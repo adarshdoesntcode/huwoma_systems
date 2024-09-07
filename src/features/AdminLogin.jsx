@@ -11,12 +11,21 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { setCredentials } from "./auth/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "./auth/authApiSlice";
+import { useToast } from "@/hooks/use-toast";
+import { ResetPassword } from "@/components/ResetPassword";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
-  // const navigate = useNavigate();
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+  const { toast } = useToast();
   const {
     handleSubmit,
     register,
@@ -24,12 +33,44 @@ function Login() {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const home_path = window.location.origin;
+
+  const from = location.state?.from?.pathname || `dashboard`;
+
+  const onSubmit = async ({ email, password }) => {
+    try {
+      const userData = await login({
+        email,
+        password,
+      });
+
+      console.log(userData);
+
+      if (userData.error) {
+        if (userData.error.status === 401)
+          throw new Error("Email or password is incorrect.");
+      }
+
+      if (!userData.error) {
+        dispatch(setCredentials({ ...userData }));
+        reset();
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: error.message,
+      });
+    }
+  };
   return (
-    <div className="flex bg-[url('/hero-pattern.webp')] pt-12 sm:pt-0 items-start sm:items-center justify-center h-screen">
-      <div className="flex gap-10 flex-col">
+    <div className="flex bg-[url('/bg.webp')] pt-12 sm:pt-0 items-start sm:items-center justify-center h-screen">
+      <div className="flex gap-14 flex-col">
         <div className="col-span-12 max-w-lg  mx-auto text-center">
-          <div className="flex gap-2 text-center  text-slate-400 text-sm flex-col items-center justify-center">
-            <img src="logo.png" className="w-[75px]" />
+          <div className="flex gap-2 text-center  text-muted-foreground text-sm flex-col items-center justify-center">
+            <img src="huwoma_logo.png" className="w-48 sm:w-64" />
             Management System
           </div>
         </div>
@@ -45,15 +86,11 @@ function Login() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
-              <form
-                // onSubmit={  handleSubmit(onSubmit)}
-
-                className="grid gap-4"
-              >
+              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">
                     {errors.email ? (
-                      <span className="text-red-500">
+                      <span className="text-destructive">
                         {errors.email.message}
                       </span>
                     ) : (
@@ -66,19 +103,20 @@ function Login() {
                     placeholder="example@email.com"
                     {...register("email", {
                       required: "Email is required",
-                      // pattern: {
-                      //   value: /^[^\d@]+@ncit\.edu\.np$/,
-                      //   message: "Invalid email address",
-                      // },
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Invalid email address",
+                      },
                     })}
-                    className={errors.email ? "border-red-500" : ""}
+                    className={errors.email ? "border-destructive" : ""}
                   />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">
                       {errors.password ? (
-                        <span className="text-red-500">
+                        <span className="text-destructive">
                           {errors.password.message}
                         </span>
                       ) : (
@@ -96,12 +134,12 @@ function Login() {
                     {showPassword ? (
                       <Eye
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute cursor-pointer text-gray-400 right-3 top-2.5 h-5 w-5"
+                        className="absolute cursor-pointer text-muted-foreground right-3 top-2.5 h-5 w-5"
                       />
                     ) : (
                       <EyeOff
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute cursor-pointer text-gray-400 right-3 top-2.5 h-5 w-5"
+                        className="absolute cursor-pointer text-muted-foreground right-3 top-2.5 h-5 w-5"
                       />
                     )}
 
@@ -111,7 +149,7 @@ function Login() {
                       {...register("password", {
                         required: "Password is required",
                       })}
-                      className={errors.password ? "border-red-500" : ""}
+                      className={errors.password ? "border-destructive" : ""}
                     />
                   </div>
                 </div>
@@ -127,18 +165,17 @@ function Login() {
                 )}
               </form>
 
-              {/* <ResetPassword
-              forgotPassword={forgotPassword}
-              setForgotPassword={setForgotPassword}
-              role={ROLES_LIST.admin}
-            /> */}
+              <ResetPassword
+                forgotPassword={forgotPassword}
+                setForgotPassword={setForgotPassword}
+              />
 
               <div className="relative my-1">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t"></span>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-slate-400">
+                  <span className="bg-background px-2 text-muted-foreground">
                     Or continue with
                   </span>
                 </div>
@@ -155,15 +192,15 @@ function Login() {
                   Login with Google
                 </a>
               </Button>
-              <div className="  mx-auto text-center  text-slate-400 text-xs">
+              <div className="  mx-auto text-center  text-muted-foreground text-xs">
                 <p>Use a registered Google Account</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="col-span-12 max-w-lg mx-auto text-center  text-slate-400 text-xs">
-          <p>For the love of cars.</p>
+        <div className="col-span-12 max-w-lg mx-auto text-center  text-muted-foreground text-xs">
+          <p>For the Love of Cars</p>
         </div>
       </div>
     </div>
