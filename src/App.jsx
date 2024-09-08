@@ -7,12 +7,14 @@ import Loader from "./components/Loader";
 import ProtectedRoute from "./features/auth/ProtectedRoute";
 import { ROLES_LIST } from "./lib/config";
 import AdminLayout from "./components/layout/AdminLayout";
+import Unauthorized from "./components/Unauthorized";
+import NotFound from "./components/NotFound";
+import PrivateRoutes from "./routes/PrivateRoutes";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    index: true,
     element: <Login />,
-    // children: PublicRoutes,
   },
 
   {
@@ -23,8 +25,9 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: `dashboard`,
+        path: "/",
         element: <AdminLayout />,
+        children: PrivateRoutes,
       },
     ],
   },
@@ -40,14 +43,14 @@ const router = createBrowserRouter([
   //   ],
   // },
 
-  // {
-  //   path: "/unauthorized",
-  //   element: <Unauthorized />,
-  // },
-  // {
-  //   path: "*",
-  //   element: <NotFound />,
-  // },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
 ]);
 
 function App() {

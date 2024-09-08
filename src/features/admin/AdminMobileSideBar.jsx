@@ -9,7 +9,11 @@ import {
 import { ROLES_LIST } from "@/lib/config";
 import {
   CalendarDays,
+  Car,
   Cctv,
+  ChartLine,
+  CircleParking,
+  Droplets,
   FileCheck,
   FolderGit2,
   GraduationCap,
@@ -35,21 +39,19 @@ function AdminMobileSideBar() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
-        <nav className="grid gap-2 text-slate-600 text-lg font-medium">
+        <nav className="grid gap-2 text-muted-foreground text-lg font-medium">
           <div className="hidden lg:flex items-center gap-2 text-base font-semibold ">
-            <Origami className="h-6 w-6" />
-            <span> / Project Phoenix / Admin</span>
+            <span>HUWOMA</span>
           </div>
           <div className="flex lg:hidden items-center gap-2 text-base font-semibold ">
-            <Origami className="h-6 w-6" />
-            <span> / Phoenix / Admin</span>
+            <span>HUWOMA</span>
           </div>
           <SheetClose asChild>
             <Link
-              to={`/${ROLES_LIST.admin}/dashboard`}
+              to={`/dashboard`}
               className={`mx-[-0.65rem] mt-4 flex items-center ${
                 isTabActive(currentPath, "dashboard")
-                  ? "bg-slate-950 text-white"
+                  ? "bg-foreground text-white"
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
@@ -59,15 +61,15 @@ function AdminMobileSideBar() {
           </SheetClose>
           <SheetClose asChild>
             <Link
-              to={`/${ROLES_LIST.admin}/events`}
+              to={`/carwash`}
               className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "events")
-                  ? "bg-slate-950 text-white"
+                isTabActive(currentPath, "carwash")
+                  ? "bg-foreground text-white"
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <CalendarDays className="h-5 w-5" />
-              Events
+              <Droplets className="h-5 w-5" />
+              Car Wash
               <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
@@ -78,15 +80,15 @@ function AdminMobileSideBar() {
           </SheetClose>
           <SheetClose asChild>
             <Link
-              to={`/${ROLES_LIST.admin}/defense`}
+              to={`/simracing`}
               className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "defense")
-                  ? "bg-slate-950 text-white"
+                isTabActive(currentPath, "simracing")
+                  ? "bg-foreground text-white"
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <ShieldCheck className="h-5 w-5" />
-              Defense
+              <Car className="h-5 w-5" />
+              Sim Racing
               <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
@@ -97,15 +99,15 @@ function AdminMobileSideBar() {
           </SheetClose>
           <SheetClose asChild>
             <Link
-              to={`/${ROLES_LIST.admin}/projects`}
+              to={`/parking`}
               className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "projects")
-                  ? "bg-slate-950 text-white"
+                isTabActive(currentPath, "parking")
+                  ? "bg-foreground text-white"
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <FolderGit2 className="h-5 w-5" />
-              Projects
+              <CircleParking className="h-5 w-5" />
+              Parking
               <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
@@ -116,77 +118,20 @@ function AdminMobileSideBar() {
           </SheetClose>
           <SheetClose asChild>
             <Link
-              to={`/${ROLES_LIST.admin}/students`}
+              to={`/analytics`}
               className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "students")
-                  ? "bg-slate-950 text-white"
+                isTabActive(currentPath, "analytics")
+                  ? "bg-foreground text-white"
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <GraduationCap className="h-5 w-5" />
-              Students
+              <ChartLine className="h-5 w-5" />
+              Analytics
               <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
               >
                 2336
-              </Badge>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link
-              to={`/${ROLES_LIST.admin}/supervisors`}
-              className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "supervisors")
-                  ? "bg-slate-950 text-white"
-                  : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
-            >
-              <Cctv className="h-5 w-5" />
-              Supervisors
-              <Badge
-                variant="secondary"
-                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
-              >
-                16
-              </Badge>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link
-              to={`/${ROLES_LIST.admin}/evaluators`}
-              className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "evaluators")
-                  ? "bg-slate-950 text-white"
-                  : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
-            >
-              <FileCheck className="h-5 w-5" />
-              Evaluators
-              <Badge
-                variant="secondary"
-                className="ml-auto flex shrink-0 items-center justify-center rounded-full"
-              >
-                44
-              </Badge>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link
-              to={`/${ROLES_LIST.admin}/notices`}
-              className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "notices")
-                  ? "bg-slate-950 text-white"
-                  : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
-            >
-              <Megaphone className="h-5 w-5" />
-              Notices
-              <Badge
-                variant="secondary"
-                className="ml-auto flex shrink-0 items-center justify-center rounded-full"
-              >
-                16
               </Badge>
             </Link>
           </SheetClose>
