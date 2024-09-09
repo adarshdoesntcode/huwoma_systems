@@ -12,7 +12,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { setCredentials } from "./auth/authSlice";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "./auth/authApiSlice";
 import { useToast } from "@/hooks/use-toast";
@@ -200,7 +200,9 @@ function Login() {
         </Card>
 
         <div className="col-span-12 max-w-lg mx-auto text-center  text-muted-foreground text-xs">
-          <p>For the Love of Cars</p>
+          <Button variant="link" asChild>
+            <Link to={"/support"}>Support</Link>
+          </Button>
         </div>
       </div>
     </div>
