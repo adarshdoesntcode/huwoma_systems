@@ -15,11 +15,12 @@ import {
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChevronLeft, PlusCircle, Users } from "lucide-react";
+import { ChevronLeft, Edit, PlusCircle, QrCode, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function SimRacing() {
@@ -50,27 +51,56 @@ function SimRacing() {
       <div className="grid grid-cols-12 gap-6 mb-6">
         <Card className="col-span-6 p-4">
           <div className="flex">
-            <div className="w-8/12">
-              <CardHeader className="pl-2 pt-2">
-                <CardTitle className="flex items-center gap-4 ">
-                  Rig #1 <Badge variant="outline">Available</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardFooter className="pb-2 pl-2">Show QR</CardFooter>
+            <div className="w-8/12 border-r pr-2 flex flex-col justify-between">
+              <div>
+                <CardHeader className=" p-2 ">
+                  <CardTitle className="flex items-center justify-between gap-4 ">
+                    <div className="flex items-center gap-4 ">Rig #1</div>
+                    <div>
+                      <Badge variant="outline">Available</Badge>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-2 text-muted-foreground text-xs  pt-0">
+                  <p>in service since 21st June, 2023</p>
+                  <p>used for 401 hours</p>
+                </CardContent>
+              </div>
+              <div className="flex justify-between items-end p-2  text-sm">
+                <Edit className="w-5 h-5 text-muted-foreground" />
+                <QrCode />
+              </div>
             </div>
-            <img src="rig.webp" className="w-4/12" />
+            <div className="w-4/12 flex items-center justify-center">
+              <img src="rig.webp" />
+            </div>
           </div>
         </Card>
         <Card className="col-span-6 p-4">
           <div className="flex">
-            <div className="w-8/12">
-              <CardHeader className="pl-2 pt-2">
-                <CardTitle className="flex items-center gap-4 ">
-                  Rig #2 <Badge>Busy</Badge>
-                </CardTitle>
-              </CardHeader>
+            <div className="w-8/12 border-r pr-2 flex flex-col justify-between">
+              <div>
+                <CardHeader className=" p-2 ">
+                  <CardTitle className="flex items-center justify-between gap-4 ">
+                    <div className="flex items-center gap-4 ">Rig #2</div>
+                    <div>
+                      <Badge variant="">Busy</Badge>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-2 text-muted-foreground text-xs  pt-0">
+                  <p>in service since 2nd April, 2021</p>
+                  <p>used for 928 hours</p>
+                </CardContent>
+              </div>
+              <div className="flex justify-between items-end p-2  text-sm">
+                <Edit className="w-5 h-5 text-muted-foreground" />
+                <QrCode />
+              </div>
             </div>
-            <img src="rig.webp" className="w-4/12" />
+            <div className="w-4/12 flex items-center justify-center">
+              <img src="rig.webp" className="" />
+            </div>
           </div>
         </Card>
       </div>
@@ -86,13 +116,16 @@ function SimRacing() {
                 Booking <PlusCircle className="ml-2 w-4 h-4" />
               </Button>
               <Button size="sm">
-                New <PlusCircle className="ml-2 w-4 h-4" />
+                Record <PlusCircle className="ml-2 w-4 h-4" />
               </Button>
             </div>
           </div>
           <TabsContent value="active">
             <Card>
-              <CardHeader></CardHeader>
+              <CardHeader>
+                <CardTitle>Active</CardTitle>
+                <CardDescription>Active</CardDescription>
+              </CardHeader>
               <CardContent>
                 <Table>
                   <TableCaption>A list of your recent invoices.</TableCaption>
@@ -181,37 +214,5 @@ const invoices = [
     paymentMethod: "Credit Card",
   },
 ];
-
-export function TableDemo() {
-  return (
-    <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
-  );
-}
 
 export default SimRacing;
