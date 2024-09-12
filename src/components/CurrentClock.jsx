@@ -53,7 +53,7 @@ function CurrentClock({ dateObject }) {
     <>
       <style>{css}</style>
 
-      <Card className="bg-transparent ">
+      <Card className="bg-transparent border-none">
         <CardHeader className="p-2 pt-0 md:p-4">
           <CardTitle className="text-center">{clock.time}</CardTitle>
           <CardDescription className="text-center">

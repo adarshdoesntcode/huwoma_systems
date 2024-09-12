@@ -15,3 +15,7 @@ export const getInitials = (fullName) => {
   const lastNameInitial = parts[parts.length - 1].charAt(0).toUpperCase();
   return `${firstNameInitial}${lastNameInitial}`;
 };
+
+export const roleByCode = (obj, value) => {
+  return Object.keys(obj).find((key) => obj[key] === value);
+};

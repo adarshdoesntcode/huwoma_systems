@@ -20,7 +20,7 @@ import { Loader2, Search } from "lucide-react";
 import AdminSideBar from "../../features/admin/AdminSideBar";
 import AdminMobileSideBar from "../../features/admin/AdminMobileSideBar";
 import useLogout from "@/hooks/useLogout";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROLES_LIST } from "@/lib/config";
 // import BreadCrumbGenerator from "../BreadCrumbGenerator";
 import { useSelector } from "react-redux";
@@ -36,6 +36,7 @@ import BreadCrumbGenerator from "../BreadCrumbGenerator";
 function AdminLayout() {
   const [logoutLoader, setLogoutLoader] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const logout = useLogout();
 
   const user = useSelector(selectCurrentUser);
@@ -84,7 +85,7 @@ function AdminLayout() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4" />
               <Input
                 type="search"
-                placeholder="Search Projects, Students, .."
+                placeholder="Search Customers"
                 className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
               />
             </div>
@@ -100,7 +101,10 @@ function AdminLayout() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/settings")}>
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem>Support</DropdownMenuItem>
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handlelogout}>

@@ -7,6 +7,8 @@ import SimRacing from "@/features/simracing/SimRacing";
 import Carwash from "@/features/carwash/Carwash";
 import Parking from "@/features/parking/Parking";
 import Analytics from "@/features/analytics/Analytics";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import SettingsRoutes from "./SettingsRoutes";
 
 const PrivateRoutes = [
   {
@@ -39,6 +41,11 @@ const PrivateRoutes = [
     path: "analytics",
     element: <Analytics />,
     errorElement: <Error />,
+  },
+  {
+    path: "/settings",
+    element: <SettingsLayout />,
+    children: SettingsRoutes,
   },
 ];
 

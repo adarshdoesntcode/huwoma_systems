@@ -32,7 +32,7 @@ function BreadCrumbGenerator({ crumbs, role }) {
       return (
         <BreadcrumbItem key={crumb}>
           <BreadcrumbLink asChild>
-            <Link to={`/${ROLES_LIST[role]}/${crumb}`}>
+            <Link to={`/${crumb}`}>
               {modifyString(crumb.charAt(0).toUpperCase() + crumb.slice(1))}
             </Link>
           </BreadcrumbLink>
@@ -44,11 +44,7 @@ function BreadCrumbGenerator({ crumbs, role }) {
           <BreadcrumbSeparator />
           <BreadcrumbItem key={crumb}>
             <BreadcrumbLink asChild>
-              <Link
-                to={`/${ROLES_LIST[role]}/${crumbs
-                  .slice(0, index + 1)
-                  .join("/")}`}
-              >
+              <Link to={`/${crumbs.slice(0, index + 1).join("/")}`}>
                 {modifyString(crumb.charAt(0).toUpperCase() + crumb.slice(1))}
               </Link>
             </BreadcrumbLink>

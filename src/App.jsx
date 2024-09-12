@@ -10,6 +10,8 @@ import AdminLayout from "./components/layout/AdminLayout";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./components/NotFound";
 import PrivateRoutes from "./routes/PrivateRoutes";
+import SettingsLayout from "./components/layout/SettingsLayout";
+import SettingsRoutes from "./routes/SettingsRoutes";
 
 const router = createBrowserRouter([
   {
