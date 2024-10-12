@@ -16,7 +16,7 @@ import { roleByCode } from "@/lib/utils";
 import { ROLES_LIST } from "@/lib/config";
 import { Label } from "@/components/ui/label";
 
-function General() {
+function GeneralSettings() {
   const user = useSelector(selectCurrentUser);
 
   return (
@@ -41,7 +41,7 @@ function General() {
             <Input placeholder="Name" />
           </div>
         </CardContent>
-        <CardFooter className="border-t px-6 py-4">
+        <CardFooter className="border-t px-6 py-4 flex justify-end">
           <Button>Update</Button>
         </CardFooter>
       </Card>
@@ -69,7 +69,7 @@ function General() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="border-t px-6 py-4">
+        <CardFooter className="border-t px-6 py-4 flex justify-end">
           <Button>Change</Button>
         </CardFooter>
       </Card>
@@ -77,4 +77,4 @@ function General() {
   );
 }
 
-export default General;
+export default GeneralSettings;

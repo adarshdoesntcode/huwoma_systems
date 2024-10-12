@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 export function SettingsLayout() {
   const navigate = useNavigate();
@@ -39,15 +39,67 @@ export function SettingsLayout() {
           Settings
         </div>
         <div className="mx-auto grid w-full max-w-3xl items-start gap-6 ">
-          <nav className="flex gap-4 flex-wrap text-sm text-muted-foreground">
-            <Link href="#" className="font-semibold text-primary">
+          <nav className="flex gap-5 flex-wrap text-sm text-muted-foreground">
+            <NavLink
+              to={"/settings/general"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4  "
+                  : " text-primary "
+              }
+            >
               General
-            </Link>
-            <Link href="#">CarWash</Link>
-            <Link href="#">SimRacing</Link>
-            <Link href="#">Parking</Link>
-            <Link href="#">Admins</Link>
-            <Link href="#">Payments</Link>
+            </NavLink>
+            <NavLink
+              to={"/settings/c-wash"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent "
+                  : " text-primary border-b-2 border-transparent"
+              }
+            >
+              CarWash
+            </NavLink>
+            <NavLink
+              to={"/settings/s-racing"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                  : " text-primary border-b-2 border-transparent"
+              }
+            >
+              SimRacing
+            </NavLink>
+            <NavLink
+              to={"/settings/park"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                  : " text-primary border-b-2 border-transparent"
+              }
+            >
+              Parking
+            </NavLink>
+            <NavLink
+              to={"/settings/admins"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                  : " text-primary border-b-2 border-transparent"
+              }
+            >
+              Admins
+            </NavLink>
+            <NavLink
+              to={"/settings/payments"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                  : " text-primary border-b-2 border-transparent"
+              }
+            >
+              Payments
+            </NavLink>
           </nav>
           <Outlet />
         </div>

@@ -24,7 +24,7 @@ function AdminSideBar() {
           </div>
         </div>
         <div className="flex-1">
-          <nav className="grid  text-muted-foreground items-start px-2 text-sm font-medium lg:px-4">
+          <nav className="grid  text-muted items-start px-2 text-sm font-medium lg:px-4">
             <Link
               to={`/dashboard`}
               className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${

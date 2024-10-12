@@ -2,7 +2,9 @@ import { Navigate } from "react-router-dom";
 
 import Error from "@/components/error/Error";
 
-import General from "@/features/settings/General";
+import GeneralSettings from "@/features/settings/GeneralSettings";
+import CarwashSettings from "@/features/settings/carwash-settings/CarwashSettings";
+import CarwashNewConfig from "@/features/settings/carwash-settings/CarwashNewConfig";
 
 const SettingsRoutes = [
   {
@@ -12,7 +14,17 @@ const SettingsRoutes = [
   },
   {
     path: "general",
-    element: <General />,
+    element: <GeneralSettings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "c-wash",
+    element: <CarwashSettings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "c-wash/new",
+    element: <CarwashNewConfig />,
     errorElement: <Error />,
   },
 ];
