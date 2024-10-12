@@ -18,6 +18,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import {
   Table,
   TableBody,
   TableCaption,
@@ -38,11 +48,18 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+
+function getTotalRate(services, key) {
+  return services?.reduce((total, service) => total + service[key], 0);
+}
 
 const CarwashConfigSettings = () => {
-  const [modelOpen, setIsModalOpen] = useState(false);
+  const [modelOpen, setModalOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVehicleId, setSelectedVehicleId] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState({});
 
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useCarwashconfigQuery();
@@ -56,13 +73,13 @@ const CarwashConfigSettings = () => {
   } else if (isSuccess) {
     if (!data) {
       content = (
-        <div className="w-full h-20 text-muted-foreground flex items-center justify-center">
+        <div className="h-20 text-xs flex items-center justify-center text-muted-foreground">
           No Configurations
         </div>
       );
     } else {
       content = (
-        <div>
+        <div className="border rounded-md">
           <Table>
             <TableHeader>
               <TableRow>
@@ -79,7 +96,8 @@ const CarwashConfigSettings = () => {
                   key={vehicle._id}
                   className="cursor-pointer"
                   onClick={() => {
-                    console.log("object");
+                    setSelectedVehicle(vehicle);
+                    setModalOpen(true);
                   }}
                 >
                   <TableCell>{index + 1}</TableCell>
@@ -135,6 +153,11 @@ const CarwashConfigSettings = () => {
             selectedVehicleId={selectedVehicleId}
             setSelectedVehicleId={selectedVehicleId}
           />
+          <ConfigDetails
+            setModalOpen={setModalOpen}
+            modelOpen={modelOpen}
+            selectedVehicle={selectedVehicle}
+          />
         </div>
       );
     }
@@ -159,16 +182,39 @@ const CarwashConfigSettings = () => {
   );
 };
 
-function ConfirmDelete({ dialogOpen, setDialogOpen, selectedVehicleId }) {
+function ConfirmDelete({
+  dialogOpen,
+  setDialogOpen,
+  selectedVehicleId,
+  setSelectedVehicleId,
+}) {
   const [deleteCarWashConfig, { isLoading }] = useDeleteCarWashConfigMutation();
 
   const handleDelete = async () => {
-    if (!selectedVehicleId) return;
-    const res = await deleteCarWashConfig({
-      vehicleTypeId: selectedVehicleId,
-    });
-    console.log(res);
-    setDialogOpen(false);
+    try {
+      if (!selectedVehicleId) return;
+      const res = await deleteCarWashConfig({
+        vehicleTypeId: selectedVehicleId,
+      });
+      setDialogOpen(false);
+      if (res.error) {
+        throw new Error(res.error.data.message);
+      }
+
+      if (!res.error) {
+        setSelectedVehicleId("");
+        toast({
+          title: "Configuration Deleted!",
+          description: res.data.data.vehicleTypeName,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
   };
   return (
     <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -195,6 +241,155 @@ function ConfirmDelete({ dialogOpen, setDialogOpen, selectedVehicleId }) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
+  const navigate = useNavigate();
+
+  return (
+    <Dialog open={modelOpen} onOpenChange={setModalOpen}>
+      <DialogContent>
+        <DialogHeader className="border-b pb-4">
+          <DialogTitle>{selectedVehicle.vehicleTypeName}</DialogTitle>
+          <DialogDescription>
+            Bill Abbreviation : {selectedVehicle.billAbbreviation}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="max-h-[70vh] overflow-y-auto">
+          <div>
+            <Label>Services</Label>
+            {selectedVehicle?.services?.length === 0 && (
+              <div className="h-14 text-xs flex items-center justify-center text-muted-foreground">
+                No Services
+              </div>
+            )}
+            {selectedVehicle?.services?.length > 0 && (
+              <div className="grid gap-2 mt-2">
+                {selectedVehicle.services.map((service) => {
+                  return (
+                    <Card key={service._id}>
+                      <CardHeader className="p-4 flex">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-sm">
+                              {service.serviceTypeName}
+                            </CardTitle>
+                            <CardDescription className="text-xs">
+                              Bill Abbreviation : {service.billAbbreviation}
+                            </CardDescription>
+                          </div>
+
+                          <Badge>Rs. {service.serviceRate}</Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="px-2 pb-4">
+                        <div className="flex flex-wrap gap-2">
+                          {service.includeParking && (
+                            <Badge variant="secondary">Includes Parking</Badge>
+                          )}
+                          {service.streakApplicable && (
+                            <Badge variant="secondary">Offers Free Wash</Badge>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          <div>
+            <Label>Packages</Label>
+            {selectedVehicle?.packages?.length === 0 && (
+              <div className="h-14 text-xs flex items-center justify-center text-muted-foreground">
+                No Packages
+              </div>
+            )}
+            {selectedVehicle?.packages?.length > 0 && (
+              <div className="grid gap-2 mt-2">
+                {selectedVehicle.packages.map((pack) => {
+                  return (
+                    <Card key={pack._id}>
+                      <CardHeader className="p-4 flex border-b">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-sm">
+                              {pack.packageTypeName}
+                            </CardTitle>
+                            <CardDescription className="text-xs">
+                              Bill Abbreviation : {pack.billAbbreviation}
+                            </CardDescription>
+                          </div>
+
+                          <Badge>
+                            Rs.{" "}
+                            {getTotalRate(
+                              pack.packageContents,
+                              "packageServiceRate"
+                            )}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="px-2 pb-4">
+                        <div className="p-2">
+                          <Label>Breakdown </Label>
+                          {pack.packageContents.map((content) => {
+                            return (
+                              <ul className="list-disc pl-6" key={content._id}>
+                                <li>
+                                  <div
+                                    className="flex
+                                  justify-between
+                                  items-start"
+                                  >
+                                    <div>
+                                      <div className="text-sm font-medium">
+                                        {content.packageServiceName}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        Bill Abbreviation:{" "}
+                                        {content.billAbbreviation}
+                                      </div>
+                                    </div>
+                                    <Badge variant="outline">
+                                      Rs. {content.packageServiceRate}
+                                    </Badge>
+                                  </div>
+                                </li>
+                              </ul>
+                            );
+                          })}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {pack.includeParking && (
+                            <Badge variant="secondary">Includes Parking</Badge>
+                          )}
+                          {pack.streakApplicable && (
+                            <Badge variant="secondary">Offers Free Wash</Badge>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              navigate(`/settings/c-wash/edit/${selectedVehicle._id}`)
+            }
+          >
+            Edit
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
