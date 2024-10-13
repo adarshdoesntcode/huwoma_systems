@@ -9,6 +9,22 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["VehicleTypes"],
     }),
+    createVehicleType: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/carwash/vehicletype",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["VehicleTypes"],
+    }),
+    createServiceType: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/carwash/servicetype",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["VehicleTypes"],
+    }),
     deleteCarWashConfig: builder.mutation({
       query: (credentials) => ({
         url: "/settings/carwash/vehicletype",
@@ -41,4 +57,6 @@ export const {
   useCarwashInspectionTemplateQuery,
   useUpdateInspectionTemplateMutation,
   useDeleteCarWashConfigMutation,
+  useCreateVehicleTypeMutation,
+  useCreateServiceTypeMutation,
 } = settingsApiSlice;

@@ -15,7 +15,7 @@ function CarwashSettings() {
   return (
     <div className="grid gap-6">
       <CarwashConfigSettings />
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Parking Buffer</CardTitle>
           <CardDescription>
@@ -24,8 +24,8 @@ function CarwashSettings() {
           </CardDescription>
         </CardHeader>
         <CardContent></CardContent>
-      </Card> */}
-      {/* <CarWashInspectionSetting /> */}
+      </Card>
+      <CarWashInspectionSetting />
     </div>
   );
 }

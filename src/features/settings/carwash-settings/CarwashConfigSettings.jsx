@@ -79,14 +79,15 @@ const CarwashConfigSettings = () => {
       );
     } else {
       content = (
-        <div className="border rounded-md">
+        <>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>SN</TableHead>
                 <TableHead>Vehicle</TableHead>
+                <TableHead className="pl-1">Type</TableHead>
                 <TableHead className="text-center">Services</TableHead>
-                <TableHead className="text-center">Packages</TableHead>
+                {/* <TableHead className="text-center">Packages</TableHead> */}
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -100,26 +101,41 @@ const CarwashConfigSettings = () => {
                     setModalOpen(true);
                   }}
                 >
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell className="font-medium">
-                    {vehicle.vehicleTypeName}
+                  <TableCell className="p-1 pl-4">{index + 1}</TableCell>
+                  <TableCell className="font-medium p-1 ">
+                    <div className="flex items-center gap-4 text-center">
+                      <img src={`${vehicle.vehicleIcon}`} className="h-16" />
+                    </div>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="p-1 text-left">
+                    <div>
+                      <p>{vehicle.vehicleTypeName}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {vehicle.billAbbreviation}
+                      </p>
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="text-center p-1">
                     <Badge
-                      variant={vehicle.services.length > 0 ? "" : "outline"}
+                      variant={
+                        vehicle.services.length > 0 ? "secondary" : "outline"
+                      }
                     >
                       {vehicle.services.length}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-center">
+                  {/* <TableCell className="text-center">
                     <Badge
-                      variant={vehicle.packages.length > 0 ? "" : "outline"}
+                      variant={
+                        vehicle.packages.length > 0 ? "secondary" : "outline"
+                      }
                     >
                       {vehicle.packages.length}
                     </Badge>
-                  </TableCell>
+                  </TableCell> */}
 
-                  <TableCell className="text-right">
+                  <TableCell className="text-right p-1">
                     <div className="flex gap-2 items-center justify-end">
                       <Button
                         size="sm"
@@ -132,7 +148,7 @@ const CarwashConfigSettings = () => {
                       </Button>
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="secondary"
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedVehicleId(vehicle._id);
@@ -151,14 +167,14 @@ const CarwashConfigSettings = () => {
             setDialogOpen={setDialogOpen}
             dialogOpen={dialogOpen}
             selectedVehicleId={selectedVehicleId}
-            setSelectedVehicleId={selectedVehicleId}
+            setSelectedVehicleId={setSelectedVehicleId}
           />
           <ConfigDetails
             setModalOpen={setModalOpen}
             modelOpen={modelOpen}
             selectedVehicle={selectedVehicle}
           />
-        </div>
+        </>
       );
     }
   } else if (isError) {
@@ -169,10 +185,10 @@ const CarwashConfigSettings = () => {
       <CardHeader>
         <CardTitle>Configuration</CardTitle>
         <CardDescription>
-          Configure vehicle type, services and packages
+          Configure vehicle type and its services
         </CardDescription>
       </CardHeader>
-      <CardContent className="overflow-auto">{content}</CardContent>
+      <CardContent className="py-0 overflow-auto">{content}</CardContent>
       <CardFooter className="border-t px-6 py-4 flex justify-end">
         <Button onClick={() => navigate("/settings/c-wash/new")}>
           Add Config
@@ -251,10 +267,17 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
     <Dialog open={modelOpen} onOpenChange={setModalOpen}>
       <DialogContent>
         <DialogHeader className="border-b pb-4">
-          <DialogTitle>{selectedVehicle.vehicleTypeName}</DialogTitle>
-          <DialogDescription>
-            Bill Abbreviation : {selectedVehicle.billAbbreviation}
-          </DialogDescription>
+          <div className="flex items-center gap-4">
+            <div>
+              <img src={`${selectedVehicle.vehicleIcon}`} className="h-16" />
+            </div>
+            <div>
+              <DialogTitle>{selectedVehicle.vehicleTypeName}</DialogTitle>
+              <DialogDescription>
+                Bill Abbreviation : {selectedVehicle.billAbbreviation}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto">
           <div>
@@ -269,7 +292,7 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
                 {selectedVehicle.services.map((service) => {
                   return (
                     <Card key={service._id}>
-                      <CardHeader className="p-4 flex">
+                      <CardHeader className="p-4 flex pb-2">
                         <div className="flex items-start justify-between">
                           <div>
                             <CardTitle className="text-sm">
@@ -284,6 +307,15 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
                         </div>
                       </CardHeader>
                       <CardContent className="px-2 pb-4">
+                        <div>
+                          <ul className="ml-6 text-xs mb-2 list-disc">
+                            {service.serviceDescription.map(
+                              (description, index) => {
+                                return <li key={index}>{description}</li>;
+                              }
+                            )}
+                          </ul>
+                        </div>
                         <div className="flex flex-wrap gap-2">
                           {service.includeParking && (
                             <Badge variant="secondary">Includes Parking</Badge>
@@ -299,7 +331,7 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
               </div>
             )}
           </div>
-          <div>
+          {/* <div className="mt-4">
             <Label>Packages</Label>
             {selectedVehicle?.packages?.length === 0 && (
               <div className="h-14 text-xs flex items-center justify-center text-muted-foreground">
@@ -375,7 +407,7 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
                 })}
               </div>
             )}
-          </div>
+          </div> */}
         </div>
         <DialogFooter>
           <Button

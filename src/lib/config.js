@@ -16,3 +16,18 @@ export const ROLES_LIST = {
   ADMIN: 4200,
   SUPERADMIN: 8848,
 };
+
+export const VEHICLE_ICON_PATHS = [
+  "/vehicles/1.webp",
+  "/vehicles/2.webp",
+  "/vehicles/3.webp",
+  "/vehicles/4.webp",
+  "/vehicles/5.webp",
+  "/vehicles/6.webp",
+  "/vehicles/7.webp",
+  "/vehicles/8.webp",
+  "/vehicles/9.webp",
+  "/vehicles/10.webp",
+  "/vehicles/11.webp",
+  "/vehicles/12.webp",
+];
