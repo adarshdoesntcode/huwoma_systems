@@ -5,6 +5,7 @@ import Error from "@/components/error/Error";
 import GeneralSettings from "@/features/settings/GeneralSettings";
 import CarwashSettings from "@/features/settings/carwash-settings/CarwashSettings";
 import CarwashNewConfig from "@/features/settings/carwash-settings/CarwashNewConfig";
+import CarwashEditConfig from "@/features/settings/carwash-settings/CarwashEditConfig";
 
 const SettingsRoutes = [
   {
@@ -25,6 +26,11 @@ const SettingsRoutes = [
   {
     path: "c-wash/new",
     element: <CarwashNewConfig />,
+    errorElement: <Error />,
+  },
+  {
+    path: "c-wash/edit/:id",
+    element: <CarwashEditConfig />,
     errorElement: <Error />,
   },
 ];

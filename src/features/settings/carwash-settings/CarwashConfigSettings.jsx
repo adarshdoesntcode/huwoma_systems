@@ -69,7 +69,11 @@ const CarwashConfigSettings = () => {
   let content;
 
   if (isLoading || isFetching) {
-    content = <Loader />;
+    content = (
+      <div className="py-6">
+        <Loader />
+      </div>
+    );
   } else if (isSuccess) {
     if (!data) {
       content = (
@@ -83,11 +87,10 @@ const CarwashConfigSettings = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>SN</TableHead>
-                <TableHead>Vehicle</TableHead>
+                <TableHead className="hidden sm:table-cell">SN</TableHead>
+                <TableHead className="hidden sm:table-cell">Vehicle</TableHead>
                 <TableHead className="pl-1">Type</TableHead>
                 <TableHead className="text-center">Services</TableHead>
-                {/* <TableHead className="text-center">Packages</TableHead> */}
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -95,19 +98,21 @@ const CarwashConfigSettings = () => {
               {data.data.map((vehicle, index) => (
                 <TableRow
                   key={vehicle._id}
-                  className="cursor-pointer"
+                  className="cursor-pointer hover:translate-x-1 hover:bg-inherit transition-all"
                   onClick={() => {
                     setSelectedVehicle(vehicle);
                     setModalOpen(true);
                   }}
                 >
-                  <TableCell className="p-1 pl-4">{index + 1}</TableCell>
-                  <TableCell className="font-medium p-1 ">
+                  <TableCell className="p-1 pl-4 hidden sm:table-cell">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell className="font-medium p-1 hidden sm:table-cell">
                     <div className="flex items-center gap-4 text-center">
                       <img src={`${vehicle.vehicleIcon}`} className="h-16" />
                     </div>
                   </TableCell>
-                  <TableCell className="p-1 text-left">
+                  <TableCell className="sm:p-1 p-4 text-left">
                     <div>
                       <p>{vehicle.vehicleTypeName}</p>
                       <p className="text-muted-foreground text-xs">
@@ -125,15 +130,6 @@ const CarwashConfigSettings = () => {
                       {vehicle.services.length}
                     </Badge>
                   </TableCell>
-                  {/* <TableCell className="text-center">
-                    <Badge
-                      variant={
-                        vehicle.packages.length > 0 ? "secondary" : "outline"
-                      }
-                    >
-                      {vehicle.packages.length}
-                    </Badge>
-                  </TableCell> */}
 
                   <TableCell className="text-right p-1">
                     <div className="flex gap-2 items-center justify-end">
@@ -142,6 +138,7 @@ const CarwashConfigSettings = () => {
                         variant="outline"
                         onClick={(e) => {
                           e.stopPropagation();
+                          navigate(`/settings/c-wash/edit/${vehicle._id}`);
                         }}
                       >
                         Edit
@@ -331,83 +328,6 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
               </div>
             )}
           </div>
-          {/* <div className="mt-4">
-            <Label>Packages</Label>
-            {selectedVehicle?.packages?.length === 0 && (
-              <div className="h-14 text-xs flex items-center justify-center text-muted-foreground">
-                No Packages
-              </div>
-            )}
-            {selectedVehicle?.packages?.length > 0 && (
-              <div className="grid gap-2 mt-2">
-                {selectedVehicle.packages.map((pack) => {
-                  return (
-                    <Card key={pack._id}>
-                      <CardHeader className="p-4 flex border-b">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <CardTitle className="text-sm">
-                              {pack.packageTypeName}
-                            </CardTitle>
-                            <CardDescription className="text-xs">
-                              Bill Abbreviation : {pack.billAbbreviation}
-                            </CardDescription>
-                          </div>
-
-                          <Badge>
-                            Rs.{" "}
-                            {getTotalRate(
-                              pack.packageContents,
-                              "packageServiceRate"
-                            )}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="px-2 pb-4">
-                        <div className="p-2">
-                          <Label>Breakdown </Label>
-                          {pack.packageContents.map((content) => {
-                            return (
-                              <ul className="list-disc pl-6" key={content._id}>
-                                <li>
-                                  <div
-                                    className="flex
-                                  justify-between
-                                  items-start"
-                                  >
-                                    <div>
-                                      <div className="text-sm font-medium">
-                                        {content.packageServiceName}
-                                      </div>
-                                      <div className="text-xs text-muted-foreground">
-                                        Bill Abbreviation:{" "}
-                                        {content.billAbbreviation}
-                                      </div>
-                                    </div>
-                                    <Badge variant="outline">
-                                      Rs. {content.packageServiceRate}
-                                    </Badge>
-                                  </div>
-                                </li>
-                              </ul>
-                            );
-                          })}
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {pack.includeParking && (
-                            <Badge variant="secondary">Includes Parking</Badge>
-                          )}
-                          {pack.streakApplicable && (
-                            <Badge variant="secondary">Offers Free Wash</Badge>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </div> */}
         </div>
         <DialogFooter>
           <Button

@@ -9,6 +9,21 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["VehicleTypes"],
     }),
+    vehicleTypebyId: builder.query({
+      query: (id) => ({
+        url: `/settings/carwash/vehicletype/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["VehicleType"],
+    }),
+    updateVehicleType: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/carwash/vehicletype",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["VehicleType"],
+    }),
     createVehicleType: builder.mutation({
       query: (credentials) => ({
         url: "/settings/carwash/vehicletype",
@@ -24,6 +39,21 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
       invalidatesTags: ["VehicleTypes"],
+    }),
+    serviceType: builder.query({
+      query: (id) => ({
+        url: `/settings/carwash/servicetype/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["ServiceType"],
+    }),
+    updateServiceType: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/carwash/servicetype",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["ServiceType"],
     }),
     deleteCarWashConfig: builder.mutation({
       query: (credentials) => ({
@@ -54,9 +84,13 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useCarwashconfigQuery,
+  useVehicleTypebyIdQuery,
+  useUpdateVehicleTypeMutation,
   useCarwashInspectionTemplateQuery,
   useUpdateInspectionTemplateMutation,
+  useUpdateServiceTypeMutation,
   useDeleteCarWashConfigMutation,
   useCreateVehicleTypeMutation,
   useCreateServiceTypeMutation,
+  useServiceTypeQuery,
 } = settingsApiSlice;

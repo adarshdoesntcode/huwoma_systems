@@ -8,8 +8,8 @@ function Loader() {
   const number = getRandomNumber(2);
   return (
     <div className="flex  items-center justify-center ">
-      {number === 1 && <Circuit1 className="w-28 h-28" />}
-      {number === 2 && <Circuit2 className="w-28 h-28" />}
+      {number === 1 && <Circuit1 className="w-24 h-24" />}
+      {number === 2 && <Circuit2 className="w-24 h-24" />}
     </div>
   );
 }

@@ -33,6 +33,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function CarwashNewConfig() {
   const [vehicle, setVehicle] = useState("");
@@ -52,7 +63,6 @@ function CarwashNewConfig() {
       </div>
       <VehicleType setVehicle={setVehicle} vehicle={vehicle} />
       {vehicle && <Services vehicle={vehicle} />}
-      {/* {vehicle && <Packages vehicle={vehicle} />} */}
     </>
   );
 }
@@ -169,7 +179,7 @@ function VehicleType({ vehicle, setVehicle }) {
                 </Label>
                 <Input
                   id="vehicleTypeName"
-                  type="vehicleTypeName"
+                  type="text"
                   placeholder="Vehicle type name"
                   {...register("vehicleTypeName", {
                     required: "Name is required",
@@ -191,7 +201,7 @@ function VehicleType({ vehicle, setVehicle }) {
                 </Label>
                 <Input
                   id="billAbbreviation"
-                  type="billAbbreviation"
+                  type="text"
                   placeholder="Text printed on the bill"
                   {...register("billAbbreviation", {
                     required: "Abbreviation is required",
@@ -270,7 +280,6 @@ function Services({ vehicle }) {
     handleSubmit,
     register,
     reset,
-
     formState: { errors },
   } = useForm();
 
@@ -356,7 +365,7 @@ function Services({ vehicle }) {
                       <Badge>Rs. {service.serviceRate}</Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="px-2 pb-4">
+                  <CardContent className="px-4 pb-4">
                     <div>
                       <ul className="ml-6 text-xs mb-2 list-disc">
                         {service.serviceDescription.map(
@@ -375,14 +384,29 @@ function Services({ vehicle }) {
                           <Badge variant="secondary">Offers Free Wash</Badge>
                         )}
                       </div>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="mr-2 "
-                        onClick={() => handleServiceRemove(index)}
-                      >
-                        <Trash className="w-4 h-4" />
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="icon" variant="ghost" className="mr-2 ">
+                            <Trash className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Do you want to remove?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleServiceRemove(index)}
+                            >
+                              Confirm
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </CardContent>
                 </Card>
@@ -407,7 +431,7 @@ function Services({ vehicle }) {
                   </Label>
                   <Input
                     id="serviceTypeName"
-                    type="serviceTypeName"
+                    type="text"
                     placeholder="Service type name"
                     {...register("serviceTypeName", {
                       required: "Name is required",
@@ -431,7 +455,7 @@ function Services({ vehicle }) {
                   </Label>
                   <Input
                     id="billAbbreviation"
-                    type="billAbbreviation"
+                    type="text"
                     placeholder="Text printed on the bill"
                     {...register("billAbbreviation", {
                       required: "Abbreviation is required",
@@ -452,6 +476,7 @@ function Services({ vehicle }) {
                     )}
                   </Label>
                   <Input
+                    onWheel={(e) => e.target.blur()}
                     id="serviceRate"
                     type="number"
                     placeholder="Rs."
@@ -521,6 +546,7 @@ function Services({ vehicle }) {
             variant="outline"
             className="gap-1"
             onClick={() => {
+              reset();
               setAddNewService(!addNewService);
             }}
           >
@@ -602,17 +628,4 @@ function Services({ vehicle }) {
   }
 }
 
-function Packages({ vehicle }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-xl">Packages</CardTitle>
-        <CardDescription>
-          Create a new package for the created vehicle
-        </CardDescription>
-      </CardHeader>
-      <CardContent></CardContent>
-    </Card>
-  );
-}
 export default CarwashNewConfig;
