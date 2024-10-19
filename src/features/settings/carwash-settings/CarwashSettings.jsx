@@ -10,21 +10,15 @@ import {
 
 import CarwashConfigSettings from "./CarwashConfigSettings";
 import CarWashInspectionSetting from "./CarWashInspectionSetting";
+import CarwashParkingBuffer from "./CarwashParkingBuffer";
+import CarwashCount from "./CarwashCount";
 
 function CarwashSettings() {
   return (
     <div className="grid gap-6">
       <CarwashConfigSettings />
-      <Card>
-        <CardHeader>
-          <CardTitle>Parking Buffer</CardTitle>
-          <CardDescription>
-            Time buffer between service completion and the initiation of
-            parking.
-          </CardDescription>
-        </CardHeader>
-        <CardContent></CardContent>
-      </Card>
+      <CarwashCount />
+      <CarwashParkingBuffer />
       <CarWashInspectionSetting />
     </div>
   );

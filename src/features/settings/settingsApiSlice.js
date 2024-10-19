@@ -74,7 +74,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
     updateInspectionTemplate: builder.mutation({
       query: (credentials) => ({
         url: "/settings/carwash/inspection",
-        method: "PUT",
+        method: "POST",
         body: { ...credentials },
       }),
       invalidatesTags: ["InspectionTemplate"],

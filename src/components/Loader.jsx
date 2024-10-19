@@ -7,7 +7,7 @@ function getRandomNumber(max) {
 function Loader() {
   const number = getRandomNumber(2);
   return (
-    <div className="flex  items-center justify-center ">
+    <div className="flex py-12  items-center justify-center ">
       {number === 1 && <Circuit1 className="w-24 h-24" />}
       {number === 2 && <Circuit2 className="w-24 h-24" />}
     </div>
