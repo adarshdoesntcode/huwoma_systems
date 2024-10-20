@@ -23,7 +23,7 @@ import {
   PlusCircle,
   Trash,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import {
@@ -283,6 +283,17 @@ function Services({ vehicle }) {
     formState: { errors },
   } = useForm();
 
+  const newForm = useRef(null);
+
+  useEffect(() => {
+    if (addNewService && newForm.current) {
+      newForm.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [addNewService]);
+
   const handleServiceRemove = (deleteIndex) => {
     setNewServices((prev) => {
       return prev.filter((service, index) => {
@@ -326,8 +337,16 @@ function Services({ vehicle }) {
           billAbbreviation: data.billAbbreviation,
           serviceRate: data.serviceRate,
           serviceDescription: data.serviceDescription.split(","),
-          includeParking: parkingToggle,
-          streakApplicable: streakToggle,
+          includeParking: {
+            decision: parkingToggle,
+            parkingBuffer: parkingToggle
+              ? data.parkingBuffer || undefined
+              : undefined,
+          },
+          streakApplicable: {
+            decision: streakToggle,
+            washCount: streakToggle ? data.washCount || undefined : undefined,
+          },
         },
       ];
     });
@@ -377,11 +396,17 @@ function Services({ vehicle }) {
                     </div>
                     <div className="flex items-center justify-between ">
                       <div className="flex flex-wrap gap-2">
-                        {service.includeParking && (
-                          <Badge variant="secondary">Includes Parking</Badge>
+                        {service.includeParking.decision && (
+                          <Badge variant="secondary">
+                            Parking Fees after{" "}
+                            {service.includeParking.parkingBuffer}m
+                          </Badge>
                         )}
-                        {service.streakApplicable && (
-                          <Badge variant="secondary">Offers Free Wash</Badge>
+                        {service.streakApplicable.decision && (
+                          <Badge variant="secondary">
+                            Free Wash after {service.streakApplicable.washCount}{" "}
+                            washes
+                          </Badge>
                         )}
                       </div>
                       <AlertDialog>
@@ -415,6 +440,7 @@ function Services({ vehicle }) {
           </div>
           {addNewService && (
             <form
+              ref={newForm}
               onSubmit={handleSubmit(onAdd)}
               className="grid gap-4 border p-6 rounded-md mt-4"
             >
@@ -526,6 +552,37 @@ function Services({ vehicle }) {
                     onCheckedChange={setParkingToggle}
                   />
                 </div>
+                {parkingToggle && (
+                  <div className="flex col-span-3 items-center justify-between">
+                    <Label>
+                      {errors.parkingBuffer ? (
+                        <span className="text-destructive">
+                          {errors.parkingBuffer.message}
+                        </span>
+                      ) : (
+                        <span>Time Buffer</span>
+                      )}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        onWheel={(e) => e.target.blur()}
+                        id="parkingBuffer"
+                        type="number"
+                        placeholder="Minutes"
+                        {...register("parkingBuffer", {
+                          required: "A time is required",
+                          min: {
+                            value: 1,
+                            message: "Must be greater than 0",
+                          },
+                        })}
+                        className={
+                          errors.parkingBuffer ? "border-destructive" : ""
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
                 <Separator className="col-span-3" />
                 <div className="flex col-span-3 items-center justify-between">
                   <Label>Eligible for Free Wash</Label>
@@ -534,6 +591,35 @@ function Services({ vehicle }) {
                     onCheckedChange={setStreakToggle}
                   />
                 </div>
+                {streakToggle && (
+                  <div className="flex items-center col-span-3 justify-between">
+                    <Label>
+                      {errors.washCount ? (
+                        <span className="text-destructive">
+                          {errors.washCount.message}
+                        </span>
+                      ) : (
+                        <span>Free Wash After</span>
+                      )}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        onWheel={(e) => e.target.blur()}
+                        id="washCount"
+                        type="number"
+                        placeholder="No of Washes"
+                        {...register("washCount", {
+                          required: "Count is required",
+                          min: {
+                            value: 1,
+                            message: "Must be greater than 0",
+                          },
+                        })}
+                        className={errors.washCount ? "border-destructive" : ""}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               <CardFooter className="justify-center border-t p-4 pb-0">
                 <Button variant="secondary">Done</Button>
@@ -606,11 +692,17 @@ function Services({ vehicle }) {
                         </ul>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {service.includeParking && (
-                          <Badge variant="secondary">Includes Parking</Badge>
+                        {service.includeParking.decision && (
+                          <Badge variant="secondary">
+                            Parking Fees after{" "}
+                            {service.includeParking.parkingBuffer}m
+                          </Badge>
                         )}
-                        {service.streakApplicable && (
-                          <Badge variant="secondary">Offers Free Wash</Badge>
+                        {service.streakApplicable.decision && (
+                          <Badge variant="secondary">
+                            Free Wash after {service.streakApplicable.washCount}{" "}
+                            washes
+                          </Badge>
                         )}
                       </div>
                     </CardContent>

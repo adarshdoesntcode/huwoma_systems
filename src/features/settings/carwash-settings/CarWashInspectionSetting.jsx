@@ -191,7 +191,7 @@ const CarWashInspectionSetting = () => {
       <Card className="mb-64">
         <CardHeader>
           <div className="flex justify-between items-start">
-            <div>
+            <div className="space-y-1.5">
               <CardTitle>Inspection</CardTitle>
               <CardDescription>Template of the inspection form</CardDescription>
             </div>
