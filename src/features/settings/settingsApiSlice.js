@@ -79,6 +79,37 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["InspectionTemplate"],
     }),
+    getPaymentMode: builder.query({
+      query: () => ({
+        url: "/settings/paymentmode",
+        method: "GET",
+      }),
+      providesTags: ["PaymentModes"],
+    }),
+    createPaymentMode: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/paymentmode",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["PaymentModes"],
+    }),
+    deletePaymentMode: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/paymentmode",
+        method: "DELETE",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["PaymentModes"],
+    }),
+    updatePaymentMode: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/paymentmode",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["PaymentModes"],
+    }),
   }),
 });
 
@@ -93,4 +124,8 @@ export const {
   useCreateVehicleTypeMutation,
   useCreateServiceTypeMutation,
   useServiceTypeQuery,
+  useGetPaymentModeQuery,
+  useCreatePaymentModeMutation,
+  useUpdatePaymentModeMutation,
+  useDeletePaymentModeMutation,
 } = settingsApiSlice;

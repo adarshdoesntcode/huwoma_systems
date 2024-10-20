@@ -12,7 +12,7 @@ import {
 } from "../settingsApiSlice";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,6 +55,17 @@ const CarWashInspectionSetting = () => {
     reset,
     formState: { errors },
   } = useForm();
+
+  const newForm = useRef(null);
+
+  useEffect(() => {
+    if (addNewInspection && newForm.current) {
+      newForm.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [addNewInspection]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -112,8 +123,6 @@ const CarWashInspectionSetting = () => {
     setEditId(null);
     setInspectionScope("");
   };
-
-  console.log(inspectionScope);
 
   const onAdd = (data) => {
     setInspections((prev) => {
@@ -349,6 +358,7 @@ const CarWashInspectionSetting = () => {
           </div>
           {addNewInspection && (
             <form
+              ref={newForm}
               onSubmit={handleSubmit(onAdd)}
               className="grid gap-4 border p-6 rounded-md mt-4"
             >
