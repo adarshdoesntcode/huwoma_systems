@@ -314,11 +314,17 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
                           </ul>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          {service.includeParking && (
-                            <Badge variant="secondary">Includes Parking</Badge>
+                          {service.includeParking.decision && (
+                            <Badge variant="secondary">
+                              Parking Fees after{" "}
+                              {service.includeParking.parkingBuffer}m
+                            </Badge>
                           )}
-                          {service.streakApplicable && (
-                            <Badge variant="secondary">Offers Free Wash</Badge>
+                          {service.streakApplicable.decision && (
+                            <Badge variant="secondary">
+                              Free Wash after{" "}
+                              {service.streakApplicable.washCount} washes
+                            </Badge>
                           )}
                         </div>
                       </CardContent>

@@ -57,6 +57,7 @@ const CarWashInspectionSetting = () => {
   } = useForm();
 
   const newForm = useRef(null);
+  const editForm = useRef(null);
 
   useEffect(() => {
     if (addNewInspection && newForm.current) {
@@ -65,7 +66,13 @@ const CarWashInspectionSetting = () => {
         block: "center",
       });
     }
-  }, [addNewInspection]);
+    if (editForm && editForm.current) {
+      editForm.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [addNewInspection, editIndex]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -194,168 +201,177 @@ const CarWashInspectionSetting = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-5">
-            {inspections.map((inspection, index) => {
-              if (editIndex === index) {
-                return (
-                  <form
-                    key={`inspection-${index}`}
-                    onSubmit={handleSubmit(onEdit)}
-                    className="grid gap-4 border p-6 rounded-md mt-4"
-                  >
-                    <div>
-                      <div className="grid gap-2 col-span-2">
-                        <Label>
-                          {errors.categoryName ? (
-                            <span className="text-destructive">
-                              {errors.categoryName.message}
-                            </span>
-                          ) : (
-                            <span>Category Name</span>
-                          )}
-                        </Label>
-                        <Input
-                          id="categoryName"
-                          type="text"
-                          defaultValue={inspection.categoryName}
-                          placeholder="Category name"
-                          {...register("categoryName", {
-                            required: "Name is required",
-                          })}
-                          className={
-                            errors.categoryName ? "border-destructive" : ""
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="grid gap-2 col-span-3">
-                        <Label>
-                          {errors.inspectionItems ? (
-                            <span className="text-destructive">
-                              {errors.inspectionItems.message}
-                            </span>
-                          ) : (
-                            <span>
-                              Inspection List{" "}
-                              <span className="font-normal text-muted-foreground text-xs">
-                                (separate with commas)
-                              </span>
-                            </span>
-                          )}
-                        </Label>
-                        <Textarea
-                          id="inspectionItems"
-                          type="text"
-                          defaultValue={inspection.items.join()}
-                          placeholder="item1,item2,item3.."
-                          {...register("inspectionItems", {
-                            required: "Items are required",
-                          })}
-                          className={
-                            errors.inspectionItems ? "border-destructive" : ""
-                          }
-                        />
-                      </div>
-                      <Separator className="col-span-3" />
-                      <div className="space-y-2 col-span-3 ">
-                        <Label>Inspection Scope</Label>
-                        <RadioGroup
-                          defaultValue={inspection.scope}
-                          onValueChange={setInspectionScope}
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="exterior" id="exterior" />
-                            <Label htmlFor="exterior">Exterior</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="interior" id="interior" />
-                            <Label htmlFor="interior">Interior</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                    </div>
-                    <CardFooter className="justify-center border-t p-4 pb-0">
-                      <Button variant="secondary">Done</Button>
-                    </CardFooter>
-                  </form>
-                );
-              } else {
-                return (
-                  <Card key={index}>
-                    <CardHeader className="pl-6 pb-0 pt-2 pr-2">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className="text-sm gap-2 flex-wrap flex">
-                            <span>{inspection.categoryName} </span>
-                            <Badge
-                              variant="secondary"
-                              className="font-medium uppercase text-xs"
-                            >
-                              {inspection.scope}
-                            </Badge>
-                          </CardTitle>
-                        </div>
-                        <div>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="text-muted-foreground"
-                            onClick={() => {
-                              setInspectionScope(inspection.scope);
-                              setEditIndex(index);
-                              setEditId(inspection._id);
-                            }}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="text-muted-foreground"
-                              >
-                                <Trash className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you sure?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleInspectionRemove(index)}
-                                >
-                                  Confirm
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="px-4 pb-1">
+          {inspections.length === 0 ? (
+            <div className="h-20 text-xs flex items-center justify-center text-muted-foreground">
+              No Inspections
+            </div>
+          ) : (
+            <div className="grid gap-5">
+              {inspections.map((inspection, index) => {
+                if (editIndex === index) {
+                  return (
+                    <form
+                      ref={editForm}
+                      key={`inspection-${index}`}
+                      onSubmit={handleSubmit(onEdit)}
+                      className="grid gap-4 border p-6 rounded-md mt-4"
+                    >
                       <div>
-                        <ul className="ml-6 text-xs mb-2 list-disc">
-                          {inspection.items.map((item, index) => {
-                            return <li key={index}>{item}</li>;
-                          })}
-                        </ul>
+                        <div className="grid gap-2 col-span-2">
+                          <Label>
+                            {errors.categoryName ? (
+                              <span className="text-destructive">
+                                {errors.categoryName.message}
+                              </span>
+                            ) : (
+                              <span>Category Name</span>
+                            )}
+                          </Label>
+                          <Input
+                            id="categoryName"
+                            type="text"
+                            defaultValue={inspection.categoryName}
+                            placeholder="Category name"
+                            {...register("categoryName", {
+                              required: "Name is required",
+                            })}
+                            className={
+                              errors.categoryName ? "border-destructive" : ""
+                            }
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between mt-4"></div>
-                    </CardContent>
-                  </Card>
-                );
-              }
-            })}
-          </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="grid gap-2 col-span-3">
+                          <Label>
+                            {errors.inspectionItems ? (
+                              <span className="text-destructive">
+                                {errors.inspectionItems.message}
+                              </span>
+                            ) : (
+                              <span>
+                                Inspection List{" "}
+                                <span className="font-normal text-muted-foreground text-xs">
+                                  (separate with commas)
+                                </span>
+                              </span>
+                            )}
+                          </Label>
+                          <Textarea
+                            id="inspectionItems"
+                            type="text"
+                            defaultValue={inspection.items.join()}
+                            placeholder="item1,item2,item3.."
+                            {...register("inspectionItems", {
+                              required: "Items are required",
+                            })}
+                            className={
+                              errors.inspectionItems ? "border-destructive" : ""
+                            }
+                          />
+                        </div>
+                        <Separator className="col-span-3" />
+                        <div className="space-y-2 col-span-3 ">
+                          <Label>Inspection Scope</Label>
+                          <RadioGroup
+                            defaultValue={inspection.scope}
+                            onValueChange={setInspectionScope}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="exterior" id="exterior" />
+                              <Label htmlFor="exterior">Exterior</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="interior" id="interior" />
+                              <Label htmlFor="interior">Interior</Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                      <CardFooter className="justify-center border-t p-4 pb-0">
+                        <Button variant="secondary">Done</Button>
+                      </CardFooter>
+                    </form>
+                  );
+                } else {
+                  return (
+                    <Card key={index}>
+                      <CardHeader className="pl-6 pb-0 pt-2 pr-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-sm gap-2 flex-wrap flex">
+                              <span>{inspection.categoryName} </span>
+                              <Badge
+                                variant="secondary"
+                                className="font-medium uppercase text-xs"
+                              >
+                                {inspection.scope}
+                              </Badge>
+                            </CardTitle>
+                          </div>
+                          <div>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="text-muted-foreground"
+                              onClick={() => {
+                                setInspectionScope(inspection.scope);
+                                setEditIndex(index);
+                                setEditId(inspection._id);
+                              }}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="text-muted-foreground"
+                                >
+                                  <Trash className="w-4 h-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() =>
+                                      handleInspectionRemove(index)
+                                    }
+                                  >
+                                    Confirm
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="px-4 pb-1">
+                        <div>
+                          <ul className="ml-6 text-xs mb-2 list-disc">
+                            {inspection.items.map((item, index) => {
+                              return <li key={index}>{item}</li>;
+                            })}
+                          </ul>
+                        </div>
+                        <div className="flex items-center justify-between mt-4"></div>
+                      </CardContent>
+                    </Card>
+                  );
+                }
+              })}
+            </div>
+          )}
           {addNewInspection && (
             <form
               ref={newForm}

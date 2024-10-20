@@ -112,7 +112,7 @@ const PaymentSettings = () => {
                 return (
                   <TableRow
                     key={paymentMode._id}
-                    className="cursor-pointer hover:translate-x-1 hover:bg-inherit transition-all"
+                    className="cursor-pointer"
                     onClick={() => {
                       setSelectedPaymentMode(paymentMode);
                       setDetailsOpen(true);
