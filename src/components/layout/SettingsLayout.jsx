@@ -100,6 +100,16 @@ export function SettingsLayout() {
             >
               Payments
             </NavLink>
+            <NavLink
+              to={"/settings/pos"}
+              className={({ isActive }) =>
+                isActive
+                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                  : " text-primary border-b-2 border-transparent"
+              }
+            >
+              POS
+            </NavLink>
           </nav>
           <Outlet />
         </div>

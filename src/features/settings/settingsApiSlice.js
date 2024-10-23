@@ -9,21 +9,27 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["VehicleTypes"],
     }),
+
     vehicleTypebyId: builder.query({
       query: (id) => ({
         url: `/settings/carwash/vehicletype/${id}`,
         method: "GET",
       }),
-      providesTags: ["VehicleType"],
+      providesTags: (result, error, id) => [{ type: "VehicleType", id }],
     }),
+
     updateVehicleType: builder.mutation({
       query: (credentials) => ({
-        url: "/settings/carwash/vehicletype",
+        url: `/settings/carwash/vehicletype/${credentials.id}`,
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: ["VehicleType"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "VehicleType", id },
+        "VehicleTypes",
+      ],
     }),
+
     createVehicleType: builder.mutation({
       query: (credentials) => ({
         url: "/settings/carwash/vehicletype",
@@ -32,6 +38,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["VehicleTypes"],
     }),
+
     createServiceType: builder.mutation({
       query: (credentials) => ({
         url: "/settings/carwash/servicetype",
@@ -40,21 +47,24 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["VehicleTypes"],
     }),
+
     serviceType: builder.query({
       query: (id) => ({
         url: `/settings/carwash/servicetype/${id}`,
         method: "GET",
       }),
-      providesTags: ["ServiceType"],
+      providesTags: (result, error, id) => [{ type: "ServiceType", id }],
     }),
+
     updateServiceType: builder.mutation({
       query: (credentials) => ({
-        url: "/settings/carwash/servicetype",
+        url: `/settings/carwash/servicetype/${credentials.id}`,
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: ["ServiceType"],
+      invalidatesTags: (result, error, { id }) => [{ type: "ServiceType", id }],
     }),
+
     deleteCarWashConfig: builder.mutation({
       query: (credentials) => ({
         url: "/settings/carwash/vehicletype",
@@ -63,6 +73,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["VehicleTypes"],
     }),
+
     carwashInspectionTemplate: builder.query({
       query: () => ({
         url: "/settings/carwash/inspection",
@@ -79,6 +90,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["InspectionTemplate"],
     }),
+
     getPaymentMode: builder.query({
       query: () => ({
         url: "/settings/paymentmode",
@@ -86,6 +98,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["PaymentModes"],
     }),
+
     createPaymentMode: builder.mutation({
       query: (credentials) => ({
         url: "/settings/paymentmode",
@@ -94,6 +107,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["PaymentModes"],
     }),
+
     deletePaymentMode: builder.mutation({
       query: (credentials) => ({
         url: "/settings/paymentmode",
@@ -102,13 +116,47 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["PaymentModes"],
     }),
+
     updatePaymentMode: builder.mutation({
       query: (credentials) => ({
-        url: "/settings/paymentmode",
+        url: `/settings/paymentmode/${credentials.id}`,
         method: "PUT",
         body: { ...credentials },
       }),
       invalidatesTags: ["PaymentModes"],
+    }),
+
+    updateAdminProfile: builder.mutation({
+      query: (credentials) => ({
+        url: `/settings/general/${credentials.id}`,
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AdminProfile", id },
+      ],
+    }),
+    getPOSAccess: builder.query({
+      query: () => ({
+        url: "/settings/pos-access",
+        method: "GET",
+      }),
+      providesTags: ["POSAccesses"],
+    }),
+    deletePOSAccess: builder.mutation({
+      query: (credentials) => ({
+        url: `/settings/pos-access/${credentials.id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["POSAccesses"],
+    }),
+    createPOSAccess: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/pos-access",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["POSAccesses"],
     }),
   }),
 });
@@ -128,4 +176,8 @@ export const {
   useCreatePaymentModeMutation,
   useUpdatePaymentModeMutation,
   useDeletePaymentModeMutation,
+  useUpdateAdminProfileMutation,
+  useCreatePOSAccessMutation,
+  useDeletePOSAccessMutation,
+  useGetPOSAccessQuery,
 } = settingsApiSlice;

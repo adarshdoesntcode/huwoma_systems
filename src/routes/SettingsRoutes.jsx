@@ -7,6 +7,7 @@ import CarwashSettings from "@/features/settings/carwash-settings/CarwashSetting
 import CarwashNewConfig from "@/features/settings/carwash-settings/CarwashNewConfig";
 import CarwashEditConfig from "@/features/settings/carwash-settings/CarwashEditConfig";
 import PaymentSettings from "@/features/settings/payments/PaymentSettings";
+import PosSettings from "@/features/settings/pos/PosSettings";
 
 const SettingsRoutes = [
   {
@@ -37,6 +38,11 @@ const SettingsRoutes = [
   {
     path: "payments",
     element: <PaymentSettings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "pos",
+    element: <PosSettings />,
     errorElement: <Error />,
   },
 ];

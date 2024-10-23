@@ -20,6 +20,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
       try {
         await refresh();
       } catch (err) {
+        console.log(err);
         toast({
           variant: "destructive",
           title: err.response.status === 401 ? "Token Expired" : "Unauthorized",

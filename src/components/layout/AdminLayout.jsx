@@ -28,7 +28,14 @@ import { selectCurrentUser } from "@/features/auth/authSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { AlertDialog, AlertDialogContent } from "../ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 import { toast } from "@/hooks/use-toast";
 import BreadCrumbGenerator from "../BreadCrumbGenerator";
@@ -42,7 +49,7 @@ function AdminLayout() {
   const user = useSelector(selectCurrentUser);
 
   const crumbs = location.pathname.split("/").filter((crumb) => {
-    if (crumb !== "" && crumb != ROLES_LIST.admin) {
+    if (crumb !== "" && crumb != ROLES_LIST.ADMIN) {
       return crumb;
     }
   });
@@ -118,14 +125,14 @@ function AdminLayout() {
           </main>
         </div>
       </div>
-      <AlertDialog open={logoutLoader} onOpenChange={setLogoutLoader}>
+      {/* <AlertDialog open={logoutLoader}>
         <AlertDialogContent className="w-[200px]">
           <div className="flex justify-center items-center text-gray-600">
             <Loader2 className="h-6 w-6 animate-spin mr-4" />
             <span className="text-sm whitespace-nowrap">Logging Out</span>
           </div>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
     </>
   );
 }

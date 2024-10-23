@@ -5,7 +5,7 @@ function getRandomNumber(max) {
 }
 
 const getBpath = () => ({
-  strokeWidth: 10,
+  strokeWidth: 12,
   stroke: "#ddd",
   strokeLinejoin: "round",
   fill: "none",
@@ -20,8 +20,8 @@ const getUpath = () => ({
     repeatType: "loop",
     repeatDelay: 1,
   },
-  strokeWidth: 14,
-  stroke: "#555",
+  strokeWidth: 12,
+  stroke: "#64748b",
   strokeLinejoin: "round",
   fill: "none",
 });
@@ -31,23 +31,23 @@ function Loader() {
 
   return (
     <div className="flex py-12  items-center justify-center ">
-      {number === 1 && <Circuit1 className="w-20 h-20" />}
-      {number === 2 && <Circuit2 className="w-20 h-20" />}
-      {number === 3 && <Circuit3 className="w-20 h-20" />}
-      {number === 4 && <Circuit4 className="w-20 h-20" />}
-      {number === 5 && <Circuit5 className="w-20 h-20" />}
-      {number === 6 && <Circuit6 className="w-20 h-20" />}
-      {number === 7 && <Circuit7 className="w-20 h-20" />}
-      {number === 8 && <Circuit8 className="w-20 h-20" />}
-      {number === 9 && <Circuit9 className="w-20 h-20" />}
-      {number === 10 && <Circuit10 className="w-20 h-20" />}
-      {number === 11 && <Circuit11 className="w-20 h-20" />}
-      {number === 12 && <Circuit12 className="w-20 h-20" />}
-      {number === 13 && <Circuit13 className="w-20 h-20" />}
-      {number === 14 && <Circuit14 className="w-20 h-20" />}
-      {number === 15 && <Circuit15 className="w-20 h-20" />}
-      {number === 16 && <Circuit16 className="w-20 h-20" />}
-      {number === 17 && <Circuit17 className="w-20 h-20" />}
+      {number === 1 && <Circuit1 className="w-24 h-24" />}
+      {number === 2 && <Circuit2 className="w-24 h-24" />}
+      {number === 3 && <Circuit3 className="w-24 h-24" />}
+      {number === 4 && <Circuit4 className="w-24 h-24" />}
+      {number === 5 && <Circuit5 className="w-24 h-24" />}
+      {number === 6 && <Circuit6 className="w-24 h-24" />}
+      {number === 7 && <Circuit7 className="w-24 h-24" />}
+      {number === 8 && <Circuit8 className="w-24 h-24" />}
+      {number === 9 && <Circuit9 className="w-24 h-24" />}
+      {number === 10 && <Circuit10 className="w-24 h-24" />}
+      {number === 11 && <Circuit11 className="w-24 h-24" />}
+      {number === 12 && <Circuit12 className="w-24 h-24" />}
+      {number === 13 && <Circuit13 className="w-24 h-24" />}
+      {number === 14 && <Circuit14 className="w-24 h-24" />}
+      {number === 15 && <Circuit15 className="w-24 h-24" />}
+      {number === 16 && <Circuit16 className="w-24 h-24" />}
+      {number === 17 && <Circuit17 className="w-24 h-24" />}
     </div>
   );
 }

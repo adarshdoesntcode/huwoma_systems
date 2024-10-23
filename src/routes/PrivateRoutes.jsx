@@ -9,6 +9,7 @@ import Parking from "@/features/parking/Parking";
 import Analytics from "@/features/analytics/Analytics";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import SettingsRoutes from "./SettingsRoutes";
+import CarwashNewRecord from "@/features/carwash/CarwashNewRecord";
 
 const PrivateRoutes = [
   {
@@ -24,6 +25,11 @@ const PrivateRoutes = [
   {
     path: "carwash",
     element: <Carwash />,
+    errorElement: <Error />,
+  },
+  {
+    path: "carwash/new",
+    element: <CarwashNewRecord />,
     errorElement: <Error />,
   },
   {
