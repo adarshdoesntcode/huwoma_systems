@@ -44,8 +44,6 @@ function Login() {
         password,
       });
 
-      console.log(userData);
-
       if (userData.error) {
         if (userData.error.status === 401)
           throw new Error("Email or password is incorrect.");
