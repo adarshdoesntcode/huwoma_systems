@@ -13,25 +13,35 @@ import {
 } from "@/components/ui/chart";
 import { TabsContent } from "@/components/ui/tabs";
 import { ChevronLeft, PlusCircle, ReceiptText, Users } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { CarwashDataTable } from "./CarwashDataTable";
 import { CarwashColumn } from "./CarwashColumn";
 import { useGetCarwashTransactionsQuery } from "./carwashApiSlice";
 import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
+import { useEffect, useState } from "react";
+import { isMobile } from "react-device-detect";
 
 const chartConfig = {
   desktop: {
@@ -41,11 +51,30 @@ const chartConfig = {
 };
 
 function Carwash() {
+  const [showDetails, setShowDetails] = useState(false);
   const date = new Date();
   const formattedDate = date.toISOString().split("T")[0];
   const { data, isLoading, isFetching, isSuccess, isError, error } =
     useGetCarwashTransactionsQuery(formattedDate);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const transactionDetailsId = searchParams.get("view");
+  let transactionDetails;
+
+  useEffect(() => {
+    if (transactionDetailsId) {
+      setShowDetails(true);
+    } else {
+      setShowDetails(false);
+    }
+  }, [transactionDetailsId]);
+
+  if (transactionDetailsId) {
+    transactionDetails = data?.data.find(
+      (transaction) => transaction.id === transactionDetailsId
+    );
+  }
 
   let hourlyCounts;
 
@@ -58,7 +87,7 @@ function Carwash() {
         const createdAt = new Date(transaction.createdAt);
         return createdAt.getHours() === hour.hour;
       }).length;
-      return { hour: hour.hour, count };
+      return { hour: hour.hour, Customers: count };
     });
   }
   let content;
@@ -111,7 +140,7 @@ function Carwash() {
                 content={<ChartTooltipContent hideLabel />}
               />
               <Bar
-                dataKey="count"
+                dataKey="Customers"
                 fill="var(--color-desktop)"
                 radius={4}
                 barSize={20}
@@ -120,11 +149,18 @@ function Carwash() {
           </ChartContainer>
         </div>
         <div>
-          <Tabs defaultValue="queue">
+          <Tabs
+            value={searchParams.get("tab") || "queue"}
+            onValueChange={(value) => {
+              navigate(`/carwash?tab=${value}`);
+            }}
+          >
             <div className="flex justify-between">
               <TabsList>
-                <TabsTrigger value="queue">Active</TabsTrigger>
-                <TabsTrigger value="bookings">Bookings</TabsTrigger>
+                <TabsTrigger value="queue">Queue</TabsTrigger>
+                <TabsTrigger value="pickup">PickUp</TabsTrigger>
+                <TabsTrigger value="complete">Complete</TabsTrigger>
+                <TabsTrigger value="booking">Booking</TabsTrigger>
               </TabsList>
               <div>
                 <Button size="sm" variant="outline" className="mr-2">
@@ -148,11 +184,48 @@ function Carwash() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="bookings">
-              <Card></Card>
+            <TabsContent value="pickup">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pick Up</CardTitle>
+                  <CardDescription>Vehicles ready to pickup</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="complete">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Complete</CardTitle>
+                  <CardDescription>
+                    Vehicles that have been washed and paid off
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="booking">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Booking</CardTitle>
+                  <CardDescription>Active Bookings</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
+        <TransactionDetails
+          showDetails={showDetails}
+          setShowDetails={setShowDetails}
+          transactionDetails={transactionDetails}
+        />
       </div>
     );
   } else if (isError) {
@@ -161,5 +234,57 @@ function Carwash() {
 
   return content;
 }
+
+const TransactionDetails = ({
+  showDetails,
+  setShowDetails,
+  transactionDetails,
+}) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleCloseSheet = (value) => {
+    setShowDetails(false);
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.delete("view");
+      return newParams;
+    });
+  };
+
+  console.log(isMobile);
+
+  if (isMobile) {
+    return (
+      <Drawer open={showDetails} onOpenChange={handleCloseSheet}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+            <DrawerDescription>This action cannot be undone.</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <Button>Submit</Button>
+            <DrawerClose>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  } else {
+    return (
+      <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Are you absolutely sure?</SheetTitle>
+            <SheetDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+};
 
 export default Carwash;

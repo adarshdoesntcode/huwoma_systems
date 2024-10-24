@@ -238,7 +238,7 @@ const ServiceSelect = ({ customer }) => {
           title: "Transaction Initiated!",
           description: `Bill No: ${res.data.data.billNo}`,
         });
-        navigate("/carwash");
+        navigate("/carwash?tab=queue");
       }
     } catch (error) {
       toast({

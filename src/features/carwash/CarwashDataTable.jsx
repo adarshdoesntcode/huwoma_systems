@@ -85,9 +85,16 @@ export const CarwashDataTable = ({ columns, data }) => {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
-                  // onClick={() =>
-                  //   navigate(`/${ROLES_LIST.admin}/defense/${row.original._id}`)
-                  // }
+                  onClick={() =>
+                    navigate(
+                      `${window.location.pathname}?${new URLSearchParams({
+                        ...Object.fromEntries(
+                          new URLSearchParams(window.location.search)
+                        ),
+                        view: row.original._id,
+                      }).toString()}`
+                    )
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>

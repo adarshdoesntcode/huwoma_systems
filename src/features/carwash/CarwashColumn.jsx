@@ -1,19 +1,6 @@
-// import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { TableCell, TableHead } from "@/components/ui/table";
-
 import { format } from "date-fns";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export const CarwashColumn = [
   {
@@ -21,7 +8,9 @@ export const CarwashColumn = [
     header: () => <TableHead>Bill No</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="text-gray-700">{row.original.billNo}</TableCell>
+        <TableCell className="text-muted-foreground">
+          {row.original.billNo}
+        </TableCell>
       );
     },
   },
@@ -35,8 +24,10 @@ export const CarwashColumn = [
       return (
         <TableCell className="text-gray-600">
           <div className="flex flex-col items-start">
-            <div>{customer.customerName}</div>
-            <div>{customer.customerContact}</div>
+            <div className="font-semibold">{customer.customerName}</div>
+            <div className="text-xs text-muted-foreground">
+              {customer.customerContact}
+            </div>
           </div>
         </TableCell>
       );
@@ -54,8 +45,10 @@ export const CarwashColumn = [
       return (
         <TableCell className="hidden lg:table-cell">
           <div className="flex flex-col items-start">
-            <div>{service.serviceVehicle.vehicleTypeName}</div>
-            <div>{service.serviceTypeName}</div>
+            <div className="text-xs text-muted-foreground">
+              {service.serviceVehicle.vehicleTypeName}
+            </div>
+            <div className="font-semibold">{service.serviceTypeName}</div>
           </div>
         </TableCell>
       );
@@ -90,43 +83,21 @@ export const CarwashColumn = [
       );
     },
   },
-
   {
-    id: "actions",
+    accessorKey: "createdAt",
     header: () => (
-      <TableHead className="hidden md:table-cell"> Actions</TableHead>
+      <TableHead className="hidden lg:table-cell">Initiated At</TableHead>
     ),
-
     cell: ({ row }) => {
-      return (
-        <TableCell className="hidden md:table-cell">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      const date = format(new Date(row.original.createdAt), "d MMM, yyyy");
+      const time = format(new Date(row.original.createdAt), "h:mm a");
 
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Link to={``}>View</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                Terminate
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+      return (
+        <TableCell className="hidden  lg:table-cell">
+          <div className="flex flex-col items-start">
+            <div className="font-medium">{time}</div>
+            <div className="text-xs text-muted-foreground">{date}</div>
+          </div>
         </TableCell>
       );
     },

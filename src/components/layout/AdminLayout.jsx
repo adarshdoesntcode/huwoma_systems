@@ -54,10 +54,6 @@ function AdminLayout() {
     }
   });
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location]);
-
   const handlelogout = async () => {
     try {
       setLogoutLoader(true);
