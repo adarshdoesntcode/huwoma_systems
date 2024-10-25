@@ -12,7 +12,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { TabsContent } from "@/components/ui/tabs";
-import { ChevronLeft, PlusCircle, ReceiptText, Users } from "lucide-react";
+import {
+  ChevronLeft,
+  Contact,
+  PlusCircle,
+  ReceiptText,
+  Users,
+} from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,6 +26,7 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -42,6 +49,10 @@ import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 const chartConfig = {
   desktop: {
@@ -72,7 +83,7 @@ function Carwash() {
 
   if (transactionDetailsId) {
     transactionDetails = data?.data.find(
-      (transaction) => transaction.id === transactionDetailsId
+      (transaction) => transaction._id === transactionDetailsId
     );
   }
 
@@ -251,22 +262,52 @@ const TransactionDetails = ({
     });
   };
 
-  console.log(isMobile);
-
   if (isMobile) {
     return (
       <Drawer open={showDetails} onOpenChange={handleCloseSheet}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-            <DrawerDescription>This action cannot be undone.</DrawerDescription>
+            <DrawerTitle>Transaction Details</DrawerTitle>
+            <DrawerDescription></DrawerDescription>
           </DrawerHeader>
-          <DrawerFooter>
+          <div className="p-6">
+            <div className="grid gap-2">
+              <Label>Service</Label>
+              <div className="border p-4 rounded-md shadow-sm">
+                <div className="flex flex-col ">
+                  <div className="font-medium flex items-center justify-between">
+                    <div>
+                      {transactionDetails?.service?.id?.serviceTypeName}
+                    </div>
+                    <Badge>{transactionDetails?.paymentStatus}</Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {
+                      transactionDetails?.service?.id?.serviceVehicle
+                        ?.vehicleTypeName
+                    }
+                    <div className="font-medium text-primary">
+                      #{transactionDetails?.vehicleNumber}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between border-t pt-3 mt-2">
+                  <div className="text-muted-foreground text-sm font-medium">
+                    Rate
+                  </div>
+                  <div className="text-sm font-semibold">
+                    Rs. {transactionDetails?.service?.id?.serviceRate}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <DrawerFooter>
             <Button>Submit</Button>
             <DrawerClose>
               <Button variant="outline">Cancel</Button>
             </DrawerClose>
-          </DrawerFooter>
+          </DrawerFooter> */}
         </DrawerContent>
       </Drawer>
     );
@@ -274,13 +315,42 @@ const TransactionDetails = ({
     return (
       <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
         <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Are you absolutely sure?</SheetTitle>
-            <SheetDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </SheetDescription>
+          <SheetHeader className="mb-2">
+            <SheetTitle>Transaction Details</SheetTitle>
+            <SheetDescription></SheetDescription>
           </SheetHeader>
+          <div className="grid gap-2">
+            <Label>Service</Label>
+            <div className="border p-4 rounded-md shadow-sm">
+              <div className="flex flex-col ">
+                <div className="font-medium flex items-center justify-between">
+                  <div>{transactionDetails?.service?.id?.serviceTypeName}</div>
+                  <Badge>{transactionDetails?.paymentStatus}</Badge>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {
+                    transactionDetails?.service?.id?.serviceVehicle
+                      ?.vehicleTypeName
+                  }
+                  <div className="font-medium text-primary">
+                    #{transactionDetails?.vehicleNumber}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between border-t pt-3 mt-2">
+                <div className="text-muted-foreground text-sm font-medium">
+                  Rate
+                </div>
+                <div className="text-sm font-semibold">
+                  Rs. {transactionDetails?.service?.id?.serviceRate}
+                </div>
+              </div>
+            </div>
+          </div>
+          <SheetFooter>
+            {" "}
+            <Button>Submit</Button>
+          </SheetFooter>
         </SheetContent>
       </Sheet>
     );

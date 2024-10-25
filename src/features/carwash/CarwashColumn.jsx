@@ -46,7 +46,10 @@ export const CarwashColumn = [
         <TableCell className="hidden lg:table-cell">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">
-              {service.serviceVehicle.vehicleTypeName}
+              {service.serviceVehicle.vehicleTypeName}-
+              <span className="font-medium text-primary">
+                ({row.original.vehicleNumber})
+              </span>
             </div>
             <div className="font-semibold">{service.serviceTypeName}</div>
           </div>
