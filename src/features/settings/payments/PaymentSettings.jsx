@@ -64,6 +64,7 @@ import { Textarea } from "@/components/ui/textarea";
 const PaymentSettings = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [selectedPaymentMode, setSelectedPaymentMode] = useState({});
@@ -173,26 +174,6 @@ const PaymentSettings = () => {
               })}
             </TableBody>
           </Table>
-          <ConfirmDelete
-            setDeleteOpen={setDeleteOpen}
-            deleteOpen={deleteOpen}
-            selectedPaymentMode={selectedPaymentMode}
-            setSelectedPaymentMode={setSelectedPaymentMode}
-          />
-          <ConfigDetails
-            setDetailsOpen={setDetailsOpen}
-            detailsOpen={detailsOpen}
-            selectedPaymentMode={selectedPaymentMode}
-          />
-          <EditPayment
-            setEditOpen={setEditOpen}
-            editOpen={editOpen}
-            selectedPaymentMode={selectedPaymentMode}
-          />
-          <CreatePayment
-            createOpen={createOpen}
-            setCreateOpen={setCreateOpen}
-          />
         </>
       );
     }
@@ -208,6 +189,23 @@ const PaymentSettings = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="py-0 overflow-auto">{content}</CardContent>
+      <ConfirmDelete
+        setDeleteOpen={setDeleteOpen}
+        deleteOpen={deleteOpen}
+        selectedPaymentMode={selectedPaymentMode}
+        setSelectedPaymentMode={setSelectedPaymentMode}
+      />
+      <ConfigDetails
+        setDetailsOpen={setDetailsOpen}
+        detailsOpen={detailsOpen}
+        selectedPaymentMode={selectedPaymentMode}
+      />
+      <EditPayment
+        setEditOpen={setEditOpen}
+        editOpen={editOpen}
+        selectedPaymentMode={selectedPaymentMode}
+      />
+      <CreatePayment createOpen={createOpen} setCreateOpen={setCreateOpen} />
       <CardFooter className="border-t px-6 py-4 flex justify-end">
         <Button onClick={() => setCreateOpen(true)}>Add Payment</Button>
       </CardFooter>

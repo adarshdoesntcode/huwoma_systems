@@ -5,10 +5,12 @@ import { format } from "date-fns";
 export const CarwashColumn = [
   {
     accessorKey: "billNo",
-    header: () => <TableHead>Bill No</TableHead>,
+    header: () => (
+      <TableHead className="hidden md:table-cell">Bill No</TableHead>
+    ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground">
+        <TableCell className="text-muted-foreground hidden md:table-cell">
           {row.original.billNo}
         </TableCell>
       );
@@ -36,14 +38,12 @@ export const CarwashColumn = [
   {
     accessorKey: "serviceTypeName",
 
-    header: () => (
-      <TableHead className="hidden lg:table-cell"> Service</TableHead>
-    ),
+    header: () => <TableHead> Service</TableHead>,
     cell: ({ row }) => {
       const service = row.original.service.id;
 
       return (
-        <TableCell className="hidden lg:table-cell">
+        <TableCell>
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">
               {service.serviceVehicle.vehicleTypeName}-
@@ -59,12 +59,14 @@ export const CarwashColumn = [
   },
   {
     accessorKey: "transactionStatus",
-    header: () => <TableHead>Status</TableHead>,
+    header: () => (
+      <TableHead className="hidden lg:table-cell">Status</TableHead>
+    ),
     cell: ({ row }) => {
       const status = row.original.transactionStatus;
 
       return (
-        <TableCell>
+        <TableCell className="hidden lg:table-cell">
           <Badge variant="secondary">{status}</Badge>
         </TableCell>
       );

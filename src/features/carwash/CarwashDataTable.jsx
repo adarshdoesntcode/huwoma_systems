@@ -92,7 +92,8 @@ export const CarwashDataTable = ({ columns, data }) => {
                           new URLSearchParams(window.location.search)
                         ),
                         view: row.original._id,
-                      }).toString()}`
+                      }).toString()}`,
+                      { replace: true }
                     )
                   }
                 >

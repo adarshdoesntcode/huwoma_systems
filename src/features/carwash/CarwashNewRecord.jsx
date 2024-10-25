@@ -226,9 +226,11 @@ const ServiceSelect = ({ customer }) => {
     try {
       const res = await transactionOne({
         service: selectedService._id,
+        serviceRate: selectedService.serviceRate,
         billNo: generateBillNo(),
         vehicleNumber: data.vehicleNumber,
         customer: customer._id,
+        serviceStart: new Date(),
       });
       if (res.error) {
         throw new Error(res.error.data.message);

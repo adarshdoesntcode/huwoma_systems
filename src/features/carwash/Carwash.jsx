@@ -14,9 +14,11 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import {
   ChevronLeft,
+  ChevronRight,
   Contact,
   PlusCircle,
   ReceiptText,
+  StopCircle,
   Users,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -53,6 +55,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { format } from "date-fns";
 
 const chartConfig = {
   desktop: {
@@ -67,11 +70,32 @@ function Carwash() {
   const formattedDate = date.toISOString().split("T")[0];
   const { data, isLoading, isFetching, isSuccess, isError, error } =
     useGetCarwashTransactionsQuery(formattedDate);
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const transactionDetailsId = searchParams.get("view");
   let transactionDetails;
+
+  let inQueueTransactions = [];
+  let readyForPickupTransactions = [];
+  let bookedTransactions = [];
+  let completedTransactions = [];
+
+  if (data) {
+    bookedTransactions = data?.data?.filter(
+      (transaction) => transaction.transactionStatus === "Booked"
+    );
+    inQueueTransactions = data?.data?.filter(
+      (transaction) => transaction.transactionStatus === "In Queue"
+    );
+    readyForPickupTransactions = data?.data?.filter(
+      (transaction) => transaction.transactionStatus === "Ready for Pickup"
+    );
+    completedTransactions = data?.data?.filter(
+      (transaction) => transaction.transactionStatus === "Completed"
+    );
+  }
 
   useEffect(() => {
     if (transactionDetailsId) {
@@ -112,8 +136,8 @@ function Carwash() {
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="text-xl font-semibold  flex items-center tracking-tight  justify-between gap-4 mb-4">
-          <div className="flex items-center gap-4 ">
+        <div className="text-xl flex-col sm:flex-row font-semibold  flex items-start sm:items-center tracking-tight  justify-between gap-4 mb-4">
+          <div className="flex items-center  gap-4 ">
             <Button
               variant="outline"
               size="icon"
@@ -124,7 +148,7 @@ function Carwash() {
             </Button>
             Car Wash
           </div>
-          <div>
+          <div className="w-full sm:w-fit flex justify-end">
             <Button size="sm" variant="outline" className="mr-2">
               Customers <Users className="ml-2 w-4 h-4" />
             </Button>
@@ -163,17 +187,17 @@ function Carwash() {
           <Tabs
             value={searchParams.get("tab") || "queue"}
             onValueChange={(value) => {
-              navigate(`/carwash?tab=${value}`);
+              navigate(`/carwash?tab=${value}`, { replace: true });
             }}
           >
-            <div className="flex justify-between">
+            <div className="flex flex-col items-start sm:items-center sm:flex-row gap-4 justify-between">
               <TabsList>
                 <TabsTrigger value="queue">Queue</TabsTrigger>
                 <TabsTrigger value="pickup">PickUp</TabsTrigger>
                 <TabsTrigger value="complete">Complete</TabsTrigger>
                 <TabsTrigger value="booking">Booking</TabsTrigger>
               </TabsList>
-              <div>
+              <div className="w-full sm:w-fit flex justify-end ">
                 <Button size="sm" variant="outline" className="mr-2">
                   Booking <PlusCircle className="ml-2 w-4 h-4" />
                 </Button>
@@ -191,7 +215,10 @@ function Carwash() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                  <CarwashDataTable
+                    data={inQueueTransactions}
+                    columns={CarwashColumn}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -202,7 +229,10 @@ function Carwash() {
                   <CardDescription>Vehicles ready to pickup</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                  <CarwashDataTable
+                    data={readyForPickupTransactions}
+                    columns={CarwashColumn}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -215,7 +245,10 @@ function Carwash() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                  <CarwashDataTable
+                    data={completedTransactions}
+                    columns={CarwashColumn}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -226,7 +259,10 @@ function Carwash() {
                   <CardDescription>Active Bookings</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CarwashDataTable data={data.data} columns={CarwashColumn} />
+                  <CarwashDataTable
+                    data={bookedTransactions}
+                    columns={CarwashColumn}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -258,6 +294,7 @@ const TransactionDetails = ({
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
       newParams.delete("view");
+      window.history.replaceState(null, "", `?${newParams.toString()}`);
       return newParams;
     });
   };
@@ -271,43 +308,218 @@ const TransactionDetails = ({
             <DrawerDescription></DrawerDescription>
           </DrawerHeader>
           <div className="p-6">
-            <div className="grid gap-2">
-              <Label>Service</Label>
-              <div className="border p-4 rounded-md shadow-sm">
-                <div className="flex flex-col ">
-                  <div className="font-medium flex items-center justify-between">
-                    <div>
-                      {transactionDetails?.service?.id?.serviceTypeName}
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid gap-5 overflow-y-auto">
+                {transactionDetails?.service?.id && (
+                  <div className="grid gap-2">
+                    <Label>Service</Label>
+                    <div className="border p-4 rounded-md shadow-sm">
+                      <div className="flex flex-col border-b pb-2 mb-2">
+                        <div className="font-medium flex items-center justify-between">
+                          <div className="text-sm">
+                            {transactionDetails?.service?.id?.serviceTypeName}
+                          </div>
+                          <Badge>{transactionDetails?.transactionStatus}</Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {
+                            transactionDetails?.service?.id?.serviceVehicle
+                              ?.vehicleTypeName
+                          }
+                          <div className="font-medium text-primary">
+                            Vehicle No: {transactionDetails?.vehicleNumber}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-1 flex-col mt-1">
+                        {transactionDetails?.service?.start && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Start Time
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.service?.start,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.service?.end && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              End Time
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.service?.end,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.service?.cost && (
+                          <div className="flex items-center justify-between  ">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Rate
+                            </div>
+                            <div className="text-xs font-medium">
+                              Rs. {transactionDetails?.service?.cost}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <Badge>{transactionDetails?.paymentStatus}</Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {
-                      transactionDetails?.service?.id?.serviceVehicle
-                        ?.vehicleTypeName
-                    }
-                    <div className="font-medium text-primary">
-                      #{transactionDetails?.vehicleNumber}
+                )}
+                {transactionDetails?.parking && (
+                  <div className="grid gap-2">
+                    <Label>Parking</Label>
+                    <div className="border p-4 rounded-md shadow-sm">
+                      <div className="flex gap-1 flex-col">
+                        {transactionDetails?.parking?.in && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              In
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.parking?.in,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.parking?.out && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Out
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.parking?.out,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.parking?.cost && (
+                          <>
+                            <Separator className="my-1" />
+                            <div className="flex items-center justify-between  ">
+                              <div className="text-muted-foreground text-xs font-medium">
+                                Cost
+                              </div>
+                              <div className="text-xs font-medium">
+                                Rs. {transactionDetails?.parking?.cost}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-between border-t pt-3 mt-2">
-                  <div className="text-muted-foreground text-sm font-medium">
-                    Rate
+                )}
+                <div className="grid gap-2">
+                  <Label>Details</Label>
+                  <div className="flex gap-1 flex-col mt-1">
+                    <div className="flex items-center justify-between">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Bill No
+                      </div>
+                      <div className="text-xs ">
+                        {transactionDetails?.billNo || "-"}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Transaction Date
+                      </div>
+                      {transactionDetails?.transactionTime ? (
+                        <div className="text-xs font-medium">
+                          {format(
+                            transactionDetails?.transactionTime,
+                            "dd/MM/yyyy h:mm a"
+                          ) || "-"}
+                        </div>
+                      ) : (
+                        "-"
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Customer
+                      </div>
+                      <div className="text-xs ">
+                        {transactionDetails?.customer?.customerName || "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Contact
+                      </div>
+                      <div className="text-xs font-medium">
+                        {transactionDetails?.customer?.customerContact || "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Status
+                      </div>
+                      <div className="text-xs font-medium">
+                        {transactionDetails?.paymentStatus || "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Mode
+                      </div>
+                      <div className="text-xs font-medium">
+                        {transactionDetails?.paymentMode?.paymentModeName ||
+                          "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Gross Amt
+                      </div>
+                      <div className="text-xs font-medium">
+                        Rs. {transactionDetails?.grossAmount || "-"}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-sm font-semibold">
-                    Rs. {transactionDetails?.service?.id?.serviceRate}
+                  <div className="flex items-center justify-between  ">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Discount Amt
+                    </div>
+                    <div className="text-xs font-medium">
+                      Rs. {transactionDetails?.discountAmount || "-"}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between  ">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Net Amt
+                    </div>
+                    <div className="text-xs font-medium">
+                      Rs. {transactionDetails?.netAmount || "-"}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter> */}
+          <DrawerFooter>
+            <div className="flex justify-between items-center w-full">
+              <Button variant="outline">
+                <StopCircle className="h-4 w-4 mr-2" /> Terminate
+              </Button>
+              <Button>
+                Proceed <ChevronRight className="h-4 w-4 ml-2" />{" "}
+              </Button>
+            </div>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     );
@@ -319,38 +531,220 @@ const TransactionDetails = ({
             <SheetTitle>Transaction Details</SheetTitle>
             <SheetDescription></SheetDescription>
           </SheetHeader>
-          <div className="grid gap-2">
-            <Label>Service</Label>
-            <div className="border p-4 rounded-md shadow-sm">
-              <div className="flex flex-col ">
-                <div className="font-medium flex items-center justify-between">
-                  <div>{transactionDetails?.service?.id?.serviceTypeName}</div>
-                  <Badge>{transactionDetails?.paymentStatus}</Badge>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {
-                    transactionDetails?.service?.id?.serviceVehicle
-                      ?.vehicleTypeName
-                  }
-                  <div className="font-medium text-primary">
-                    #{transactionDetails?.vehicleNumber}
+
+          <div className="flex flex-col h-full">
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid gap-5 overflow-y-auto">
+                {transactionDetails?.service?.id && (
+                  <div className="grid gap-2">
+                    <Label>Service</Label>
+                    <div className="border p-4 rounded-md shadow-sm">
+                      <div className="flex flex-col border-b pb-2 mb-2">
+                        <div className="font-medium flex items-center justify-between">
+                          <div className="text-sm">
+                            {transactionDetails?.service?.id?.serviceTypeName}
+                          </div>
+                          <Badge>{transactionDetails?.transactionStatus}</Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {
+                            transactionDetails?.service?.id?.serviceVehicle
+                              ?.vehicleTypeName
+                          }
+                          <div className="font-medium text-primary">
+                            Vehicle No: {transactionDetails?.vehicleNumber}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-1 flex-col mt-1">
+                        {transactionDetails?.service?.start && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Start Time
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.service?.start,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.service?.end && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              End Time
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.service?.end,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.service?.cost && (
+                          <div className="flex items-center justify-between  ">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Rate
+                            </div>
+                            <div className="text-xs font-medium">
+                              Rs. {transactionDetails?.service?.cost}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {transactionDetails?.parking && (
+                  <div className="grid gap-2">
+                    <Label>Parking</Label>
+                    <div className="border p-4 rounded-md shadow-sm">
+                      <div className="flex gap-1 flex-col">
+                        {transactionDetails?.parking?.in && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              In
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.parking?.in,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.parking?.out && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Out
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.parking?.out,
+                                "dd/MM/yyyy h:mm a"
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.parking?.cost && (
+                          <>
+                            <Separator className="my-1" />
+                            <div className="flex items-center justify-between  ">
+                              <div className="text-muted-foreground text-xs font-medium">
+                                Cost
+                              </div>
+                              <div className="text-xs font-medium">
+                                Rs. {transactionDetails?.parking?.cost}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="grid gap-2">
+                  <Label>Details</Label>
+                  <div className="flex gap-1 flex-col mt-1">
+                    <div className="flex items-center justify-between">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Bill No
+                      </div>
+                      <div className="text-xs ">
+                        {transactionDetails?.billNo || "-"}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Transaction Date
+                      </div>
+                      {transactionDetails?.transactionTime ? (
+                        <div className="text-xs font-medium">
+                          {format(
+                            transactionDetails?.transactionTime,
+                            "dd/MM/yyyy h:mm a"
+                          ) || "-"}
+                        </div>
+                      ) : (
+                        "-"
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Customer
+                      </div>
+                      <div className="text-xs ">
+                        {transactionDetails?.customer?.customerName || "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Contact
+                      </div>
+                      <div className="text-xs font-medium">
+                        {transactionDetails?.customer?.customerContact || "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Status
+                      </div>
+                      <div className="text-xs font-medium">
+                        {transactionDetails?.paymentStatus || "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Mode
+                      </div>
+                      <div className="text-xs font-medium">
+                        {transactionDetails?.paymentMode?.paymentModeName ||
+                          "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Gross Amt
+                      </div>
+                      <div className="text-xs font-medium">
+                        Rs. {transactionDetails?.grossAmount || "-"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between  ">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Discount Amt
+                    </div>
+                    <div className="text-xs font-medium">
+                      Rs. {transactionDetails?.discountAmount || "-"}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between  ">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Net Amt
+                    </div>
+                    <div className="text-xs font-medium">
+                      Rs. {transactionDetails?.netAmount || "-"}
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between border-t pt-3 mt-2">
-                <div className="text-muted-foreground text-sm font-medium">
-                  Rate
-                </div>
-                <div className="text-sm font-semibold">
-                  Rs. {transactionDetails?.service?.id?.serviceRate}
-                </div>
-              </div>
             </div>
+            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+              <div className="flex justify-between items-center w-full">
+                <Button variant="outline">
+                  <StopCircle className="h-4 w-4 mr-2" /> Terminate
+                </Button>
+                <Button>
+                  Proceed <ChevronRight className="h-4 w-4 ml-2" />{" "}
+                </Button>
+              </div>
+            </SheetFooter>
           </div>
-          <SheetFooter>
-            {" "}
-            <Button>Submit</Button>
-          </SheetFooter>
         </SheetContent>
       </Sheet>
     );
