@@ -50,7 +50,7 @@ export const CarwashDataTable = ({ columns, data }) => {
 
   return (
     <>
-      <div className="flex items-center mb-4 space-x-2">
+      <div className="hidden sm:flex items-center mb-4 space-x-2">
         <Input
           placeholder="Search name, code..."
           value={globalFilter}

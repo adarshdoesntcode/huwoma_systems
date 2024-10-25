@@ -100,7 +100,7 @@ function CarwashNewRecord() {
       </div>
       {customer ? (
         <Card>
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
@@ -118,6 +118,7 @@ function CarwashNewRecord() {
                 </div>
               </div>
               <Button
+                size="sm"
                 onClick={() => {
                   setCoustomer(null);
                   reset();
@@ -188,7 +189,7 @@ function CarwashNewRecord() {
               )}
             </form>
           </CardContent>
-          <CardFooter className="border-t px-6 py-4 flex justify-end">
+          <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
             {isSubmitting ? (
               <Button disabled>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -282,10 +283,10 @@ const ServiceSelect = ({ customer }) => {
     } else {
       content = (
         <Card className="mb-64">
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-lg">Wash Selection</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
             <div>
               <Label>
                 Vehicles{" "}
@@ -294,7 +295,7 @@ const ServiceSelect = ({ customer }) => {
                 </span>
               </Label>
               <Separator className="mt-2" />
-              <div className="flex flex-wrap justify-between sm:justify-evenly my-6">
+              <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
                 {data.data.map((vehicle) => {
                   return (
                     <div
@@ -305,7 +306,7 @@ const ServiceSelect = ({ customer }) => {
                         setSelectedService("");
                       }}
                     >
-                      <div className="w-28 sm:w-36 relative border  px-4 py-2 rounded-lg shadow-lg gap-2">
+                      <div className="w-24 sm:w-36 relative border  px-4 py-2 rounded-lg shadow-lg gap-2">
                         {selectedVehicle._id === vehicle._id && (
                           <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
@@ -330,7 +331,7 @@ const ServiceSelect = ({ customer }) => {
                 </Label>
                 <Separator className="mt-2" />
 
-                <div className="flex flex-wrap justify-between sm:justify-evenly my-6">
+                <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
                   {selectedVehicle.services.map((service) => {
                     return (
                       <div
@@ -340,7 +341,7 @@ const ServiceSelect = ({ customer }) => {
                           setSelectedService(service);
                         }}
                       >
-                        <div className="w-28 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg">
+                        <div className="w-24 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg">
                           {selectedService._id === service._id && (
                             <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                               <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
@@ -382,7 +383,7 @@ const ServiceSelect = ({ customer }) => {
               </>
             )}
           </CardContent>
-          <CardFooter className="border-t px-6 py-4 flex justify-end">
+          <CardFooter className="border-t sm:px-6 px-4  py-4 flex justify-end">
             {isSubmitting ? (
               <Button disabled>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

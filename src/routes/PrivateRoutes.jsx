@@ -10,6 +10,7 @@ import Analytics from "@/features/analytics/Analytics";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import SettingsRoutes from "./SettingsRoutes";
 import CarwashNewRecord from "@/features/carwash/CarwashNewRecord";
+import CarwashInspection from "@/features/carwash/CarwashInspection";
 
 const PrivateRoutes = [
   {
@@ -30,6 +31,11 @@ const PrivateRoutes = [
   {
     path: "carwash/new",
     element: <CarwashNewRecord />,
+    errorElement: <Error />,
+  },
+  {
+    path: "carwash/inspection/:id",
+    element: <CarwashInspection />,
     errorElement: <Error />,
   },
   {

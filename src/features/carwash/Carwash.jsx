@@ -13,6 +13,13 @@ import {
 } from "@/components/ui/chart";
 import { TabsContent } from "@/components/ui/tabs";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Check,
   ChevronLeft,
   ChevronRight,
   Contact,
@@ -56,6 +63,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 const chartConfig = {
   desktop: {
@@ -136,7 +144,7 @@ function Carwash() {
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="text-xl flex-col sm:flex-row font-semibold  flex items-start sm:items-center tracking-tight  justify-between gap-4 mb-4">
+        <div className="text-lg flex-col sm:flex-row font-semibold  flex items-start sm:items-center tracking-tight  justify-between gap-4 mb-4">
           <div className="flex items-center  gap-4 ">
             <Button
               variant="outline"
@@ -161,11 +169,12 @@ function Carwash() {
           <p className="text-xs text-muted-foreground p-2">
             Hourly Traffic Visualization
           </p>
-          <ChartContainer config={chartConfig} className="h-[10vh] w-full ">
+          <ChartContainer config={chartConfig} className="h-[8vh] w-full ">
             <BarChart accessibilityLayer data={hourlyCounts}>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="hour"
+                tickLine={false}
                 tickMargin={5}
                 axisLine={false}
                 tickFormatter={(value) => `${value}:00`}
@@ -178,7 +187,7 @@ function Carwash() {
                 dataKey="Customers"
                 fill="var(--color-desktop)"
                 radius={4}
-                barSize={20}
+                barSize={18}
               />
             </BarChart>
           </ChartContainer>
@@ -187,14 +196,16 @@ function Carwash() {
           <Tabs
             value={searchParams.get("tab") || "queue"}
             onValueChange={(value) => {
-              navigate(`/carwash?tab=${value}`, { replace: true });
+              navigate(`/carwash?tab=${value}`);
             }}
           >
             <div className="flex flex-col items-start sm:items-center sm:flex-row gap-4 justify-between">
               <TabsList>
                 <TabsTrigger value="queue">Queue</TabsTrigger>
                 <TabsTrigger value="pickup">PickUp</TabsTrigger>
-                <TabsTrigger value="complete">Complete</TabsTrigger>
+                <TabsTrigger value="complete" className="hidden sm:block">
+                  Complete
+                </TabsTrigger>
                 <TabsTrigger value="booking">Booking</TabsTrigger>
               </TabsList>
               <div className="w-full sm:w-fit flex justify-end ">
@@ -208,13 +219,13 @@ function Carwash() {
             </div>
             <TabsContent value="queue">
               <Card>
-                <CardHeader>
-                  <CardTitle>Queue</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-xl sm:text-2xl">Queue</CardTitle>
                   <CardDescription>
                     Vehicles in queue for their wash
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6">
                   <CarwashDataTable
                     data={inQueueTransactions}
                     columns={CarwashColumn}
@@ -224,11 +235,11 @@ function Carwash() {
             </TabsContent>
             <TabsContent value="pickup">
               <Card>
-                <CardHeader>
-                  <CardTitle>Pick Up</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-xl sm:text-2xl">Pick Up</CardTitle>
                   <CardDescription>Vehicles ready to pickup</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6">
                   <CarwashDataTable
                     data={readyForPickupTransactions}
                     columns={CarwashColumn}
@@ -238,13 +249,15 @@ function Carwash() {
             </TabsContent>
             <TabsContent value="complete">
               <Card>
-                <CardHeader>
-                  <CardTitle>Complete</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-xl sm:text-2xl">
+                    Complete
+                  </CardTitle>
                   <CardDescription>
                     Vehicles that have been washed and paid off
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
                   <CarwashDataTable
                     data={completedTransactions}
                     columns={CarwashColumn}
@@ -254,11 +267,11 @@ function Carwash() {
             </TabsContent>
             <TabsContent value="booking">
               <Card>
-                <CardHeader>
-                  <CardTitle>Booking</CardTitle>
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="text-xl sm:text-2xl">Booking</CardTitle>
                   <CardDescription>Active Bookings</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6">
                   <CarwashDataTable
                     data={bookedTransactions}
                     columns={CarwashColumn}
@@ -284,19 +297,19 @@ function Carwash() {
 
 const TransactionDetails = ({
   showDetails,
-  setShowDetails,
+
   transactionDetails,
 }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const handleCloseSheet = (value) => {
-    setShowDetails(false);
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      newParams.delete("view");
-      window.history.replaceState(null, "", `?${newParams.toString()}`);
-      return newParams;
-    });
+    navigate(
+      `${window.location.pathname}?${new URLSearchParams({
+        ...Object.fromEntries(new URLSearchParams(window.location.search)),
+        view: "",
+      }).toString()}`,
+      { replace: true }
+    );
   };
 
   if (isMobile) {
@@ -369,55 +382,104 @@ const TransactionDetails = ({
                           </div>
                         )}
                       </div>
+                      {transactionDetails?.parking && (
+                        <div className="grid mt-2 gap-2">
+                          <Label>Parking</Label>
+                          <Separator />
+                          <div>
+                            <div className="flex gap-1 flex-col">
+                              {transactionDetails?.parking?.in && (
+                                <div className="flex items-center justify-between">
+                                  <div className="text-muted-foreground text-xs font-medium">
+                                    In
+                                  </div>
+                                  <div className="text-xs ">
+                                    {format(
+                                      transactionDetails?.parking?.in,
+                                      "dd/MM/yyyy h:mm a"
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {transactionDetails?.parking?.out && (
+                                <div className="flex items-center justify-between">
+                                  <div className="text-muted-foreground text-xs font-medium">
+                                    Out
+                                  </div>
+                                  <div className="text-xs ">
+                                    {format(
+                                      transactionDetails?.parking?.out,
+                                      "dd/MM/yyyy h:mm a"
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {transactionDetails?.parking?.cost && (
+                                <>
+                                  <Separator className="my-1" />
+                                  <div className="flex items-center justify-between  ">
+                                    <div className="text-muted-foreground text-xs font-medium">
+                                      Cost
+                                    </div>
+                                    <div className="text-xs font-medium">
+                                      Rs. {transactionDetails?.parking?.cost}
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
-                {transactionDetails?.parking && (
-                  <div className="grid gap-2">
-                    <Label>Parking</Label>
-                    <div className="border p-4 rounded-md shadow-sm">
-                      <div className="flex gap-1 flex-col">
-                        {transactionDetails?.parking?.in && (
-                          <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
-                              In
-                            </div>
-                            <div className="text-xs ">
-                              {format(
-                                transactionDetails?.parking?.in,
-                                "dd/MM/yyyy h:mm a"
-                              )}
-                            </div>
+
+                {transactionDetails?.inspections.length > 0 && (
+                  <div>
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>
+                          <Label>Inspection</Label>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="grid gap-2">
+                            {transactionDetails?.inspections.map(
+                              (inspection, index) => (
+                                <div key={index} className="grid gap-1">
+                                  <div className=" text-xs  font-semibold">
+                                    {inspection?.categoryName}
+                                  </div>
+                                  <div className="border rounded-md shadow-sm">
+                                    <Table>
+                                      <TableBody>
+                                        {inspection.items.map(
+                                          (item, itemIndex) => (
+                                            <TableRow
+                                              key={`item${itemIndex}`}
+                                              className="border-b"
+                                            >
+                                              <TableCell className="text-xs border-r py-2 px-2 w-11/12">
+                                                {item.itemName}
+                                              </TableCell>
+                                              <TableCell className="p-0 text-center py-2 px-2 w-1/12">
+                                                {item.response && (
+                                                  <Check className="w-4 h-4" />
+                                                )}
+                                              </TableCell>
+                                            </TableRow>
+                                          )
+                                        )}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+                                </div>
+                              )
+                            )}
                           </div>
-                        )}
-                        {transactionDetails?.parking?.out && (
-                          <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
-                              Out
-                            </div>
-                            <div className="text-xs ">
-                              {format(
-                                transactionDetails?.parking?.out,
-                                "dd/MM/yyyy h:mm a"
-                              )}
-                            </div>
-                          </div>
-                        )}
-                        {transactionDetails?.parking?.cost && (
-                          <>
-                            <Separator className="my-1" />
-                            <div className="flex items-center justify-between  ">
-                              <div className="text-muted-foreground text-xs font-medium">
-                                Cost
-                              </div>
-                              <div className="text-xs font-medium">
-                                Rs. {transactionDetails?.parking?.cost}
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 )}
                 <div className="grid gap-2">
@@ -515,7 +577,13 @@ const TransactionDetails = ({
               <Button variant="outline">
                 <StopCircle className="h-4 w-4 mr-2" /> Terminate
               </Button>
-              <Button>
+              <Button
+                onClick={() =>
+                  navigate(`/carwash/inspection/${transactionDetails._id}`, {
+                    replace: true,
+                  })
+                }
+              >
                 Proceed <ChevronRight className="h-4 w-4 ml-2" />{" "}
               </Button>
             </div>
@@ -594,55 +662,104 @@ const TransactionDetails = ({
                           </div>
                         )}
                       </div>
+                      {transactionDetails?.parking && (
+                        <div className="grid mt-2 gap-2">
+                          <Label>Parking</Label>
+                          <Separator />
+                          <div>
+                            <div className="flex gap-1 flex-col">
+                              {transactionDetails?.parking?.in && (
+                                <div className="flex items-center justify-between">
+                                  <div className="text-muted-foreground text-xs font-medium">
+                                    In
+                                  </div>
+                                  <div className="text-xs ">
+                                    {format(
+                                      transactionDetails?.parking?.in,
+                                      "dd/MM/yyyy h:mm a"
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {transactionDetails?.parking?.out && (
+                                <div className="flex items-center justify-between">
+                                  <div className="text-muted-foreground text-xs font-medium">
+                                    Out
+                                  </div>
+                                  <div className="text-xs ">
+                                    {format(
+                                      transactionDetails?.parking?.out,
+                                      "dd/MM/yyyy h:mm a"
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {transactionDetails?.parking?.cost && (
+                                <>
+                                  <Separator className="my-1" />
+                                  <div className="flex items-center justify-between  ">
+                                    <div className="text-muted-foreground text-xs font-medium">
+                                      Cost
+                                    </div>
+                                    <div className="text-xs font-medium">
+                                      Rs. {transactionDetails?.parking?.cost}
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
-                {transactionDetails?.parking && (
-                  <div className="grid gap-2">
-                    <Label>Parking</Label>
-                    <div className="border p-4 rounded-md shadow-sm">
-                      <div className="flex gap-1 flex-col">
-                        {transactionDetails?.parking?.in && (
-                          <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
-                              In
-                            </div>
-                            <div className="text-xs ">
-                              {format(
-                                transactionDetails?.parking?.in,
-                                "dd/MM/yyyy h:mm a"
-                              )}
-                            </div>
+
+                {transactionDetails?.inspections.length > 0 && (
+                  <div>
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>
+                          <Label>Inspection</Label>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="grid gap-2">
+                            {transactionDetails?.inspections.map(
+                              (inspection, index) => (
+                                <div key={index} className="grid gap-1">
+                                  <div className=" text-xs  font-semibold">
+                                    {inspection?.categoryName}
+                                  </div>
+                                  <div className="border rounded-md shadow-sm">
+                                    <Table>
+                                      <TableBody>
+                                        {inspection.items.map(
+                                          (item, itemIndex) => (
+                                            <TableRow
+                                              key={`item${itemIndex}`}
+                                              className="border-b"
+                                            >
+                                              <TableCell className="text-xs border-r py-2 px-2 w-11/12">
+                                                {item.itemName}
+                                              </TableCell>
+                                              <TableCell className="p-0 text-center py-2 px-2 w-1/12">
+                                                {item.response && (
+                                                  <Check className="w-4 h-4" />
+                                                )}
+                                              </TableCell>
+                                            </TableRow>
+                                          )
+                                        )}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+                                </div>
+                              )
+                            )}
                           </div>
-                        )}
-                        {transactionDetails?.parking?.out && (
-                          <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
-                              Out
-                            </div>
-                            <div className="text-xs ">
-                              {format(
-                                transactionDetails?.parking?.out,
-                                "dd/MM/yyyy h:mm a"
-                              )}
-                            </div>
-                          </div>
-                        )}
-                        {transactionDetails?.parking?.cost && (
-                          <>
-                            <Separator className="my-1" />
-                            <div className="flex items-center justify-between  ">
-                              <div className="text-muted-foreground text-xs font-medium">
-                                Cost
-                              </div>
-                              <div className="text-xs font-medium">
-                                Rs. {transactionDetails?.parking?.cost}
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 )}
                 <div className="grid gap-2">
@@ -739,7 +856,11 @@ const TransactionDetails = ({
                 <Button variant="outline">
                   <StopCircle className="h-4 w-4 mr-2" /> Terminate
                 </Button>
-                <Button>
+                <Button
+                  onClick={() =>
+                    navigate(`/carwash/inspection/${transactionDetails._id}`)
+                  }
+                >
                   Proceed <ChevronRight className="h-4 w-4 ml-2" />{" "}
                 </Button>
               </div>
