@@ -314,14 +314,18 @@ const TransactionDetails = ({
 
   if (isMobile) {
     return (
-      <Drawer open={showDetails} onOpenChange={handleCloseSheet}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Transaction Details</DrawerTitle>
-            <DrawerDescription></DrawerDescription>
-          </DrawerHeader>
-          <div className="p-6">
-            <div className="flex-1 overflow-y-auto">
+      <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
+        <SheetContent
+          className="h-[80vh] flex-1 overflow-y-auto  sm:h-[70vh] pb-0"
+          side={"bottom"}
+        >
+          <SheetHeader className="mb-2">
+            <SheetTitle>Transaction Details</SheetTitle>
+            <SheetDescription></SheetDescription>
+          </SheetHeader>
+
+          <div className="flex flex-col flex-1">
+            <div className="flex-1 overflow-y-auto pb-16">
               <div className="grid gap-5 overflow-y-auto">
                 {transactionDetails?.service?.id && (
                   <div className="grid gap-2">
@@ -482,6 +486,7 @@ const TransactionDetails = ({
                     </Accordion>
                   </div>
                 )}
+
                 <div className="grid gap-2">
                   <Label>Details</Label>
                   <div className="flex gap-1 flex-col mt-1">
@@ -571,37 +576,35 @@ const TransactionDetails = ({
                 </div>
               </div>
             </div>
+            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+              <div className="flex justify-between items-center w-full">
+                <Button variant="outline">
+                  <StopCircle className="h-4 w-4 mr-2" /> Terminate
+                </Button>
+                <Button
+                  onClick={() =>
+                    navigate(`/carwash/inspection/${transactionDetails._id}`)
+                  }
+                >
+                  Proceed <ChevronRight className="h-4 w-4 ml-2" />{" "}
+                </Button>
+              </div>
+            </SheetFooter>
           </div>
-          <DrawerFooter>
-            <div className="flex justify-between items-center w-full">
-              <Button variant="outline">
-                <StopCircle className="h-4 w-4 mr-2" /> Terminate
-              </Button>
-              <Button
-                onClick={() =>
-                  navigate(`/carwash/inspection/${transactionDetails._id}`, {
-                    replace: true,
-                  })
-                }
-              >
-                Proceed <ChevronRight className="h-4 w-4 ml-2" />{" "}
-              </Button>
-            </div>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
     );
   } else {
     return (
       <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
-        <SheetContent>
+        <SheetContent className="min-w-[350px]  sm:min-w-[450px]">
           <SheetHeader className="mb-2">
             <SheetTitle>Transaction Details</SheetTitle>
             <SheetDescription></SheetDescription>
           </SheetHeader>
 
           <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto pb-12">
               <div className="grid gap-5 overflow-y-auto">
                 {transactionDetails?.service?.id && (
                   <div className="grid gap-2">
