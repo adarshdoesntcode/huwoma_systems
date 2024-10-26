@@ -53,6 +53,13 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["CarwashTransactions"],
     }),
+    deleteCarwashTransaction: builder.mutation({
+      query: (credentials) => ({
+        url: `/carwash/transaction/${credentials.id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
     getTransactionForInspection: builder.query({
       query: (credentials) => ({
         url: `/carwash/transaction/${credentials}`,
@@ -72,4 +79,5 @@ export const {
   useTransactionThreeMutation,
   useGetCarwashTransactionsQuery,
   useGetTransactionForInspectionQuery,
+  useDeleteCarwashTransactionMutation,
 } = carwashApiSlice;

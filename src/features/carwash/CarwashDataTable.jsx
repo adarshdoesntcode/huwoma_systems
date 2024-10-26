@@ -6,6 +6,13 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Table,
@@ -26,8 +33,11 @@ export const CarwashDataTable = ({ columns, data }) => {
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const [filter, setFilter] = useState("billNo");
+
   const [sorting, setSorting] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+
   const navigate = useNavigate();
 
   const table = useReactTable({
@@ -35,6 +45,7 @@ export const CarwashDataTable = ({ columns, data }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -42,21 +53,33 @@ export const CarwashDataTable = ({ columns, data }) => {
     state: {
       pagination,
       sorting,
-      globalFilter,
     },
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: "auto",
   });
 
   return (
     <>
-      <div className="hidden sm:flex items-center mb-4 space-x-2">
-        <Input
-          placeholder="Search name, code..."
-          value={globalFilter}
-          onChange={(defense) => setGlobalFilter(defense.target.value)}
-          className="max-w-sm"
-        />
+      <div className="items-center mb-4 space-x-2">
+        <div className="flex items-center gap-2 space-x-2">
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="billNo">Bill No</SelectItem>
+              <SelectItem value="customer">Contact</SelectItem>
+              <SelectItem value="serviceTypeName">Vehicle No</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Input
+            placeholder="Search.."
+            value={table.getColumn(filter)?.getFilterValue() ?? ""}
+            onChange={(event) =>
+              table.getColumn(filter)?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        </div>
       </div>
       <div className="bg-white border rounded-md">
         <Table>
@@ -113,7 +136,7 @@ export const CarwashDataTable = ({ columns, data }) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No Open Transactions today.
+                  No Transactions today.
                 </TableCell>
               </TableRow>
             )}

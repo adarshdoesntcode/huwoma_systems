@@ -30,6 +30,9 @@ import {
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { format } from "date-fns";
+import { Separator } from "@/components/ui/separator";
 
 function CarwashInspection() {
   const navigate = useNavigate();
@@ -142,66 +145,144 @@ function CarwashInspection() {
           </Button>
           Car Wash Inspection
         </div>
-        {customer && (
-          <Card>
-            <CardHeader className="p-4">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12">
-                    <AvatarFallback>
-                      <Contact />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-md">
-                      {customer.customerName}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      {customer.customerContact}
-                    </CardDescription>
+
+        {service && (
+          <div className="grid gap-2 ">
+            <Label>Inspection For</Label>
+            <div className="border p-4 rounded-md shadow-sm bg-background">
+              <div className="flex">
+                <div className="w-24">
+                  <img src={`${service?.serviceVehicle?.vehicleIcon}`} />
+                </div>
+                <div className="flex flex-1 flex-col  pb-2 mb-2">
+                  <div className="font-medium flex items-center justify-between">
+                    <div className="text-sm">{service?.serviceTypeName}</div>
+                    <Badge>{data?.data?.transaction?.transactionStatus}</Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {service?.serviceVehicle?.vehicleTypeName}
+                    <div className="font-medium text-primary">
+                      Vehicle No: {data?.data?.transaction?.vehicleNumber}
+                    </div>
                   </div>
                 </div>
               </div>
-            </CardHeader>
-          </Card>
-        )}
-
-        <div className="border flex items-start gap-4 p-4 bg-background rounded-md shadow-sm">
-          <div className="w-24">
-            <img src={`${service?.serviceVehicle?.vehicleIcon}`} />
-          </div>
-          <div className="flex flex-col flex-1">
-            <div className="font-medium flex items-center justify-between">
-              <div className="text-base font-semibold">
-                {service?.serviceTypeName}
+              <Separator />
+              <div className="flex gap-1 flex-col mt-2">
+                {data?.data?.transaction?.service?.start && (
+                  <div className="flex items-center justify-between">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Start Time
+                    </div>
+                    <div className="text-xs ">
+                      {format(
+                        data?.data?.transaction?.service?.start,
+                        "dd/MM/yyyy h:mm a"
+                      )}
+                    </div>
+                  </div>
+                )}
+                {data?.data?.transaction?.service?.end && (
+                  <div className="flex items-center justify-between">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      End Time
+                    </div>
+                    <div className="text-xs ">
+                      {format(
+                        data?.data?.transaction?.service?.end,
+                        "dd/MM/yyyy h:mm a"
+                      )}
+                    </div>
+                  </div>
+                )}
+                {data?.data?.transaction?.service?.cost && (
+                  <div className="flex items-center justify-between  ">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Rate
+                    </div>
+                    <div className="text-xs font-medium">
+                      Rs. {data?.data?.transaction?.service?.cost}
+                    </div>
+                  </div>
+                )}
               </div>
-              <Badge className="tracking-wider font-medium text-sm">
-                # {data.data.transaction?.vehicleNumber}
-              </Badge>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {service?.serviceVehicle?.vehicleTypeName}
+              {data?.data?.transaction?.parking && (
+                <div className="grid mt-2 gap-2">
+                  <Label>Parking</Label>
+                  <Separator />
+                  <div>
+                    <div className="flex gap-1 flex-col">
+                      {data?.data?.transaction?.parking?.in && (
+                        <div className="flex items-center justify-between">
+                          <div className="text-muted-foreground text-xs font-medium">
+                            In
+                          </div>
+                          <div className="text-xs ">
+                            {format(
+                              data?.data?.transaction?.parking?.in,
+                              "dd/MM/yyyy h:mm a"
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      {data?.data?.transaction?.parking?.out && (
+                        <div className="flex items-center justify-between">
+                          <div className="text-muted-foreground text-xs font-medium">
+                            Out
+                          </div>
+                          <div className="text-xs ">
+                            {format(
+                              data?.data?.transaction?.parking?.out,
+                              "dd/MM/yyyy h:mm a"
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      {data?.data?.transaction?.parking?.cost && (
+                        <>
+                          <Separator className="my-1" />
+                          <div className="flex items-center justify-between  ">
+                            <div className="text-muted-foreground text-xs font-medium">
+                              Cost
+                            </div>
+                            <div className="text-xs font-medium">
+                              Rs. {data?.data?.transaction?.parking?.cost}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-        <Card>
-          <CardHeader>
+        )}
+        <Card className>
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-lg">Inspection Form</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
             <form onSubmit={handleSubmit(onSubmit)} id="inspection-submit">
               <div className="grid gap-4">
                 {data.data.inspectionTemplates.map(
                   (inspection, categoryIndex) => (
                     <div key={inspection.categoryName} className="space-y-2">
-                      <div className="text-sm font-semibold">
-                        {inspection.categoryName}
+                      <div className="text-sm font-semibold bg-muted py-2 pl-4 pr-2 rounded-md flex justify-between">
+                        <span>{inspection.categoryName}</span>
+                        <Badge
+                          variant="outline"
+                          className="bg-background font-medium "
+                        >
+                          {inspection.scope}
+                        </Badge>
                       </div>
+
                       <div className="space-y-2">
                         {inspection.items.map((item, itemIndex) => (
                           <div
                             key={`item${itemIndex}`}
-                            className="flex items-center"
+                            className="flex items-center ml-4"
                           >
                             <Checkbox
                               checked={watch(
@@ -227,7 +308,7 @@ function CarwashInspection() {
               </div>
             </form>
           </CardContent>
-          <CardFooter className="border-t pt-4">
+          <CardFooter className="border-t pt-4 p-4 sm:p-6">
             <div className="w-full flex justify-between">
               <Button
                 type="button"
@@ -263,6 +344,8 @@ function CarwashInspection() {
         </Card>
       </div>
     );
+  } else if (isError) {
+    content = <ApiError error={error} />;
   }
 
   return (

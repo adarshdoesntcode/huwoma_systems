@@ -34,6 +34,11 @@ export const CarwashColumn = [
         </TableCell>
       );
     },
+    filterFn: (row, _, filterValue) => {
+      return row.original.customer.customerContact
+        .toString()
+        .includes(filterValue);
+    },
   },
   {
     accessorKey: "serviceTypeName",
@@ -55,6 +60,9 @@ export const CarwashColumn = [
           </div>
         </TableCell>
       );
+    },
+    filterFn: (row, _, filterValue) => {
+      return row.original.vehicleNumber.toString().includes(filterValue);
     },
   },
   {

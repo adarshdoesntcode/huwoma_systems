@@ -131,11 +131,11 @@ function CarwashNewRecord() {
         </Card>
       ) : (
         <Card>
-          <CardHeader>
+          <CardHeader className="p-4 sm:p-6">
             <CardTitle>Customer</CardTitle>
             <CardDescription>Customer for the transaction</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="grid gap-4"
