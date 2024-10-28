@@ -119,7 +119,7 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
 
     updatePaymentMode: builder.mutation({
       query: (credentials) => ({
-        url: "/settings/paymentmode/",
+        url: "/settings/paymentmode",
         method: "PUT",
         body: { ...credentials },
       }),

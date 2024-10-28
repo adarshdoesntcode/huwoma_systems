@@ -98,12 +98,30 @@ export const CarwashColumn = [
   },
   {
     accessorKey: "createdAt",
-    header: () => (
-      <TableHead className="hidden lg:table-cell">Initiated At</TableHead>
-    ),
+    header: ({ table }) => {
+      const rows = table.getFilteredRowModel().rows;
+
+      let header = "Initiated At";
+
+      if (rows[0]?.original.transactionStatus === "Ready for Pickup") {
+        header = "Finished At";
+      } else if (rows[0]?.original.transactionStatus === "Completed") {
+        header = "Transaction Time";
+      }
+
+      return <TableHead className="hidden lg:table-cell">{header}</TableHead>;
+    },
     cell: ({ row }) => {
-      const date = format(new Date(row.original.createdAt), "d MMM, yyyy");
-      const time = format(new Date(row.original.createdAt), "h:mm a");
+      let date = format(new Date(row.original.createdAt), "d MMM, yyyy");
+      let time = format(new Date(row.original.createdAt), "h:mm a");
+
+      if (row?.original.transactionStatus === "Ready for Pickup") {
+        date = format(new Date(row.original.service.end), "d MMM, yyyy");
+        time = format(new Date(row.original.service.end), "h:mm a");
+      } else if (row?.original.transactionStatus === "Completed") {
+        date = format(new Date(row.original.transactionTime), "d MMM, yyyy");
+        time = format(new Date(row.original.transactionTime), "h:mm a");
+      }
 
       return (
         <TableCell className="hidden  lg:table-cell">

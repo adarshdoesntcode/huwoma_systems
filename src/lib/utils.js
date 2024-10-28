@@ -33,3 +33,43 @@ export const generateBillNo = () => {
 
   return billNo;
 };
+
+export const findWashCount = (transactions, id) => {
+  const washCount = transactions.filter((transaction) => {
+    return transaction?.service?.id?._id === id;
+  });
+
+  return washCount.length;
+};
+export function getOrdinal(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+export const getTimeDifference = (startTime, endTime) => {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const differenceInMilliseconds = Math.abs(end - start);
+  const differenceInHours = Math.floor(
+    differenceInMilliseconds / (1000 * 60 * 60)
+  );
+  const differenceInMinutes = Math.floor(
+    (differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+  );
+
+  return {
+    hours: differenceInHours,
+    minutes: differenceInMinutes,
+  };
+};
+
+export const timeDifference = (date1, date2, buffer) => {
+  const date1conv = new Date(date1);
+  const differenceInMinutes = Math.abs(date2 - date1conv) / (1000 * 60);
+  if (differenceInMinutes >= buffer) {
+    return true;
+  } else {
+    return false;
+  }
+};
