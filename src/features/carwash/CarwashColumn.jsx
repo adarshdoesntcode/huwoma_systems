@@ -48,15 +48,15 @@ export const CarwashColumn = [
       const service = row.original.service.id;
 
       return (
-        <TableCell>
+        <TableCell className="p-2">
           <div className="flex flex-col items-start">
-            <div className="text-xs text-muted-foreground">
-              {service.serviceVehicle.vehicleTypeName}-
-              <span className="font-medium text-primary">
+            <div className="font-semibold">{service.serviceTypeName}</div>
+            <div className="text-xs flex justify-between gap-2 text-muted-foreground">
+              {service.serviceVehicle.vehicleTypeName}
+              <span className="font-medium text-xs text-primary">
                 ({row.original.vehicleNumber})
               </span>
             </div>
-            <div className="font-semibold">{service.serviceTypeName}</div>
           </div>
         </TableCell>
       );

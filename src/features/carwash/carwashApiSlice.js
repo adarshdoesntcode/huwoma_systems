@@ -53,6 +53,12 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["CarwashTransactions"],
     }),
+    getCheckoutDetails: builder.query({
+      query: (credentials) => ({
+        url: `/carwash/checkoutdetails/${credentials.customerId}`,
+        method: "GET",
+      }),
+    }),
     deleteCarwashTransaction: builder.mutation({
       query: (credentials) => ({
         url: `/carwash/transaction/${credentials.id}`,
@@ -80,4 +86,5 @@ export const {
   useGetCarwashTransactionsQuery,
   useGetTransactionForInspectionQuery,
   useDeleteCarwashTransactionMutation,
+  useGetCheckoutDetailsQuery,
 } = carwashApiSlice;

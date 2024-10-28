@@ -32,6 +32,8 @@ function CarwashNewRecord() {
   const [newCustomer, setNewCustomer] = useState(false);
   const [findCustomer] = useFindCustomerMutation();
   const [createCutomer] = useCreateCutomerMutation();
+  const navigate = useNavigate();
+
   const {
     handleSubmit,
     reset,
@@ -84,7 +86,6 @@ function CarwashNewRecord() {
     }
   };
 
-  const navigate = useNavigate();
   return (
     <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
       <div className="text-lg font-semibold tracking-tight flex items-center gap-4">
@@ -241,7 +242,7 @@ const ServiceSelect = ({ customer }) => {
           title: "Transaction Initiated!",
           description: `Bill No: ${res.data.data.billNo}`,
         });
-        navigate("/carwash?tab=queue");
+        navigate("/carwash", { state: { tab: "queue" }, replace: true });
       }
     } catch (error) {
       toast({

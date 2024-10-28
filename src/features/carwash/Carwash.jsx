@@ -32,13 +32,16 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  OctagonX,
   PlusCircle,
+  Printer,
   ReceiptText,
   RefreshCcw,
   StopCircle,
   Users,
+  X,
 } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Bar, BarChart, XAxis } from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -78,37 +81,26 @@ const chartConfig = {
 function Carwash() {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+
   const date = new Date();
   const formattedDate = date.toISOString().split("T")[0];
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(formattedDate);
-
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
 
-  const transactionDetailsId = searchParams.get("view");
-  const deleteId = searchParams.get("delete");
+  const navigateState = location.state || {};
+
+  const transactionDetailsId = navigateState?.view;
+  const deleteId = navigateState?.delete;
+  const tab = navigateState?.tab;
+
   let transactionDetails;
 
   let inQueueTransactions = [];
   let readyForPickupTransactions = [];
   let bookedTransactions = [];
   let completedTransactions = [];
-
-  if (data) {
-    bookedTransactions = data?.data?.filter(
-      (transaction) => transaction.transactionStatus === "Booked"
-    );
-    inQueueTransactions = data?.data?.filter(
-      (transaction) => transaction.transactionStatus === "In Queue"
-    );
-    readyForPickupTransactions = data?.data?.filter(
-      (transaction) => transaction.transactionStatus === "Ready for Pickup"
-    );
-    completedTransactions = data?.data?.filter(
-      (transaction) => transaction.transactionStatus === "Completed"
-    );
-  }
 
   useEffect(() => {
     if (transactionDetailsId) {
@@ -145,6 +137,24 @@ function Carwash() {
       }).length;
       return { hour: hour.hour, Customers: count };
     });
+  }
+  if (data) {
+    bookedTransactions = data?.data
+      ?.filter((transaction) => transaction.transactionStatus === "Booked")
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    inQueueTransactions = data?.data
+      ?.filter((transaction) => transaction.transactionStatus === "In Queue")
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    readyForPickupTransactions = data?.data
+      ?.filter(
+        (transaction) => transaction.transactionStatus === "Ready for Pickup"
+      )
+      .sort((a, b) => new Date(b.service.end) - new Date(a.service.end));
+    completedTransactions = data?.data
+      ?.filter((transaction) => transaction.transactionStatus === "Completed")
+      .sort(
+        (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
+      );
   }
   const handleRefresh = () => {
     refetch();
@@ -203,16 +213,16 @@ function Carwash() {
                 dataKey="Customers"
                 fill="var(--color-desktop)"
                 radius={4}
-                barSize={18}
+                barSize={12}
               />
             </BarChart>
           </ChartContainer>
         </div>
         <div>
           <Tabs
-            value={searchParams.get("tab") || "queue"}
+            value={tab || "queue"}
             onValueChange={(value) => {
-              navigate(`/carwash?tab=${value}`);
+              navigate("/carwash", { state: { tab: value }, replace: true });
             }}
           >
             <div className="flex  items-start sm:items-center sm:flex-row gap-4 justify-between">
@@ -233,7 +243,7 @@ function Carwash() {
                     </Badge>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="complete" className="hidden sm:block">
+                <TabsTrigger value="complete">
                   Complete
                   {completedTransactions.length > 0 && !isMobile && (
                     <Badge className="ml-2 font-medium">
@@ -391,14 +401,16 @@ const TransactionDetails = ({
   transactionDetails,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navigateState = location.state || {};
+  const tab = navigateState?.tab;
 
   const handleCloseSheet = (value) => {
     navigate(
       `${window.location.pathname}?${new URLSearchParams({
         ...Object.fromEntries(new URLSearchParams(window.location.search)),
-        view: "",
       }).toString()}`,
-      { replace: true }
+      { replace: true, state: { tab: tab } }
     );
   };
 
@@ -671,7 +683,10 @@ const TransactionDetails = ({
                 <Button
                   variant="outline"
                   onClick={() =>
-                    navigate(`/carwash?delete=${transactionDetails._id}`)
+                    navigate("/carwash", {
+                      replace: true,
+                      state: { delete: transactionDetails?._id, tab: tab },
+                    })
                   }
                 >
                   <StopCircle className="h-4 w-4 mr-2" /> Terminate
@@ -954,36 +969,62 @@ const TransactionDetails = ({
               )}
             </div>
             <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
-              <div className="flex justify-between items-center w-full">
+              <div className="flex justify-between gap-4 items-center w-full">
                 <div>
                   {transactionDetails?.transactionStatus === "In Queue" && (
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       onClick={() =>
-                        navigate(`/carwash?delete=${transactionDetails._id}`)
+                        navigate("/carwash", {
+                          replace: true,
+                          state: { delete: transactionDetails?._id, tab: tab },
+                        })
                       }
                     >
-                      <StopCircle className="h-4 w-4 mr-2" /> Terminate
+                      <OctagonX className="h-4 w-4 mr-2" /> Terminate
                     </Button>
                   )}
                 </div>
-                <Button
-                  onClick={() => {
-                    if (transactionDetails?.transactionStatus === "In Queue") {
+                {transactionDetails?.transactionStatus === "In Queue" && (
+                  <Button
+                    className="w-full"
+                    onClick={() => {
                       navigate(`/carwash/inspection/${transactionDetails._id}`);
-                    } else if (
-                      transactionDetails?.transactionStatus ===
-                      "Ready for Pickup"
-                    ) {
-                      navigate(`/carwash/checkout/${transactionDetails._id}`);
-                    }
-                  }}
-                >
-                  {transactionDetails?.transactionStatus === "In Queue"
-                    ? "Proceed"
-                    : "Checkout"}
-                  <ChevronRight className="h-4 w-4 ml-2" />{" "}
-                </Button>
+                    }}
+                  >
+                    Proceed
+                    <ChevronRight className="h-4 w-4 ml-2" />{" "}
+                  </Button>
+                )}
+
+                {transactionDetails?.transactionStatus ===
+                  "Ready for Pickup" && (
+                  <Button
+                    className="w-full"
+                    onClick={() => {
+                      navigate("/carwash/checkout", {
+                        state: { transactionDetails },
+                      });
+                    }}
+                  >
+                    Checkout
+                    <ChevronRight className="h-4 w-4 ml-2" />{" "}
+                  </Button>
+                )}
+                {transactionDetails?.transactionStatus === "Completed" && (
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    // onClick={() => {
+                    //   navigate("/carwash/checkout", {
+                    //     state: { transactionDetails },
+                    //   });
+                    // }}
+                  >
+                    Print
+                    <Printer className="h-4 w-4 ml-2" />{" "}
+                  </Button>
+                )}
               </div>
             </SheetFooter>
           </div>
@@ -999,13 +1040,7 @@ function ConfirmDelete({ dialogOpen, setDialogOpen, transactionId }) {
   const navigate = useNavigate();
 
   const handleCloseDelete = (value) => {
-    navigate(
-      `${window.location.pathname}?${new URLSearchParams({
-        ...Object.fromEntries(new URLSearchParams(window.location.search)),
-        delete: "",
-      }).toString()}`,
-      { replace: true }
-    );
+    navigate("/carwash", { replace: true });
   };
 
   const handleDelete = async () => {
@@ -1014,19 +1049,14 @@ function ConfirmDelete({ dialogOpen, setDialogOpen, transactionId }) {
       const res = await deleteCarwashTransaction({
         id: transactionId,
       });
-      setDialogOpen(false);
+
       if (res.error) {
+        handleCloseDelete();
         throw new Error(res.error.data.message);
       }
 
       if (!res.error) {
-        navigate(
-          `${window.location.pathname}?${new URLSearchParams({
-            ...Object.fromEntries(new URLSearchParams(window.location.search)),
-            delete: "",
-          }).toString()}`,
-          { replace: true }
-        );
+        handleCloseDelete();
         toast({
           title: "Transaction Terminated!",
           description: "Successfully",

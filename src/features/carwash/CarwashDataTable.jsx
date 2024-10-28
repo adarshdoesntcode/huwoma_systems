@@ -26,15 +26,19 @@ import React, { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const CarwashDataTable = ({ columns, data }) => {
+  const location = useLocation();
+  const navigateState = location.state || {};
+  const tab = navigateState?.tab;
+
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const [filter, setFilter] = useState("billNo");
+  const [filter, setFilter] = useState("serviceTypeName");
 
   const [sorting, setSorting] = useState([]);
 
@@ -65,9 +69,9 @@ export const CarwashDataTable = ({ columns, data }) => {
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="billNo">Bill No</SelectItem>
-              <SelectItem value="customer">Contact</SelectItem>
               <SelectItem value="serviceTypeName">Vehicle No</SelectItem>
+              <SelectItem value="customer">Contact</SelectItem>
+              <SelectItem value="billNo">Bill No</SelectItem>
             </SelectContent>
           </Select>
 
@@ -109,15 +113,10 @@ export const CarwashDataTable = ({ columns, data }) => {
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
                   onClick={() =>
-                    navigate(
-                      `${window.location.pathname}?${new URLSearchParams({
-                        ...Object.fromEntries(
-                          new URLSearchParams(window.location.search)
-                        ),
-                        view: row.original._id,
-                      }).toString()}`,
-                      { replace: true }
-                    )
+                    navigate("/carwash", {
+                      replace: true,
+                      state: { view: row.original?._id, tab: tab },
+                    })
                   }
                 >
                   {row.getVisibleCells().map((cell) => (

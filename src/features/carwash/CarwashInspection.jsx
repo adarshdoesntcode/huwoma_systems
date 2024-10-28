@@ -111,7 +111,7 @@ function CarwashInspection() {
           title: "Inspection Complete!",
           description: `Vehicle Ready for Pickup!`,
         });
-        navigate("/carwash?tab=pickup");
+        navigate("/carwash", { state: { tab: "pickup" }, replace: true });
       }
     } catch (error) {
       toast({
@@ -125,12 +125,11 @@ function CarwashInspection() {
   let content;
   if (isLoading || isFetching) {
     content = (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex flex-1 h-full items-center justify-center">
         <Loader />
       </div>
     );
   } else if (isSuccess) {
-    const customer = data?.data?.transaction?.customer;
     const service = data?.data?.transaction?.service?.id;
     content = (
       <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
@@ -150,8 +149,8 @@ function CarwashInspection() {
           <div className="grid gap-2 ">
             <Label>Inspection For</Label>
             <div className="border p-4 rounded-md shadow-sm bg-background">
-              <div className="flex">
-                <div className="w-24">
+              <div className="flex gap-4">
+                <div className="w-24 ">
                   <img src={`${service?.serviceVehicle?.vehicleIcon}`} />
                 </div>
                 <div className="flex flex-1 flex-col  pb-2 mb-2">

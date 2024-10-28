@@ -67,7 +67,11 @@ const PaymentSettings = () => {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedPaymentMode, setSelectedPaymentMode] = useState({});
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
+  console.log(
+    "🚀 ~ PaymentSettings ~ selectedPaymentMode:",
+    selectedPaymentMode
+  );
 
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useGetPaymentModeQuery();
@@ -188,24 +192,34 @@ const PaymentSettings = () => {
           Configure payment modes for the system
         </CardDescription>
       </CardHeader>
+
       <CardContent className="py-0 overflow-auto">{content}</CardContent>
-      <ConfirmDelete
-        setDeleteOpen={setDeleteOpen}
-        deleteOpen={deleteOpen}
-        selectedPaymentMode={selectedPaymentMode}
-        setSelectedPaymentMode={setSelectedPaymentMode}
-      />
-      <ConfigDetails
-        setDetailsOpen={setDetailsOpen}
-        detailsOpen={detailsOpen}
-        selectedPaymentMode={selectedPaymentMode}
-      />
-      <EditPayment
-        setEditOpen={setEditOpen}
-        editOpen={editOpen}
-        selectedPaymentMode={selectedPaymentMode}
-      />
-      <CreatePayment createOpen={createOpen} setCreateOpen={setCreateOpen} />
+      {deleteOpen && (
+        <ConfirmDelete
+          setDeleteOpen={setDeleteOpen}
+          deleteOpen={deleteOpen}
+          selectedPaymentMode={selectedPaymentMode}
+          setSelectedPaymentMode={setSelectedPaymentMode}
+        />
+      )}
+      {editOpen && (
+        <EditPayment
+          setEditOpen={setEditOpen}
+          editOpen={editOpen}
+          selectedPaymentMode={selectedPaymentMode}
+        />
+      )}
+      {createOpen && (
+        <CreatePayment createOpen={createOpen} setCreateOpen={setCreateOpen} />
+      )}
+      {detailsOpen && (
+        <ConfigDetails
+          setDetailsOpen={setDetailsOpen}
+          detailsOpen={detailsOpen}
+          selectedPaymentMode={selectedPaymentMode}
+        />
+      )}
+
       <CardFooter className="border-t px-6 py-4 flex justify-end">
         <Button onClick={() => setCreateOpen(true)}>Add Payment</Button>
       </CardFooter>
@@ -432,6 +446,7 @@ function ConfirmDelete({
 }
 
 function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
+  console.log("🚀 ~ EditPayment ~ selectedPaymentMode:", selectedPaymentMode);
   const [updatePaymentMode, { isLoading: isSubmitting }] =
     useUpdatePaymentModeMutation();
   const {
