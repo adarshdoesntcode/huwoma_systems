@@ -50,6 +50,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function getTotalRate(services, key) {
   return services?.reduce((total, service) => total + service[key], 0);
@@ -70,8 +71,10 @@ const CarwashConfigSettings = () => {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="py-6">
-        <Loader />
+      <div className=" space-y-6">
+        <Skeleton className="w-full h-16 rounded-xl" />
+        <Skeleton className="w-full h-16 rounded-xl" />
+        <Skeleton className="w-full h-16 rounded-xl" />
       </div>
     );
   } else if (isSuccess) {

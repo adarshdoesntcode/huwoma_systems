@@ -35,6 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { isEqual } from "lodash";
 import { toast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CarWashInspectionSetting = () => {
   const [initialInspections, setInitialInspections] = useState([]);
@@ -180,8 +181,10 @@ const CarWashInspectionSetting = () => {
           <CardDescription>Template of the inspection form</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="py-6">
-            <Loader />
+          <div className=" space-y-6">
+            <Skeleton className="w-full h-24 rounded-xl" />
+            <Skeleton className="w-full h-24 rounded-xl" />
+            <Skeleton className="w-full h-34 rounded-xl" />
           </div>
         </CardContent>
       </Card>

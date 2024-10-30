@@ -171,7 +171,7 @@ function Carwash() {
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="text-lg  sm:flex-row font-semibold  flex items-start sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
+        <div className="  sm:flex-row  flex items-start sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
           <div className="flex items-center  gap-2 ">
             <Button
               variant="outline"
@@ -181,7 +181,7 @@ function Carwash() {
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            Car Wash
+            <span className="text-base sm:text-lg  font-bold">Car Wash</span>
           </div>
           <div className=" flex justify-end">
             <Button size="sm" variant="outline" className="mr-2">
@@ -954,7 +954,15 @@ const TransactionDetails = ({
                                 Total Time
                               </div>
                               <div className="text-sm font-semibold ">
-                                {`${parkingTime?.hours}h ${parkingTime?.minutes}m`}
+                                {`${
+                                  parkingTime?.hours > 0
+                                    ? `${parkingTime?.hours}h `
+                                    : ""
+                                } ${
+                                  parkingTime?.minutes > 0
+                                    ? `${parkingTime?.minutes}m`
+                                    : ""
+                                }`}
                               </div>
                             </div>
                           </div>

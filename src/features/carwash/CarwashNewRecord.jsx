@@ -25,7 +25,7 @@ import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { generateBillNo } from "@/lib/utils";
+import { findWashCountForCustomer, generateBillNo } from "@/lib/utils";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -133,7 +133,7 @@ function CarwashNewRecord() {
       ) : (
         <Card>
           <CardHeader className="p-4 sm:p-6">
-            <CardTitle>Customer</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl">Customer</CardTitle>
             <CardDescription>Customer for the transaction</CardDescription>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
@@ -191,16 +191,31 @@ function CarwashNewRecord() {
             </form>
           </CardContent>
           <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-            {isSubmitting ? (
-              <Button disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {newCustomer ? "Creating" : "Finding"}
-              </Button>
-            ) : (
-              <Button type="submit" form="customer">
-                {newCustomer ? "Create" : "Next"}
-              </Button>
-            )}
+            <div className="flex w-full items-center justify-between gap-4">
+              <div>
+                {newCustomer && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      reset();
+                      setNewCustomer(false);
+                    }}
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+              {isSubmitting ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {newCustomer ? "Creating" : "Finding"}
+                </Button>
+              ) : (
+                <Button type="submit" form="customer">
+                  {newCustomer ? "Create" : "Next"}
+                </Button>
+              )}
+            </div>
           </CardFooter>
         </Card>
       )}
@@ -253,6 +268,9 @@ const ServiceSelect = ({ customer }) => {
     }
   };
   let content;
+
+  const applicableTransactions = customer?.customerTransactions || [];
+  console.log("🚀 ~ applicableTransactions:", applicableTransactions);
 
   if (isLoading || isFetching) {
     content = (
@@ -334,6 +352,20 @@ const ServiceSelect = ({ customer }) => {
 
                 <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
                   {selectedVehicle.services.map((service) => {
+                    let washCount = service.streakApplicable.washCount;
+                    let washStreak = findWashCountForCustomer(
+                      applicableTransactions,
+                      service._id
+                    );
+
+                    let washStreakApplicable =
+                      service.streakApplicable.decision;
+
+                    let isFree =
+                      washStreak >= washCount && washStreakApplicable
+                        ? true
+                        : false;
+
                     return (
                       <div
                         key={service._id}
@@ -346,6 +378,11 @@ const ServiceSelect = ({ customer }) => {
                           {selectedService._id === service._id && (
                             <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                               <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
+                            </Badge>
+                          )}
+                          {isFree && (
+                            <Badge className="rounded-full p-1 shadow-lg absolute left-0 top-0 translate-x-1/4 -translate-y-1/4">
+                              Freee !!!
                             </Badge>
                           )}
                           {service.serviceTypeName}

@@ -180,7 +180,7 @@ function CarwashCheckout() {
             variant="outline"
             size="icon"
             className="h-8 w-8"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/carwash", { state: { tab: "pickup" } })}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -231,7 +231,7 @@ function CarwashCheckout() {
                           Start Time
                         </div>
                         <div className="text-xs ">
-                          {format(serviceStart, "dd/MM/yyyy hh:mm a")}
+                          {format(serviceStart, "d MMM, yy - h:mm a")}
                         </div>
                       </div>
                     )}
@@ -241,7 +241,7 @@ function CarwashCheckout() {
                           End Time
                         </div>
                         <div className="text-xs ">
-                          {format(serviceEnd, "dd/MM/yyyy hh:mm a")}
+                          {format(serviceEnd, "d MMM, yy - h:mm a")}
                         </div>
                       </div>
                     )}
@@ -273,7 +273,7 @@ function CarwashCheckout() {
                               Start Time
                             </div>
                             <div className="text-xs ">
-                              {format(parkingStart, "dd/MM/yyyy hh:mm a")}
+                              {format(parkingStart, "d MMM, yy - h:mm a")}
                             </div>
                           </div>
 
@@ -282,7 +282,7 @@ function CarwashCheckout() {
                               End Time
                             </div>
                             <div className="text-xs ">
-                              {format(parkingEnd, "dd/MM/yyyy h:mm a")}
+                              {format(parkingEnd, "d MMM, yy - h:mm a")}
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
@@ -290,7 +290,15 @@ function CarwashCheckout() {
                               Total Time
                             </div>
                             <div className="text-sm font-semibold ">
-                              {`${parkingTime?.hours}h ${parkingTime?.minutes}m`}
+                              {`${
+                                parkingTime?.hours > 0
+                                  ? `${parkingTime?.hours}h `
+                                  : ""
+                              } ${
+                                parkingTime?.minutes > 0
+                                  ? `${parkingTime?.minutes}m`
+                                  : ""
+                              }`}
                             </div>
                           </div>
                           <Separator className="my-2" />

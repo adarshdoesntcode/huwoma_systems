@@ -41,6 +41,14 @@ export const findWashCount = (transactions, id) => {
 
   return washCount.length;
 };
+
+export const findWashCountForCustomer = (transactions, id) => {
+  const washCount = transactions.filter((transaction) => {
+    return transaction?.service?.id === id;
+  });
+
+  return washCount.length;
+};
 export function getOrdinal(n) {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;

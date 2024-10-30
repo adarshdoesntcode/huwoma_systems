@@ -125,7 +125,7 @@ function CarwashInspection() {
   let content;
   if (isLoading || isFetching) {
     content = (
-      <div className="flex flex-1 h-full items-center justify-center">
+      <div className="flex-1 h-full flex items-center justify-center">
         <Loader />
       </div>
     );
@@ -138,7 +138,7 @@ function CarwashInspection() {
             variant="outline"
             size="icon"
             className="h-8 w-8"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/carwash", { state: { tab: "queue" } })}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -257,7 +257,7 @@ function CarwashInspection() {
             </div>
           </div>
         )}
-        <Card className>
+        <Card className="mb-16">
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-lg">Inspection Form</CardTitle>
           </CardHeader>
@@ -347,11 +347,7 @@ function CarwashInspection() {
     content = <ApiError error={error} />;
   }
 
-  return (
-    <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
-      {content}
-    </div>
-  );
+  return content;
 }
 
 export default CarwashInspection;
