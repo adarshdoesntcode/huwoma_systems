@@ -25,7 +25,11 @@ import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { findWashCountForCustomer, generateBillNo } from "@/lib/utils";
+import {
+  findWashCountForCustomer,
+  generateBillNo,
+  getOrdinal,
+} from "@/lib/utils";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -227,6 +231,7 @@ function CarwashNewRecord() {
 const ServiceSelect = ({ customer }) => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [serviceCost, setServiceCost] = useState("");
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useVehicleTypeWithServicesQuery();
 
@@ -372,6 +377,7 @@ const ServiceSelect = ({ customer }) => {
                         className="flex flex-col  items-center gap-3 text-xs text-primary font-medium   cursor-pointer hover:scale-105 transition-transform hover:text-primary"
                         onClick={() => {
                           setSelectedService(service);
+                          setServiceCost(isFree ? 0 : service.serviceRate);
                         }}
                       >
                         <div className="w-24 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg">
@@ -381,10 +387,21 @@ const ServiceSelect = ({ customer }) => {
                             </Badge>
                           )}
                           {isFree && (
-                            <Badge className="rounded-full p-1 shadow-lg absolute left-0 top-0 translate-x-1/4 -translate-y-1/4">
-                              Freee !!!
+                            <Badge
+                              variant="outline"
+                              className="rounded-full text-xs bg-primary-foreground normal-case text-destructive  border-dashed border-destructive   tracking-wider  shadow-lg absolute left-0 top-0 -translate-x-1/4 -translate-y-1/4 rotate-[-20deg]"
+                            >
+                              Free!!
                             </Badge>
                           )}
+                          {/* {!isFree && washStreakApplicable && (
+                            <Badge
+                              variant="outline"
+                              className=" text-xs bg-primary-foreground normal-case     tracking-wider  shadow-lg absolute left-0 top-0 -translate-x-1/4 -translate-y-1/4 "
+                            >
+                              {getOrdinal(washStreak + 1)}
+                            </Badge>
+                          )} */}
                           {service.serviceTypeName}
                         </div>
                         <p>Rs. {service.serviceRate}</p>

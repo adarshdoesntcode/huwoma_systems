@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, ChevronLeft, Contact } from "lucide-react";
+import { Check, ChevronLeft, Contact, Loader2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -38,6 +38,7 @@ import {
   getTimeDifference,
   timeDifference,
 } from "@/lib/utils";
+import SubmitButton from "@/components/SubmitButton";
 
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
@@ -444,13 +445,18 @@ function CarwashCheckout() {
             )}
           </CardContent>
           <CardFooter className="p-4 sm:p-6 flex justify-end">
-            <Button
+            <SubmitButton
+              condition={isSubmitting}
+              loadingText="Receiving"
               type="submit"
               form="final-transaction"
               disabled={!paymentMode}
-            >
-              Payment Received <Check className="w-4 h-4 ml-2" />
-            </Button>
+              buttonText={
+                <>
+                  Payment Received <Check className="w-4 h-4 ml-2" />
+                </>
+              }
+            />
           </CardFooter>
         </Card>
       </div>

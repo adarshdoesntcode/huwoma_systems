@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
+import SubmitButton from "@/components/SubmitButton";
 
 function CarwashInspection() {
   const navigate = useNavigate();
@@ -328,16 +329,17 @@ function CarwashInspection() {
                   "Reset"
                 )}
               </Button>
-              {isSubmitting ? (
-                <Button disabled>
-                  Submitting
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                </Button>
-              ) : (
-                <Button type="submit" form="inspection-submit">
-                  Submit <ChevronRight className="h-4 w-4 ml-2" />{" "}
-                </Button>
-              )}
+              <SubmitButton
+                condition={isSubmitting}
+                loadingText="Submitting"
+                type="submit"
+                form="inspection-submit"
+                buttonText={
+                  <>
+                    Submit <ChevronRight className="h-4 w-4 ml-2" />
+                  </>
+                }
+              />
             </div>
           </CardFooter>
         </Card>

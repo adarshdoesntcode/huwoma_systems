@@ -26,12 +26,29 @@ import React, { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+import { Loader2 } from "lucide-react";
+
+import { useDeleteCarwashTransactionMutation } from "./carwashApiSlice";
+
+import { toast } from "@/hooks/use-toast";
+
+import CarwashTransactionDetails from "./CarwashTransactionDetails";
 
 export const CarwashDataTable = ({ columns, data }) => {
-  const location = useLocation();
-  const navigateState = location.state || {};
-  const tab = navigateState?.tab;
+  const [showDetails, setShowDetails] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [transactionDetails, setTransactionDetails] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -42,14 +59,11 @@ export const CarwashDataTable = ({ columns, data }) => {
 
   const [sorting, setSorting] = useState([]);
 
-  const navigate = useNavigate();
-
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -112,12 +126,10 @@ export const CarwashDataTable = ({ columns, data }) => {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer"
-                  onClick={() =>
-                    navigate("/carwash", {
-                      replace: true,
-                      state: { view: row.original?._id, tab: tab },
-                    })
-                  }
+                  onClick={() => {
+                    setTransactionDetails(row.original);
+                    setShowDetails(true);
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
@@ -164,6 +176,84 @@ export const CarwashDataTable = ({ columns, data }) => {
           Next
         </Button>
       </div>
+      <CarwashTransactionDetails
+        showDetails={showDetails}
+        setShowDetails={setShowDetails}
+        showDelete={showDelete}
+        setShowDelete={setShowDelete}
+        setDeleteId={setDeleteId}
+        setTransactionDetails={setTransactionDetails}
+        transactionDetails={transactionDetails}
+      />
+      <ConfirmDelete
+        showDelete={showDelete}
+        setShowDelete={setShowDelete}
+        setDeleteId={setDeleteId}
+        deleteId={deleteId}
+      />
     </>
   );
 };
+
+function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
+  const [deleteCarwashTransaction, { isLoading }] =
+    useDeleteCarwashTransactionMutation();
+
+  const handleCloseDelete = () => {
+    setShowDelete(false);
+    setDeleteId(null);
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (!deleteId) return;
+      const res = await deleteCarwashTransaction({
+        id: deleteId,
+      });
+
+      if (res.error) {
+        handleCloseDelete();
+        throw new Error(res.error.data.message);
+      }
+
+      if (!res.error) {
+        handleCloseDelete();
+        toast({
+          title: "Transaction Terminated!",
+          description: "Successfully",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
+  };
+  return (
+    <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will terminate this transaction
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          {isLoading ? (
+            <Button variant="destructive" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Terminating
+            </Button>
+          ) : (
+            <Button variant="destructive" onClick={handleDelete}>
+              Terminate
+            </Button>
+          )}
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
