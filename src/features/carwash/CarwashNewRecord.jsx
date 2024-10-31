@@ -10,13 +10,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Check, CheckCheck, ChevronLeft, Contact, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   useCreateCutomerMutation,
   useFindCustomerMutation,
   useTransactionOneMutation,
+  useTransactionStartFromBookingMutation,
   useVehicleTypeWithServicesQuery,
 } from "./carwashApiSlice";
 import { toast } from "@/hooks/use-toast";
@@ -30,6 +31,7 @@ import {
   generateBillNo,
   getOrdinal,
 } from "@/lib/utils";
+import { ResetIcon } from "@radix-ui/react-icons";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -37,6 +39,13 @@ function CarwashNewRecord() {
   const [findCustomer] = useFindCustomerMutation();
   const [createCutomer] = useCreateCutomerMutation();
   const navigate = useNavigate();
+
+  const locationState = useLocation().state || null;
+  useEffect(() => {
+    if (locationState?.customer) {
+      setCoustomer(locationState.customer);
+    }
+  }, [locationState]);
 
   const {
     handleSubmit,
@@ -101,7 +110,7 @@ function CarwashNewRecord() {
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        Car Wash New Record
+        Car Wash Record
       </div>
       {customer ? (
         <Card>
@@ -122,15 +131,20 @@ function CarwashNewRecord() {
                   </CardDescription>
                 </div>
               </div>
-              <Button
-                size="sm"
-                onClick={() => {
-                  setCoustomer(null);
-                  reset();
-                }}
-              >
-                Clear
-              </Button>
+              <div>
+                {!locationState && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setCoustomer(null);
+                      reset();
+                    }}
+                  >
+                    Reset <ResetIcon className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
+              </div>
             </div>
           </CardHeader>
         </Card>
@@ -223,12 +237,14 @@ function CarwashNewRecord() {
           </CardFooter>
         </Card>
       )}
-      {customer && <ServiceSelect customer={customer} />}
+      {customer && (
+        <ServiceSelect customer={customer} locationState={locationState} />
+      )}
     </div>
   );
 }
 
-const ServiceSelect = ({ customer }) => {
+const ServiceSelect = ({ customer, locationState }) => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [serviceCost, setServiceCost] = useState("");
@@ -236,6 +252,8 @@ const ServiceSelect = ({ customer }) => {
     useVehicleTypeWithServicesQuery();
 
   const [transactionOne] = useTransactionOneMutation();
+  const [transactionStartFromBooking] =
+    useTransactionStartFromBookingMutation();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -246,14 +264,25 @@ const ServiceSelect = ({ customer }) => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await transactionOne({
-        service: selectedService._id,
-        serviceRate: selectedService.serviceRate,
-        billNo: generateBillNo(),
-        vehicleNumber: data.vehicleNumber,
-        customer: customer._id,
-        serviceStart: new Date(),
-      });
+      let res;
+      if (locationState) {
+        res = await transactionStartFromBooking({
+          service: selectedService._id,
+          transactionId: locationState.transaction,
+          serviceRate: selectedService.serviceRate,
+          vehicleNumber: data.vehicleNumber,
+          customer: customer._id,
+          serviceStart: new Date(),
+        });
+      } else {
+        res = await transactionOne({
+          service: selectedService._id,
+          serviceRate: selectedService.serviceRate,
+          vehicleNumber: data.vehicleNumber,
+          customer: customer._id,
+          serviceStart: new Date(),
+        });
+      }
       if (res.error) {
         throw new Error(res.error.data.message);
       }
@@ -275,7 +304,6 @@ const ServiceSelect = ({ customer }) => {
   let content;
 
   const applicableTransactions = customer?.customerTransactions || [];
-  console.log("🚀 ~ applicableTransactions:", applicableTransactions);
 
   if (isLoading || isFetching) {
     content = (

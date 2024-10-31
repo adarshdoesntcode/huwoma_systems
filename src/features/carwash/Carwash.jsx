@@ -12,42 +12,24 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { TabsContent } from "@/components/ui/tabs";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
-import {
-  ChevronLeft,
-  Loader2,
-  PlusCircle,
-  ReceiptText,
-  RefreshCcw,
-  Users,
-} from "lucide-react";
+import { PlusCircle, ReceiptText, RefreshCcw, Users } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Bar, BarChart, XAxis } from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CarwashDataTable } from "./CarwashDataTable";
 import { CarwashColumn } from "./CarwashColumn";
-import {
-  useDeleteCarwashTransactionMutation,
-  useGetCarwashTransactionsQuery,
-} from "./carwashApiSlice";
+import { useGetCarwashTransactionsQuery } from "./carwashApiSlice";
 import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
 
 import { isMobile } from "react-device-detect";
 import { Badge } from "@/components/ui/badge";
 
-import { toast } from "@/hooks/use-toast";
 import NavBackButton from "@/components/NavBackButton";
+import { CarwashBookingDataTable } from "./CarwashBookingDataTable";
+import { CarwashBookingColumn } from "./CarwashBookingColumn";
 
 const chartConfig = {
   desktop: {
@@ -105,6 +87,7 @@ function Carwash() {
         (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
       );
   }
+
   const handleRefresh = () => {
     refetch();
   };
@@ -201,7 +184,12 @@ function Carwash() {
                 </TabsTrigger>
               </TabsList>
               <div className="w-full sm:w-fit order-1 sm:order-2 flex justify-end ">
-                <Button size="sm" variant="outline" className="mr-2 w-full">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mr-2 w-full"
+                  onClick={() => navigate("/carwash/booking")}
+                >
                   <span>Booking</span>
                   <PlusCircle className="ml-2 w-4 h-4" />
                 </Button>
@@ -311,9 +299,9 @@ function Carwash() {
                 </CardHeader>
 
                 <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
-                  <CarwashDataTable
+                  <CarwashBookingDataTable
                     data={bookedTransactions}
-                    columns={CarwashColumn}
+                    columns={CarwashBookingColumn}
                   />
                 </CardContent>
               </Card>

@@ -46,6 +46,22 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CarwashTransactions"],
     }),
+    transactionBooking: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/booking",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
+    transactionStartFromBooking: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/booking",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
     getCarwashTransactions: builder.query({
       query: (credentials) => ({
         url: `/carwash/transactions?date=${credentials}`,
@@ -87,4 +103,6 @@ export const {
   useGetTransactionForInspectionQuery,
   useDeleteCarwashTransactionMutation,
   useGetCheckoutDetailsQuery,
+  useTransactionBookingMutation,
+  useTransactionStartFromBookingMutation,
 } = carwashApiSlice;

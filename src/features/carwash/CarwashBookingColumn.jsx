@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
-export const CarwashColumn = [
+export const CarwashBookingColumn = [
   {
     accessorKey: "billNo",
     header: () => (
@@ -40,31 +40,31 @@ export const CarwashColumn = [
         .includes(filterValue);
     },
   },
-  {
-    accessorKey: "serviceTypeName",
+  // {
+  //   accessorKey: "serviceTypeName",
 
-    header: () => <TableHead> Service</TableHead>,
-    cell: ({ row }) => {
-      const service = row.original.service?.id;
+  //   header: () => <TableHead> Service</TableHead>,
+  //   cell: ({ row }) => {
+  //     const service = row.original.service?.id;
 
-      return (
-        <TableCell className="p-2">
-          <div className="flex flex-col items-start">
-            <div className="font-semibold">{service?.serviceTypeName}</div>
-            <div className="text-xs flex justify-between gap-2 text-muted-foreground">
-              {service?.serviceVehicle?.vehicleTypeName}
-              <span className="font-medium text-xs text-primary">
-                ({row.original?.vehicleNumber})
-              </span>
-            </div>
-          </div>
-        </TableCell>
-      );
-    },
-    filterFn: (row, _, filterValue) => {
-      return row.original.vehicleNumber.toString().includes(filterValue);
-    },
-  },
+  //     return (
+  //       <TableCell className="p-2">
+  //         <div className="flex flex-col items-start">
+  //           <div className="font-semibold">{service?.serviceTypeName}</div>
+  //           <div className="text-xs flex justify-between gap-2 text-muted-foreground">
+  //             {service?.serviceVehicle?.vehicleTypeName}
+  //             <span className="font-medium text-xs text-primary">
+  //               ({row.original?.vehicleNumber})
+  //             </span>
+  //           </div>
+  //         </div>
+  //       </TableCell>
+  //     );
+  //   },
+  //   filterFn: (row, _, filterValue) => {
+  //     return row.original.vehicleNumber.toString().includes(filterValue);
+  //   },
+  // },
   {
     accessorKey: "transactionStatus",
     header: () => (
@@ -82,16 +82,20 @@ export const CarwashColumn = [
   },
 
   {
-    accessorKey: "paymentStatus",
+    accessorKey: "bookingDeadline",
     header: () => (
-      <TableHead className="hidden lg:table-cell">Payment</TableHead>
+      <TableHead className="hidden lg:table-cell">Deadline</TableHead>
     ),
     cell: ({ row }) => {
-      const payment = row.original.paymentStatus;
+      let date = format(new Date(row.original.bookingDeadline), "d MMM, yyyy");
+      let time = format(new Date(row.original.bookingDeadline), "h:mm a");
 
       return (
         <TableCell className="hidden  lg:table-cell">
-          <Badge variant="outline">{payment}</Badge>
+          <div className="flex flex-col items-start">
+            <div className="font-medium">{time}</div>
+            <div className="text-xs text-muted-foreground">{date}</div>
+          </div>
         </TableCell>
       );
     },
@@ -99,29 +103,13 @@ export const CarwashColumn = [
   {
     accessorKey: "createdAt",
     header: ({ table }) => {
-      const rows = table.getFilteredRowModel().rows;
-
-      let header = "Initiated At";
-
-      if (rows[0]?.original.transactionStatus === "Ready for Pickup") {
-        header = "Finished At";
-      } else if (rows[0]?.original.transactionStatus === "Completed") {
-        header = "Transaction Time";
-      }
+      let header = "Booked At";
 
       return <TableHead className="hidden lg:table-cell">{header}</TableHead>;
     },
     cell: ({ row }) => {
       let date = format(new Date(row.original.createdAt), "d MMM, yyyy");
       let time = format(new Date(row.original.createdAt), "h:mm a");
-
-      if (row?.original.transactionStatus === "Ready for Pickup") {
-        date = format(new Date(row.original.service.end), "d MMM, yyyy");
-        time = format(new Date(row.original.service.end), "h:mm a");
-      } else if (row?.original.transactionStatus === "Completed") {
-        date = format(new Date(row.original.transactionTime), "d MMM, yyyy");
-        time = format(new Date(row.original.transactionTime), "h:mm a");
-      }
 
       return (
         <TableCell className="hidden  lg:table-cell">
