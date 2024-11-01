@@ -31,6 +31,7 @@ import NavBackButton from "@/components/NavBackButton";
 import { CarwashBookingDataTable } from "./CarwashBookingDataTable";
 import { CarwashBookingColumn } from "./CarwashBookingColumn";
 import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
 
 const chartConfig = {
   desktop: {
@@ -54,7 +55,8 @@ function Carwash() {
 
   useEffect(() => {
     if (isSuccess) {
-      setLastUpdated(new Date().getTime());
+      const date = format(new Date(), "hh:mm:ss a");
+      setLastUpdated(date);
     }
   }, [isSuccess, isFetching]);
 
@@ -247,10 +249,7 @@ function Carwash() {
                         />
                       </Button>
                       <span className="text-[10px] text-muted-foreground hidden sm:block">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
+                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
                       </span>
                     </div>
                   </div>
@@ -289,10 +288,7 @@ function Carwash() {
                         />
                       </Button>
                       <span className="text-[10px] text-muted-foreground hidden sm:block">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
+                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
                       </span>
                     </div>
                   </div>
@@ -331,10 +327,7 @@ function Carwash() {
                         />
                       </Button>
                       <span className="text-[10px] text-muted-foreground hidden sm:block">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
+                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
                       </span>
                     </div>
                   </div>
@@ -371,10 +364,7 @@ function Carwash() {
                         />
                       </Button>
                       <span className="text-[10px] text-muted-foreground hidden sm:block">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
+                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
                       </span>
                     </div>
                   </div>

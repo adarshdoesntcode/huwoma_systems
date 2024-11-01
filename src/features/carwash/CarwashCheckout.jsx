@@ -44,6 +44,8 @@ function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const inputRef = useRef(null);
+
   const {
     register,
     watch,
@@ -70,6 +72,11 @@ function CarwashCheckout() {
       });
     }
   }, [paymentMode]);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   let applicableTransactions,
     paymentModes,
@@ -328,7 +335,7 @@ function CarwashCheckout() {
                                 inputMode="numeric"
                                 autoComplete="off"
                                 placeholder="0"
-                                autoFocus
+                                ref={inputRef}
                                 {...register("parkingCost", {
                                   required: "Cost is required",
                                 })}
