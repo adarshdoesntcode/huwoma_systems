@@ -75,8 +75,8 @@ function AdminName() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-4">
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="flex text-xl sm:text-2xl items-center gap-4">
           {user.fullname}
           <Badge
             variant={user.role[0] === ROLES_LIST.SUPERADMIN ? "" : "outline"}
@@ -84,9 +84,11 @@ function AdminName() {
             {roleByCode(ROLES_LIST, user.role[0])}
           </Badge>
         </CardTitle>
-        <CardDescription>Used to identify you in the system.</CardDescription>
+        <CardDescription className="text-xs sm:text-sm">
+          Used to identify you in the system.
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
         <form
           onSubmit={handleSubmit(onSubmit)}
           id="name-change"
@@ -112,7 +114,7 @@ function AdminName() {
           />
         </form>
       </CardContent>
-      <CardFooter className="border-t px-6 py-4 flex justify-end">
+      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
         {isSubmitting ? (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -178,13 +180,13 @@ function AdminPassword() {
   };
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Password</CardTitle>
-        <CardDescription>
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-xl sm:text-2xl ">Password</CardTitle>
+        <CardDescription className="text-xs sm:text-sm">
           Provide current password with your new password
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 sm:p-6 pt-2 sm:pt-0">
         <form
           onSubmit={handleSubmit(onSubmit)}
           id="password-change"
@@ -314,7 +316,7 @@ function AdminPassword() {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="border-t px-6 py-4 flex justify-end">
+      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
         {isSubmitting ? (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

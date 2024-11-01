@@ -318,14 +318,15 @@ function CarwashCheckout() {
                                 <span>Parking Cost</span>
                               )}
                             </Label>
-                            <div className="flex items-center gap-2 w-full  sm:w-[180px] ">
+                            <div className="flex items-center gap-6 sm:gap-2 w-full  sm:w-[180px] ">
                               <Label>Rs.</Label>
 
                               <Input
                                 onWheel={(e) => e.target.blur()}
                                 id="parkingCost"
                                 type="tel"
-                                inputmode="numeric"
+                                inputMode="numeric"
+                                autoComplete="off"
                                 placeholder="0"
                                 autoFocus
                                 {...register("parkingCost", {
@@ -355,14 +356,15 @@ function CarwashCheckout() {
                           <span>Discount</span>
                         )}
                       </Label>
-                      <div className="flex items-center gap-2 w-full  sm:w-[180px] ">
+                      <div className="flex items-center gap-6 sm:gap-2 w-full  sm:w-[180px] ">
                         <Label>Rs.</Label>
 
                         <Input
                           onWheel={(e) => e.target.blur()}
                           id="discountAmt"
                           type="tel"
-                          inputmode="numeric"
+                          autoComplete="off"
+                          inputMode="numeric"
                           placeholder="0"
                           {...register("discountAmt", {
                             validate: (value) => {
@@ -408,9 +410,9 @@ function CarwashCheckout() {
                   </div>
 
                   <div className="border p-4 rounded-md shadow-sm">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
                       <Label>Payment Mode</Label>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 w-full sm:w-[180px]">
                         <Select
                           value={paymentMode._id}
                           onValueChange={(e) => {
@@ -419,7 +421,7 @@ function CarwashCheckout() {
                             );
                           }}
                         >
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger>
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>

@@ -71,10 +71,25 @@ const CarwashConfigSettings = () => {
 
   if (isLoading || isFetching) {
     content = (
-      <div className=" space-y-6">
-        <Skeleton className="w-full h-16 rounded-xl" />
-        <Skeleton className="w-full h-16 rounded-xl" />
-        <Skeleton className="w-full h-16 rounded-xl" />
+      <div className="pb-2">
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-14 w-1/6" />
+          <Skeleton className="h-14 w-3/6" />
+          <Skeleton className="h-14 w-1/6" />
+          <Skeleton className="h-14 w-1/6" />
+        </div>
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-14 w-1/6" />
+          <Skeleton className="h-14 w-3/6" />
+          <Skeleton className="h-14 w-1/6" />
+          <Skeleton className="h-14 w-1/6" />
+        </div>
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-14 w-1/6" />
+          <Skeleton className="h-14 w-3/6" />
+          <Skeleton className="h-14 w-1/6" />
+          <Skeleton className="h-14 w-1/6" />
+        </div>
       </div>
     );
   } else if (isSuccess) {
@@ -184,14 +199,16 @@ const CarwashConfigSettings = () => {
   }
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Configuration</CardTitle>
-        <CardDescription>
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-xl sm:text-2xl">Configuration</CardTitle>
+        <CardDescription className="text-xs sm:text-sm">
           Configure vehicle type and its services
         </CardDescription>
       </CardHeader>
-      <CardContent className="py-0 overflow-auto">{content}</CardContent>
-      <CardFooter className="border-t px-6 py-4 flex justify-end">
+      <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pt-0">
+        {content}
+      </CardContent>
+      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
         <Button onClick={() => navigate("/settings/c-wash/new")}>
           Add Config
         </Button>
@@ -281,7 +298,7 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
             </div>
           </div>
         </DialogHeader>
-        <div className="max-h-[70vh] overflow-y-auto">
+        <div className="max-h-[50vh] overflow-y-auto">
           <div>
             <Label>Services</Label>
             {selectedVehicle?.services?.length === 0 && (

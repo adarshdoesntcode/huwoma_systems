@@ -43,6 +43,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { isEqual } from "lodash";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function CarwashEditConfig() {
   const navigate = useNavigate();
@@ -156,7 +157,13 @@ function VehicleType() {
           <CardDescription>Edit vehile type</CardDescription>
         </CardHeader>
         <CardContent>
-          <Loader />
+          <div className="pb-4 space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <div className="flex gap-4">
+              <Skeleton className="h-10 w-3/4" />
+              <Skeleton className="h-10 w-1/4" />
+            </div>
+          </div>
         </CardContent>
       </Card>
     );
@@ -454,7 +461,19 @@ function Services() {
           <CardDescription>Edit services for the vehicle</CardDescription>
         </CardHeader>
         <CardContent>
-          <Loader />
+          <div className="border rounded-md p-4 space-y-2 mb-4">
+            <Skeleton className="h-8 w-2/5" />
+            <Skeleton className="h-4 w-3/5" />
+            <Skeleton className="h-4 w-1/5" />
+            <Skeleton className="h-4 w-1/5" />
+          </div>
+          <div className="border rounded-md p-4 space-y-2">
+            <Skeleton className="h-8 w-2/5" />
+            <Skeleton className="h-4 w-3/5" />
+            <Skeleton className="h-4 w-1/5" />
+            <Skeleton className="h-4 w-1/5" />
+          </div>
+          {/* <Loader /> */}
         </CardContent>
       </Card>
     );

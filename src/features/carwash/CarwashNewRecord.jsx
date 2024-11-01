@@ -182,8 +182,9 @@ function CarwashNewRecord() {
                   onWheel={(e) => e.target.blur()}
                   id="serviceRate"
                   type="tel"
-                  inputmode="numeric"
+                  inputMode="numeric"
                   placeholder="+977"
+                  autoComplete="off"
                   autoFocus
                   {...register("customerContact", {
                     required: "Number is required",
@@ -210,6 +211,7 @@ function CarwashNewRecord() {
                     type="text"
                     placeholder="Name"
                     autoFocus
+                    autoComplete="off"
                     {...register("customerName", {
                       required: "Name is required",
                     })}
@@ -472,7 +474,8 @@ const ServiceSelect = ({ customer, locationState }) => {
                     <Input
                       id="vehicleNumber"
                       type="tel"
-                      inputmode="numeric"
+                      inputMode="numeric"
+                      autoComplete="off"
                       placeholder="Vehicle Identification Number"
                       autoFocus
                       {...register("vehicleNumber", {

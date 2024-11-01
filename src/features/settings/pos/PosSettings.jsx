@@ -27,6 +27,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function PosSettings() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -38,8 +39,17 @@ function PosSettings() {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="py-4">
-        <Loader />
+      <div className="pb-2">
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-4/6" />
+          <Skeleton className="h-10 w-2/6" />
+        </div>
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-4/6" />
+          <Skeleton className="h-10 w-2/6" />
+        </div>
       </div>
     );
   } else if (isSuccess) {
@@ -120,14 +130,14 @@ function PosSettings() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>POS Access</CardTitle>
-        <CardDescription>
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-xl sm:text-2xl">POS Access</CardTitle>
+        <CardDescription className="text-xs sm:text-sm">
           Configure payment modes for the system
         </CardDescription>
       </CardHeader>
-      <CardContent className="py-0 overflow-auto">{content}</CardContent>
-      <CardFooter className="border-t px-6 py-4 flex justify-end">
+      <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">{content}</CardContent>
+      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
         <Button onClick={() => setCreateOpen(true)}>Add Access</Button>
       </CardFooter>
     </Card>

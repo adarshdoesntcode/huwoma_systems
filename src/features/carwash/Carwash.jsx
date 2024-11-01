@@ -133,29 +133,32 @@ function Carwash() {
             </Button>
           </div>
         </div>
-        <div className="bg-white border rounded-md pt-3 hidden sm:block">
-          <ChartContainer config={chartConfig} className="h-[8vh] w-full ">
-            <BarChart accessibilityLayer data={hourlyCounts}>
-              <XAxis
-                dataKey="hour"
-                tickLine={false}
-                tickMargin={5}
-                axisLine={false}
-                tickFormatter={(value) => `${value}:00`}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Bar
-                dataKey="Customers"
-                fill="var(--color-desktop)"
-                radius={4}
-                barSize={14}
-              />
-            </BarChart>
-          </ChartContainer>
-        </div>
+        {!isMobile && (
+          <div className="bg-white border rounded-md pt-3  ">
+            <ChartContainer config={chartConfig} className="h-[8vh] w-full">
+              <BarChart accessibilityLayer data={hourlyCounts}>
+                <XAxis
+                  dataKey="hour"
+                  tickLine={false}
+                  tickMargin={5}
+                  axisLine={false}
+                  tickFormatter={(value) => `${value}:00`}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Bar
+                  dataKey="Customers"
+                  fill="var(--color-desktop)"
+                  radius={4}
+                  barSize={14}
+                />
+              </BarChart>
+            </ChartContainer>
+          </div>
+        )}
+
         <div>
           <Tabs
             value={tab || "queue"}

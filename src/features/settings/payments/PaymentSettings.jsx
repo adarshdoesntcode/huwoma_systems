@@ -60,6 +60,7 @@ import { useForm } from "react-hook-form";
 import { isEqual } from "lodash";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PaymentSettings = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -80,8 +81,25 @@ const PaymentSettings = () => {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="py-6">
-        <Loader />
+      <div className="pb-2">
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-2/6" />
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-2/6" />
+        </div>
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-2/6" />
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-2/6" />
+        </div>
+        <div className="border-t py-3  flex gap-4">
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-2/6" />
+          <Skeleton className="h-10 w-1/6" />
+          <Skeleton className="h-10 w-2/6" />
+        </div>
       </div>
     );
   } else if (isSuccess) {
@@ -188,14 +206,14 @@ const PaymentSettings = () => {
   }
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Payment Mode</CardTitle>
-        <CardDescription>
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-xl sm:text-2xl">Payment Mode</CardTitle>
+        <CardDescription className="text-xs sm:text-sm">
           Configure payment modes for the system
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="py-0 overflow-auto">{content}</CardContent>
+      <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">{content}</CardContent>
       {deleteOpen && (
         <ConfirmDelete
           setDeleteOpen={setDeleteOpen}
@@ -222,7 +240,7 @@ const PaymentSettings = () => {
         />
       )}
 
-      <CardFooter className="border-t px-6 py-4 flex justify-end">
+      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
         <Button onClick={() => setCreateOpen(true)}>Add Payment</Button>
       </CardFooter>
     </Card>

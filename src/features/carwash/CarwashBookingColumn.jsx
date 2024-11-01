@@ -24,7 +24,7 @@ export const CarwashBookingColumn = [
       const customer = row.original.customer;
 
       return (
-        <TableCell className="text-gray-600">
+        <TableCell className="text-gray-600 border-t">
           <div className="flex flex-col items-start">
             <div className="font-semibold">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">

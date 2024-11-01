@@ -162,7 +162,8 @@ function CarwashNewBooking() {
                   onWheel={(e) => e.target.blur()}
                   id="serviceRate"
                   type="tel"
-                  inputmode="numeric"
+                  inputMode="numeric"
+                  autoComplete="off"
                   placeholder="+977"
                   autoFocus
                   {...register("customerContact", {
@@ -189,6 +190,7 @@ function CarwashNewBooking() {
                     id="customerName"
                     type="text"
                     placeholder="Name"
+                    autoComplete="off"
                     autoFocus
                     {...register("customerName", {
                       required: "Name is required",

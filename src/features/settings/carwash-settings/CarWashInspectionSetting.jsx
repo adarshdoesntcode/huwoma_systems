@@ -176,8 +176,8 @@ const CarWashInspectionSetting = () => {
   if (isLoading || isFetching) {
     content = (
       <Card>
-        <CardHeader>
-          <CardTitle>Inspection</CardTitle>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl"> Inspection</CardTitle>
           <CardDescription>Template of the inspection form</CardDescription>
         </CardHeader>
         <CardContent>
@@ -192,24 +192,26 @@ const CarWashInspectionSetting = () => {
   } else if (isSuccess) {
     content = (
       <Card className="mb-64">
-        <CardHeader>
+        <CardHeader className="p-4 sm:p-6">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <CardTitle>Inspection</CardTitle>
-              <CardDescription>Template of the inspection form</CardDescription>
+              <CardTitle className="text-xl sm:text-2xl">Inspection</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Template of the inspection form
+              </CardDescription>
             </div>
             <div>
               {isDirty && <Badge variant="destructive">Unsaved Changes</Badge>}
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
           {inspections.length === 0 ? (
             <div className="h-20 text-xs flex items-center justify-center text-muted-foreground">
               No Inspections
             </div>
           ) : (
-            <div className="grid gap-5">
+            <div className="grid gap-4 sm:gap-5">
               {inspections.map((inspection, index) => {
                 if (editIndex === index) {
                   return (
@@ -217,7 +219,7 @@ const CarWashInspectionSetting = () => {
                       ref={editForm}
                       key={`inspection-${index}`}
                       onSubmit={handleSubmit(onEdit)}
-                      className="grid gap-4 border p-6 rounded-md mt-4"
+                      className="grid gap-4 border p-4 sm:p-6  rounded-md mt-4"
                     >
                       <div>
                         <div className="grid gap-2 col-span-2">
@@ -299,14 +301,14 @@ const CarWashInspectionSetting = () => {
                 } else {
                   return (
                     <Card key={index}>
-                      <CardHeader className="pl-6 pb-0 pt-2 pr-2">
+                      <CardHeader className="pl-4 sm:pl-6 pb-0 pt-2 pr-2">
                         <div className="flex items-center justify-between">
                           <div>
                             <CardTitle className="text-sm gap-2 flex-wrap flex">
                               <span>{inspection.categoryName} </span>
                               <Badge
                                 variant="secondary"
-                                className="font-medium uppercase text-xs"
+                                className="font-medium uppercase text-xs hidden sm:flex"
                               >
                                 {inspection.scope}
                               </Badge>
@@ -359,7 +361,7 @@ const CarWashInspectionSetting = () => {
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent className="px-4 pb-1">
+                      <CardContent className="px-2 sm:px-4 pb-1">
                         <div>
                           <ul className="ml-6 text-xs mb-2 list-disc">
                             {inspection.items.map((item, index) => {
@@ -379,7 +381,7 @@ const CarWashInspectionSetting = () => {
             <form
               ref={newForm}
               onSubmit={handleSubmit(onAdd)}
-              className="grid gap-4 border p-6 rounded-md mt-4"
+              className="grid gap-4 border p-4 sm:p-6 rounded-md mt-4"
             >
               <div>
                 <div className="grid gap-2 col-span-2">
@@ -455,7 +457,7 @@ const CarWashInspectionSetting = () => {
             </form>
           )}
         </CardContent>
-        <CardFooter className="border-t px-6 py-4  flex justify-between">
+        <CardFooter className="border-t px-4 sm:px-6  py-4  flex justify-between">
           <Button
             variant="outline"
             className="gap-1"
