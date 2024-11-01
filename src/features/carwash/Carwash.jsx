@@ -30,7 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import NavBackButton from "@/components/NavBackButton";
 import { CarwashBookingDataTable } from "./CarwashBookingDataTable";
 import { CarwashBookingColumn } from "./CarwashBookingColumn";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const chartConfig = {
   desktop: {
@@ -40,10 +40,20 @@ const chartConfig = {
 };
 
 function Carwash() {
+  const [lastUpdated, setLastUpdated] = useState(null);
+
   const date = useMemo(() => new Date().toISOString(), []);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
-    useGetCarwashTransactionsQuery(date);
+    useGetCarwashTransactionsQuery(date, {
+      pollingInterval: 30000,
+    });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setLastUpdated(new Date().getTime());
+    }
+  }, [isSuccess, isFetching]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -96,7 +106,7 @@ function Carwash() {
 
   let content;
 
-  if (isLoading || isFetching) {
+  if (isLoading) {
     content = (
       <div className="flex flex-1 items-center justify-center">
         <Loader />
@@ -217,10 +227,26 @@ function Carwash() {
                         Vehicles in queue for their wash
                       </CardDescription>
                     </div>
-                    <Button variant="outline" onClick={handleRefresh}>
-                      <span className="sr-only sm:not-sr-only">Refresh</span>
-                      <RefreshCcw className="w-4 h-4 sm:ml-2" />
-                    </Button>
+                    <div className="flex items-end gap-1 flex-col">
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <span className="sr-only sm:not-sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={`w-4 h-4 sm:ml-2 ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+                      <span className="text-[10px] text-muted-foreground">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
@@ -243,10 +269,26 @@ function Carwash() {
                         Vehicles ready for pickup
                       </CardDescription>
                     </div>
-                    <Button variant="outline" onClick={handleRefresh}>
-                      <span className="sr-only sm:not-sr-only">Refresh</span>
-                      <RefreshCcw className="w-4 h-4 sm:ml-2" />
-                    </Button>
+                    <div className="flex items-end gap-2 flex-col">
+                      <span className="text-[10px] text-muted-foreground">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <span className="sr-only sm:not-sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={`w-4 h-4 sm:ml-2 ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
@@ -269,10 +311,26 @@ function Carwash() {
                         Vehicles that have been washed and paid off
                       </CardDescription>
                     </div>
-                    <Button variant="outline" onClick={handleRefresh}>
-                      <span className="sr-only sm:not-sr-only">Refresh</span>
-                      <RefreshCcw className="w-4 h-4 sm:ml-2" />
-                    </Button>
+                    <div className="flex items-end gap-2 flex-col">
+                      <span className="text-[10px] text-muted-foreground">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <span className="sr-only sm:not-sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={`w-4 h-4 sm:ml-2 ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
@@ -293,10 +351,26 @@ function Carwash() {
                       </CardTitle>
                       <CardDescription>Active Bookings</CardDescription>
                     </div>
-                    <Button variant="outline" onClick={handleRefresh}>
-                      <span className="sr-only sm:not-sr-only">Refresh</span>
-                      <RefreshCcw className="w-4 h-4 sm:ml-2" />
-                    </Button>
+                    <div className="flex items-end gap-2 flex-col">
+                      <span className="text-[10px] text-muted-foreground">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <span className="sr-only sm:not-sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={`w-4 h-4 sm:ml-2 ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
 
