@@ -273,7 +273,6 @@ const ServiceSelect = ({ customer, locationState }) => {
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
           serviceStart: new Date().toISOString(),
-          clientDate: new Date().toISOString(),
         });
       } else {
         res = await transactionOne({

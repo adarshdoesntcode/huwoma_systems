@@ -249,6 +249,7 @@ const BookingTime = ({ customer }) => {
         billNo: generateBillNo(),
         bookingDeadline: date.toISOString(),
         customerId: customer._id,
+        clientDate: new Date().toISOString(),
       });
       if (res.error) {
         throw new Error(res.error.data.message);
