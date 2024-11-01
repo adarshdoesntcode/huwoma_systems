@@ -169,6 +169,7 @@ function CarwashNewBooking() {
                     validate: (value) =>
                       String(value).length === 10 || "Number must be 10 digits",
                   })}
+                  autoFocus
                   className={errors.serviceRate ? "border-destructive" : ""}
                 />
               </div>

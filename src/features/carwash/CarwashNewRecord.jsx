@@ -175,6 +175,7 @@ function CarwashNewRecord() {
                   id="serviceRate"
                   type="number"
                   placeholder="+977"
+                  autoFocus
                   {...register("customerContact", {
                     required: "Number is required",
                     valueAsNumber: true,

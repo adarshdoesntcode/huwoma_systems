@@ -97,7 +97,7 @@ const PaymentSettings = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>SN</TableHead>
+                <TableHead className="hidden sm:table-cell">SN</TableHead>
                 <TableHead>Payment Name</TableHead>
                 <TableHead className="pl-1 text-center hidden sm:table-cell">
                   Transactions
@@ -123,7 +123,9 @@ const PaymentSettings = () => {
                       setDetailsOpen(true);
                     }}
                   >
-                    <TableCell className="p-1 pl-4 ">{index + 1}</TableCell>
+                    <TableCell className="p-1 pl-4 hidden sm:table-cell">
+                      {index + 1}
+                    </TableCell>
                     <TableCell className="font-medium p-4 ">
                       {paymentMode.paymentModeName}
                     </TableCell>

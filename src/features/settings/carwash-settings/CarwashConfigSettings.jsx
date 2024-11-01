@@ -93,7 +93,9 @@ const CarwashConfigSettings = () => {
                 <TableHead className="hidden sm:table-cell">SN</TableHead>
                 <TableHead className="hidden sm:table-cell">Vehicle</TableHead>
                 <TableHead className="pl-1">Type</TableHead>
-                <TableHead className="text-center">Services</TableHead>
+                <TableHead className="text-center hidden sm:table-cell">
+                  Services
+                </TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -124,7 +126,7 @@ const CarwashConfigSettings = () => {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-center p-1">
+                  <TableCell className="text-center p-1 hidden sm:table-cell">
                     <Badge
                       variant={
                         vehicle.services.length > 0 ? "secondary" : "outline"

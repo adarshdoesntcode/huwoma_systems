@@ -47,6 +47,9 @@ function Carwash() {
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(date, {
       pollingInterval: 30000,
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
     });
 
   useEffect(() => {
@@ -130,7 +133,7 @@ function Carwash() {
             </Button>
           </div>
         </div>
-        <div className="bg-white border rounded-md pt-3 ">
+        <div className="bg-white border rounded-md pt-3 hidden sm:block">
           <ChartContainer config={chartConfig} className="h-[8vh] w-full ">
             <BarChart accessibilityLayer data={hourlyCounts}>
               <XAxis
@@ -161,7 +164,7 @@ function Carwash() {
             }}
           >
             <div className="flex flex-col  items-start sm:items-center sm:flex-row gap-4 justify-between">
-              <TabsList className="order-2 sm:order-1">
+              <TabsList className="order-2 md:order-1">
                 <TabsTrigger value="queue">
                   Queue
                   {inQueueTransactions.length > 0 && !isMobile && (
@@ -227,7 +230,7 @@ function Carwash() {
                         Vehicles in queue for their wash
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-1 flex-col">
+                    <div className="flex items-end gap-2 flex-col">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -240,7 +243,7 @@ function Carwash() {
                           }`}
                         />
                       </Button>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] text-muted-foreground hidden sm:block">
                         Last Updated:{" "}
                         {lastUpdated
                           ? new Date(lastUpdated).toLocaleString()
@@ -249,7 +252,7 @@ function Carwash() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
                   <CarwashDataTable
                     data={inQueueTransactions}
                     columns={CarwashColumn}
@@ -270,12 +273,6 @@ function Carwash() {
                       </CardDescription>
                     </div>
                     <div className="flex items-end gap-2 flex-col">
-                      <span className="text-[10px] text-muted-foreground">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
-                      </span>
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -288,10 +285,16 @@ function Carwash() {
                           }`}
                         />
                       </Button>
+                      <span className="text-[10px] text-muted-foreground hidden sm:block">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
                   <CarwashDataTable
                     data={readyForPickupTransactions}
                     columns={CarwashColumn}
@@ -308,16 +311,10 @@ function Carwash() {
                         Complete
                       </CardTitle>
                       <CardDescription>
-                        Vehicles that have been washed and paid off
+                        Vehicles that have been paid off
                       </CardDescription>
                     </div>
                     <div className="flex items-end gap-2 flex-col">
-                      <span className="text-[10px] text-muted-foreground">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
-                      </span>
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -330,10 +327,16 @@ function Carwash() {
                           }`}
                         />
                       </Button>
+                      <span className="text-[10px] text-muted-foreground hidden sm:block">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
                   <CarwashDataTable
                     data={completedTransactions}
                     columns={CarwashColumn}
@@ -352,12 +355,6 @@ function Carwash() {
                       <CardDescription>Active Bookings</CardDescription>
                     </div>
                     <div className="flex items-end gap-2 flex-col">
-                      <span className="text-[10px] text-muted-foreground">
-                        Last Updated:{" "}
-                        {lastUpdated
-                          ? new Date(lastUpdated).toLocaleString()
-                          : "loading..."}
-                      </span>
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -370,11 +367,17 @@ function Carwash() {
                           }`}
                         />
                       </Button>
+                      <span className="text-[10px] text-muted-foreground hidden sm:block">
+                        Last Updated:{" "}
+                        {lastUpdated
+                          ? new Date(lastUpdated).toLocaleString()
+                          : "loading..."}
+                      </span>
                     </div>
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
                   <CarwashBookingDataTable
                     data={bookedTransactions}
                     columns={CarwashBookingColumn}
