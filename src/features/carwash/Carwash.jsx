@@ -167,32 +167,32 @@ function Carwash() {
               <TabsList className="order-2 md:order-1">
                 <TabsTrigger value="queue">
                   Queue
-                  {inQueueTransactions.length > 0 && !isMobile && (
-                    <Badge className="ml-2 font-medium ">
+                  {inQueueTransactions.length > 0 && (
+                    <Badge className="ml-2 font-medium hidden sm:block ">
                       {inQueueTransactions.length}
                     </Badge>
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="pickup">
                   PickUp
-                  {readyForPickupTransactions.length > 0 && !isMobile && (
-                    <Badge className="ml-2 font-medium">
+                  {readyForPickupTransactions.length > 0 && (
+                    <Badge className="ml-2 font-medium hidden sm:block">
                       {readyForPickupTransactions.length}
                     </Badge>
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="complete">
                   Complete
-                  {completedTransactions.length > 0 && !isMobile && (
-                    <Badge className="ml-2 font-medium">
+                  {completedTransactions.length > 0 && (
+                    <Badge className="ml-2 font-medium hidden sm:block">
                       {completedTransactions.length}
                     </Badge>
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="booking">
                   Booking
-                  {bookedTransactions.length > 0 && !isMobile && (
-                    <Badge className="ml-2 font-medium">
+                  {bookedTransactions.length > 0 && (
+                    <Badge className="ml-2 font-medium hidden sm:block">
                       {bookedTransactions.length}
                     </Badge>
                   )}

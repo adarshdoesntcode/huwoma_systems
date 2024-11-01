@@ -91,6 +91,8 @@ export const CarwashDataTable = ({ columns, data }) => {
 
           <Input
             placeholder="Search.."
+            type="tel"
+            inputmode="numeric"
             value={table.getColumn(filter)?.getFilterValue() ?? ""}
             onChange={(event) =>
               table.getColumn(filter)?.setFilterValue(event.target.value)

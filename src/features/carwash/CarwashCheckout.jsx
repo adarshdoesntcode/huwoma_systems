@@ -324,8 +324,10 @@ function CarwashCheckout() {
                               <Input
                                 onWheel={(e) => e.target.blur()}
                                 id="parkingCost"
-                                type="number"
+                                type="tel"
+                                inputmode="numeric"
                                 placeholder="0"
+                                autoFocus
                                 {...register("parkingCost", {
                                   required: "Cost is required",
                                 })}
@@ -359,7 +361,8 @@ function CarwashCheckout() {
                         <Input
                           onWheel={(e) => e.target.blur()}
                           id="discountAmt"
-                          type="number"
+                          type="tel"
+                          inputmode="numeric"
                           placeholder="0"
                           {...register("discountAmt", {
                             validate: (value) => {
@@ -417,7 +420,7 @@ function CarwashCheckout() {
                           }}
                         >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Mode" />
+                            <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
                             {paymentModes?.map((mode) => (

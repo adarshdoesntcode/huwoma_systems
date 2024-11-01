@@ -9,7 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, CheckCheck, ChevronLeft, Contact, Loader2 } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  ChevronLeft,
+  ChevronRight,
+  Contact,
+  Loader2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,6 +39,7 @@ import {
   getOrdinal,
 } from "@/lib/utils";
 import { ResetIcon } from "@radix-ui/react-icons";
+import SubmitButton from "@/components/SubmitButton";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -154,7 +162,7 @@ function CarwashNewRecord() {
             <CardTitle className="text-xl sm:text-2xl">Customer</CardTitle>
             <CardDescription>Customer for the transaction</CardDescription>
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="grid gap-4"
@@ -173,7 +181,8 @@ function CarwashNewRecord() {
                 <Input
                   onWheel={(e) => e.target.blur()}
                   id="serviceRate"
-                  type="number"
+                  type="tel"
+                  inputmode="numeric"
                   placeholder="+977"
                   autoFocus
                   {...register("customerContact", {
@@ -200,6 +209,7 @@ function CarwashNewRecord() {
                     id="customerName"
                     type="text"
                     placeholder="Name"
+                    autoFocus
                     {...register("customerName", {
                       required: "Name is required",
                     })}
@@ -224,16 +234,23 @@ function CarwashNewRecord() {
                   </Button>
                 )}
               </div>
-              {isSubmitting ? (
-                <Button disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {newCustomer ? "Creating" : "Finding"}
-                </Button>
-              ) : (
-                <Button type="submit" form="customer">
-                  {newCustomer ? "Create" : "Next"}
-                </Button>
-              )}
+              <SubmitButton
+                condition={isSubmitting}
+                loadingText={newCustomer ? "Creating" : "Finding"}
+                buttonText={
+                  newCustomer ? (
+                    <>
+                      Create <ChevronRight className="w-4 h-4 ml-2" />
+                    </>
+                  ) : (
+                    <>
+                      Next <ChevronRight className="w-4 h-4 ml-2" />
+                    </>
+                  )
+                }
+                type="submit"
+                form="customer"
+              />
             </div>
           </CardFooter>
         </Card>
@@ -454,8 +471,10 @@ const ServiceSelect = ({ customer, locationState }) => {
                     </Label>
                     <Input
                       id="vehicleNumber"
-                      type="text"
+                      type="tel"
+                      inputmode="numeric"
                       placeholder="Vehicle Identification Number"
+                      autoFocus
                       {...register("vehicleNumber", {
                         required: "Identification is required",
                       })}
@@ -480,7 +499,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                 disabled={!selectedVehicle || !selectedService}
                 form="transaction-1"
               >
-                Submit
+                Submit <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             )}
           </CardFooter>

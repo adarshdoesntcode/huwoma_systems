@@ -142,7 +142,7 @@ function CarwashNewBooking() {
             <CardTitle className="text-xl sm:text-2xl">Customer</CardTitle>
             <CardDescription>Customer for new booking</CardDescription>
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="grid gap-4"
@@ -161,15 +161,16 @@ function CarwashNewBooking() {
                 <Input
                   onWheel={(e) => e.target.blur()}
                   id="serviceRate"
-                  type="number"
+                  type="tel"
+                  inputmode="numeric"
                   placeholder="+977"
+                  autoFocus
                   {...register("customerContact", {
                     required: "Number is required",
                     valueAsNumber: true,
                     validate: (value) =>
                       String(value).length === 10 || "Number must be 10 digits",
                   })}
-                  autoFocus
                   className={errors.serviceRate ? "border-destructive" : ""}
                 />
               </div>
@@ -188,6 +189,7 @@ function CarwashNewBooking() {
                     id="customerName"
                     type="text"
                     placeholder="Name"
+                    autoFocus
                     {...register("customerName", {
                       required: "Name is required",
                     })}
