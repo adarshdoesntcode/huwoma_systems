@@ -247,7 +247,7 @@ const BookingTime = ({ customer }) => {
     try {
       const res = await transactionBooking({
         billNo: generateBillNo(),
-        bookingDeadline: date,
+        bookingDeadline: date.toISOString(),
         customerId: customer._id,
       });
       if (res.error) {

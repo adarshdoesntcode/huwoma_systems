@@ -64,7 +64,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
     }),
     getCarwashTransactions: builder.query({
       query: (credentials) => ({
-        url: `/carwash/transactions?date=${credentials}`,
+        url: `/carwash/transactions/${credentials}`,
         method: "GET",
       }),
       providesTags: ["CarwashTransactions"],

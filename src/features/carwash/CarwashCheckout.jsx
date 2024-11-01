@@ -103,10 +103,12 @@ function CarwashCheckout() {
         paymentStatus: "Paid",
         paymentMode: paymentMode._id,
         parkingIn:
-          parkingEligible && parkingIncluded ? parkingStart : undefined,
+          parkingEligible && parkingIncluded
+            ? parkingStart.toISOString()
+            : undefined,
         parkingOut: parkingEligible && parkingIncluded ? parkingEnd : undefined,
         parkingCost: Number(data.parkingCost) || undefined,
-        transactionTime: new Date(),
+        transactionTime: new Date().toISOString(),
         grossAmount: grossAmt,
         discountAmount: Number(data.discountAmt) || 0,
         netAmount: netAmt,
@@ -154,6 +156,7 @@ function CarwashCheckout() {
     vehicleNumber = transactionDetails?.vehicleNumber;
     serviceStart = transactionDetails?.service?.start;
     serviceEnd = transactionDetails?.service?.end;
+
     serviceCost =
       washStreak >= washCount && washStreakApplicable
         ? 0
@@ -161,12 +164,14 @@ function CarwashCheckout() {
 
     parkingBuffer =
       transactionDetails?.service?.id?.includeParking.parkingBuffer;
+
     parkingEligible = timeDifference(serviceEnd, new Date(), parkingBuffer);
     parkingIncluded = transactionDetails?.service?.id?.includeParking.decision;
     parkingStart = new Date(
       new Date(serviceEnd).getTime() + parkingBuffer * 60 * 1000
     );
-    parkingEnd = new Date();
+
+    parkingEnd = new Date().toISOString();
     parkingTime = getTimeDifference(parkingStart, parkingEnd);
     parkingCost = Number(watch("parkingCost")) || 0;
     grossAmt = (Number(watch("parkingCost")) || 0) + (serviceCost || 0);
@@ -303,7 +308,7 @@ function CarwashCheckout() {
                             </div>
                           </div>
                           <Separator className="my-2" />
-                          <div className="flex items-center justify-between">
+                          <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
                             <Label>
                               {errors.parkingCost ? (
                                 <span className="text-destructive">
@@ -313,7 +318,7 @@ function CarwashCheckout() {
                                 <span>Parking Cost</span>
                               )}
                             </Label>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 w-full  sm:w-[180px] ">
                               <Label>Rs.</Label>
 
                               <Input
@@ -338,7 +343,7 @@ function CarwashCheckout() {
                   )}
 
                   <div className="border p-4 rounded-md shadow-sm my-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
                       <Label>
                         {errors.discountAmt ? (
                           <span className="text-destructive">
@@ -348,7 +353,7 @@ function CarwashCheckout() {
                           <span>Discount</span>
                         )}
                       </Label>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 w-full  sm:w-[180px] ">
                         <Label>Rs.</Label>
 
                         <Input
@@ -366,8 +371,8 @@ function CarwashCheckout() {
                           })}
                           className={
                             errors.discountAmt
-                              ? "border-destructive text-end"
-                              : "text-end"
+                              ? "border-destructive text-end "
+                              : "text-end "
                           }
                         />
                       </div>

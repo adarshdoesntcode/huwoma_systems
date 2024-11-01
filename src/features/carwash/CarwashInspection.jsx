@@ -102,7 +102,7 @@ function CarwashInspection() {
         transactionId: id,
         inspections: data.inspections,
         transactionStatus: "Ready for Pickup",
-        serviceEnd: new Date(),
+        serviceEnd: new Date().toISOString(),
       });
       if (res.error) {
         throw new Error(res.error.data.message);
@@ -195,13 +195,15 @@ function CarwashInspection() {
                     </div>
                   </div>
                 )}
-                {data?.data?.transaction?.service?.cost && (
+                {data?.data?.transaction?.service?.cost >= 0 && (
                   <div className="flex items-center justify-between  ">
                     <div className="text-muted-foreground text-xs font-medium">
                       Rate
                     </div>
                     <div className="text-xs font-medium">
-                      Rs. {data?.data?.transaction?.service?.cost}
+                      {data?.data?.transaction?.service?.cost > 0
+                        ? `Rs. ${data?.data?.transaction?.service?.cost}`
+                        : "Free"}
                     </div>
                   </div>
                 )}

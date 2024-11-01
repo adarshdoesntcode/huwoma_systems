@@ -269,18 +269,20 @@ const ServiceSelect = ({ customer, locationState }) => {
         res = await transactionStartFromBooking({
           service: selectedService._id,
           transactionId: locationState.transaction,
-          serviceRate: selectedService.serviceRate,
+          serviceRate: serviceCost,
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
-          serviceStart: new Date(),
+          serviceStart: new Date().toISOString(),
+          clientDate: new Date().toISOString(),
         });
       } else {
         res = await transactionOne({
           service: selectedService._id,
-          serviceRate: selectedService.serviceRate,
+          serviceRate: serviceCost,
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
-          serviceStart: new Date(),
+          serviceStart: new Date().toISOString(),
+          clientDate: new Date().toISOString(),
         });
       }
       if (res.error) {

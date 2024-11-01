@@ -195,7 +195,7 @@ const Details = ({
                     </div>
                   </div>
                 )}
-                {transactionDetails?.service?.cost && (
+                {transactionDetails?.service?.cost >= 0 && (
                   <div className="flex items-center justify-between  ">
                     <div className="text-muted-foreground text-xs font-medium">
                       Cost

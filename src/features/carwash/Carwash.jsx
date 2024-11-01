@@ -30,6 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import NavBackButton from "@/components/NavBackButton";
 import { CarwashBookingDataTable } from "./CarwashBookingDataTable";
 import { CarwashBookingColumn } from "./CarwashBookingColumn";
+import { useMemo } from "react";
 
 const chartConfig = {
   desktop: {
@@ -39,10 +40,11 @@ const chartConfig = {
 };
 
 function Carwash() {
-  const date = new Date();
-  const formattedDate = date.toISOString().split("T")[0];
+  const date = useMemo(() => new Date().toISOString(), []);
+
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
-    useGetCarwashTransactionsQuery(formattedDate);
+    useGetCarwashTransactionsQuery(date);
+
   const navigate = useNavigate();
   const location = useLocation();
 

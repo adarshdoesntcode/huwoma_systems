@@ -15,19 +15,16 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
         url: `/settings/carwash/vehicletype/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "VehicleType", id }],
+      providesTags: ["VehicleType"],
     }),
 
     updateVehicleType: builder.mutation({
       query: (credentials) => ({
-        url: `/settings/carwash/vehicletype/${credentials.id}`,
+        url: "/settings/carwash/vehicletype",
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "VehicleType", id },
-        "VehicleTypes",
-      ],
+      invalidatesTags: ["VehicleType", "VehicleTypes"],
     }),
 
     createVehicleType: builder.mutation({
@@ -49,20 +46,20 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
     }),
 
     serviceType: builder.query({
-      query: (id) => ({
-        url: `/settings/carwash/servicetype/${id}`,
+      query: (vehicleTypeId) => ({
+        url: `/settings/carwash/servicetype/${vehicleTypeId}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "ServiceType", id }],
+      providesTags: ["ServiceType"],
     }),
 
     updateServiceType: builder.mutation({
       query: (credentials) => ({
-        url: `/settings/carwash/servicetype/${credentials.id}`,
+        url: "/settings/carwash/servicetype",
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "ServiceType", id }],
+      invalidatesTags: ["ServiceType"],
     }),
 
     deleteCarWashConfig: builder.mutation({
