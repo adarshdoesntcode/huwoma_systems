@@ -54,10 +54,12 @@ function CarwashCheckout() {
   } = useForm({
     mode: "onChange",
   });
-  const { transactionDetails } = location.state;
+
+  const transactionDetails = location.state?.transactionDetails;
+
   const { data, isLoading, isError, error, isFetching, isSuccess } =
     useGetCheckoutDetailsQuery({
-      customerId: transactionDetails.customer._id,
+      customerId: transactionDetails?.customer?._id,
     });
   const [transactionThree] = useTransactionThreeMutation();
 
@@ -473,6 +475,9 @@ function CarwashCheckout() {
       </div>
     );
   } else if (isError) {
+    if (!transactionDetails) {
+      navigate("/carwash", { state: { tab: "pickup" }, replace: true });
+    }
     content = <ApiError error={error} />;
   }
 
