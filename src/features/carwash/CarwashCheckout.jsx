@@ -44,7 +44,6 @@ function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const inputRef = useRef(null);
 
   const {
     register,
@@ -72,11 +71,6 @@ function CarwashCheckout() {
       });
     }
   }, [paymentMode]);
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
 
   let applicableTransactions,
     paymentModes,
@@ -330,12 +324,12 @@ function CarwashCheckout() {
 
                               <Input
                                 onWheel={(e) => e.target.blur()}
-                                id="parkingCost"
+                                id="parkingCost-Checkout"
                                 type="tel"
                                 inputMode="numeric"
                                 autoComplete="off"
                                 placeholder="0"
-                                ref={inputRef}
+                                autoFocus
                                 {...register("parkingCost", {
                                   required: "Cost is required",
                                 })}

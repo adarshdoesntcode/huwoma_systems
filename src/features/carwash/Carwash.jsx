@@ -65,7 +65,7 @@ function Carwash() {
 
   const navigateState = location.state || {};
 
-  const tab = navigateState?.tab;
+  const tab = navigateState?.tab || "queue";
 
   let inQueueTransactions = [];
   let readyForPickupTransactions = [];
@@ -163,7 +163,7 @@ function Carwash() {
 
         <div>
           <Tabs
-            value={tab || "queue"}
+            value={tab}
             onValueChange={(value) => {
               navigate("/carwash", { state: { tab: value }, replace: true });
             }}
