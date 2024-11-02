@@ -13,6 +13,7 @@ import CarwashNewRecord from "@/features/carwash/CarwashNewRecord";
 import CarwashInspection from "@/features/carwash/CarwashInspection";
 import CarwashCheckout from "@/features/carwash/CarwashCheckout";
 import CarwashNewBooking from "@/features/carwash/CarwashNewBooking";
+import CarwashTransactions from "@/features/carwash/carwash_tranasactions/CarwashTransactions";
 
 const PrivateRoutes = [
   {
@@ -48,6 +49,16 @@ const PrivateRoutes = [
   {
     path: "carwash/checkout",
     element: <CarwashCheckout />,
+    errorElement: <Error />,
+  },
+  {
+    path: "carwash/transactions",
+    element: <CarwashTransactions />,
+    errorElement: <Error />,
+  },
+  {
+    path: "carwash/customers",
+    element: <CarwashNewBooking />,
     errorElement: <Error />,
   },
   {

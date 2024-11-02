@@ -128,7 +128,15 @@ function Carwash() {
 
               <Users className="sm:ml-2 w-4 h-4" />
             </Button>
-            <Button size="sm" variant="outline">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                navigate("/carwash/transactions", {
+                  scroll: { top: 0, left: 0, behavior: "smooth" },
+                })
+              }
+            >
               <span className="sr-only sm:not-sr-only">Transactions </span>
 
               <ReceiptText className="sm:ml-2 w-4 h-4" />

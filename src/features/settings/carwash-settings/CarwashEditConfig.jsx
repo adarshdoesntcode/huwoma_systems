@@ -487,7 +487,9 @@ function Services() {
               <CardDescription>Edit services for the vehicle</CardDescription>
             </div>
             <div>
-              {isDirty && <Badge variant="destructive">Unsaved Changes</Badge>}
+              {isDirty && !isFetching && (
+                <Badge variant="destructive">Unsaved Changes</Badge>
+              )}
             </div>
           </div>
         </CardHeader>

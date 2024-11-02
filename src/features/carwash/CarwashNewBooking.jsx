@@ -339,7 +339,7 @@ function DateTimePicker({ date, setDate }) {
           selected={date}
           onSelect={(d) => handleSelect(d)}
           initialFocus
-          fromDate={new Date()}
+          toDate={new Date()}
         />
         <div className="p-3 border-t border-border">
           <TimePicker setDate={setDate} date={date} />

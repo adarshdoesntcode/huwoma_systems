@@ -89,6 +89,12 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["CarwashTransaction"],
     }),
+    getPreFilterTransactions: builder.query({
+      query: () => ({
+        url: "/carwash/transaction/prefilter",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -105,4 +111,5 @@ export const {
   useGetCheckoutDetailsQuery,
   useTransactionBookingMutation,
   useTransactionStartFromBookingMutation,
+  useGetPreFilterTransactionsQuery,
 } = carwashApiSlice;
