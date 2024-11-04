@@ -10,9 +10,24 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ResetIcon } from "@radix-ui/react-icons";
-import { Dot, Filter, Settings2 } from "lucide-react";
-import { useState } from "react";
-import { format, subMonths, subWeeks, subYears } from "date-fns";
+import {
+  Car,
+  Dot,
+  Droplets,
+  Filter,
+  Footprints,
+  ParkingCircle,
+  Settings2,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  endOfDay,
+  format,
+  startOfDay,
+  subMonths,
+  subWeeks,
+  subYears,
+} from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -32,9 +47,22 @@ import {
 } from "@/components/ui/select";
 
 import TextSeparator from "@/components/ui/TextSeparator";
-import { useGetPreFilterTransactionsQuery } from "../carwashApiSlice";
+import {
+  useGetPostFilterTransactionsMutation,
+  useGetPreFilterTransactionsQuery,
+} from "../carwashApiSlice";
 import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
+import SubmitButton from "@/components/SubmitButton";
+import { useForm } from "react-hook-form";
+import { toast } from "@/hooks/use-toast";
+import { CarwashFilterTranasactionDataTable } from "./CarwashFilterTransactionDataTable";
+import { CarwashFilterTransactionColumn } from "./CarwashFilterTransactionColumn";
+
+import PaymentsGraph from "./charts/PaymentsGraph";
+import VehicleIncomeGraph from "./charts/VehicleIncomeGraph";
+import { DailyIncomeGraph } from "./charts/DailyIncomeGraph";
+import { isMobile } from "react-device-detect";
 
 const initialState = {
   preset: {
@@ -50,33 +78,39 @@ const initialState = {
     to: "",
   },
   transaction: {
-    status: null,
+    status: "All",
   },
   payment: {
-    status: null,
+    status: "All",
   },
 };
 
 const configInitialState = {
-  text: null,
-  value: null,
+  text: "All",
+  value: "All",
 };
 
 function CarwashTransactions() {
   const [filter, setFilter] = useState(initialState);
   const [selectedVehicle, setSelectedVehicle] = useState(configInitialState);
   const [selectedService, setSelectedService] = useState(configInitialState);
-  console.log("🚀 ~ CarwashTransactions ~ selectedService:", selectedService);
+  const [responseData, setResponseData] = useState("");
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm();
 
   const { data, isLoading, isSuccess, isError, error } =
     useGetPreFilterTransactionsQuery();
+
+  const [getPostFilterTransactions] = useGetPostFilterTransactionsMutation();
 
   const handlePresetSelect = (value) => {
     let changedstate = {
       text: "",
       from: null,
     };
-    console.log(value);
     switch (value) {
       case "Last Week":
         changedstate = {
@@ -136,16 +170,74 @@ function CarwashTransactions() {
   };
 
   const handleVehicleSelect = (vehicles, value) => {
-    const vehicle = vehicles.find(
-      (vehicle) => vehicle.vehicleTypeName === value
-    );
-    setSelectedVehicle({ text: value, value: vehicle });
+    if (value !== "All") {
+      const vehicle = vehicles.find(
+        (vehicle) => vehicle.vehicleTypeName === value
+      );
+      setSelectedVehicle({
+        text: value,
+        value: vehicle,
+      });
+    } else {
+      setSelectedVehicle(configInitialState);
+    }
     setSelectedService(configInitialState);
   };
 
   const handleServiceSelect = (services, value) => {
-    const service = services.find((service) => service.serviceName === value);
-    setSelectedService({ text: value, value: service });
+    if (value !== "All") {
+      const service = services.find(
+        (service) => service.serviceTypeName === value
+      );
+      setSelectedService({
+        text: value,
+        value: service,
+      });
+    } else {
+      setSelectedService(configInitialState);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    setResponseData("");
+    let range;
+    if (filter.preset.from || filter.preset.from === null) {
+      range = { from: filter.preset.from, to: filter.preset.to };
+    } else if (filter.customDate.date) {
+      range = {
+        from: startOfDay(filter.customDate.date),
+        to: endOfDay(filter.customDate.date),
+      };
+    } else if (filter.customRange.from && filter.customRange.to) {
+      range = { ...filter.customRange };
+    } else {
+      return;
+    }
+    try {
+      const res = await getPostFilterTransactions({
+        timeRange: { ...range },
+        transactionStatus:
+          filter.transaction.status === "All"
+            ? null
+            : filter.transaction.status,
+        paymentStatus:
+          filter.payment.status === "All" ? null : filter.payment.status,
+        vehicleId: selectedVehicle?.value?._id || null,
+        serviceId: selectedService?.value?._id || null,
+      });
+      if (res.error) {
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        setResponseData(res.data.data);
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
   };
 
   let content;
@@ -170,7 +262,11 @@ function CarwashTransactions() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pb-0 sm:pt-0">
-            <div className="grid  grid-cols-12">
+            <form
+              id="carwash-transaction-filter"
+              className="grid  grid-cols-12"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="col-span-12 p-4 pl-2 sm:col-span-4 border-b sm:border-b-0  sm:border-r">
                 <div className="space-y-2">
                   <Label>
@@ -280,7 +376,7 @@ function CarwashTransactions() {
                             ...prev,
                             preset: {
                               from: "",
-                              to: new Date().toISOString(),
+                              to: new Date(),
                             },
                             customDate: {
                               date: "",
@@ -326,7 +422,7 @@ function CarwashTransactions() {
                           </SelectItem>
                         ))}
 
-                        <SelectItem value={null}>All</SelectItem>
+                        <SelectItem value={"All"}>All</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -334,7 +430,7 @@ function CarwashTransactions() {
                     <Label>Service Type</Label>
 
                     <Select
-                      disabled={!selectedVehicle.value}
+                      disabled={selectedVehicle.value === "All"}
                       value={selectedService.text}
                       onValueChange={(value) => {
                         handleServiceSelect(
@@ -347,7 +443,7 @@ function CarwashTransactions() {
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
-                        {selectedVehicle?.value?.services.map((service) => (
+                        {selectedVehicle?.value?.services?.map((service) => (
                           <SelectItem
                             key={service._id}
                             value={service.serviceTypeName}
@@ -363,7 +459,7 @@ function CarwashTransactions() {
                             </span>
                           </SelectItem>
                         ))}
-                        <SelectItem value={null}>All</SelectItem>
+                        <SelectItem value={"All"}>All</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -397,7 +493,7 @@ function CarwashTransactions() {
                         </SelectItem>
                         <SelectItem value="Completed">Completed</SelectItem>
                         <SelectItem value="Cancelled">Cancelled</SelectItem>
-                        <SelectItem value={null}>All</SelectItem>
+                        <SelectItem value={"All"}>All</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -423,13 +519,13 @@ function CarwashTransactions() {
                         <SelectItem value="Paid">Paid</SelectItem>
                         <SelectItem value="Pending">Pending</SelectItem>
                         <SelectItem value="Cancelled">Cancelled</SelectItem>
-                        <SelectItem value={null}>All</SelectItem>
+                        <SelectItem value={"All"}>All</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
           </CardContent>
           <CardFooter className="border-t  px-4 sm:px-6  py-4 ">
             <div className="flex items-center justify-between w-full">
@@ -439,16 +535,25 @@ function CarwashTransactions() {
                   setSelectedService(configInitialState);
                   setSelectedVehicle(configInitialState);
                   setFilter(initialState);
+                  setResponseData("");
                 }}
               >
                 Defaults <ResetIcon className="h-4 w-4 ml-2" />
               </Button>
-              <Button>
-                Filter <Filter className="h-4 w-4 ml-2" />
-              </Button>
+              <SubmitButton
+                buttonText={
+                  <>
+                    Filter <Filter className="h-4 w-4 ml-2" />
+                  </>
+                }
+                condition={isSubmitting}
+                loadingText="Submitting"
+                form="carwash-transaction-filter"
+              />
             </div>
           </CardFooter>
         </Card>
+        {responseData && <FilteredAnalytics responseData={responseData} />}
       </div>
     );
   } else if (isError) {
@@ -457,5 +562,204 @@ function CarwashTransactions() {
 
   return content;
 }
+
+function sumByKey(key, array) {
+  return array.reduce((sum, obj) => {
+    const keys = key.split(".");
+    let value = obj;
+
+    for (let key of keys) {
+      value = value && key in value ? value[key] : undefined;
+      if (value === undefined) break;
+    }
+
+    return typeof value === "number" ? sum + value : sum;
+  }, 0);
+}
+
+function calculateVehicleServiceIncome(transactions) {
+  const result = [];
+
+  transactions.forEach((transaction) => {
+    const serviceVehicle = transaction.service?.id?.serviceVehicle;
+    const serviceType = transaction.service?.id?.serviceTypeName;
+    const serviceCost = transaction.service?.cost;
+
+    if (serviceVehicle && serviceType && serviceCost !== undefined) {
+      let vehicleTypeEntry = result.find(
+        (entry) => entry.vehicleTypeName === serviceVehicle.vehicleTypeName
+      );
+
+      if (!vehicleTypeEntry) {
+        vehicleTypeEntry = {
+          vehicleTypeName: serviceVehicle.vehicleTypeName,
+          services: [],
+        };
+        result.push(vehicleTypeEntry);
+      }
+
+      let serviceEntry = vehicleTypeEntry.services.find(
+        (service) => service.serviceTypeName === serviceType
+      );
+
+      if (!serviceEntry) {
+        serviceEntry = {
+          serviceTypeName: serviceType,
+          income: 0,
+        };
+        vehicleTypeEntry.services.push(serviceEntry);
+      }
+
+      serviceEntry.income += serviceCost;
+    }
+  });
+
+  return result;
+}
+
+const FilteredAnalytics = ({ responseData }) => {
+  const analyticsRef = useRef(null);
+
+  const completetedTransactions = responseData.filter(
+    (transaction) =>
+      transaction.transactionStatus === "Completed" &&
+      transaction.paymentStatus === "Paid"
+  );
+
+  const vehicleIncomeData = calculateVehicleServiceIncome(
+    completetedTransactions
+  );
+
+  const pendingTransactions = responseData.filter(
+    (transaction) =>
+      transaction.paymentStatus === "Pending" &&
+      transaction.transactionStatus !== "Cancelled"
+  );
+
+  const totalNetRevenue = sumByKey("netAmount", completetedTransactions);
+  const WashRevenue = sumByKey("service.cost", completetedTransactions);
+  const discountAmount = sumByKey("discountAmount", completetedTransactions);
+
+  const parkingRevenue = sumByKey("parking.cost", completetedTransactions);
+  const pendingRevenue = sumByKey("service.cost", pendingTransactions);
+
+  const freeWashes =
+    WashRevenue + parkingRevenue - discountAmount - totalNetRevenue;
+  let dailyIncome = [];
+
+  if (responseData) {
+    dailyIncome = Array.from(
+      new Set(
+        completetedTransactions.map(
+          (transaction) =>
+            new Date(transaction.createdAt).toLocaleDateString().split("T")[0]
+        )
+      )
+    ).map((date) => {
+      const income = completetedTransactions
+        .filter(
+          (transaction) =>
+            new Date(transaction.createdAt)
+              .toLocaleDateString()
+              .split("T")[0] === date
+        )
+        .reduce((sum, transaction) => sum + transaction.netAmount, 0);
+
+      return { date: format(date, "MMM d, yyyy"), Income: income };
+    });
+  }
+
+  useEffect(() => {
+    const headerOffset = 70;
+
+    if (analyticsRef.current) {
+      const elementPosition = analyticsRef.current.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  }, [responseData]);
+  return (
+    <div className="space-y-6 " ref={analyticsRef}>
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mb-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Net Revenue
+            </CardTitle>
+            <Droplets className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              +{totalNetRevenue.toLocaleString()}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              +{pendingRevenue.toLocaleString()} pending
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Wash Revenue</CardTitle>
+            <Car className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              +{(WashRevenue - freeWashes).toLocaleString()}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              -{freeWashes.toLocaleString()} for free washes
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Parking Revenue
+            </CardTitle>
+            <ParkingCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              +{parkingRevenue.toLocaleString()}
+            </div>
+            {/* <p className="text-xs text-muted-foreground">+19% than yesterday</p> */}
+          </CardContent>
+        </Card>
+        <Card x-chunk="dashboard-01-chunk-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Discounted</CardTitle>
+            <Footprints className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              -{discountAmount.toLocaleString()}
+            </div>
+            {/* <p className="text-xs text-muted-foreground">+201 than yesterday</p> */}
+          </CardContent>
+        </Card>
+      </div>
+      {dailyIncome.length > 1 && !isMobile && (
+        <DailyIncomeGraph dailyIncome={dailyIncome} />
+      )}
+      <div className="grid grid-cols-12 gap-6 ">
+        <VehicleIncomeGraph vehicleIncomeData={vehicleIncomeData} />
+        <PaymentsGraph completetedTransactions={completetedTransactions} />
+      </div>
+      <Card>
+        <CardHeader></CardHeader>
+        <CardContent>
+          <CarwashFilterTranasactionDataTable
+            data={responseData}
+            columns={CarwashFilterTransactionColumn}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
 export default CarwashTransactions;

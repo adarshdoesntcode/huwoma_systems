@@ -95,6 +95,13 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getPostFilterTransactions: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/postfilter",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
   }),
 });
 
@@ -112,4 +119,5 @@ export const {
   useTransactionBookingMutation,
   useTransactionStartFromBookingMutation,
   useGetPreFilterTransactionsQuery,
+  useGetPostFilterTransactionsMutation,
 } = carwashApiSlice;
