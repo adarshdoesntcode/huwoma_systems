@@ -15,7 +15,7 @@ import { TabsContent } from "@/components/ui/tabs";
 
 import { PlusCircle, ReceiptText, RefreshCcw, Users } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Bar, BarChart, XAxis } from "recharts";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CarwashDataTable } from "./CarwashDataTable";
@@ -34,9 +34,9 @@ import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 
 const chartConfig = {
-  desktop: {
+  customers: {
     label: "Customers",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-1))",
   },
 };
 
@@ -83,7 +83,7 @@ function Carwash() {
         const createdAt = new Date(transaction.createdAt);
         return createdAt.getHours() === hour.hour;
       }).length;
-      return { hour: hour.hour, Customers: count };
+      return { hour: hour.hour.toString(), Customers: count };
     });
   }
   if (data) {
@@ -149,18 +149,25 @@ function Carwash() {
               <BarChart accessibilityLayer data={hourlyCounts}>
                 <XAxis
                   dataKey="hour"
+                  type="category"
                   tickLine={false}
                   tickMargin={5}
                   axisLine={false}
                   tickFormatter={(value) => `${value}:00`}
                 />
+
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
+                  content={
+                    <ChartTooltipContent
+                      indicator="line"
+                      labelFormatter={(value) => `${value}:00h`}
+                    />
+                  }
                 />
                 <Bar
                   dataKey="Customers"
-                  fill="var(--color-desktop)"
+                  fill="var(--color-customers)"
                   radius={4}
                   barSize={14}
                 />

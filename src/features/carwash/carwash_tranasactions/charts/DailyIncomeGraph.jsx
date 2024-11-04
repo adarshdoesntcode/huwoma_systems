@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import {
   Card,
@@ -15,28 +15,83 @@ import {
 } from "@/components/ui/chart";
 import { format } from "date-fns";
 
-export const description = "An area chart with gradient fill";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
-const chartConfig = {
-  mobile: {
-    label: "Income",
-    color: "hsl(var(--chart-2))",
-  },
-};
-export function DailyIncomeGraph({ dailyIncome }) {
+function analyzeDailyIncome(dailyIncome) {
+  const windowSize = Math.min(
+    Math.max(Math.floor(dailyIncome.length / 10), 1),
+    30
+  );
+
+  const movingAverage = (arr, windowSize) => {
+    const averages = [];
+    for (let i = 0; i <= arr.length - windowSize; i++) {
+      const sum = arr
+        .slice(i, i + windowSize)
+        .reduce((acc, curr) => acc + curr, 0);
+      averages.push(sum / windowSize);
+    }
+    return averages;
+  };
+
+  const movingAverages = movingAverage(dailyIncome, windowSize);
+
+  if (movingAverages.length < 2) {
+    return {
+      trend: "stable",
+      percentageChange: "0.00",
+      currentAverage: (movingAverages[0] || 0).toFixed(2),
+      previousAverage: (movingAverages[0] || 0).toFixed(2),
+    };
+  }
+
+  const currentAverage = movingAverages[movingAverages.length - 1];
+  const previousAverage = movingAverages[movingAverages.length - 2];
+  const percentageChange =
+    ((currentAverage - previousAverage) / previousAverage) * 100;
+
+  const trend =
+    currentAverage > previousAverage
+      ? "up"
+      : currentAverage < previousAverage
+      ? "down"
+      : "stable";
+
+  return {
+    trend,
+    percentageChange: percentageChange.toFixed(2),
+    currentAverage: currentAverage.toFixed(2),
+    previousAverage: previousAverage.toFixed(2),
+  };
+}
+
+export function DailyIncomeGraph({ dailyIncome, range }) {
+  const incomes = dailyIncome.map((item) => item.Income);
+
+  const { trend, percentageChange } = analyzeDailyIncome(incomes);
+
+  const chartConfig = {
+    mobile: {
+      label: "Income",
+      color: `hsl(var(--chart-${
+        trend === "up" ? "1" : trend === "down" ? "2" : "3"
+      }))`,
+    },
+  };
   return (
     <Card>
       <CardHeader>
         <CardTitle>Daily Net Revenue</CardTitle>
-        <CardDescription>
-          Showing total visitors for the last 6 months
+        <CardDescription className="flex items-center gap-2 font-medium leading-none">
+          {trend === "stable" && `Trending ${trend}`}
+          {trend !== "stable" && (
+            <>
+              {`Trending ${trend} by ${Math.abs(percentageChange)}% `}
+              {trend === "up" ? (
+                <TrendingUp className="h-4 w-4" />
+              ) : (
+                <TrendingDown className="h-4 w-4" />
+              )}
+            </>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -87,10 +142,10 @@ export function DailyIncomeGraph({ dailyIncome }) {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              Total incomes for each day of earnings between
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January - June 2024
+              {range}
             </div>
           </div>
         </div>

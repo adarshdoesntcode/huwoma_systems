@@ -333,7 +333,7 @@ export function Dashboard() {
                 <Line
                   dataKey={activeChart}
                   type="monotone"
-                  stroke={`var(--color-mobile)`}
+                  stroke={`var(--color-desktop)`}
                   strokeWidth={2}
                   dot={false}
                 />

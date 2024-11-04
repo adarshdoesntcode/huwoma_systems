@@ -54,7 +54,7 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
     pageSize: 10,
   });
 
-  const [filter, setFilter] = useState("serviceTypeName");
+  const [filter, setFilter] = useState("billNo");
 
   const [sorting, setSorting] = useState([]);
 
@@ -149,7 +149,7 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No Transactions today.
+                  No Transactions.
                 </TableCell>
               </TableRow>
             )}

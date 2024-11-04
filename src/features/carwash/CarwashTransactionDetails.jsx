@@ -353,21 +353,21 @@ const Details = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="text-muted-foreground text-xs font-medium">
-                Transaction Date
+            {transactionDetails?.transactionTime && (
+              <div className="flex items-center justify-between">
+                <>
+                  <div className="text-muted-foreground text-xs font-medium">
+                    Transaction Date
+                  </div>
+                  <div className="text-xs font-medium">
+                    {format(
+                      transactionDetails?.transactionTime,
+                      "d MMM, yy - h:mm a"
+                    )}
+                  </div>
+                </>
               </div>
-              {transactionDetails?.transactionTime ? (
-                <div className="text-xs font-medium">
-                  {format(
-                    transactionDetails?.transactionTime,
-                    "d MMM, yy - h:mm a"
-                  ) || "-"}
-                </div>
-              ) : (
-                "-"
-              )}
-            </div>
+            )}
 
             <div className="flex items-center justify-between  ">
               <div className="text-muted-foreground text-xs font-medium">

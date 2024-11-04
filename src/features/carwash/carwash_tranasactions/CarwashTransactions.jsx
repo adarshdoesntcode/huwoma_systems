@@ -11,7 +11,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { ResetIcon } from "@radix-ui/react-icons";
 import {
+  BadgePercent,
   Car,
+  DollarSign,
   Dot,
   Droplets,
   Filter,
@@ -95,6 +97,7 @@ function CarwashTransactions() {
   const [selectedVehicle, setSelectedVehicle] = useState(configInitialState);
   const [selectedService, setSelectedService] = useState(configInitialState);
   const [responseData, setResponseData] = useState("");
+  const [range, setRange] = useState("");
 
   const {
     handleSubmit,
@@ -198,24 +201,30 @@ function CarwashTransactions() {
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     setResponseData("");
-    let range;
+
+    let dateRange;
+
     if (filter.preset.from || filter.preset.from === null) {
-      range = { from: filter.preset.from, to: filter.preset.to };
+      dateRange = { from: filter.preset.from, to: filter.preset.to };
     } else if (filter.customDate.date) {
-      range = {
+      dateRange = {
         from: startOfDay(filter.customDate.date),
         to: endOfDay(filter.customDate.date),
       };
     } else if (filter.customRange.from && filter.customRange.to) {
-      range = { ...filter.customRange };
+      dateRange = { ...filter.customRange };
     } else {
-      return;
+      return toast({
+        variant: "destructive",
+        title: "Not Enough Information!!",
+        description: "Please select a time range",
+      });
     }
     try {
       const res = await getPostFilterTransactions({
-        timeRange: { ...range },
+        timeRange: { ...dateRange },
         transactionStatus:
           filter.transaction.status === "All"
             ? null
@@ -230,6 +239,7 @@ function CarwashTransactions() {
       }
       if (!res.error) {
         setResponseData(res.data.data);
+        setRange(dateRange);
       }
     } catch (error) {
       toast({
@@ -252,7 +262,7 @@ function CarwashTransactions() {
     const vehicleTypes = data?.data || [];
 
     content = (
-      <div className=" space-y-4">
+      <div className=" space-y-4 mb-64">
         <NavBackButton buttonText={"Car Wash Transactions"} navigateTo={-1} />
         <Card>
           <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
@@ -553,7 +563,9 @@ function CarwashTransactions() {
             </div>
           </CardFooter>
         </Card>
-        {responseData && <FilteredAnalytics responseData={responseData} />}
+        {responseData && (
+          <FilteredAnalytics responseData={responseData} range={range} />
+        )}
       </div>
     );
   } else if (isError) {
@@ -617,7 +629,7 @@ function calculateVehicleServiceIncome(transactions) {
   return result;
 }
 
-const FilteredAnalytics = ({ responseData }) => {
+const FilteredAnalytics = ({ responseData, range }) => {
   const analyticsRef = useRef(null);
 
   const completetedTransactions = responseData.filter(
@@ -643,8 +655,6 @@ const FilteredAnalytics = ({ responseData }) => {
   const parkingRevenue = sumByKey("parking.cost", completetedTransactions);
   const pendingRevenue = sumByKey("service.cost", pendingTransactions);
 
-  const freeWashes =
-    WashRevenue + parkingRevenue - discountAmount - totalNetRevenue;
   let dailyIncome = [];
 
   if (responseData) {
@@ -682,76 +692,109 @@ const FilteredAnalytics = ({ responseData }) => {
       });
     }
   }, [responseData]);
+
+  let rangeString;
+
+  if (responseData.length > 0) {
+    rangeString = `${
+      !range.from
+        ? format(responseData[0].createdAt, "dd MMM, yyyy")
+        : format(range.from, "dd MMM, yyyy")
+    } - ${format(range.to, "dd MMM, yyy")}`;
+  }
+
   return (
     <div className="space-y-6 " ref={analyticsRef}>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Net Revenue
-            </CardTitle>
-            <Droplets className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              +{totalNetRevenue.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              +{pendingRevenue.toLocaleString()} pending
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Wash Revenue</CardTitle>
-            <Car className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              +{(WashRevenue - freeWashes).toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              -{freeWashes.toLocaleString()} for free washes
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Parking Revenue
-            </CardTitle>
-            <ParkingCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              +{parkingRevenue.toLocaleString()}
-            </div>
-            {/* <p className="text-xs text-muted-foreground">+19% than yesterday</p> */}
-          </CardContent>
-        </Card>
-        <Card x-chunk="dashboard-01-chunk-3">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Discounted</CardTitle>
-            <Footprints className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              -{discountAmount.toLocaleString()}
-            </div>
-            {/* <p className="text-xs text-muted-foreground">+201 than yesterday</p> */}
-          </CardContent>
-        </Card>
-      </div>
+      {completetedTransactions.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mb-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Net Revenue
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                +{totalNetRevenue.toLocaleString()}
+              </div>
+              {pendingRevenue > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  +{pendingRevenue.toLocaleString()} pending
+                </p>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Wash Revenue
+              </CardTitle>
+              <Droplets className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                +{WashRevenue.toLocaleString()}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {/* -{freeWashes.toLocaleString()} for free washes */}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Parking Revenue
+              </CardTitle>
+              <ParkingCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                +{parkingRevenue.toLocaleString()}
+              </div>
+              {/* <p className="text-xs text-muted-foreground">+19% than yesterday</p> */}
+            </CardContent>
+          </Card>
+          <Card x-chunk="dashboard-01-chunk-3">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Discounted</CardTitle>
+              <BadgePercent className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                -{discountAmount.toLocaleString()}
+              </div>
+              {/* <p className="text-xs text-muted-foreground">+201 than yesterday</p> */}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {dailyIncome.length > 1 && !isMobile && (
-        <DailyIncomeGraph dailyIncome={dailyIncome} />
+        <DailyIncomeGraph dailyIncome={dailyIncome} range={rangeString} />
       )}
       <div className="grid grid-cols-12 gap-6 ">
-        <VehicleIncomeGraph vehicleIncomeData={vehicleIncomeData} />
-        <PaymentsGraph completetedTransactions={completetedTransactions} />
+        {completetedTransactions.length > 0 && (
+          <>
+            <VehicleIncomeGraph vehicleIncomeData={vehicleIncomeData} />
+            <PaymentsGraph
+              completetedTransactions={completetedTransactions}
+              range={rangeString}
+            />
+          </>
+        )}
       </div>
       <Card>
-        <CardHeader></CardHeader>
-        <CardContent>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-lg sm:text-xl">Transactions</CardTitle>
+          <CardDescription className="text-xs">
+            {rangeString?.split("-")[0].trim() ===
+            rangeString?.split("-")[1].trim()
+              ? rangeString?.split("-")[0]
+              : rangeString}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
           <CarwashFilterTranasactionDataTable
             data={responseData}
             columns={CarwashFilterTransactionColumn}

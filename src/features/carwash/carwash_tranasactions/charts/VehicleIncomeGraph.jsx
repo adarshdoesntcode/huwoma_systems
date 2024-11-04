@@ -31,7 +31,7 @@ function createChartConfig(incomeData) {
     },
   };
   incomeData.forEach((vehicle, index) => {
-    const colorVar = `--chart-${index + 2}`;
+    const colorVar = `--chart-${index + 1}`;
     chartConfig[vehicle.vehicleTypeName] = {
       label: vehicle.vehicleTypeName,
       color: `hsl(var(${colorVar}))`,
@@ -69,8 +69,8 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
     )[0]?.services || [];
 
   return (
-    <Card className="col-span-12 sm:col-span-6">
-      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+    <Card className="col-span-12 xl:col-span-6">
+      <CardHeader className="flex flex-col  space-y-0 border-b p-0 sm:flex-row">
         <div className="flex">
           {keys.map((key) => {
             const chart = key;
@@ -79,7 +79,7 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
               <button
                 key={chart}
                 data-active={activeChart === chart}
-                className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even-border-l data-[active=true]:bg-muted/50 sm:border-r sm:border-t-0 sm:px-8 sm:py-6"
+                className=" flex  flex-col justify-center gap-1 border-t px-6 py-4 text-left even-border-l data-[active=true]:bg-muted/50 sm:border-r sm:border-t-0 sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(chart)}
               >
                 <span className="text-xs text-muted-foreground ">
@@ -93,8 +93,8 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
           })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
-        <ChartContainer config={chartConfig} className="max-h-40 w-full">
+      <CardContent className="p-4 sm:p-6">
+        <ChartContainer config={chartConfig} className="h-40 w-full">
           <BarChart
             accessibilityLayer
             data={serviceData}

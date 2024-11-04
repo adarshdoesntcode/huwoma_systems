@@ -103,22 +103,25 @@ function calculatePaymentModeTotals(transactions) {
   return result;
 }
 
-function PaymentsGraph({ completetedTransactions }) {
+function PaymentsGraph({ completetedTransactions, range }) {
   const paymentGraphData = calculatePaymentModeTotals(completetedTransactions);
   const chartConfig = useMemo(
     () => createChartConfig(paymentGraphData),
     [paymentGraphData]
   );
-  console.log("🚀 ~ PaymentsGraph ~ chartConfig:", chartConfig);
 
   return (
-    <Card className="col-span-12 sm:col-span-6">
-      <CardHeader className="pb-0">
-        <CardTitle>Payment Breakdown</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+    <Card className="col-span-12 xl:col-span-6">
+      <CardHeader className="pb-0 p-4 sm:p-6 sm:pb-0">
+        <CardTitle className="text-lg sm:text-xl">Payment Breakdown</CardTitle>
+        <CardDescription className="text-xs">
+          {range.split("-")[0].trim() === range.split("-")[1].trim()
+            ? range.split("-")[0]
+            : range}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
-        <ChartContainer config={chartConfig} className=" max-h-40 w-full">
+      <CardContent className="p-4 sm:p-6">
+        <ChartContainer config={chartConfig} className=" h-40 w-full">
           <BarChart
             accessibilityLayer
             data={paymentGraphData}
@@ -127,6 +130,8 @@ function PaymentsGraph({ completetedTransactions }) {
               left: 20,
             }}
           >
+            <CartesianGrid horizontal={false} />
+
             <YAxis
               dataKey="paymentModeName"
               type="category"
@@ -139,7 +144,7 @@ function PaymentsGraph({ completetedTransactions }) {
 
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent hide indicator="line" />}
             />
             <Bar dataKey="total" layout="vertical" radius={10}>
               <LabelList
