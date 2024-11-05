@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 
 import { getTimeDifference, timeDifference } from "@/lib/utils";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 const CarwashTransactionDetails = ({
   showDetails,
@@ -156,7 +157,7 @@ const Details = ({
                   <div className="text-sm">
                     {transactionDetails?.service?.id?.serviceTypeName}
                   </div>
-                  <Badge>{transactionDetails?.transactionStatus}</Badge>
+                  <StatusBadge status={transactionDetails?.transactionStatus} />
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {

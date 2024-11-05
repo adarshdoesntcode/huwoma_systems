@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
@@ -51,7 +52,8 @@ export const CarwashBookingColumn = [
 
       return (
         <TableCell className="hidden lg:table-cell">
-          <Badge variant="secondary">{status}</Badge>
+          {/* <Badge variant="secondary">{status}</Badge> */}
+          <StatusBadge status={status} />
         </TableCell>
       );
     },

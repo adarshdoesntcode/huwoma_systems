@@ -91,6 +91,16 @@ const configInitialState = {
   text: "All",
   value: "All",
 };
+const getFirstDayOfCurrentMonth = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+};
+
+// Function to get the last day of the previous month
+const getLastDayOfPreviousMonth = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 0);
+};
 
 function CarwashTransactions() {
   const [filter, setFilter] = useState(initialState);
@@ -377,7 +387,6 @@ function CarwashTransactions() {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        initialFocus
                         mode="range"
                         toDate={new Date()}
                         selected={filter.customRange}
@@ -391,7 +400,15 @@ function CarwashTransactions() {
                             customDate: {
                               date: "",
                             },
-                            customRange: { ...prev.customRange, ...value },
+                            customRange: {
+                              ...prev.customRange,
+                              ...{
+                                from: value.from
+                                  ? startOfDay(value.from)
+                                  : undefined,
+                                to: value.to ? endOfDay(value.to) : undefined,
+                              },
+                            },
                           }));
                         }}
                         numberOfMonths={2}
@@ -703,6 +720,10 @@ const FilteredAnalytics = ({ responseData, range }) => {
     } - ${format(range.to, "dd MMM, yyy")}`;
   }
 
+  const carwashTableData = [...responseData].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   return (
     <div className="space-y-6 " ref={analyticsRef}>
       {completetedTransactions.length > 0 && (
@@ -785,7 +806,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
         )}
       </div>
       <Card>
-        <CardHeader className="p-4 sm:p-6">
+        <CardHeader className="p-4 sm:p-6 ">
           <CardTitle className="text-lg sm:text-xl">Transactions</CardTitle>
           <CardDescription className="text-xs">
             {rangeString?.split("-")[0].trim() ===
@@ -796,7 +817,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
         </CardHeader>
         <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
           <CarwashFilterTranasactionDataTable
-            data={responseData}
+            data={carwashTableData}
             columns={CarwashFilterTransactionColumn}
           />
         </CardContent>

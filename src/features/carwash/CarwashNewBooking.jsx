@@ -194,6 +194,10 @@ function CarwashNewBooking() {
                     autoFocus
                     {...register("customerName", {
                       required: "Name is required",
+                      pattern: {
+                        value: /^[a-zA-Z\s]*$/,
+                        message: "Invalid Name",
+                      },
                     })}
                     className={errors.customerName ? "border-destructive" : ""}
                   />
@@ -339,7 +343,7 @@ function DateTimePicker({ date, setDate }) {
           selected={date}
           onSelect={(d) => handleSelect(d)}
           initialFocus
-          toDate={new Date()}
+          fromDate={new Date()}
         />
         <div className="p-3 border-t border-border">
           <TimePicker setDate={setDate} date={date} />

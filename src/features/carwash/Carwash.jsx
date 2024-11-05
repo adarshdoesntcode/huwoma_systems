@@ -15,7 +15,16 @@ import { TabsContent } from "@/components/ui/tabs";
 
 import { PlusCircle, ReceiptText, RefreshCcw, Users } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LabelList,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CarwashDataTable } from "./CarwashDataTable";
@@ -43,7 +52,7 @@ const chartConfig = {
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  const date = useMemo(() => new Date().toISOString(), []);
+  const date = useMemo(() => new Date().toISOString().split("T")[0], []);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(date, {
@@ -144,14 +153,22 @@ function Carwash() {
           </div>
         </div>
         {!isMobile && (
-          <div className="bg-white border rounded-md pt-3  ">
+          <div className="bg-background border rounded-md ">
+            <div className="px-4 pt-3 text-xs text-muted-foreground">
+              Hourly Customer Count
+            </div>
             <ChartContainer config={chartConfig} className="h-[8vh] w-full">
-              <BarChart accessibilityLayer data={hourlyCounts}>
+              <LineChart
+                accessibilityLayer
+                data={hourlyCounts}
+                margin={{ top: 20, left: 30, bottom: 10, right: 30 }}
+              >
+                <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="hour"
                   type="category"
                   tickLine={false}
-                  tickMargin={5}
+                  tickMargin={10}
                   axisLine={false}
                   tickFormatter={(value) => `${value}:00`}
                 />
@@ -161,17 +178,20 @@ function Carwash() {
                   content={
                     <ChartTooltipContent
                       indicator="line"
-                      labelFormatter={(value) => `${value}:00h`}
+                      labelFormatter={(value) =>
+                        `${value}:00 ${value < 12 ? "AM" : "PM"}`
+                      }
                     />
                   }
                 />
-                <Bar
+                <Line
                   dataKey="Customers"
-                  fill="var(--color-customers)"
-                  radius={4}
-                  barSize={14}
+                  type="natural"
+                  stroke="var(--color-customers)"
+                  strokeWidth={2}
+                  dot={false}
                 />
-              </BarChart>
+              </LineChart>
             </ChartContainer>
           </div>
         )}
@@ -188,7 +208,7 @@ function Carwash() {
                 <TabsTrigger value="queue">
                   Queue
                   {inQueueTransactions.length > 0 && (
-                    <Badge className="ml-2 font-medium hidden sm:block ">
+                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
                       {inQueueTransactions.length}
                     </Badge>
                   )}
@@ -196,7 +216,7 @@ function Carwash() {
                 <TabsTrigger value="pickup">
                   PickUp
                   {readyForPickupTransactions.length > 0 && (
-                    <Badge className="ml-2 font-medium hidden sm:block">
+                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
                       {readyForPickupTransactions.length}
                     </Badge>
                   )}
@@ -204,7 +224,7 @@ function Carwash() {
                 <TabsTrigger value="complete">
                   Complete
                   {completedTransactions.length > 0 && (
-                    <Badge className="ml-2 font-medium hidden sm:block">
+                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
                       {completedTransactions.length}
                     </Badge>
                   )}
@@ -212,7 +232,7 @@ function Carwash() {
                 <TabsTrigger value="booking">
                   Booking
                   {bookedTransactions.length > 0 && (
-                    <Badge className="ml-2 font-medium hidden sm:block">
+                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
                       {bookedTransactions.length}
                     </Badge>
                   )}

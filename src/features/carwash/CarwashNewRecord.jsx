@@ -214,6 +214,10 @@ function CarwashNewRecord() {
                     autoComplete="off"
                     {...register("customerName", {
                       required: "Name is required",
+                      pattern: {
+                        value: /^[a-zA-Z\s]*$/,
+                        message: "Invalid Name",
+                      },
                     })}
                     className={errors.customerName ? "border-destructive" : ""}
                   />

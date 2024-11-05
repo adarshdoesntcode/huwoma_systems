@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import SubmitButton from "@/components/SubmitButton";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 function CarwashInspection() {
   const navigate = useNavigate();
@@ -157,7 +158,9 @@ function CarwashInspection() {
                 <div className="flex flex-1 flex-col  pb-2 mb-2">
                   <div className="font-medium flex items-center justify-between">
                     <div className="text-sm">{service?.serviceTypeName}</div>
-                    <Badge>{data?.data?.transaction?.transactionStatus}</Badge>
+                    <StatusBadge
+                      status={data?.data?.transaction?.transactionStatus}
+                    />
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {service?.serviceVehicle?.vehicleTypeName}

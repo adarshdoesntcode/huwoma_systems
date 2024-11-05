@@ -36,12 +36,143 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { Loader2 } from "lucide-react";
+import { File, Loader2 } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 
 import CarwashTransactionDetails from "../CarwashTransactionDetails";
 import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
+
+import { Workbook } from "exceljs";
+import { format } from "date-fns";
+
+const exportExcel = (rows) => {
+  try {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Transactions");
+
+    const titleRow = worksheet.addRow(["Huwoma Park N Wash"]);
+    titleRow.font = { bold: true, size: 14 };
+    titleRow.alignment = { horizontal: "center" };
+
+    worksheet.mergeCells(`A1:P1`);
+
+    worksheet.addRow([]);
+
+    worksheet.mergeCells(`A2:P2`);
+    worksheet.columns = [
+      { width: 25 },
+      { width: 15 },
+      { width: 20 },
+      { width: 15 },
+      { width: 15 },
+      { width: 10 },
+      { width: 20 },
+      { width: 14 },
+      { width: 14 },
+      { width: 18 },
+      { width: 18 },
+      { width: 15 },
+      { width: 15 },
+      { width: 15 },
+      { width: 15 },
+      { width: 25 },
+    ];
+
+    worksheet.getRow(3).values = [
+      "Initiated At",
+      "Bill No",
+      "Customer Name",
+      "Contact",
+      "Vehicle",
+      "VehicleNo.",
+      "Service",
+      "Service Cost",
+      "Parking Cost",
+      "Transaction Status",
+      "Payment Status",
+      "Payment Mode",
+      "Gross Amount",
+      "Discount Amount",
+      "Net Amount",
+      "Payment Date",
+    ];
+    worksheet.getRow(3).font = { bold: true, size: 12 };
+    worksheet.getRow(3).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFD3D3D3" },
+    };
+
+    const rowData = rows.map((row) => ({
+      Initiated_At: row.original?.createdAt
+        ? format(row.original?.createdAt, "d MMM, yyyy h:mm a")
+        : "",
+      Bill_No: row.original?.billNo || "",
+      Customer_Name: row.original?.customer?.customerName || "",
+      Customer_Contact: row.original?.customer?.customerContact || "",
+      Vehicle: row.original?.service?.id?.serviceVehicle?.vehicleTypeName || "",
+      Vehicle_Number: row.original?.vehicleNumber
+        ? Number(row.original?.vehicleNumber)
+        : "",
+      Service: row.original?.service?.id?.serviceTypeName || "",
+      Service_Cost: row.original?.service?.cost || 0,
+      Parking_Cost: row.original?.parking?.cost || 0,
+      Transaction_Status: row.original?.transactionStatus || "",
+      Payment_Status: row.original?.paymentStatus || "",
+      Payment_Mode: row.original?.paymentMode?.paymentModeName || "",
+      Gross_Amount: row.original?.grossAmount || 0,
+      Discount_Amount: row.original?.discountAmount || 0,
+      Net_Amount: row.original?.netAmount || "",
+      Payment_Date: row.original?.transactionTime
+        ? format(row.original?.transactionTime, "d MMM, yyyy h:mm a")
+        : "",
+    }));
+
+    rowData.forEach((row) => {
+      worksheet.addRow([
+        row.Initiated_At,
+        row.Bill_No,
+        row.Customer_Name,
+        row.Customer_Contact,
+        row.Vehicle,
+        row.Vehicle_Number,
+        row.Service,
+        row.Service_Cost,
+        row.Parking_Cost,
+        row.Transaction_Status,
+        row.Payment_Status,
+        row.Payment_Mode,
+        row.Gross_Amount,
+        row.Discount_Amount,
+        row.Net_Amount,
+        row.Payment_Date,
+      ]);
+    });
+
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ParkNWashTransactions.xlsx";
+      a.click();
+    });
+    toast({
+      title: "Exported Successfully!!",
+      description: "Check you downloads folder",
+    });
+  } catch (e) {
+    console.error(e);
+    toast({
+      variant: "destructive",
+      title: "Something went wrong!!",
+      description: "Could not download",
+    });
+  }
+};
 
 export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -51,7 +182,7 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 15,
   });
 
   const [filter, setFilter] = useState("billNo");
@@ -75,7 +206,7 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
 
   return (
     <>
-      <div className="items-center mb-4 space-x-2">
+      <div className="flex justify-between items-center mb-4 space-x-2">
         <div className="flex items-center gap-2 space-x-2">
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-[180px]">
@@ -99,6 +230,17 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
             }
             className="max-w-sm"
           />
+        </div>
+        <div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-10 gap-1 text-sm"
+            onClick={() => exportExcel(table.getFilteredRowModel().rows)}
+          >
+            <File className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only">Export</span>
+          </Button>
         </div>
       </div>
       <div className="bg-white border rounded-md">

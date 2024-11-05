@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
@@ -10,7 +11,7 @@ export const CarwashFilterTransactionColumn = [
     ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground hidden md:table-cell">
+        <TableCell className="text-muted-foreground hidden md:table-cell px-4 py-2">
           {row.original.billNo}
         </TableCell>
       );
@@ -24,9 +25,9 @@ export const CarwashFilterTransactionColumn = [
       const customer = row.original.customer;
 
       return (
-        <TableCell className="text-gray-600">
+        <TableCell className="px-4 py-2">
           <div className="flex flex-col items-start">
-            <div className="font-semibold">{customer.customerName}</div>
+            <div className="font-medium text-xs">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>
@@ -48,9 +49,11 @@ export const CarwashFilterTransactionColumn = [
       const service = row.original.service?.id;
 
       return (
-        <TableCell className="p-2">
+        <TableCell className="px-4 py-2">
           <div className="flex flex-col items-start">
-            <div className="font-semibold">{service?.serviceTypeName}</div>
+            <div className=" text-xs font-medium">
+              {service?.serviceTypeName}
+            </div>
             <div className="text-xs flex justify-between gap-2 text-muted-foreground">
               {service?.serviceVehicle?.vehicleTypeName}
               <span className="font-medium text-xs text-primary">
@@ -74,8 +77,9 @@ export const CarwashFilterTransactionColumn = [
       const status = row.original.transactionStatus;
 
       return (
-        <TableCell className="hidden lg:table-cell">
-          <Badge variant="secondary">{status}</Badge>
+        <TableCell className="hidden lg:table-cell px-4 py-2">
+          {/* <Badge variant="secondary">{status}</Badge> */}
+          <StatusBadge status={status} />
         </TableCell>
       );
     },
@@ -90,8 +94,9 @@ export const CarwashFilterTransactionColumn = [
       const payment = row.original.paymentStatus;
 
       return (
-        <TableCell className="hidden  lg:table-cell">
-          <Badge variant="outline">{payment}</Badge>
+        <TableCell className="hidden  lg:table-cell px-4 py-2">
+          {/* <Badge variant="outline">{payment}</Badge> */}
+          <StatusBadge status={payment} />
         </TableCell>
       );
     },
@@ -104,13 +109,13 @@ export const CarwashFilterTransactionColumn = [
       return <TableHead className="hidden lg:table-cell">{header}</TableHead>;
     },
     cell: ({ row }) => {
-      let date = format(new Date(row.original.createdAt), "d MMM, yyyy");
+      let date = format(new Date(row.original.createdAt), "d MMM, yyyy h:mm a");
       let time = format(new Date(row.original.createdAt), "h:mm a");
 
       return (
-        <TableCell className="hidden  lg:table-cell">
+        <TableCell className="hidden  lg:table-cell px-4 py-2">
           <div className="flex flex-col items-start">
-            <div className="font-medium">{time}</div>
+            {/* <div className="font-medium">{time}</div> */}
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
         </TableCell>
