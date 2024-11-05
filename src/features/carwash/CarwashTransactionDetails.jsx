@@ -27,7 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 
-import { getTimeDifference, timeDifference } from "@/lib/utils";
+import { getTimeDifference, handlePrint, timeDifference } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
 
 const CarwashTransactionDetails = ({
@@ -440,6 +440,53 @@ const Details = ({
 const DetailsFooter = ({ transactionDetails, handleTermination }) => {
   const navigate = useNavigate();
 
+  const handleReceiptPrint = () => {
+    let tableList = [
+      [
+        `\n${1}\n`,
+        `\n${transactionDetails?.service?.id?.serviceVehicle?.vehicleTypeName} ${transactionDetails?.service?.id?.serviceTypeName}\n`,
+        `\n${transactionDetails?.service?.id?.serviceRate.toFixed(2)}\n`,
+        `\n${transactionDetails?.service?.cost.toFixed(2)}\n`,
+      ],
+    ];
+
+    if (transactionDetails?.parking?.in && transactionDetails?.parking?.out) {
+      tableList.push([
+        `\n${2}\n`,
+        `\nParking (${format(
+          transactionDetails?.parking?.in,
+          "d MMM, h:mm a"
+        )} - ${format(transactionDetails?.parking.out, "d MMM, h:mm a")})\n`,
+        `\n${" "}\n`,
+        `\n${transactionDetails?.parking?.cost.toFixed(2)}\n`,
+      ]);
+    }
+
+    const billData = {
+      customerName: transactionDetails?.customer?.customerName || "",
+      customerContact:
+        transactionDetails?.customer?.customerContact.toString() || "",
+      paymentMode: transactionDetails?.paymentMode?.paymentModeName || "",
+      grossAmount:
+        transactionDetails?.grossAmount.toFixed(2).toString() || "0.00",
+      discountAmount:
+        transactionDetails?.discountAmount.toFixed(2).toString() || "0.00",
+      netAmount: transactionDetails?.netAmount.toFixed(2).toString() || "0.00",
+      billNo: transactionDetails?.billNo.toString() || "",
+      transactionDate: transactionDetails?.transactionTime
+        ? format(transactionDetails?.transactionTime, "d MMM, yy h:mm a")
+        : "",
+      createdAt: transactionDetails?.createdAt
+        ? format(transactionDetails?.createdAt, "d MMM, yy h:mm a")
+        : "",
+
+      tableList: tableList,
+    };
+    console.log("🚀 ~ handleReceiptPrint ~ billData:", billData);
+
+    handlePrint(billData);
+  };
+
   return (
     <div className="flex justify-between gap-4 items-center w-full">
       <div>
@@ -483,11 +530,7 @@ const DetailsFooter = ({ transactionDetails, handleTermination }) => {
         <Button
           className="w-full"
           variant="outline"
-          // onClick={() => {
-          //   navigate("/carwash/checkout", {
-          //     state: { transactionDetails },
-          //   });
-          // }}
+          onClick={handleReceiptPrint}
         >
           Print
           <Printer className="h-4 w-4 ml-2" />{" "}
