@@ -52,7 +52,7 @@ const chartConfig = {
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  const date = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const date = useMemo(() => new Date().toISOString(), []);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(date, {
@@ -90,6 +90,7 @@ function Carwash() {
     })).map((hour) => {
       const count = data.data.filter((transaction) => {
         const createdAt = new Date(transaction.createdAt);
+        console.log("🚀 ~ count ~ createdAt:", createdAt.getHours());
         return createdAt.getHours() === hour.hour;
       }).length;
       return { hour: hour.hour.toString(), Customers: count };
