@@ -111,7 +111,7 @@ function CarwashCheckout() {
             : undefined,
         parkingOut: parkingEligible && parkingIncluded ? parkingEnd : undefined,
         parkingCost: Number(data.parkingCost) || undefined,
-        transactionTime: new Date().toISOString(),
+        // transactionTime: new Date().toISOString(),
         grossAmount: grossAmt,
         discountAmount: Number(data.discountAmt) || 0,
         netAmount: netAmt,

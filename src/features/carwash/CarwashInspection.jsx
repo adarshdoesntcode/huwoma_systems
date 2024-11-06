@@ -103,7 +103,7 @@ function CarwashInspection() {
         transactionId: id,
         inspections: data.inspections,
         transactionStatus: "Ready for Pickup",
-        serviceEnd: new Date().toISOString(),
+        // serviceEnd: new Date().toISOString(),
       });
       if (res.error) {
         throw new Error(res.error.data.message);
