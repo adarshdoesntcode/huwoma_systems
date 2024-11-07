@@ -85,7 +85,6 @@ export const timeDifference = (date1, date2, buffer) => {
 };
 
 export const handlePrint = (data) => {
-  console.log(data);
   let props = {
     outputType: "blob",
     returnJsPDFDocObject: true,

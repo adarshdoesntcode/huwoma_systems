@@ -9,6 +9,18 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+    getCarwashCustomers: builder.query({
+      query: () => ({
+        url: "/carwash/customers",
+        method: "GET",
+      }),
+    }),
+    getCarwashCustomerById: builder.query({
+      query: (id) => ({
+        url: `/carwash/customer/${id}`,
+        method: "GET",
+      }),
+    }),
     createCutomer: builder.mutation({
       query: (credentials) => ({
         url: "/carwash/customer/new",
@@ -120,4 +132,6 @@ export const {
   useTransactionStartFromBookingMutation,
   useGetPreFilterTransactionsQuery,
   useGetPostFilterTransactionsMutation,
+  useGetCarwashCustomersQuery,
+  useGetCarwashCustomerByIdQuery,
 } = carwashApiSlice;

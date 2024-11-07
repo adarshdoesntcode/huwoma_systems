@@ -159,8 +159,8 @@ function CarwashNewRecord() {
       ) : (
         <Card>
           <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl">Customer</CardTitle>
-            <CardDescription>Customer for the transaction</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">New Wash</CardTitle>
+            <CardDescription>Customer for the new wash record</CardDescription>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
             <form

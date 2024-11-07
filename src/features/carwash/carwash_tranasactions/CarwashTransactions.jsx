@@ -671,6 +671,11 @@ const FilteredAnalytics = ({ responseData, range }) => {
 
   const parkingRevenue = sumByKey("parking.cost", completetedTransactions);
   const pendingRevenue = sumByKey("service.cost", pendingTransactions);
+  const actualWashRevenue = sumByKey(
+    "service.actualRate",
+    completetedTransactions
+  );
+  const freeWash = actualWashRevenue - WashRevenue;
 
   let dailyIncome = [];
 
@@ -757,9 +762,11 @@ const FilteredAnalytics = ({ responseData, range }) => {
               <div className="text-2xl font-bold">
                 +{WashRevenue.toLocaleString()}
               </div>
-              <p className="text-xs text-muted-foreground">
-                {/* -{freeWashes.toLocaleString()} for free washes */}
-              </p>
+              {freeWash > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  -{freeWash.toLocaleString()} for free wash
+                </p>
+              )}
             </CardContent>
           </Card>
           <Card>

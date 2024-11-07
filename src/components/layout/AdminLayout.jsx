@@ -48,6 +48,10 @@ function AdminLayout() {
 
   const user = useSelector(selectCurrentUser);
 
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, [location]);
+
   const crumbs = location.pathname.split("/").filter((crumb) => {
     if (crumb !== "" && crumb != ROLES_LIST.ADMIN) {
       return crumb;
@@ -85,12 +89,18 @@ function AdminLayout() {
             </Breadcrumb>
 
             <div className="relative ml-auto flex-1 md:grow-0">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4" />
+              <div className="flex items-center justify-center">
+                <img
+                  src="/huwoma_logo.png"
+                  className=" h-6 aspect-auto mx-auto"
+                />
+              </div>
+              {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4" />
               <Input
                 type="search"
                 placeholder="Search Customers"
                 className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-              />
+              /> */}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -116,7 +126,7 @@ function AdminLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <main className="flex flex-1 flex-col  p-4  lg:px-6 bg-slate-50">
+          <main className="flex flex-1 flex-col  p-4 pt-2 lg:px-6 bg-slate-50">
             <Outlet />
           </main>
         </div>

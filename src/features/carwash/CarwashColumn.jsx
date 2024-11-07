@@ -25,7 +25,7 @@ export const CarwashColumn = [
       const customer = row.original.customer;
 
       return (
-        <TableCell className="text-gray-600">
+        <TableCell className="text-gray-600 px-4 py-2 sm:py-2 sm:px-4">
           <div className="flex flex-col items-start">
             <div className="font-semibold">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
@@ -49,7 +49,7 @@ export const CarwashColumn = [
       const service = row.original.service?.id;
 
       return (
-        <TableCell className="p-2">
+        <TableCell className="px-4 py-2 sm:py-2 sm:px-4">
           <div className="flex flex-col items-start">
             <div className="font-semibold">{service?.serviceTypeName}</div>
             <div className="text-xs flex justify-between gap-2 text-muted-foreground">

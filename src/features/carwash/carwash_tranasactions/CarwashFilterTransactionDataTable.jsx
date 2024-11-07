@@ -63,10 +63,10 @@ const exportExcel = (rows) => {
     worksheet.columns = [
       { width: 25 },
       { width: 15 },
-      { width: 20 },
-      { width: 15 },
+      { width: 24 },
       { width: 15 },
       { width: 10 },
+      { width: 15 },
       { width: 20 },
       { width: 14 },
       { width: 14 },
@@ -84,8 +84,8 @@ const exportExcel = (rows) => {
       "Bill No",
       "Customer Name",
       "Contact",
-      "Vehicle",
       "VehicleNo.",
+      "Vehicle",
       "Service",
       "Service Cost",
       "Parking Cost",
@@ -111,10 +111,10 @@ const exportExcel = (rows) => {
       Bill_No: row.original?.billNo || "",
       Customer_Name: row.original?.customer?.customerName || "",
       Customer_Contact: row.original?.customer?.customerContact || "",
-      Vehicle: row.original?.service?.id?.serviceVehicle?.vehicleTypeName || "",
       Vehicle_Number: row.original?.vehicleNumber
         ? Number(row.original?.vehicleNumber)
         : "",
+      Vehicle: row.original?.service?.id?.serviceVehicle?.vehicleTypeName || "",
       Service: row.original?.service?.id?.serviceTypeName || "",
       Service_Cost: row.original?.service?.cost || 0,
       Parking_Cost: row.original?.parking?.cost || 0,
@@ -123,7 +123,7 @@ const exportExcel = (rows) => {
       Payment_Mode: row.original?.paymentMode?.paymentModeName || "",
       Gross_Amount: row.original?.grossAmount || 0,
       Discount_Amount: row.original?.discountAmount || 0,
-      Net_Amount: row.original?.netAmount || "",
+      Net_Amount: row.original?.netAmount || 0,
       Payment_Date: row.original?.transactionTime
         ? format(row.original?.transactionTime, "d MMM, yyyy h:mm a")
         : "",
@@ -135,8 +135,8 @@ const exportExcel = (rows) => {
         row.Bill_No,
         row.Customer_Name,
         row.Customer_Contact,
-        row.Vehicle,
         row.Vehicle_Number,
+        row.Vehicle,
         row.Service,
         row.Service_Cost,
         row.Parking_Cost,
@@ -162,7 +162,7 @@ const exportExcel = (rows) => {
     });
     toast({
       title: "Exported Successfully!!",
-      description: "Check you downloads folder",
+      description: "Check your downloads folder",
     });
   } catch (e) {
     console.error(e);

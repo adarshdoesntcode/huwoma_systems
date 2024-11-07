@@ -50,17 +50,21 @@ export const CarwashFilterTransactionColumn = [
 
       return (
         <TableCell className="px-4 py-2">
-          <div className="flex flex-col items-start">
-            <div className=" text-xs font-medium">
-              {service?.serviceTypeName}
+          {service ? (
+            <div className="flex flex-col items-start">
+              <div className=" text-xs font-medium">
+                {service?.serviceTypeName}
+              </div>
+              <div className="text-xs flex justify-between gap-2 text-muted-foreground">
+                {service?.serviceVehicle?.vehicleTypeName}
+                <span className="font-medium text-xs text-primary">
+                  ({row.original?.vehicleNumber})
+                </span>
+              </div>
             </div>
-            <div className="text-xs flex justify-between gap-2 text-muted-foreground">
-              {service?.serviceVehicle?.vehicleTypeName}
-              <span className="font-medium text-xs text-primary">
-                ({row.original?.vehicleNumber})
-              </span>
-            </div>
-          </div>
+          ) : (
+            <div className=" text-xs  text-muted-foreground">Not Selected</div>
+          )}
         </TableCell>
       );
     },
@@ -78,7 +82,6 @@ export const CarwashFilterTransactionColumn = [
 
       return (
         <TableCell className="hidden lg:table-cell px-4 py-2">
-          {/* <Badge variant="secondary">{status}</Badge> */}
           <StatusBadge status={status} />
         </TableCell>
       );
@@ -95,7 +98,6 @@ export const CarwashFilterTransactionColumn = [
 
       return (
         <TableCell className="hidden  lg:table-cell px-4 py-2">
-          {/* <Badge variant="outline">{payment}</Badge> */}
           <StatusBadge status={payment} />
         </TableCell>
       );
@@ -103,19 +105,17 @@ export const CarwashFilterTransactionColumn = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ table }) => {
+    header: () => {
       let header = "Initiated At";
 
       return <TableHead className="hidden lg:table-cell">{header}</TableHead>;
     },
     cell: ({ row }) => {
       let date = format(new Date(row.original.createdAt), "d MMM, yyyy h:mm a");
-      let time = format(new Date(row.original.createdAt), "h:mm a");
 
       return (
         <TableCell className="hidden  lg:table-cell px-4 py-2">
           <div className="flex flex-col items-start">
-            {/* <div className="font-medium">{time}</div> */}
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
         </TableCell>

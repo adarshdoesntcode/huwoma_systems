@@ -90,7 +90,7 @@ function Carwash() {
     })).map((hour) => {
       const count = data.data.filter((transaction) => {
         const createdAt = new Date(transaction.createdAt);
-        console.log("🚀 ~ count ~ createdAt:", createdAt.getHours());
+
         return createdAt.getHours() === hour.hour;
       }).length;
       return { hour: hour.hour.toString(), Customers: count };
@@ -133,7 +133,12 @@ function Carwash() {
         <div className="  sm:flex-row  flex items-start sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
           <NavBackButton buttonText={"Car Wash"} navigateTo={-1} />
           <div className=" flex justify-end">
-            <Button size="sm" variant="outline" className="mr-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="mr-2"
+              onClick={() => navigate("/carwash/customers")}
+            >
               <span className="sr-only sm:not-sr-only">Customers </span>
 
               <Users className="sm:ml-2 w-4 h-4" />
@@ -141,11 +146,7 @@ function Carwash() {
             <Button
               size="sm"
               variant="outline"
-              onClick={() =>
-                navigate("/carwash/transactions", {
-                  scroll: { top: 0, left: 0, behavior: "smooth" },
-                })
-              }
+              onClick={() => navigate("/carwash/transactions")}
             >
               <span className="sr-only sm:not-sr-only">Transactions </span>
 
@@ -267,7 +268,7 @@ function Carwash() {
                       <CardTitle className="text-xl sm:text-2xl">
                         Queue
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">
                         Vehicles in queue for their wash
                       </CardDescription>
                     </div>
@@ -306,7 +307,7 @@ function Carwash() {
                       <CardTitle className="text-xl sm:text-2xl">
                         Pick Up
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">
                         Vehicles ready for pickup
                       </CardDescription>
                     </div>
@@ -345,7 +346,7 @@ function Carwash() {
                       <CardTitle className="text-xl sm:text-2xl">
                         Complete
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">
                         Vehicles that have been paid off
                       </CardDescription>
                     </div>
@@ -384,7 +385,9 @@ function Carwash() {
                       <CardTitle className="text-xl sm:text-2xl">
                         Booking
                       </CardTitle>
-                      <CardDescription>Active Bookings</CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">
+                        Active Bookings
+                      </CardDescription>
                     </div>
                     <div className="flex items-end gap-2 flex-col">
                       <Button

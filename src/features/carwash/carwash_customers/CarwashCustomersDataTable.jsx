@@ -18,7 +18,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -37,27 +36,101 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { Loader2 } from "lucide-react";
-
-import { useDeleteCarwashTransactionMutation } from "./carwashApiSlice";
+import { File, Loader2 } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 
-import CarwashTransactionDetails from "./CarwashTransactionDetails";
+import CarwashTransactionDetails from "../CarwashTransactionDetails";
+import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
+
+import { Workbook } from "exceljs";
+import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-export const CarwashBookingDataTable = ({ columns, data }) => {
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const navigate = useNavigate();
+const exportExcel = (rows) => {
+  try {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Customers");
+
+    const titleRow = worksheet.addRow(["Huwoma Park N Wash"]);
+    titleRow.font = { bold: true, size: 14 };
+    titleRow.alignment = { horizontal: "center" };
+
+    worksheet.mergeCells(`A1:D1`);
+
+    worksheet.addRow([]);
+
+    worksheet.mergeCells(`A2:P2`);
+    worksheet.columns = [
+      { width: 25 },
+      { width: 15 },
+      { width: 20 },
+      { width: 25 },
+    ];
+
+    worksheet.getRow(3).values = [
+      "Customer",
+      "Contact",
+      "Total Spent",
+      "Customer Since",
+    ];
+    worksheet.getRow(3).font = { bold: true, size: 12 };
+    worksheet.getRow(3).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFD3D3D3" },
+    };
+
+    const rowData = rows.map((row, index) => ({
+      Customer_Name: row.original?.customerName || "",
+      Customer_Contact: row.original?.customerContact || "",
+      Customer_Transactions: row.original?.totalNetAmount || 0,
+      Customer_Since: row.original?.createdAt
+        ? format(row.original?.createdAt, "MMMM d, yyyy")
+        : "",
+    }));
+
+    rowData.forEach((row) => {
+      worksheet.addRow([
+        row.Customer_Name,
+        row.Customer_Contact,
+        row.Customer_Transactions,
+        row.Customer_Since,
+      ]);
+    });
+
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ParkNWashCustomers.xlsx";
+      a.click();
+    });
+    toast({
+      title: "Exported Successfully!!",
+      description: "Check your downloads folder",
+    });
+  } catch (e) {
+    console.error(e);
+    toast({
+      variant: "destructive",
+      title: "Something went wrong!!",
+      description: "Could not download",
+    });
+  }
+};
+
+export const CarwashCustomersDataTable = ({ columns, data }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 15,
   });
-
-  const [filter, setFilter] = useState("customer");
-
+  const [filter, setFilter] = useState("customerContact");
   const [sorting, setSorting] = useState([]);
+  const navigate = useNavigate();
 
   const table = useReactTable({
     data,
@@ -76,22 +149,21 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
 
   return (
     <>
-      <div className="items-center mb-4 space-x-2">
+      <div className="flex justify-between items-center mb-4 space-x-2">
         <div className="flex items-center gap-2 space-x-2">
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="customer">Contact</SelectItem>
-              <SelectItem value="billNo">Bill No</SelectItem>
+              <SelectItem value="customerContact">Contact</SelectItem>
+              <SelectItem value="customerName">Name</SelectItem>
             </SelectContent>
           </Select>
 
           <Input
             placeholder="Search.."
-            type="tel"
-            inputMode="numeric"
+            type={setFilter === "customerContact" ? "tel" : "text"}
             autoComplete="off"
             value={table.getColumn(filter)?.getFilterValue() ?? ""}
             onChange={(event) =>
@@ -99,6 +171,17 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
             }
             className="max-w-sm"
           />
+        </div>
+        <div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-10 gap-1 text-sm"
+            onClick={() => exportExcel(table.getFilteredRowModel().rows)}
+          >
+            <File className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only">Export</span>
+          </Button>
         </div>
       </div>
       <div className="bg-white border rounded-md">
@@ -118,7 +201,6 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
                     </React.Fragment>
                   );
                 })}
-                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             ))}
           </TableHeader>
@@ -128,14 +210,9 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer "
+                  className="cursor-pointer"
                   onClick={() => {
-                    navigate("/carwash/new", {
-                      state: {
-                        customer: row.original.customer,
-                        transaction: row.original._id,
-                      },
-                    });
+                    navigate(`/carwash/customers/${row.original._id}`);
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -146,19 +223,6 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
                       )}
                     </React.Fragment>
                   ))}
-                  <TableCell className="text-center border-t px-4 py-2 sm:py-2 sm:px-4">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDelete(true);
-                        setDeleteId(row.original._id);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -167,7 +231,7 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No Bookings.
+                  No Customers.
                 </TableCell>
               </TableRow>
             )}
@@ -196,76 +260,6 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
           Next
         </Button>
       </div>
-
-      <ConfirmDelete
-        showDelete={showDelete}
-        setShowDelete={setShowDelete}
-        setDeleteId={setDeleteId}
-        deleteId={deleteId}
-      />
     </>
   );
 };
-
-function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
-  const [deleteCarwashTransaction, { isLoading }] =
-    useDeleteCarwashTransactionMutation();
-
-  const handleCloseDelete = () => {
-    setShowDelete(false);
-    setDeleteId(null);
-  };
-
-  const handleDelete = async () => {
-    try {
-      if (!deleteId) return;
-      const res = await deleteCarwashTransaction({
-        id: deleteId,
-      });
-
-      if (res.error) {
-        handleCloseDelete();
-        throw new Error(res.error.data.message);
-      }
-
-      if (!res.error) {
-        handleCloseDelete();
-        toast({
-          title: "Booking Cancelled!",
-          description: "Successfully",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong!!",
-        description: error.message,
-      });
-    }
-  };
-  return (
-    <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will terminate this transaction
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {isLoading ? (
-            <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Terminating
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleDelete}>
-              Terminate
-            </Button>
-          )}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}

@@ -445,8 +445,8 @@ const DetailsFooter = ({ transactionDetails, handleTermination }) => {
       [
         `\n${1}\n`,
         `\n${transactionDetails?.service?.id?.serviceVehicle?.vehicleTypeName} ${transactionDetails?.service?.id?.serviceTypeName}\n`,
-        `\n${transactionDetails?.service?.id?.serviceRate.toFixed(2)}\n`,
-        `\n${transactionDetails?.service?.cost.toFixed(2)}\n`,
+        `\n${transactionDetails?.service?.actualRate?.toFixed(2) || ""}\n`,
+        `\n${transactionDetails?.service?.cost?.toFixed(2)}\n`,
       ],
     ];
 
@@ -482,7 +482,6 @@ const DetailsFooter = ({ transactionDetails, handleTermination }) => {
 
       tableList: tableList,
     };
-    console.log("🚀 ~ handleReceiptPrint ~ billData:", billData);
 
     handlePrint(billData);
   };

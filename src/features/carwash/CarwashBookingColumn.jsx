@@ -23,15 +23,20 @@ export const CarwashBookingColumn = [
     header: () => <TableHead>Customer</TableHead>,
     cell: ({ row }) => {
       const customer = row.original.customer;
+      const date = format(
+        new Date(row.original.bookingDeadline),
+        "d MMM, h:mm a"
+      );
 
       return (
-        <TableCell className="text-gray-600 border-t">
-          <div className="flex flex-col items-start">
+        <TableCell className=" border-t px-4 py-2 sm:py-2 sm:px-4">
+          <div className="flex flex-col   items-start">
             <div className="font-semibold">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>
           </div>
+          <div className="text-xs block sm:hidden">Deadline: {date}</div>
         </TableCell>
       );
     },

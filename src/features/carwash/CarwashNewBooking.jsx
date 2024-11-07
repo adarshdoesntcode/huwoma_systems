@@ -139,7 +139,7 @@ function CarwashNewBooking() {
       ) : (
         <Card>
           <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl">Customer</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl">New Booking</CardTitle>
             <CardDescription>Customer for new booking</CardDescription>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
