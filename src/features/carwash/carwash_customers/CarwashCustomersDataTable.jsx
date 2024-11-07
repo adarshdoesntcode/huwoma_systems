@@ -163,7 +163,7 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
 
           <Input
             placeholder="Search.."
-            type={setFilter === "customerContact" ? "tel" : "text"}
+            type={filter === "customerContact" ? "tel" : "text"}
             autoComplete="off"
             value={table.getColumn(filter)?.getFilterValue() ?? ""}
             onChange={(event) =>

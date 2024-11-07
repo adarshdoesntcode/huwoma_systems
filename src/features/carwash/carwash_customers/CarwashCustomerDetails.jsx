@@ -15,7 +15,16 @@ import { format } from "date-fns";
 import { CarwashFilterTranasactionDataTable } from "../carwash_tranasactions/CarwashFilterTransactionDataTable";
 import { CarwashFilterTransactionColumn } from "../carwash_tranasactions/CarwashFilterTransactionColumn";
 import { Label } from "@/components/ui/label";
-import { Table } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
@@ -76,7 +85,7 @@ function CarwashCustomerDetails() {
       <div className=" space-y-4 mb-64">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
-          <CardHeader className="p-4 sm:p-6">
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-2">
             <CardTitle className="text-xl sm:text-2xl">
               {customer.customerName}
             </CardTitle>
@@ -84,42 +93,67 @@ function CarwashCustomerDetails() {
               <span>{customer.customerContact}</span>
               <span>Since {format(customer.createdAt, "MMMM d, yyyy")}</span>
             </CardDescription>
-            <div>
+          </CardHeader>
+          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+            <Separator className="my-2" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
               {vehicleWithServicesAndStats.map((vehicleWithService, index) => {
                 return (
-                  <div key={index}>
+                  <div key={index} className="space-y-2 ">
                     <Label className="text-xs">
                       {vehicleWithService.vehicleTypeName}
                     </Label>
-                    <Table>
-                      {vehicleWithService.services.map((service, index) => {
-                        return (
-                          <div key={index}>
-                            <div className="flex justify-between">
-                              <span>{service.serviceTypeName}</span>
-                              <span>
-                                {service.totalTransactions} Transaction
-                                {service.totalTransactions > 1 && "s"}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Wash Count</span>
-                              <span>{service.washCount}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Streak</span>
-                              <span>{service.streak}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </Table>
+                    <div className="border rounded-lg">
+                      <Table className="text-[10px]">
+                        <TableHeader className="border-b bg-muted">
+                          <TableRow>
+                            <TableHead className=" py-0 ">Services</TableHead>
+                            <TableHead className=" py-0  text-center">
+                              Current Streak{" "}
+                            </TableHead>
+                            <TableHead className=" py-0 text-center ">
+                              Free After{" "}
+                            </TableHead>
+                            <TableHead className=" py-0 text-center ">
+                              Total Washes{" "}
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {vehicleWithService.services.map((service, index) => {
+                            return (
+                              <TableRow key={index}>
+                                <TableCell className="font-medium">
+                                  <span>{service.serviceTypeName}</span>
+                                </TableCell>
+                                <TableCell className="text-center text-xs font-medium py-1 ">
+                                  <div className="flex gap-1 flex-col">
+                                    <span>{service.streak}</span>
+                                    <Progress
+                                      className="h-3"
+                                      value={
+                                        (service.streak / service.washCount) *
+                                        100
+                                      }
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-center text-xs font-medium">
+                                  <span>{service.washCount}</span>
+                                </TableCell>
+                                <TableCell className="text-center text-xs font-medium">
+                                  <span>{service.totalTransactions}</span>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 );
               })}
             </div>
-          </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
             <CarwashFilterTranasactionDataTable
               data={customer.customerTransactions}
               columns={CarwashFilterTransactionColumn}

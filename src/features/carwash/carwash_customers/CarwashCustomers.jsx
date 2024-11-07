@@ -28,7 +28,7 @@ function CarwashCustomers() {
 
     content = (
       <div className=" space-y-4 mb-64">
-        <NavBackButton buttonText={"Car Wash Customers"} navigateTo={-1} />
+        <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-xl sm:text-2xl">All Customers</CardTitle>

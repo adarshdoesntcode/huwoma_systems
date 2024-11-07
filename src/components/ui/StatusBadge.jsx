@@ -15,7 +15,7 @@ const StatusBadge = ({ status }) => {
 
   return (
     <Badge
-      className={`${badgeClass} uppercase text-[10px] py-0 pointer-events-none`}
+      className={`${badgeClass} uppercase text-[10px] py-0 whitespace-nowrap pointer-events-none`}
     >
       {status}
     </Badge>

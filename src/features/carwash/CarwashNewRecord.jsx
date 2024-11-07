@@ -40,6 +40,7 @@ import {
 } from "@/lib/utils";
 import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
+import NavBackButton from "@/components/NavBackButton";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -109,17 +110,8 @@ function CarwashNewRecord() {
 
   return (
     <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
-      <div className="text-lg font-semibold tracking-tight flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => navigate(-1)}
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-        Car Wash Record
-      </div>
+      <NavBackButton buttonText={"Back"} navigateTo={-1} />
+
       {customer ? (
         <Card>
           <CardHeader className="p-4 sm:p-6">

@@ -13,50 +13,32 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-import { Input } from "@/components/ui/input";
-
-import { Loader2, Search } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import AdminSideBar from "../../features/admin/AdminSideBar";
 import AdminMobileSideBar from "../../features/admin/AdminMobileSideBar";
 import useLogout from "@/hooks/useLogout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROLES_LIST } from "@/lib/config";
-// import BreadCrumbGenerator from "../BreadCrumbGenerator";
+
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/features/auth/authSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { getInitials } from "@/lib/utils";
+import { getInitials, roleByCode } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../ui/alert-dialog";
 
 import { toast } from "@/hooks/use-toast";
 import BreadCrumbGenerator from "../BreadCrumbGenerator";
+import { Badge } from "../ui/badge";
 
 function AdminLayout() {
   const [logoutLoader, setLogoutLoader] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const logout = useLogout();
 
   const user = useSelector(selectCurrentUser);
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [location]);
-
-  const crumbs = location.pathname.split("/").filter((crumb) => {
-    if (crumb !== "" && crumb != ROLES_LIST.ADMIN) {
-      return crumb;
-    }
-  });
+  const logout = useLogout();
 
   const handlelogout = async () => {
     try {
@@ -71,6 +53,17 @@ function AdminLayout() {
       });
     }
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  const crumbs = location.pathname.split("/").filter((crumb) => {
+    if (crumb !== "" && crumb != ROLES_LIST.ADMIN) {
+      return crumb;
+    }
+  });
+
   return (
     <>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -89,18 +82,15 @@ function AdminLayout() {
             </Breadcrumb>
 
             <div className="relative ml-auto flex-1 md:grow-0">
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center sm:hidden">
                 <img
                   src="/huwoma_logo.png"
                   className=" h-6 aspect-auto mx-auto"
                 />
               </div>
-              {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4" />
-              <Input
-                type="search"
-                placeholder="Search Customers"
-                className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-              /> */}
+              <div className="hidden sm:block">
+                <Badge>{roleByCode(ROLES_LIST, user.role[0])}</Badge>
+              </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -130,15 +120,19 @@ function AdminLayout() {
             <Outlet />
           </main>
         </div>
-      </div>
-      {/* <AlertDialog open={logoutLoader}>
-        <AlertDialogContent className="w-[200px]">
-          <div className="flex justify-center items-center text-gray-600">
-            <Loader2 className="h-6 w-6 animate-spin mr-4" />
-            <span className="text-sm whitespace-nowrap">Logging Out</span>
+        <div
+          className={`fixed inset-0 z-50 w-dvw  bg-muted-foreground/30 h-svh flex items-center justify-center ${
+            logoutLoader ? "block" : "hidden"
+          }`}
+        >
+          <div className="w-[200px] bg-white rounded-md shadow-lg px-4 py-6">
+            <div className="flex justify-center items-center ">
+              <Loader2 className="h-6 w-6 animate-spin mr-4" />
+              <span className="text-sm whitespace-nowrap">Logging Out</span>
+            </div>
           </div>
-        </AlertDialogContent>
-      </AlertDialog> */}
+        </div>
+      </div>
     </>
   );
 }

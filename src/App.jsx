@@ -12,6 +12,17 @@ import NotFound from "./components/NotFound";
 import PrivateRoutes from "./routes/PrivateRoutes";
 import SettingsLayout from "./components/layout/SettingsLayout";
 import SettingsRoutes from "./routes/SettingsRoutes";
+import useLogout from "./hooks/useLogout";
+import { useState } from "react";
+import { toast } from "./hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
 
 const router = createBrowserRouter([
   {

@@ -35,6 +35,7 @@ import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import SubmitButton from "@/components/SubmitButton";
 import StatusBadge from "@/components/ui/StatusBadge";
+import NavBackButton from "@/components/NavBackButton";
 
 function CarwashInspection() {
   const navigate = useNavigate();
@@ -135,32 +136,28 @@ function CarwashInspection() {
     const service = data?.data?.transaction?.service?.id;
     content = (
       <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
-        <div className="text-lg font-semibold tracking-tight flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => navigate("/carwash", { state: { tab: "queue" } })}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          Car Wash Inspection
-        </div>
+        <NavBackButton
+          buttonText={"Back"}
+          navigateTo={"/carwash"}
+          navigateOpt={{ state: { tab: "queue" } }}
+        />
 
         {service && (
           <div className="grid gap-2 ">
-            <Label>Inspection For</Label>
+            <Label className="text-base font-bold">Inspection For</Label>
             <div className="border p-4 rounded-md shadow-sm bg-background">
               <div className="flex gap-4">
-                <div className="w-24 ">
+                <div className="w-20 sm:w-24 ">
                   <img src={`${service?.serviceVehicle?.vehicleIcon}`} />
                 </div>
                 <div className="flex flex-1 flex-col  pb-2 mb-2">
                   <div className="font-medium flex items-center justify-between">
                     <div className="text-sm">{service?.serviceTypeName}</div>
-                    <StatusBadge
-                      status={data?.data?.transaction?.transactionStatus}
-                    />
+                    <div className="hidden sm:block">
+                      <StatusBadge
+                        status={data?.data?.transaction?.transactionStatus}
+                      />
+                    </div>
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {service?.serviceVehicle?.vehicleTypeName}

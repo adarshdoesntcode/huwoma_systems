@@ -273,7 +273,7 @@ function CarwashTransactions() {
 
     content = (
       <div className=" space-y-4 mb-64">
-        <NavBackButton buttonText={"Car Wash Transactions"} navigateTo={-1} />
+        <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
           <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
             <CardTitle className="flex gap-3 text-lg sm:text-xl items-center">

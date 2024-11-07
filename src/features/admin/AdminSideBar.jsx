@@ -19,8 +19,8 @@ function AdminSideBar() {
     <div className="hidden  border-r bg-[url('/bg.webp')] bg-center bg-fixed md:block">
       <div className="sticky top-0 flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <div className="flex items-center ">
-            <img src="/huwoma_logo.png" className="w-8/12 mb-1 mx-auto" />
+          <div className="flex items-center justify-center w-full">
+            <img src="/huwoma_logo.png" className="h-7" />
           </div>
         </div>
         <div className="flex-1">

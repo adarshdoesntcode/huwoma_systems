@@ -13,7 +13,13 @@ import {
 } from "@/components/ui/chart";
 import { TabsContent } from "@/components/ui/tabs";
 
-import { PlusCircle, ReceiptText, RefreshCcw, Users } from "lucide-react";
+import {
+  Droplets,
+  PlusCircle,
+  ReceiptText,
+  RefreshCcw,
+  Users,
+} from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Bar,
@@ -72,9 +78,13 @@ function Carwash() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navigateState = location.state || {};
+  const navigateState = useMemo(() => location.state || {}, [location.state]);
 
-  const tab = navigateState?.tab || "queue";
+  const [tab, setTab] = useState(navigateState?.tab || "queue");
+
+  useEffect(() => {
+    setTab(navigateState?.tab || "queue");
+  }, [navigateState]);
 
   let inQueueTransactions = [];
   let readyForPickupTransactions = [];
@@ -84,11 +94,16 @@ function Carwash() {
   let hourlyCounts;
 
   if (data) {
+    const filteredTransactions = data?.data?.filter(
+      (transaction) =>
+        transaction.transactionStatus !== "Cancelled" &&
+        transaction.paymentStatus !== "Cancelled"
+    );
     hourlyCounts = Array.from({ length: 24 }, (_, i) => ({
       hour: i,
       count: 0,
     })).map((hour) => {
-      const count = data.data.filter((transaction) => {
+      const count = filteredTransactions.filter((transaction) => {
         const createdAt = new Date(transaction.createdAt);
 
         return createdAt.getHours() === hour.hour;
@@ -130,8 +145,11 @@ function Carwash() {
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="  sm:flex-row  flex items-start sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
-          <NavBackButton buttonText={"Car Wash"} navigateTo={-1} />
+        <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
+          <div className="text-sm font-semibold uppercase text-primary  flex items-center gap-2">
+            <Droplets className="w-4 h-4 text-muted-foreground" />
+            Carwash
+          </div>
           <div className=" flex justify-end">
             <Button
               size="sm"
@@ -202,7 +220,7 @@ function Carwash() {
           <Tabs
             value={tab}
             onValueChange={(value) => {
-              navigate("/carwash", { state: { tab: value }, replace: true });
+              setTab(value);
             }}
           >
             <div className="flex flex-col  items-start sm:items-center sm:flex-row gap-4 justify-between">
@@ -262,7 +280,7 @@ function Carwash() {
             </div>
             <TabsContent value="queue">
               <Card>
-                <CardHeader className="p-4 sm:p-6">
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
@@ -301,7 +319,7 @@ function Carwash() {
             </TabsContent>
             <TabsContent value="pickup">
               <Card>
-                <CardHeader className="p-4 sm:p-6">
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
@@ -340,7 +358,7 @@ function Carwash() {
             </TabsContent>
             <TabsContent value="complete">
               <Card>
-                <CardHeader className="p-4 sm:p-6">
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
@@ -379,7 +397,7 @@ function Carwash() {
             </TabsContent>
             <TabsContent value="booking">
               <Card>
-                <CardHeader className="p-4 sm:p-6">
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
