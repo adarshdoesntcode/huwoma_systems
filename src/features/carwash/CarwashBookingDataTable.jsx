@@ -45,15 +45,12 @@ import { toast } from "@/hooks/use-toast";
 
 import CarwashTransactionDetails from "./CarwashTransactionDetails";
 import { useNavigate } from "react-router-dom";
+import { DataTablePagination } from "@/components/DataTablePagination";
 
 export const CarwashBookingDataTable = ({ columns, data }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
 
   const [filter, setFilter] = useState("customer");
 
@@ -64,12 +61,11 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
+
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      pagination,
       sorting,
     },
   });
@@ -174,27 +170,8 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-slate-500">
-          Showing {table.getPaginationRowModel().rows.length} of{" "}
-          {table.getCoreRowModel().rows.length}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="py-4 text-muted-foreground">
+        <DataTablePagination table={table} />
       </div>
 
       <ConfirmDelete

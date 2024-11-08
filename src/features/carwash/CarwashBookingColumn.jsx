@@ -1,3 +1,4 @@
+import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
@@ -20,7 +21,13 @@ export const CarwashBookingColumn = [
 
   {
     accessorKey: "customer",
-    header: () => <TableHead>Customer</TableHead>,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Customer"
+        className={"px-1"}
+      />
+    ),
     cell: ({ row }) => {
       const customer = row.original.customer;
       const date = format(
@@ -45,6 +52,11 @@ export const CarwashBookingColumn = [
         .toString()
         .includes(filterValue);
     },
+    sortingFn: (a, b) => {
+      const nameA = a.original.customer?.customerName?.toLowerCase() || "";
+      const nameB = b.original.customer?.customerName?.toLowerCase() || "";
+      return nameA.localeCompare(nameB);
+    },
   },
 
   {
@@ -66,8 +78,12 @@ export const CarwashBookingColumn = [
 
   {
     accessorKey: "bookingDeadline",
-    header: () => (
-      <TableHead className="hidden md:table-cell">Deadline</TableHead>
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={"Deadline"}
+        className="hidden lg:table-cell px-1"
+      />
     ),
     cell: ({ row }) => {
       let date = format(new Date(row.original.bookingDeadline), "d MMM, yyyy");
@@ -85,10 +101,16 @@ export const CarwashBookingColumn = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ table }) => {
+    header: ({ column }) => {
       let header = "Booked At";
 
-      return <TableHead className="hidden xl:table-cell">{header}</TableHead>;
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={header}
+          className="hidden lg:table-cell px-1"
+        />
+      );
     },
     cell: ({ row }) => {
       let date = format(new Date(row.original.createdAt), "d MMM, yyyy");

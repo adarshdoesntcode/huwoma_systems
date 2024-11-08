@@ -121,7 +121,7 @@ function PaymentsGraph({ completetedTransactions, range }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
-        <ChartContainer config={chartConfig} className=" h-40 w-full">
+        <ChartContainer config={chartConfig} className="h-48 w-full">
           <BarChart
             accessibilityLayer
             data={paymentGraphData}
@@ -146,7 +146,7 @@ function PaymentsGraph({ completetedTransactions, range }) {
               cursor={false}
               content={<ChartTooltipContent hide indicator="line" />}
             />
-            <Bar dataKey="total" layout="vertical" radius={10}>
+            <Bar dataKey="total" layout="vertical" radius={10} barSize={50}>
               <LabelList
                 dataKey="total"
                 position="insideLeft"

@@ -46,6 +46,7 @@ import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
 import { Workbook } from "exceljs";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { DataTablePagination } from "@/components/DataTablePagination";
 
 const exportExcel = (rows) => {
   try {
@@ -124,10 +125,6 @@ const exportExcel = (rows) => {
 };
 
 export const CarwashCustomersDataTable = ({ columns, data }) => {
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 15,
-  });
   const [filter, setFilter] = useState("customerContact");
   const [sorting, setSorting] = useState([]);
   const navigate = useNavigate();
@@ -137,12 +134,11 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
+
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      pagination,
       sorting,
     },
   });
@@ -238,27 +234,8 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-slate-500">
-          Showing {table.getPaginationRowModel().rows.length} of{" "}
-          {table.getCoreRowModel().rows.length}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="py-4 text-muted-foreground">
+        <DataTablePagination table={table} />
       </div>
     </>
   );

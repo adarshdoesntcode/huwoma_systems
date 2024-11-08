@@ -1,3 +1,4 @@
+import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
@@ -20,7 +21,13 @@ export const CarwashColumn = [
 
   {
     accessorKey: "customer",
-    header: () => <TableHead>Customer</TableHead>,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Customer"
+        className={"px-1"}
+      />
+    ),
     cell: ({ row }) => {
       const customer = row.original.customer;
 
@@ -39,6 +46,11 @@ export const CarwashColumn = [
       return row.original.customer.customerContact
         .toString()
         .includes(filterValue);
+    },
+    sortingFn: (a, b) => {
+      const nameA = a.original.customer?.customerName?.toLowerCase() || "";
+      const nameB = b.original.customer?.customerName?.toLowerCase() || "";
+      return nameA.localeCompare(nameB);
     },
   },
   {
@@ -76,7 +88,6 @@ export const CarwashColumn = [
 
       return (
         <TableCell className="hidden lg:table-cell">
-          {/* <Badge variant="secondary">{status}</Badge> */}
           <StatusBadge status={status} />
         </TableCell>
       );
@@ -101,7 +112,7 @@ export const CarwashColumn = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ table }) => {
+    header: ({ table, column }) => {
       const rows = table.getFilteredRowModel().rows;
 
       let header = "Initiated At";
@@ -112,7 +123,13 @@ export const CarwashColumn = [
         header = "Transaction Time";
       }
 
-      return <TableHead className="hidden lg:table-cell">{header}</TableHead>;
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={header}
+          className="hidden lg:table-cell px-1"
+        />
+      );
     },
     cell: ({ row }) => {
       let date = format(new Date(row.original.createdAt), "d MMM, yyyy");

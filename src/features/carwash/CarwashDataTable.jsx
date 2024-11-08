@@ -43,17 +43,13 @@ import { useDeleteCarwashTransactionMutation } from "./carwashApiSlice";
 import { toast } from "@/hooks/use-toast";
 
 import CarwashTransactionDetails from "./CarwashTransactionDetails";
+import { DataTablePagination } from "@/components/DataTablePagination";
 
 export const CarwashDataTable = ({ columns, data }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
 
   const [filter, setFilter] = useState("serviceTypeName");
 
@@ -64,12 +60,11 @@ export const CarwashDataTable = ({ columns, data }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
+
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      pagination,
       sorting,
     },
   });
@@ -157,27 +152,8 @@ export const CarwashDataTable = ({ columns, data }) => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-slate-500">
-          Showing {table.getPaginationRowModel().rows.length} of{" "}
-          {table.getCoreRowModel().rows.length}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="py-4 text-muted-foreground">
+        <DataTablePagination table={table} />
       </div>
       <CarwashTransactionDetails
         showDetails={showDetails}

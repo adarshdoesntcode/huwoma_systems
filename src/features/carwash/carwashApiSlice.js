@@ -1,4 +1,5 @@
 import { apiSlice } from "@/api/apiSlice";
+import { update } from "lodash";
 
 export const carwashApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -20,7 +21,17 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         url: `/carwash/customer/${id}`,
         method: "GET",
       }),
+      providesTags: ["CarwashCustomer"],
     }),
+    updateCarwashCustomer: builder.mutation({
+      query: (credentials) => ({
+        url: `/carwash/customer/${credentials.id}`,
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashCustomer"],
+    }),
+
     createCutomer: builder.mutation({
       query: (credentials) => ({
         url: "/carwash/customer/new",
@@ -134,4 +145,5 @@ export const {
   useGetPostFilterTransactionsMutation,
   useGetCarwashCustomersQuery,
   useGetCarwashCustomerByIdQuery,
+  useUpdateCarwashCustomerMutation,
 } = carwashApiSlice;

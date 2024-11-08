@@ -94,7 +94,7 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
         </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
-        <ChartContainer config={chartConfig} className="h-40 w-full">
+        <ChartContainer config={chartConfig} className="h-48 w-full">
           <BarChart
             accessibilityLayer
             data={serviceData}
@@ -122,6 +122,7 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
               layout="vertical"
               fill={`${chartConfig[activeChart]?.color}`}
               radius={10}
+              barSize={50}
             >
               <LabelList
                 dataKey="serviceTypeName"

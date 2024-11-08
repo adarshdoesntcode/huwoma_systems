@@ -1,3 +1,4 @@
+import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
@@ -16,7 +17,13 @@ export const CarwashCustomersColumn = [
 
   {
     accessorKey: "customerName",
-    header: () => <TableHead>Customer</TableHead>,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Customer"
+        className={"px-1"}
+      />
+    ),
     cell: ({ row }) => {
       const customer = row.original;
 
@@ -53,10 +60,13 @@ export const CarwashCustomersColumn = [
 
   {
     accessorKey: "customerTransactions",
-    header: () => (
-      <TableHead className="hidden lg:table-cell text-center">
-        Total Spent
-      </TableHead>
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Total Spent"
+        className={"px-1 hidden lg:table-cell"}
+        buttonClass={"mx-auto"}
+      />
     ),
     cell: ({ row }) => {
       const total = row.original.totalNetAmount || 0;
@@ -67,17 +77,27 @@ export const CarwashCustomersColumn = [
         </TableCell>
       );
     },
+
+    sortingFn: (a, b) => {
+      const A = a.original.totalNetAmount || 0;
+      const B = b.original.totalNetAmount || 0;
+
+      return B - A;
+    },
   },
 
   {
     accessorKey: "createdAt",
-    header: () => {
+    header: ({ column }) => {
       let header = "Customer Since";
 
       return (
-        <TableHead className="hidden lg:table-cell text-center">
-          {header}
-        </TableHead>
+        <DataTableColumnHeader
+          column={column}
+          title={header}
+          className="hidden lg:table-cell px-1"
+          buttonClass={"mx-auto"}
+        />
       );
     },
     cell: ({ row }) => {

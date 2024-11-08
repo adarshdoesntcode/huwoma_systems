@@ -1,3 +1,4 @@
+import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
@@ -20,7 +21,13 @@ export const CarwashFilterTransactionColumn = [
 
   {
     accessorKey: "customer",
-    header: () => <TableHead>Customer</TableHead>,
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Customer"
+        className={"px-1"}
+      />
+    ),
     cell: ({ row }) => {
       const customer = row.original.customer;
 
@@ -39,6 +46,11 @@ export const CarwashFilterTransactionColumn = [
       return row.original.customer.customerContact
         .toString()
         .includes(filterValue);
+    },
+    sortingFn: (a, b) => {
+      const nameA = a.original.customer?.customerName?.toLowerCase() || "";
+      const nameB = b.original.customer?.customerName?.toLowerCase() || "";
+      return nameA.localeCompare(nameB);
     },
   },
   {
@@ -74,8 +86,12 @@ export const CarwashFilterTransactionColumn = [
   },
   {
     accessorKey: "transactionStatus",
-    header: () => (
-      <TableHead className="hidden lg:table-cell">Status</TableHead>
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={"Status"}
+        className="hidden lg:table-cell px-1"
+      />
     ),
     cell: ({ row }) => {
       const status = row.original.transactionStatus;
@@ -86,12 +102,19 @@ export const CarwashFilterTransactionColumn = [
         </TableCell>
       );
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
 
   {
     accessorKey: "paymentStatus",
-    header: () => (
-      <TableHead className="hidden lg:table-cell">Payment</TableHead>
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={"Payment"}
+        className="hidden lg:table-cell px-1"
+      />
     ),
     cell: ({ row }) => {
       const payment = row.original.paymentStatus;
@@ -102,13 +125,22 @@ export const CarwashFilterTransactionColumn = [
         </TableCell>
       );
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     accessorKey: "createdAt",
-    header: () => {
+    header: ({ column }) => {
       let header = "Initiated At";
 
-      return <TableHead className="hidden lg:table-cell">{header}</TableHead>;
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={header}
+          className="hidden lg:table-cell px-1"
+        />
+      );
     },
     cell: ({ row }) => {
       let date = format(new Date(row.original.createdAt), "d MMM, yyyy h:mm a");

@@ -184,12 +184,8 @@ function CarwashCheckout() {
     netAmt = grossAmt - discountAmt;
 
     content = (
-      <div className="mx-auto grid w-full max-w-xl items-start gap-3 ">
-        <NavBackButton
-          buttonText={"Back"}
-          navigateTo={"/carwash"}
-          navigateOpt={{ state: { tab: "pickup" } }}
-        />
+      <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
+        <NavBackButton buttonText={"Back"} navigateTo={-1} />
 
         <Card className="mb-20">
           <CardHeader className="p-4 sm:p-6">
@@ -215,29 +211,19 @@ function CarwashCheckout() {
             {service && (
               <div className="grid gap-2">
                 <Label>Service</Label>
-                <div className="border p-4  rounded-md shadow-sm">
-                  <div className="flex gap-3 items-start">
-                    <div className="w-24 pt-1">
-                      <img src={`${service?.serviceVehicle?.vehicleIcon}`} />
+                <div className="border p-4 rounded-md shadow-sm">
+                  <div className="flex flex-col border-b pb-2 mb-2">
+                    <div className="font-medium flex items-center justify-between">
+                      <div className="text-sm">{serviceName}</div>
+                      <Badge>{getOrdinal(washStreak + 1)} Wash</Badge>
                     </div>
-                    <div className="flex flex-col w-full  pb-2 mb-2">
-                      <div className="font-medium flex items-center justify-between">
-                        <div className="text-sm">{serviceName}</div>
-                        <Badge>
-                          <span className="whitespace-nowrap">
-                            {getOrdinal(washStreak + 1)} Wash{" "}
-                          </span>
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {vehicleName}
-                        <div className="font-medium text-primary">
-                          Vehicle No: {vehicleNumber}
-                        </div>
+                    <div className="text-xs text-muted-foreground">
+                      {vehicleName}
+                      <div className="font-medium text-primary">
+                        Vehicle No: {vehicleNumber}
                       </div>
                     </div>
                   </div>
-                  <Separator className="mb-2" />
                   <div className="flex gap-1 flex-col mt-1">
                     {serviceStart && (
                       <div className="flex items-center justify-between">

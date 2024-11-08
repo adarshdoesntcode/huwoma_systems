@@ -5,14 +5,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from "@tanstack/react-table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import {
   Table,
@@ -22,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 
@@ -45,6 +40,8 @@ import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
 
 import { Workbook } from "exceljs";
 import { format } from "date-fns";
+import { DataTableToolbar } from "@/components/DataTableToolbar";
+import { DataTablePagination } from "@/components/DataTablePagination";
 
 const exportExcel = (rows) => {
   try {
@@ -179,58 +176,36 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 15,
-  });
-
-  const [filter, setFilter] = useState("billNo");
-
   const [sorting, setSorting] = useState([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
     onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
-      pagination,
       sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
     },
   });
 
   return (
     <>
       <div className="flex justify-between items-center mb-4 space-x-2">
-        <div className="flex items-center gap-2 space-x-2">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="serviceTypeName">Vehicle No</SelectItem>
-              <SelectItem value="customer">Contact</SelectItem>
-              <SelectItem value="billNo">Bill No</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Input
-            placeholder="Search.."
-            type="tel"
-            inputMode="numeric"
-            autoComplete="off"
-            value={table.getColumn(filter)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(filter)?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
+        <DataTableToolbar table={table} />
         <div>
           <Button
             size="sm"
@@ -298,27 +273,8 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-slate-500">
-          Showing {table.getPaginationRowModel().rows.length} of{" "}
-          {table.getCoreRowModel().rows.length}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="py-4 text-muted-foreground">
+        <DataTablePagination table={table} />
       </div>
       <CarwashTransactionDetails
         showDetails={showDetails}
