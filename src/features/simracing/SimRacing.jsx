@@ -20,165 +20,197 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChevronLeft, Edit, PlusCircle, QrCode, Users } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import {
+  Car,
+  ChevronLeft,
+  Droplets,
+  Edit,
+  PlusCircle,
+  QrCode,
+  ReceiptText,
+  RefreshCcw,
+  Users,
+} from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import RigCard from "./RigCard";
+import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
+import ApiError from "@/components/error/ApiError";
+import Loader from "@/components/Loader";
+import { useGetSimRacingTransactionsQuery } from "./simRacingApiSlice";
+import { SimRacingDataTable } from "./SimRacingDataTable";
+import { SimRacingColumn } from "./SimRacingColumn";
 
 function SimRacing() {
   const navigate = useNavigate();
-  return (
-    <div>
-      <div className="text-xl font-semibold  flex items-center tracking-tight  justify-between gap-4 mb-4">
-        <div className="flex items-center gap-4 ">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => navigate(-1)}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          Sim Racing
+  const location = useLocation();
+  const navigateState = useMemo(() => location.state || {}, [location.state]);
+  const [tab, setTab] = useState(navigateState?.tab || "active");
+
+  const [lastUpdated, setLastUpdated] = useState(null);
+
+  const date = useMemo(() => new Date().toISOString(), []);
+
+  const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
+    useGetSimRacingTransactionsQuery(date, {
+      pollingInterval: 10000,
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    });
+
+  useEffect(() => {
+    if (isSuccess) {
+      const date = format(new Date(), "hh:mm:ss a");
+      setLastUpdated(date);
+    }
+  }, [isSuccess, isFetching]);
+
+  let rigs = [];
+  let transactions = [];
+
+  if (data) {
+    rigs = data?.data?.rigs || [];
+    transactions = data?.data?.transactions || [];
+  }
+
+  const handleRefresh = () => {
+    refetch();
+  };
+
+  let content;
+
+  if (isLoading) {
+    content = (
+      <div className="flex flex-1 items-center justify-center">
+        <Loader />
+      </div>
+    );
+  } else if (isSuccess) {
+    content = (
+      <div className="space-y-4">
+        <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
+          <div className="text-sm font-semibold uppercase text-primary  flex items-center gap-2">
+            <Car className="w-4 h-4 text-muted-foreground" />
+            Sim Racing
+          </div>
+          <div className=" flex justify-end">
+            <Button
+              size="sm"
+              variant="outline"
+              className="mr-2"
+              onClick={() => navigate("/simracing/customers")}
+            >
+              <span className="sr-only sm:not-sr-only">Customers </span>
+
+              <Users className="sm:ml-2 w-4 h-4" />
+            </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => navigate("/simracing/transactions")}
+            >
+              <span className="sr-only sm:not-sr-only">Transactions </span>
+
+              <ReceiptText className="sm:ml-2 w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-12 gap-4 sm:gap-6 mb-6">
+          {rigs.map((rig) => (
+            <RigCard
+              key={rig._id}
+              className={"col-span-12 lg:col-span-6"}
+              rig={rig}
+            />
+          ))}
         </div>
         <div>
-          <Button size="sm" variant="outline" className="mr-2">
-            Customers <Users className="ml-2 w-4 h-4" />
-          </Button>
-          <Button size="sm" variant="outline">
-            New Rig <PlusCircle className="ml-2 w-4 h-4" />
-          </Button>
+          <Tabs
+            value={tab}
+            onValueChange={(value) => {
+              setTab(value);
+            }}
+          >
+            <div className="flex flex-col  items-start sm:items-center sm:flex-row gap-4 justify-between">
+              <TabsList className="order-2 md:order-1">
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="finish">Finished</TabsTrigger>
+                <TabsTrigger value="booking">Booking</TabsTrigger>
+              </TabsList>
+              <div className="w-full sm:w-fit order-1 sm:order-2 flex justify-end ">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mr-2 w-full"
+                  onClick={() => navigate("/simracing/booking")}
+                >
+                  <span>Booking</span>
+                  <PlusCircle className="ml-2 w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => navigate("/simracing/new")}
+                  className="w-full"
+                >
+                  <span>Race</span>
+                  <PlusCircle className="ml-2  w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <TabsContent value="active">
+              <Card>
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-xl sm:text-2xl">
+                        Active
+                      </CardTitle>
+                      <CardDescription className="text-xs sm:text-sm">
+                        Ongoing sessions on the rigs
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-end gap-2 flex-col">
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <span className="sr-only sm:not-sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={`w-4 h-4 sm:ml-2 ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+                      <span className="text-[10px] text-muted-foreground hidden sm:block">
+                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                  <SimRacingDataTable
+                    data={transactions}
+                    columns={SimRacingColumn}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="bookings">
+              <Card></Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-6 mb-6">
-        <Card className="col-span-6 p-4">
-          <div className="flex">
-            <div className="w-8/12 border-r pr-2 flex flex-col justify-between">
-              <div>
-                <CardHeader className=" p-2 ">
-                  <CardTitle className="flex items-center justify-between gap-4 ">
-                    <div className="flex items-center gap-4 ">Rig #1</div>
-                    <div>
-                      <Badge variant="outline">Available</Badge>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-2 text-muted-foreground text-xs  pt-0">
-                  <p>in service since 21st June, 2023</p>
-                  <p>used for 401 hours</p>
-                </CardContent>
-              </div>
-              <div className="flex justify-between items-end p-2  text-sm">
-                <Edit className="w-5 h-5 text-muted-foreground" />
-                <QrCode />
-              </div>
-            </div>
-            <div className="w-4/12 flex items-center justify-center">
-              <img src="rig.webp" />
-            </div>
-          </div>
-        </Card>
-        <Card className="col-span-6 p-4">
-          <div className="flex">
-            <div className="w-8/12 border-r pr-2 flex flex-col justify-between">
-              <div>
-                <CardHeader className=" p-2 ">
-                  <CardTitle className="flex items-center justify-between gap-4 ">
-                    <div className="flex items-center gap-4 ">Rig #2</div>
-                    <div>
-                      <Badge variant="">Busy</Badge>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-2 text-muted-foreground text-xs  pt-0">
-                  <p>in service since 2nd April, 2021</p>
-                  <p>used for 928 hours</p>
-                </CardContent>
-              </div>
-              <div className="flex justify-between items-end p-2  text-sm">
-                <Edit className="w-5 h-5 text-muted-foreground" />
-                <QrCode />
-              </div>
-            </div>
-            <div className="w-4/12 flex items-center justify-center">
-              <img src="rig.webp" className="" />
-            </div>
-          </div>
-        </Card>
-      </div>
-      <div>
-        <Tabs defaultValue="active">
-          <div className="flex justify-between">
-            <TabsList>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            </TabsList>
-            <div>
-              <Button size="sm" variant="outline" className="mr-2">
-                Booking <PlusCircle className="ml-2 w-4 h-4" />
-              </Button>
-              <Button size="sm">
-                Record <PlusCircle className="ml-2 w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-          <TabsContent value="active">
-            <Card>
-              <CardHeader>
-                <CardTitle>Active</CardTitle>
-                <CardDescription>Ongoing sessions on the rigs</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader className="bg-muted">
-                    <TableRow>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Rig</TableHead>
-                      <TableHead>Start Time</TableHead>
-                      <TableHead>Time Lapsed</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invoices.map((invoice, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">
-                          <div>{invoice.customer.name}</div>
+    );
+  } else if (isError) {
+    content = <ApiError error={error} />;
+  }
 
-                          <div>{invoice.customer.contact}</div>
-                        </TableCell>
-                        <TableCell>{invoice.rig}</TableCell>
-                        <TableCell>{invoice.startTime}</TableCell>
-                        <TableCell>{invoice.timeLapsed}</TableCell>
-                        <TableCell className="text-right">
-                          <Button size="sm" variant="destructive">
-                            End
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="bookings">
-            <Card></Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  );
+  return content;
 }
-
-const invoices = [
-  {
-    customer: {
-      name: "Sajjan Raj Vaidya",
-      contact: "986756788",
-    },
-    rig: "Rig#2",
-    startTime: "11:00 AM",
-    timeLapsed: "00:36",
-  },
-];
 
 export default SimRacing;

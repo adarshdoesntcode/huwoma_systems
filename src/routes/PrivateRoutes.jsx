@@ -6,7 +6,7 @@ import Dashboard from "@/features/dashboard/Dashboard";
 import SimRacing from "@/features/simracing/SimRacing";
 import Carwash from "@/features/carwash/Carwash";
 import Parking from "@/features/parking/Parking";
-import Analytics from "@/features/analytics/Analytics";
+
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import SettingsRoutes from "./SettingsRoutes";
 import CarwashNewRecord from "@/features/carwash/CarwashNewRecord";
@@ -16,6 +16,8 @@ import CarwashNewBooking from "@/features/carwash/CarwashNewBooking";
 import CarwashCustomers from "@/features/carwash/carwash_customers/CarwashCustomers";
 import CarwashTransactions from "@/features/carwash/carwash_tranasactions/CarwashTransactions";
 import CarwashCustomerDetails from "@/features/carwash/carwash_customers/CarwashCustomerDetails";
+import Analytics from "@/features/analytics/Analytics";
+import SimRacingNewRace from "@/features/simracing/SimRacingNewRace";
 
 const PrivateRoutes = [
   {
@@ -73,7 +75,26 @@ const PrivateRoutes = [
     element: <SimRacing />,
     errorElement: <Error />,
   },
-
+  {
+    path: "simracing/new",
+    element: <SimRacingNewRace />,
+    errorElement: <Error />,
+  },
+  {
+    path: "simracing/booking",
+    element: <SimRacing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "simracing/customers",
+    element: <SimRacing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "simracing/transactions",
+    element: <SimRacing />,
+    errorElement: <Error />,
+  },
   {
     path: "parking",
     element: <Parking />,

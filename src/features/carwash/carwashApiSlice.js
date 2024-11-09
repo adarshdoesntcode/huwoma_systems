@@ -1,5 +1,4 @@
 import { apiSlice } from "@/api/apiSlice";
-import { update } from "lodash";
 
 export const carwashApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

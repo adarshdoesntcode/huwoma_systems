@@ -1,3 +1,9 @@
+import { useEffect, useState } from "react";
+
+import { useLocation, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "@/hooks/use-toast";
+import NavBackButton from "@/components/NavBackButton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,44 +15,26 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Check,
-  CheckCheck,
-  ChevronLeft,
-  ChevronRight,
-  Contact,
-  Loader2,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
-import {
-  useCreateCutomerMutation,
-  useFindCustomerMutation,
-  useTransactionOneMutation,
-  useTransactionStartFromBookingMutation,
-  useVehicleTypeWithServicesQuery,
-} from "./carwashApiSlice";
-import { toast } from "@/hooks/use-toast";
+import { CheckCheck, ChevronRight, Contact, Loader2 } from "lucide-react";
+import SubmitButton from "@/components/SubmitButton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ResetIcon } from "@radix-ui/react-icons";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
-  findWashCountForCustomer,
-  generateBillNo,
-  getOrdinal,
-} from "@/lib/utils";
-import { ResetIcon } from "@radix-ui/react-icons";
-import SubmitButton from "@/components/SubmitButton";
-import NavBackButton from "@/components/NavBackButton";
+  useCreateRacerMutation,
+  useFindRacerMutation,
+  useGetAvailableRigsQuery,
+  useStartRaceMutation,
+} from "./simRacingApiSlice";
 
-function CarwashNewRecord() {
+function SimRacingNewRace() {
   const [customer, setCoustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState(false);
-  const [findCustomer] = useFindCustomerMutation();
-  const [createCutomer] = useCreateCutomerMutation();
+  const [findRacer] = useFindRacerMutation();
+  const [createRacer] = useCreateRacerMutation();
 
   const locationState = useLocation().state || null;
   useEffect(() => {
@@ -65,7 +53,7 @@ function CarwashNewRecord() {
   const onSubmit = async (data) => {
     if (newCustomer) {
       try {
-        const res = await createCutomer({
+        const res = await createRacer({
           customerContact: data.customerContact,
           customerName: data.customerName,
         });
@@ -84,7 +72,7 @@ function CarwashNewRecord() {
       }
     } else if (!newCustomer) {
       try {
-        const res = await findCustomer({
+        const res = await findRacer({
           customerContact: data.customerContact,
         });
         if (res.error) {
@@ -150,8 +138,8 @@ function CarwashNewRecord() {
       ) : (
         <Card>
           <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl">New Wash</CardTitle>
-            <CardDescription>Customer for the new wash record</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">New Race</CardTitle>
+            <CardDescription>Customer for the new race record</CardDescription>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
             <form
@@ -253,22 +241,21 @@ function CarwashNewRecord() {
         </Card>
       )}
       {customer && (
-        <ServiceSelect customer={customer} locationState={locationState} />
+        <RigSelect customer={customer} locationState={locationState} />
       )}
     </div>
   );
 }
 
-const ServiceSelect = ({ customer, locationState }) => {
-  const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [selectedService, setSelectedService] = useState("");
-  const [serviceCost, setServiceCost] = useState("");
-  const { data, isLoading, isSuccess, isError, error, isFetching } =
-    useVehicleTypeWithServicesQuery();
+const RigSelect = ({ customer, locationState }) => {
+  const [selectedRig, setSelectedRig] = useState("");
 
-  const [transactionOne] = useTransactionOneMutation();
-  const [transactionStartFromBooking] =
-    useTransactionStartFromBookingMutation();
+  const { data, isLoading, isSuccess, isError, error, isFetching } =
+    useGetAvailableRigsQuery();
+
+  const [startRace] = useStartRaceMutation();
+  // const [transactionStartFromBooking] =
+  //   useTransactionStartFromBookingMutation();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -281,24 +268,20 @@ const ServiceSelect = ({ customer, locationState }) => {
     try {
       let res;
       if (locationState) {
-        res = await transactionStartFromBooking({
-          service: selectedService._id,
-          transactionId: locationState.transaction,
-          serviceRate: serviceCost,
-          actualRate: selectedService.serviceRate,
-          vehicleNumber: data.vehicleNumber,
-          customer: customer._id,
-          // serviceStart: new Date().toISOString(),
-        });
+        // res = await transactionStartFromBooking({
+        //   service: selectedService._id,
+        //   transactionId: locationState.transaction,
+        //   serviceRate: serviceCost,
+        //   actualRate: selectedService.serviceRate,
+        //   vehicleNumber: data.vehicleNumber,
+        //   customer: customer._id,
+        //   serviceStart: new Date().toISOString(),
+        // });
+        return;
       } else {
-        res = await transactionOne({
-          service: selectedService._id,
-          serviceRate: serviceCost,
-          actualRate: selectedService.serviceRate,
-          vehicleNumber: data.vehicleNumber,
+        res = await startRace({
+          rig: selectedRig._id,
           customer: customer._id,
-          // serviceStart: new Date().toISOString(),
-          // clientDate: new Date().toISOString(),
         });
       }
       if (res.error) {
@@ -306,10 +289,10 @@ const ServiceSelect = ({ customer, locationState }) => {
       }
       if (!res.error) {
         toast({
-          title: "Transaction Initiated!",
+          title: "Race Started!",
           description: `Bill No: ${res.data.data.billNo}`,
         });
-        navigate("/carwash", { state: { tab: "queue" }, replace: true });
+        navigate("/simracing", { state: { tab: "active" }, replace: true });
       }
     } catch (error) {
       toast({
@@ -320,8 +303,6 @@ const ServiceSelect = ({ customer, locationState }) => {
     }
   };
   let content;
-
-  const applicableTransactions = customer?.customerTransactions || [];
 
   if (isLoading || isFetching) {
     content = (
@@ -340,12 +321,11 @@ const ServiceSelect = ({ customer, locationState }) => {
       content = (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Vehicle Type</CardTitle>
+            <CardTitle className="text-lg">Rig Selection</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex text-center  items-center justify-center text-sm text-muted-foreground py-6 ">
-              No Configuration <br />
-              create in the settings page
+              No Available Rigs
             </div>
           </CardContent>
         </Card>
@@ -354,154 +334,55 @@ const ServiceSelect = ({ customer, locationState }) => {
       content = (
         <Card className="mb-64">
           <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-lg">Wash Selection</CardTitle>
+            <CardTitle className="text-lg">Rig Selection</CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-            <div>
+            <form id="rig-form" onSubmit={handleSubmit(onSubmit)}>
               <Label>
-                Vehicles{" "}
+                Rigs{" "}
                 <span className="font-normal text-xs text-muted-foreground">
                   (Select One)
                 </span>
               </Label>
               <Separator className="mt-2" />
-              <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
-                {data.data.map((vehicle) => {
+              <div className="flex flex-wrap gap-2 justify-evenly my-6">
+                {data.data.map((rig) => {
                   return (
                     <div
-                      key={vehicle._id}
+                      key={rig._id}
                       className="flex flex-col  items-center gap-3 text-xs text-muted-foreground cursor-pointer hover:scale-105 transition-transform hover:text-primary"
                       onClick={() => {
-                        setSelectedVehicle(vehicle);
-                        setSelectedService("");
+                        setSelectedRig(rig);
                       }}
                     >
-                      <div className="w-24 sm:w-36 relative border  px-4 py-2 rounded-lg shadow-lg gap-2">
-                        {selectedVehicle._id === vehicle._id && (
+                      <div className="w-32 sm:w-44 relative border  p-4 rounded-lg shadow-lg gap-2">
+                        {selectedRig._id === rig._id && (
                           <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
                           </Badge>
                         )}
-                        <img src={vehicle.vehicleIcon} />
+                        <img src={"/rig.webp"} />
                       </div>
-                      <p>{vehicle.vehicleTypeName}</p>
+                      <p className="font-medium text-sm">{rig.rigName}</p>
                     </div>
                   );
                 })}
               </div>
-            </div>
-
-            {selectedVehicle && (
-              <div>
-                <Label>
-                  Services{" "}
-                  <span className="font-normal text-xs text-muted-foreground">
-                    (Select One)
-                  </span>
-                </Label>
-                <Separator className="mt-2" />
-
-                <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
-                  {selectedVehicle.services.map((service) => {
-                    let washCount = service.streakApplicable.washCount;
-                    let washStreak = findWashCountForCustomer(
-                      applicableTransactions,
-                      service._id
-                    );
-
-                    let washStreakApplicable =
-                      service.streakApplicable.decision;
-
-                    let isFree =
-                      washStreak >= washCount && washStreakApplicable
-                        ? true
-                        : false;
-
-                    return (
-                      <div
-                        key={service._id}
-                        className="flex flex-col  items-center gap-3 text-xs text-primary font-medium   cursor-pointer hover:scale-105 transition-transform hover:text-primary"
-                        onClick={() => {
-                          setSelectedService(service);
-                          setServiceCost(isFree ? 0 : service.serviceRate);
-                        }}
-                      >
-                        <div className="w-24 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg">
-                          {selectedService._id === service._id && (
-                            <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
-                              <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
-                            </Badge>
-                          )}
-                          {isFree && (
-                            <Badge
-                              variant="outline"
-                              className="rounded-full text-xs bg-primary-foreground normal-case text-destructive  border-dashed border-destructive   tracking-wider  shadow-lg absolute left-0 top-0 -translate-x-1/4 -translate-y-1/4 rotate-[-20deg]"
-                            >
-                              Free!!
-                            </Badge>
-                          )}
-                          {/* {!isFree && washStreakApplicable && (
-                            <Badge
-                              variant="outline"
-                              className=" text-xs bg-primary-foreground normal-case     tracking-wider  shadow-lg absolute left-0 top-0 -translate-x-1/4 -translate-y-1/4 "
-                            >
-                              {getOrdinal(washStreak + 1)}
-                            </Badge>
-                          )} */}
-                          {service.serviceTypeName}
-                        </div>
-                        <p>Rs. {service.serviceRate}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            {selectedService && (
-              <>
-                <form id="transaction-1" onSubmit={handleSubmit(onSubmit)}>
-                  <Separator className="mb-2" />
-                  <div className="grid gap-2 mt-6">
-                    <Label>
-                      Vehicle No.{" "}
-                      <span className="font-normal text-xs text-muted-foreground">
-                        (for your own convenience)
-                      </span>
-                    </Label>
-                    <Input
-                      id="vehicleNumber"
-                      type="tel"
-                      inputMode="numeric"
-                      autoComplete="off"
-                      placeholder="Vehicle Identification Number"
-                      autoFocus
-                      {...register("vehicleNumber", {
-                        required: "Identification is required",
-                      })}
-                      className={
-                        errors.vehicleNumber ? "border-destructive" : ""
-                      }
-                    />
-                  </div>
-                </form>
-              </>
-            )}
+            </form>
           </CardContent>
           <CardFooter className="border-t sm:px-6 px-4  py-4 flex justify-end">
-            {isSubmitting ? (
-              <Button disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={!selectedVehicle || !selectedService}
-                form="transaction-1"
-              >
-                Submit <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            )}
+            <SubmitButton
+              condition={isSubmitting}
+              loadingText="Submitting"
+              type="submit"
+              disabled={!selectedRig}
+              form="rig-form"
+              buttonText={
+                <>
+                  Submit <ChevronRight className="w-4 h-4 ml-2" />
+                </>
+              }
+            />
           </CardFooter>
         </Card>
       );
@@ -512,4 +393,4 @@ const ServiceSelect = ({ customer, locationState }) => {
   return content;
 };
 
-export default CarwashNewRecord;
+export default SimRacingNewRace;

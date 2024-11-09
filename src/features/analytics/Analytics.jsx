@@ -1,5 +1,5 @@
 function Analytics() {
-  return <div></div>;
+  return <div>Check</div>;
 }
 
 export default Analytics;
