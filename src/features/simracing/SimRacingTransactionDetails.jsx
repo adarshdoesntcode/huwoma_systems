@@ -26,6 +26,7 @@ const SimRacingTransactionDetails = ({
 
   if (transactionDetails) {
     raceStart = transactionDetails?.start;
+    console.log("🚀 ~ raceStart:", raceStart);
     raceEnd = transactionDetails?.end;
     raceTime = getTimeDifference(raceStart, raceEnd);
   }
@@ -49,7 +50,12 @@ const SimRacingTransactionDetails = ({
 
           <div className="flex flex-col flex-1">
             <div className="flex-1 overflow-y-auto pb-16">
-              <Details transactionDetails={transactionDetails} />
+              <Details
+                transactionDetails={transactionDetails}
+                raceStart={raceStart}
+                raceEnd={raceEnd}
+                raceTime={raceTime}
+              />
             </div>
           </div>
         </SheetContent>
