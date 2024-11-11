@@ -308,7 +308,7 @@ const RigSelect = ({ customer, locationState }) => {
     content = (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Vehicle Type</CardTitle>
+          <CardTitle className="text-lg">Rig Selection</CardTitle>
         </CardHeader>
 
         <CardContent>

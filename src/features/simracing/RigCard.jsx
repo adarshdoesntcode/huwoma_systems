@@ -1,5 +1,11 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Dot, Edit, QrCode, Wrench } from "lucide-react";
@@ -21,8 +27,6 @@ function RigCard({ rig, className }) {
   const downloadContent = () => {
     html2canvas(canvasRef.current).then((canvas) => {
       const imageURL = canvas.toDataURL("image/png");
-
-      // Create a temporary anchor element to trigger the download
       const link = document.createElement("a");
       link.href = imageURL;
       link.download = `${rig?.rigName}_QR.png`;
@@ -31,26 +35,32 @@ function RigCard({ rig, className }) {
   };
 
   return (
-    <Card className={cn("p-2 sm:p-4", className)}>
-      <div className="flex">
-        <div className="w-8/12 border-r pr-2 flex flex-col justify-between">
+    <Card
+      className={cn(
+        "p-2 sm:p-4 bg-[linear-gradient(to_right_bottom,rgba(256,256,256,1),rgba(256,256,256,0.7),rgba(256,256,256,0.4)),url('/rig.webp')] bg-center sm:bg-none  bg-cover ",
+        className
+      )}
+    >
+      <div className="flex ">
+        <div className="sm:w-8/12 w-full sm:border-r sm:pr-2 flex flex-col justify-between">
           <div>
-            <CardHeader className=" p-2 ">
-              <CardTitle className="flex items-center justify-between gap-4 ">
+            <CardHeader className=" p-2 pb-0 sm:pb-2 ">
+              <CardTitle className="flex text-lg sm:text-2xl items-center justify-between gap-4 ">
                 <div className="flex items-center gap-4 ">{rig?.rigName}</div>
                 <div>
                   <Badge
                     variant={rig?.rigStatus === "On Track" ? "" : "outline"}
+                    className={rig?.rigStatus !== "On Track" ? "bg-white" : ""}
                   >
                     {rig?.rigStatus}
                   </Badge>
                 </div>
               </CardTitle>
+              <CardDescription className="text-xs">
+                <p>Raced by {rig?.rigTransactions?.length} drivers</p>
+                <p>On track since {format(rig?.createdAt, "MMM d, yyyy")}</p>
+              </CardDescription>
             </CardHeader>
-            <CardContent className="p-2 text-muted-foreground text-xs  ">
-              <p>Raced by {rig?.rigTransactions?.length} drivers</p>
-              <p>On track since {format(rig?.createdAt, "MMM d, yyyy")}</p>
-            </CardContent>
           </div>
           <div className="flex justify-between items-end p-2  pb-1">
             <Dot
@@ -94,7 +104,7 @@ function RigCard({ rig, className }) {
             </Dialog>
           </div>
         </div>
-        <div className="w-4/12 aspect-auto flex items-center justify-center">
+        <div className="w-4/12 aspect-auto hidden sm:flex items-center justify-center ">
           <img src="rig.webp" />
         </div>
       </div>

@@ -39,7 +39,7 @@ export const SimRacingColumn = [
               {customer.customerContact}
             </div>
           </div>
-          <div className="text-xs block sm:hidden">Start: {date}</div>
+          <div className="text-xs block md:hidden">Started: {date}</div>
         </TableCell>
       );
     },
@@ -73,7 +73,7 @@ export const SimRacingColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden lg:table-cell px-1"
+          className="hidden xl:table-cell px-1"
         />
       );
     },
@@ -93,8 +93,8 @@ export const SimRacingColumn = [
   },
   {
     accessorKey: "timeLapsed",
-    header: ({ column }) => (
-      <TableHead className="hidden lg:table-cell text-center">
+    header: () => (
+      <TableHead className="hidden md:table-cell text-center">
         Time Lapsed
       </TableHead>
     ),
