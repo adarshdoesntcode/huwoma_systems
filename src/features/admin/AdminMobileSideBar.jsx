@@ -70,12 +70,12 @@ function AdminMobileSideBar() {
             >
               <Droplets className="h-5 w-5" />
               Car Wash
-              <Badge
+              {/* <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
               >
                 3
-              </Badge>
+              </Badge> */}
             </Link>
           </SheetClose>
           <SheetClose asChild>
@@ -89,12 +89,12 @@ function AdminMobileSideBar() {
             >
               <Car className="h-5 w-5" />
               Sim Racing
-              <Badge
+              {/* <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
               >
                 3
-              </Badge>
+              </Badge> */}
             </Link>
           </SheetClose>
           <SheetClose asChild>
@@ -108,31 +108,31 @@ function AdminMobileSideBar() {
             >
               <CircleParking className="h-5 w-5" />
               Parking
-              <Badge
+              {/* <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
               >
                 6
-              </Badge>
+              </Badge> */}
             </Link>
           </SheetClose>
           <SheetClose asChild>
             <Link
-              to={`/analytics`}
+              to={`/broadcast`}
               className={`mx-[-0.65rem]  flex items-center ${
                 isTabActive(currentPath, "analytics")
                   ? "bg-foreground text-white"
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <ChartLine className="h-5 w-5" />
-              Analytics
-              <Badge
+              <Megaphone className="h-5 w-5" />
+              Broadcast
+              {/* <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
               >
                 2336
-              </Badge>
+              </Badge> */}
             </Link>
           </SheetClose>
         </nav>

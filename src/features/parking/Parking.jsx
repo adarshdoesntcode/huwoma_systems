@@ -1,5 +1,5 @@
 function Parking() {
-  return <div></div>;
+  return <div>Parking</div>;
 }
 
 export default Parking;

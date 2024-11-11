@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
+
 import {
   Select,
   SelectContent,
@@ -45,6 +46,10 @@ import { toast } from "@/hooks/use-toast";
 
 import { useNavigate } from "react-router-dom";
 import { DataTablePagination } from "@/components/DataTablePagination";
+import {
+  useCancelRaceMutation,
+  useDeleteSimracingTransactionMutation,
+} from "./simRacingApiSlice";
 
 export const SimRacingDataTable = ({ columns, data }) => {
   const [showDelete, setShowDelete] = useState(false);
@@ -125,14 +130,14 @@ export const SimRacingDataTable = ({ columns, data }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer "
+                  className="hover:bg-inherit"
                   onClick={() => {
-                    navigate("/carwash/new", {
-                      state: {
-                        customer: row.original.customer,
-                        transaction: row.original._id,
-                      },
-                    });
+                    // navigate("/carwash/new", {
+                    //   state: {
+                    //     customer: row.original.customer,
+                    //     transaction: row.original._id,
+                    //   },
+                    // });
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -144,35 +149,41 @@ export const SimRacingDataTable = ({ columns, data }) => {
                     </React.Fragment>
                   ))}
                   <TableCell className="text-center border-t px-4 py-2 sm:py-2 sm:px-4">
-                    <div className="space-x-2">
+                    <div className="flex gap-1 sm:flex-2 justify-center flex-col sm:flex-row">
                       <Button
-                        size="icon"
+                        size="sm"
                         variant="outline"
+                        title="Cancel Race"
+                        className="h-9 text-xs order-2 sm:order-1"
                         onClick={(e) => {
                           e.stopPropagation();
                           setShowDelete(true);
                           setDeleteId(row.original._id);
                         }}
                       >
+                        Cancel
                         <img
                           src="/redflag.png"
-                          className="w-5 h-5"
+                          className="w-3 h-3 ml-2"
                           alt="delete"
                         />
                       </Button>
+
                       <Button
-                        size="icon"
+                        size="sm"
                         variant="outline"
+                        className="h-9 text-xs order-1 sm:order-2"
+                        title="Finish Race"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowDelete(true);
-                          setDeleteId(row.original._id);
+                          navigate(`/simracing/checkout/${row.original._id}`);
                         }}
                       >
+                        Finish
                         <img
                           src="/checkered.png"
-                          className="w-5 h-5"
-                          alt="delete"
+                          className="w-3 h-3 ml-2 "
+                          alt="finish"
                         />
                       </Button>
                     </div>
@@ -207,45 +218,45 @@ export const SimRacingDataTable = ({ columns, data }) => {
 };
 
 function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
-  // const [deleteCarwashTransaction, { isLoading }] =
-  //   useDeleteCarwashTransactionMutation();
+  const [cancelRace, { isLoading }] = useCancelRaceMutation();
 
-  let isLoading = false;
   const handleCloseDelete = () => {
     setShowDelete(false);
     setDeleteId(null);
   };
 
   const handleDelete = async () => {
-    // try {
-    //   if (!deleteId) return;
-    //   const res = await deleteCarwashTransaction({
-    //     id: deleteId,
-    //   });
-    //   if (res.error) {
-    //     handleCloseDelete();
-    //     throw new Error(res.error.data.message);
-    //   }
-    //   if (!res.error) {
-    //     handleCloseDelete();
-    //     toast({
-    //       title: "Booking Cancelled!",
-    //       description: "Successfully",
-    //     });
-    //   }
-    // } catch (error) {
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Something went wrong!!",
-    //     description: error.message,
-    //   });
-    // }
+    try {
+      if (!deleteId) return;
+      const res = await cancelRace({
+        id: deleteId,
+      });
+      if (res.error) {
+        handleCloseDelete();
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        handleCloseDelete();
+        toast({
+          title: "Race Cancelled!",
+          description: "Successfully",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
   };
   return (
     <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Do you want to terminate this race?
+          </AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will terminate this transaction
           </AlertDialogDescription>

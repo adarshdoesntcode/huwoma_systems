@@ -1,9 +1,5 @@
 import NavBackButton from "@/components/NavBackButton";
-import {
-  useCreateCutomerMutation,
-  useFindCustomerMutation,
-  useTransactionBookingMutation,
-} from "./carwashApiSlice";
+
 import { useState } from "react";
 
 import { useForm } from "react-hook-form";
@@ -16,8 +12,13 @@ import {
   Calendar as CalendarIcon,
   ChevronRight,
 } from "lucide-react";
+import {
+  useCreateRacerMutation,
+  useFindRacerMutation,
+  useSimracingBookingMutation,
+} from "./simRacingApiSlice";
 
-import { cn, generateBillNo } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -42,12 +43,13 @@ import { Contact } from "lucide-react";
 import SubmitButton from "@/components/SubmitButton";
 import { TimePicker } from "@/components/ui/time-picker";
 import { useNavigate } from "react-router-dom";
+import { useTransactionBookingMutation } from "../carwash/carwashApiSlice";
 
-function CarwashNewBooking() {
+function SimRacingNewBooking() {
   const [customer, setCoustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState(false);
-  const [findCustomer] = useFindCustomerMutation();
-  const [createCutomer] = useCreateCutomerMutation();
+  const [findRacer] = useFindRacerMutation();
+  const [createRacer] = useCreateRacerMutation();
 
   const {
     handleSubmit,
@@ -59,7 +61,7 @@ function CarwashNewBooking() {
   const onSubmit = async (data) => {
     if (newCustomer) {
       try {
-        const res = await createCutomer({
+        const res = await createRacer({
           customerContact: data.customerContact,
           customerName: data.customerName,
         });
@@ -78,7 +80,7 @@ function CarwashNewBooking() {
       }
     } else if (!newCustomer) {
       try {
-        const res = await findCustomer({
+        const res = await findRacer({
           customerContact: data.customerContact,
         });
         if (res.error) {
@@ -140,7 +142,7 @@ function CarwashNewBooking() {
         <Card>
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-xl sm:text-2xl">
-              Carwash Booking
+              Sim Racing Booking
             </CardTitle>
             <CardDescription>Customer for new booking</CardDescription>
           </CardHeader>
@@ -250,17 +252,15 @@ function CarwashNewBooking() {
 
 const BookingTime = ({ customer }) => {
   const [date, setDate] = useState(new Date());
-  const [transactionBooking, { isLoading }] = useTransactionBookingMutation();
+  const [simracingBooking, { isLoading }] = useSimracingBookingMutation();
   const navigate = useNavigate();
 
   const onSubmit = async () => {
     if (!date) return;
     try {
-      const res = await transactionBooking({
-        billNo: generateBillNo(),
+      const res = await simracingBooking({
         bookingDeadline: date.toISOString(),
         customerId: customer._id,
-        // clientDate: new Date().toISOString(),
       });
       if (res.error) {
         throw new Error(res.error.data.message);
@@ -270,7 +270,7 @@ const BookingTime = ({ customer }) => {
           title: "Booking Successful!",
           description: `Bill No: ${res.data.data.billNo}`,
         });
-        navigate("/carwash", { state: { tab: "booking" }, replace: true });
+        navigate("/simracing", { state: { tab: "booking" }, replace: true });
       }
     } catch (error) {
       toast({
@@ -355,4 +355,4 @@ function DateTimePicker({ date, setDate }) {
   );
 }
 
-export default CarwashNewBooking;
+export default SimRacingNewBooking;

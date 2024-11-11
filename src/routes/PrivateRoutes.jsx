@@ -16,8 +16,10 @@ import CarwashNewBooking from "@/features/carwash/CarwashNewBooking";
 import CarwashCustomers from "@/features/carwash/carwash_customers/CarwashCustomers";
 import CarwashTransactions from "@/features/carwash/carwash_tranasactions/CarwashTransactions";
 import CarwashCustomerDetails from "@/features/carwash/carwash_customers/CarwashCustomerDetails";
-import Analytics from "@/features/analytics/Analytics";
 import SimRacingNewRace from "@/features/simracing/SimRacingNewRace";
+import SimRacingNewBooking from "@/features/simracing/SimRacingNewBooking";
+import Broadcast from "@/features/broadcast/Broadcast";
+import SimRacingCheckout from "@/features/simracing/SimRacingCheckout";
 
 const PrivateRoutes = [
   {
@@ -82,7 +84,7 @@ const PrivateRoutes = [
   },
   {
     path: "simracing/booking",
-    element: <SimRacing />,
+    element: <SimRacingNewBooking />,
     errorElement: <Error />,
   },
   {
@@ -96,13 +98,18 @@ const PrivateRoutes = [
     errorElement: <Error />,
   },
   {
+    path: "simracing/checkout/:id",
+    element: <SimRacingCheckout />,
+    errorElement: <Error />,
+  },
+  {
     path: "parking",
     element: <Parking />,
     errorElement: <Error />,
   },
   {
-    path: "analytics",
-    element: <Analytics />,
+    path: "broadcast",
+    element: <Broadcast />,
     errorElement: <Error />,
   },
   {

@@ -37,7 +37,7 @@ function RigCard({ rig, className }) {
   return (
     <Card
       className={cn(
-        "p-2 sm:p-4 bg-[linear-gradient(to_right_bottom,rgba(256,256,256,1),rgba(256,256,256,0.7),rgba(256,256,256,0.4)),url('/rig.webp')] bg-center sm:bg-none  bg-cover ",
+        "p-2 sm:p-4 bg-[linear-gradient(to_right_bottom,rgba(256,256,256,1),rgba(256,256,256,.95),rgba(256,256,256,0.6)),url('/rig.webp')] bg-center sm:bg-none  bg-cover ",
         className
       )}
     >
@@ -45,7 +45,7 @@ function RigCard({ rig, className }) {
         <div className="sm:w-8/12 w-full sm:border-r sm:pr-2 flex flex-col justify-between">
           <div>
             <CardHeader className=" p-2 pb-0 sm:pb-2 ">
-              <CardTitle className="flex text-lg sm:text-2xl items-center justify-between gap-4 ">
+              <CardTitle className="flex text-lg sm:text-2xl  items-center justify-between gap-4 ">
                 <div className="flex items-center gap-4 ">{rig?.rigName}</div>
                 <div>
                   <Badge
@@ -57,8 +57,9 @@ function RigCard({ rig, className }) {
                 </div>
               </CardTitle>
               <CardDescription className="text-xs">
-                <p>Raced by {rig?.rigTransactions?.length} drivers</p>
-                <p>On track since {format(rig?.createdAt, "MMM d, yyyy")}</p>
+                Raced by {rig?.completedPaidTransactionCount} drivers
+                <br />
+                On track since {format(rig?.createdAt, "MMM d, yyyy")}
               </CardDescription>
             </CardHeader>
           </div>

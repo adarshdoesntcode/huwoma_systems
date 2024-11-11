@@ -78,8 +78,8 @@ export const SimRacingColumn = [
       );
     },
     cell: ({ row }) => {
-      let date = format(new Date(row.original.createdAt), "d MMM, yyyy");
-      let time = format(new Date(row.original.createdAt), "h:mm a");
+      let date = format(new Date(row.original.start), "d MMM, yyyy");
+      let time = format(new Date(row.original.start), "h:mm a");
 
       return (
         <TableCell className="hidden  xl:table-cell ">
@@ -99,11 +99,11 @@ export const SimRacingColumn = [
       </TableHead>
     ),
     cell: ({ row }) => {
-      const createdAt = new Date(row.original.createdAt);
+      const start = new Date(row.original.start);
 
       return (
         <TableCell className="hidden md:table-cell font-mono">
-          <TimeLapsed createdAt={createdAt} />
+          <TimeLapsed createdAt={start} />
         </TableCell>
       );
     },

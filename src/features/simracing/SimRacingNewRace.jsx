@@ -27,6 +27,7 @@ import {
   useCreateRacerMutation,
   useFindRacerMutation,
   useGetAvailableRigsQuery,
+  useRaceStartFromBookingMutation,
   useStartRaceMutation,
 } from "./simRacingApiSlice";
 
@@ -254,8 +255,7 @@ const RigSelect = ({ customer, locationState }) => {
     useGetAvailableRigsQuery();
 
   const [startRace] = useStartRaceMutation();
-  // const [transactionStartFromBooking] =
-  //   useTransactionStartFromBookingMutation();
+  const [raceStartFromBooking] = useRaceStartFromBookingMutation();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -268,16 +268,11 @@ const RigSelect = ({ customer, locationState }) => {
     try {
       let res;
       if (locationState) {
-        // res = await transactionStartFromBooking({
-        //   service: selectedService._id,
-        //   transactionId: locationState.transaction,
-        //   serviceRate: serviceCost,
-        //   actualRate: selectedService.serviceRate,
-        //   vehicleNumber: data.vehicleNumber,
-        //   customer: customer._id,
-        //   serviceStart: new Date().toISOString(),
-        // });
-        return;
+        res = await raceStartFromBooking({
+          transactionId: locationState.transaction,
+          rig: selectedRig._id,
+          customer: customer._id,
+        });
       } else {
         res = await startRace({
           rig: selectedRig._id,

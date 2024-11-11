@@ -4,6 +4,8 @@ import {
   CircleParking,
   Droplets,
   Home,
+  Megaphone,
+  Mic,
   Wrench,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -47,9 +49,9 @@ function AdminSideBar() {
             >
               <Droplets className="h-4 w-4" />
               Car Wash
-              <div className="ml-auto flex shrink-0 items-center justify-center">
+              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
                 3
-              </div>
+              </div> */}
             </Link>
             <Link
               to={`/simracing`}
@@ -61,9 +63,9 @@ function AdminSideBar() {
             >
               <Car className="h-4 w-4" />
               Sim Racing
-              <div className="ml-auto flex shrink-0 items-center justify-center">
+              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
                 3
-              </div>
+              </div> */}
             </Link>
             <Link
               to={`/parking`}
@@ -75,23 +77,23 @@ function AdminSideBar() {
             >
               <CircleParking className="h-4 w-4" />
               Parking
-              <div className="ml-auto flex shrink-0 items-center justify-center">
+              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
                 26
-              </div>
+              </div> */}
             </Link>
             <Link
-              to={`/analytics`}
+              to={`/broadcast`}
               className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
                 isTabActive(currentPath, "analytics")
                   ? "bg-foreground text-white"
                   : "hover:text-primary "
               } text-muted-foreground transition-all hover:pl-4`}
             >
-              <ChartLine className="h-4 w-4" />
-              Analytics
-              <div className="ml-auto flex shrink-0 items-center justify-center">
+              <Megaphone className="h-4 w-4" />
+              Broadcast
+              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
                 1156
-              </div>
+              </div> */}
             </Link>
           </nav>
         </div>

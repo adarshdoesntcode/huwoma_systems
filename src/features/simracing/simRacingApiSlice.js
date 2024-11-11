@@ -17,8 +17,8 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getSimRacingTransactions: builder.query({
-      query: (credentials) => ({
-        url: `/simracing/transactions/${credentials}`,
+      query: () => ({
+        url: "/simracing/transactions",
         method: "GET",
       }),
       providesTags: ["SimRacingTransactions"],
@@ -36,6 +36,50 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    simracingBooking: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/booking",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
+    raceStartFromBooking: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/booking",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
+    getSimracingCheckoutDetails: builder.query({
+      query: (credentials) => ({
+        url: `/simracing/checkoutdetails/${credentials}`,
+        method: "GET",
+      }),
+    }),
+    simracingCheckout: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/checkout",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
+    cancelRace: builder.mutation({
+      query: (credentials) => ({
+        url: `/simracing/transaction/${credentials.id}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
+    deleteSimracingTransaction: builder.mutation({
+      query: (credentials) => ({
+        url: `/simracing/transaction/${credentials.id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
   }),
 });
 
@@ -45,4 +89,10 @@ export const {
   useCreateRacerMutation,
   useGetAvailableRigsQuery,
   useStartRaceMutation,
+  useDeleteSimracingTransactionMutation,
+  useSimracingBookingMutation,
+  useCancelRaceMutation,
+  useRaceStartFromBookingMutation,
+  useGetSimracingCheckoutDetailsQuery,
+  useSimracingCheckoutMutation,
 } = simRacingApiSlice;

@@ -58,23 +58,13 @@ const chartConfig = {
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  const [date, setDate] = useState(new Date().toISOString());
-
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
-    useGetCarwashTransactionsQuery(date, {
+    useGetCarwashTransactionsQuery({
       pollingInterval: 30000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     });
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setDate(new Date().toISOString());
-    }, 30000); // Updates every 30 seconds
-
-    return () => clearInterval(intervalId); // Cleanup interval on unmount
-  }, []);
 
   useEffect(() => {
     if (isSuccess) {
