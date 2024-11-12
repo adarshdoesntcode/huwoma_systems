@@ -23,6 +23,9 @@ import {
   AlertDialogTitle,
 } from "./components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
+import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClientStartRace";
+import Error from "./components/error/Error";
+import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
 
 const router = createBrowserRouter([
   {
@@ -44,17 +47,16 @@ const router = createBrowserRouter([
       },
     ],
   },
-
-  // {
-  //   element: <ProtectedRoute allowedRole={ROLES_LIST.admin} />,
-  //   children: [
-  //     {
-  //       path: `${ROLES_LIST.admin}`,
-  //       element: <AdminLayout />,
-  //       children: AdminRoutes,
-  //     },
-  //   ],
-  // },
+  {
+    path: "/simracingbyhuwoma/startrace/:id",
+    element: <SimRacingClientStartRace />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/simracingbyhuwoma/myrace/:id",
+    element: <SimRacingClientMyRace />,
+    errorElement: <Error />,
+  },
 
   {
     path: "/unauthorized",

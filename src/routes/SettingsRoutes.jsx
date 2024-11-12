@@ -7,6 +7,8 @@ import CarwashSettings from "@/features/settings/carwash-settings/CarwashSetting
 import CarwashNewConfig from "@/features/settings/carwash-settings/CarwashNewConfig";
 import CarwashEditConfig from "@/features/settings/carwash-settings/CarwashEditConfig";
 import PaymentSettings from "@/features/settings/payments/PaymentSettings";
+
+import SimrRacingSettings from "@/features/settings/simracing/SimRacingSettings";
 import PosSettings from "@/features/settings/pos/PosSettings";
 
 const SettingsRoutes = [
@@ -38,6 +40,11 @@ const SettingsRoutes = [
   {
     path: "payments",
     element: <PaymentSettings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "s-racing",
+    element: <SimrRacingSettings />,
     errorElement: <Error />,
   },
   {

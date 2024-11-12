@@ -40,19 +40,25 @@ import {
 import {
   useCarwashconfigQuery,
   useCreatePaymentModeMutation,
+  useCreateSimRacingRigMutation,
   useDeleteCarWashConfigMutation,
   useDeletePaymentModeMutation,
+  useDeleteSimRacingRigMutation,
   useGetPaymentModeQuery,
+  useGetSimRacingCoordinatesQuery,
+  useGetSimRacingRigsQuery,
   useUpdatePaymentModeMutation,
+  useUpdateSimRacingCoordinatesMutation,
+  useUpdateSimRacingRigMutation,
 } from "../settingsApiSlice";
 import QRCode from "react-qr-code";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -62,16 +68,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const PaymentSettings = () => {
+const SimRacingSettings = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
+  const [selectedRig, setSelectedRig] = useState("");
 
   const { data, isLoading, isSuccess, isError, error, isFetching } =
-    useGetPaymentModeQuery();
+    useGetSimRacingRigsQuery();
 
   let content;
 
@@ -102,7 +108,7 @@ const PaymentSettings = () => {
     if (!data) {
       content = (
         <div className="h-20 text-xs flex items-center justify-center text-muted-foreground">
-          No Payment Modes
+          No Rigs
         </div>
       );
     } else {
@@ -112,36 +118,30 @@ const PaymentSettings = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="hidden sm:table-cell">SN</TableHead>
-                <TableHead>Payment Name</TableHead>
+                <TableHead className="hidden md:table-cell">Rig</TableHead>
+                <TableHead>Name</TableHead>
                 <TableHead className="pl-1 text-center hidden sm:table-cell">
                   Transactions
                 </TableHead>
-                <TableHead className="text-center hidden sm:table-cell">
-                  QR Data
-                </TableHead>
+
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.data.map((paymentMode, index) => {
-                const totalTransaction =
-                  paymentMode.carWashTransactions.length +
-                  paymentMode.simRacingTransactions.length +
-                  paymentMode.parkingTransactions.length;
+              {data.data.map((rig, index) => {
+                const totalTransaction = rig.rigTransactions.length;
                 return (
-                  <TableRow
-                    key={paymentMode._id}
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setSelectedPaymentMode(paymentMode);
-                      setDetailsOpen(true);
-                    }}
-                  >
+                  <TableRow key={rig._id}>
                     <TableCell className="p-1 pl-4 hidden sm:table-cell">
                       {index + 1}
                     </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <div className="flex items-center gap-4 text-center">
+                        <img src={"/rig.webp"} className="w-16 aspect-auto" />
+                      </div>
+                    </TableCell>
                     <TableCell className="font-medium p-4 ">
-                      {paymentMode.paymentModeName}
+                      {rig.rigName}
                     </TableCell>
                     <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
                       <div>
@@ -155,14 +155,6 @@ const PaymentSettings = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-center p-1 hidden sm:table-cell">
-                      {paymentMode.qrCodeData ? (
-                        <Badge>Available</Badge>
-                      ) : (
-                        <Badge variant="outline">None</Badge>
-                      )}
-                    </TableCell>
-
                     <TableCell className="text-right p-1">
                       <div className="flex gap-2 items-center justify-end">
                         <Button
@@ -170,7 +162,7 @@ const PaymentSettings = () => {
                           variant="outline"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedPaymentMode(paymentMode);
+                            setSelectedRig(rig);
                             setEditOpen(true);
                           }}
                         >
@@ -181,7 +173,7 @@ const PaymentSettings = () => {
                           variant="secondary"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedPaymentMode(paymentMode);
+                            setSelectedRig(rig);
                             setDeleteOpen(true);
                           }}
                         >
@@ -201,101 +193,52 @@ const PaymentSettings = () => {
     content = <ApiError error={error} />;
   }
   return (
-    <Card>
-      <CardHeader className="p-4 sm:p-6">
-        <CardTitle className="text-xl sm:text-2xl">Payment Mode</CardTitle>
-        <CardDescription className="text-xs sm:text-sm">
-          Configure payment modes for the system
-        </CardDescription>
-      </CardHeader>
+    <>
+      <Card>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl">SimRacing Rigs</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
+            Operational SimRacing Rigs
+          </CardDescription>
+        </CardHeader>
 
-      <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">{content}</CardContent>
-      {deleteOpen && (
-        <ConfirmDelete
-          setDeleteOpen={setDeleteOpen}
-          deleteOpen={deleteOpen}
-          selectedPaymentMode={selectedPaymentMode}
-          setSelectedPaymentMode={setSelectedPaymentMode}
-        />
-      )}
-      {editOpen && (
-        <EditPayment
-          setEditOpen={setEditOpen}
-          editOpen={editOpen}
-          selectedPaymentMode={selectedPaymentMode}
-        />
-      )}
-      {createOpen && (
-        <CreatePayment createOpen={createOpen} setCreateOpen={setCreateOpen} />
-      )}
-      {detailsOpen && (
-        <ConfigDetails
-          setDetailsOpen={setDetailsOpen}
-          detailsOpen={detailsOpen}
-          selectedPaymentMode={selectedPaymentMode}
-        />
-      )}
+        <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+          {content}
+        </CardContent>
+        {deleteOpen && (
+          <ConfirmDelete
+            setDeleteOpen={setDeleteOpen}
+            deleteOpen={deleteOpen}
+            selectedRig={selectedRig}
+            setSelectedRig={setSelectedRig}
+          />
+        )}
+        {editOpen && (
+          <EditPayment
+            setEditOpen={setEditOpen}
+            editOpen={editOpen}
+            selectedRig={selectedRig}
+          />
+        )}
+        {createOpen && (
+          <CreatePayment
+            createOpen={createOpen}
+            setCreateOpen={setCreateOpen}
+          />
+        )}
 
-      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-        <Button onClick={() => setCreateOpen(true)}>Add Payment</Button>
-      </CardFooter>
-    </Card>
+        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+          <Button onClick={() => setCreateOpen(true)}>Add Rig</Button>
+        </CardFooter>
+      </Card>
+      <SimRacingLocation />
+    </>
   );
 };
 
-function ConfigDetails({ setDetailsOpen, detailsOpen, selectedPaymentMode }) {
-  return (
-    <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-      <DialogContent className="p-8">
-        <DialogHeader>
-          <DialogTitle>{selectedPaymentMode?.paymentModeName}</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <Separator />
-        <div className="max-h-[70vh] overflow-y-auto">
-          <div className="space-y-2  mb-2">
-            <Label>Transactions</Label>
-            <div className="pb-4 text-sm font-medium text-muted-foreground">
-              <div className="flex justify-between">
-                <span>Car Wash</span>
-                <span>{selectedPaymentMode?.carWashTransactions?.length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Sim Racing</span>
-                <span>
-                  {selectedPaymentMode?.simRacingTransactions?.length}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Parking</span>
-                <span>{selectedPaymentMode?.parkingTransactions?.length}</span>
-              </div>
-            </div>
-          </div>
-          <Separator />
-
-          {selectedPaymentMode?.qrCodeData && (
-            <div className="space-y-4 mt-4">
-              <Label>Qr Code</Label>
-              <div className="flex items-center flex-col gap-4 justify-center ">
-                <div className="p-4 border rounded-md">
-                  <QRCode value={selectedPaymentMode.qrCodeData} />
-                </div>
-                <p className="text-muted-foreground uppercase font-medium">
-                  {selectedPaymentMode?.paymentModeName}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 function CreatePayment({ createOpen, setCreateOpen }) {
-  const [createPaymentMode, { isLoading: isSubmitting }] =
-    useCreatePaymentModeMutation();
+  const [createSimRacingRig, { isLoading: isSubmitting }] =
+    useCreateSimRacingRigMutation();
   const {
     handleSubmit,
     register,
@@ -305,7 +248,7 @@ function CreatePayment({ createOpen, setCreateOpen }) {
 
   const onSubmit = async (data) => {
     try {
-      const res = await createPaymentMode({
+      const res = await createSimRacingRig({
         ...data,
       });
       if (res.error) {
@@ -315,8 +258,8 @@ function CreatePayment({ createOpen, setCreateOpen }) {
         setCreateOpen(false);
         reset();
         toast({
-          title: "Payment Mode Created",
-          description: `${res.data.data.paymentModeName}`,
+          title: "New Rig Created",
+          description: `${res.data.data.rigName}`,
         });
       }
     } catch (error) {
@@ -332,52 +275,31 @@ function CreatePayment({ createOpen, setCreateOpen }) {
     <Dialog open={createOpen} onOpenChange={setCreateOpen}>
       <DialogContent className="p-6">
         <DialogHeader>
-          <DialogTitle>Create New Payemnt Mode</DialogTitle>
+          <DialogTitle>Create New Rig</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto p-2">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label>
-                {errors.paymentModeName ? (
+                {errors.rigName ? (
                   <span className="text-destructive">
-                    {errors.paymentModeName.message}
+                    {errors.rigName.message}
                   </span>
                 ) : (
-                  <span>Payment Name</span>
+                  <span>Rig Name</span>
                 )}
               </Label>
               <Input
-                id="paymentModeName"
+                id="rigName"
                 type="text"
                 placeholder="Name"
-                {...register("paymentModeName", {
+                autoFocus
+                autoComplete="off"
+                {...register("rigName", {
                   required: "Name is required",
                 })}
-                className={errors.paymentModeName ? "border-destructive" : ""}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>
-                {errors.qrCodeData ? (
-                  <span className="text-destructive">
-                    {errors.qrCodeData.message}
-                  </span>
-                ) : (
-                  <span>
-                    QR Code Data
-                    <span className="font-normal text-muted-foreground text-xs ml-2">
-                      (leave empty if not necessary)
-                    </span>
-                  </span>
-                )}
-              </Label>
-              <Textarea
-                id="qrCodeData"
-                type="text"
-                placeholder="decoded QR Code data"
-                {...register("qrCodeData")}
-                className={errors.qrCodeData ? "border-destructive" : ""}
+                className={errors.rigName ? "border-destructive" : ""}
               />
             </div>
 
@@ -401,16 +323,16 @@ function CreatePayment({ createOpen, setCreateOpen }) {
 function ConfirmDelete({
   deleteOpen,
   setDeleteOpen,
-  selectedPaymentMode,
-  setSelectedPaymentMode,
+  selectedRig,
+  setSelectedRig,
 }) {
-  const [deletePaymentMode, { isLoading }] = useDeletePaymentModeMutation();
+  const [deleteSimRacingRig, { isLoading }] = useDeleteSimRacingRigMutation();
 
   const handleDelete = async () => {
     try {
-      if (!selectedPaymentMode) return;
-      const res = await deletePaymentMode({
-        paymentModeId: selectedPaymentMode._id,
+      if (!selectedRig) return;
+      const res = await deleteSimRacingRig({
+        rigId: selectedRig._id,
       });
       setDeleteOpen(false);
       if (res.error) {
@@ -418,11 +340,11 @@ function ConfirmDelete({
       }
 
       if (!res.error) {
-        setSelectedPaymentMode({});
+        setSelectedRig({});
 
         toast({
-          title: "Payment Mode Deleted!",
-          description: res.data.data.paymentModeName,
+          title: "Rig Deleted!",
+          description: res.data.data.rigName,
         });
       }
     } catch (error) {
@@ -461,9 +383,9 @@ function ConfirmDelete({
   );
 }
 
-function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
-  const [updatePaymentMode, { isLoading: isSubmitting }] =
-    useUpdatePaymentModeMutation();
+function EditPayment({ selectedRig, editOpen, setEditOpen }) {
+  const [updateSimRacingRig, { isLoading: isSubmitting }] =
+    useUpdateSimRacingRigMutation();
   const {
     handleSubmit,
     register,
@@ -473,9 +395,9 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
 
   const onSubmit = async (data) => {
     try {
-      const res = await updatePaymentMode({
-        paymentModeId: selectedPaymentMode._id,
-        updates: { ...data },
+      const res = await updateSimRacingRig({
+        rigId: selectedRig._id,
+        rigName: data.rigName,
       });
       if (res.error) {
         throw new Error(res.error.data.message);
@@ -484,8 +406,8 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
         setEditOpen(false);
         reset();
         toast({
-          title: "Payment Mode Updated",
-          description: `${res.data.data.paymentModeName}`,
+          title: "Rig Updated",
+          description: `${res.data.data.rigName}`,
         });
       }
     } catch (error) {
@@ -501,54 +423,32 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
     <Dialog open={editOpen} onOpenChange={setEditOpen}>
       <DialogContent className="p-6">
         <DialogHeader>
-          <DialogTitle>Edit Payemnt Mode</DialogTitle>
+          <DialogTitle>Edit Rig</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="max-h-[70vh] overflow-y-auto p-2">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
             <div className="space-y-2">
               <Label>
-                {errors.paymentModeName ? (
+                {errors.rigName ? (
                   <span className="text-destructive">
-                    {errors.paymentModeName.message}
+                    {errors.rigName.message}
                   </span>
                 ) : (
-                  <span>Payment Name</span>
+                  <span>Rig Name</span>
                 )}
               </Label>
               <Input
-                id="paymentModeName"
+                id="rigName"
                 type="text"
-                defaultValue={selectedPaymentMode.paymentModeName}
+                defaultValue={selectedRig.rigName}
                 placeholder="Name"
-                {...register("paymentModeName", {
+                autoComplete="off"
+                autoFocus
+                {...register("rigName", {
                   required: "Name is required",
                 })}
-                className={errors.paymentModeName ? "border-destructive" : ""}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>
-                {errors.qrCodeData ? (
-                  <span className="text-destructive">
-                    {errors.qrCodeData.message}
-                  </span>
-                ) : (
-                  <span>
-                    QR Code Data
-                    <span className="font-normal text-muted-foreground text-xs ml-2">
-                      (leave empty if not necessary)
-                    </span>
-                  </span>
-                )}
-              </Label>
-              <Textarea
-                id="qrCodeData"
-                type="text"
-                defaultValue={selectedPaymentMode.qrCodeData}
-                placeholder="decoded QR Code data"
-                {...register("qrCodeData")}
-                className={errors.qrCodeData ? "border-destructive" : ""}
+                className={errors.rigName ? "border-destructive" : ""}
               />
             </div>
 
@@ -569,4 +469,159 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
   );
 }
 
-export default PaymentSettings;
+function SimRacingLocation() {
+  const { data, isLoading, isSuccess, isFetching, isError, error } =
+    useGetSimRacingCoordinatesQuery();
+
+  const [updateSimRacingCoordinates] = useUpdateSimRacingCoordinatesMutation();
+
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    if (!data.coordinates) {
+      return;
+    }
+    const coordinates = data.coordinates.split(",").map(Number);
+    const lat = coordinates[0];
+    const lng = coordinates[1];
+
+    try {
+      const res = await updateSimRacingCoordinates({
+        simRacingCoordinates: {
+          type: "Point",
+          coordinates: [lng, lat], // [longitude, latitude]
+        },
+      });
+      if (res.error) {
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        toast({
+          title: "Location Updated!",
+          description: "Successfully",
+        });
+        reset();
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
+  };
+
+  let content;
+  if (isLoading || isFetching) {
+    content = (
+      <Card>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl ">
+            SimRacing Location
+          </CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
+            Current Location : Loading..
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+          <div className=" flex flex-col items-start gap-4">
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-11 w-full" />
+          </div>
+        </CardContent>
+        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+          <Button disabled>Save</Button>
+        </CardFooter>
+      </Card>
+    );
+  } else if (isSuccess) {
+    const coordinates = data?.data?.simRacingCoordinates?.coordinates;
+
+    content = (
+      <Card>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl ">
+            SimRacing Location
+          </CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
+            Current Location :
+            {coordinates ? (
+              <Button variant="link" className="group" asChild>
+                <a
+                  href={`https://www.google.com/maps?q=${coordinates[1]},${coordinates[0]}`}
+                  target="_blank"
+                >
+                  {coordinates[1].toFixed(6)}, {coordinates[0].toFixed(6)}
+                  <ArrowUpRight className="ml-1 h-4 w-4 group-hover:-translate-y-1 group-hover:translate-x-1 transition" />
+                </a>
+              </Button>
+            ) : (
+              "Not Set"
+            )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            id="coordinates-change"
+            className="grid gap-2"
+          >
+            <Label>
+              {errors.coordinates ? (
+                <span className="text-destructive">
+                  {errors.coordinates.message}
+                </span>
+              ) : (
+                <span>Change Coordinates</span>
+              )}
+            </Label>
+            <Input
+              id="coordinates"
+              type="text"
+              autoComplete="off"
+              placeholder="Latitude, Longitude"
+              {...register("coordinates", {
+                required: "Coordinates are required",
+                pattern: {
+                  value: /^([-+]?\d{1,2}(\.\d+)?),\s*([-+]?\d{1,3}(\.\d+)?)$/,
+                  message:
+                    "Please enter valid coordinates in 'Latitude, Longitude' format",
+                },
+                validate: (value) => {
+                  const [latitude, longitude] = value.split(",").map(Number);
+                  if (latitude < -90 || latitude > 90)
+                    return "Latitude must be between -90 and 90";
+                  if (longitude < -180 || longitude > 180)
+                    return "Longitude must be between -180 and 180";
+                  return true;
+                },
+              })}
+              className={errors.coordinates ? "border-destructive" : ""}
+            />
+          </form>
+        </CardContent>
+        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+          {isSubmitting ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving
+            </Button>
+          ) : (
+            <Button type="submit" form="coordinates-change">
+              Save
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    );
+  }
+
+  return content;
+}
+
+export default SimRacingSettings;

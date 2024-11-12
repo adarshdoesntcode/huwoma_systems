@@ -59,7 +59,7 @@ function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
-    useGetCarwashTransactionsQuery({
+    useGetCarwashTransactionsQuery(undefined, {
       pollingInterval: 30000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,

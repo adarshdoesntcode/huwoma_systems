@@ -94,7 +94,7 @@ function RigCard({ rig, className }) {
                     </div>
                     <div className="border p-4 rounded-lg shadow-lg">
                       <QRCode
-                        value={`https://huwoma.vercel.app/race/${rig?._id}`}
+                        value={`https://huwoma.vercel.app/simracingbyhuwoma/startrace/${rig?._id}`}
                       />
                     </div>
                     <div className="font-medium uppercase">{rig?.rigName}</div>

@@ -133,6 +133,52 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
         { type: "AdminProfile", id },
       ],
     }),
+    getSimRacingRigs: builder.query({
+      query: () => ({
+        url: "/settings/simracing",
+        method: "GET",
+      }),
+      providesTags: ["SimRacingRigs"],
+    }),
+    createSimRacingRig: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/simracing",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingRigs"],
+    }),
+    updateSimRacingRig: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/simracing",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingRigs"],
+    }),
+    deleteSimRacingRig: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/simracing",
+        method: "DELETE",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingRigs"],
+    }),
+    getSimRacingCoordinates: builder.query({
+      query: () => ({
+        url: "/settings/simracing/location",
+        method: "GET",
+      }),
+      providesTags: ["SimRacingCoordinates"],
+    }),
+    updateSimRacingCoordinates: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/simracing/location",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingCoordinates"],
+    }),
     getPOSAccess: builder.query({
       query: () => ({
         url: "/settings/pos-access",
@@ -177,4 +223,10 @@ export const {
   useCreatePOSAccessMutation,
   useDeletePOSAccessMutation,
   useGetPOSAccessQuery,
+  useGetSimRacingRigsQuery,
+  useCreateSimRacingRigMutation,
+  useUpdateSimRacingRigMutation,
+  useDeleteSimRacingRigMutation,
+  useGetSimRacingCoordinatesQuery,
+  useUpdateSimRacingCoordinatesMutation,
 } = settingsApiSlice;

@@ -54,7 +54,7 @@ function SimRacing() {
   const [lastUpdated, setLastUpdated] = useState(null);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
-    useGetSimRacingTransactionsQuery({
+    useGetSimRacingTransactionsQuery(undefined, {
       pollingInterval: 10000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
