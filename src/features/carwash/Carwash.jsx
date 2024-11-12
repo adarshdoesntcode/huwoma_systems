@@ -192,7 +192,6 @@ function Carwash() {
                 />
 
                 <ChartTooltip
-                  cursor={false}
                   content={
                     <ChartTooltipContent
                       indicator="line"

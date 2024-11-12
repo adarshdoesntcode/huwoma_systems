@@ -29,6 +29,7 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
+      invalidatesTags: ["SimRacingTransactions"],
     }),
     getAvailableRigs: builder.query({
       query: () => ({
@@ -64,7 +65,7 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["SimRacingTransactions"],
     }),
     cancelRace: builder.mutation({
       query: (credentials) => ({
