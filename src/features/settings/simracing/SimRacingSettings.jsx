@@ -67,6 +67,7 @@ import { isEqual } from "lodash";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Image } from "@unpic/react";
 
 const SimRacingSettings = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -131,13 +132,19 @@ const SimRacingSettings = () => {
               {data.data.map((rig, index) => {
                 const totalTransaction = rig.rigTransactions.length;
                 return (
-                  <TableRow key={rig._id}>
+                  <TableRow key={rig._id} className="hover:bg-inherit">
                     <TableCell className="p-1 pl-4 hidden sm:table-cell">
                       {index + 1}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden md:table-cell px-0">
                       <div className="flex items-center gap-4 text-center">
-                        <img src={"/rig.webp"} className="w-16 aspect-auto" />
+                        <Image
+                          src={"/rig.webp"}
+                          width={64}
+                          height={40}
+                          layout="fixed"
+                          alt="Vehicle Image"
+                        />
                       </div>
                     </TableCell>
                     <TableCell className="font-medium p-4 ">
@@ -155,7 +162,7 @@ const SimRacingSettings = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-right p-1">
+                    <TableCell className="text-right p-1 px-0">
                       <div className="flex gap-2 items-center justify-end">
                         <Button
                           size="sm"

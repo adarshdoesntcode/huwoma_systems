@@ -51,6 +51,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Image } from "@unpic/react";
 
 function getTotalRate(services, key) {
   return services?.reduce((total, service) => total + service[key], 0);
@@ -129,7 +130,13 @@ const CarwashConfigSettings = () => {
                   </TableCell>
                   <TableCell className="font-medium p-1 hidden sm:table-cell">
                     <div className="flex items-center gap-4 text-center">
-                      <img src={`${vehicle.vehicleIcon}`} className="h-16" />
+                      <Image
+                        src={vehicle.vehicleIcon}
+                        width={96}
+                        height={64}
+                        layout="fixed"
+                        alt="Vehicle Image"
+                      />
                     </div>
                   </TableCell>
                   <TableCell className="sm:p-1 p-4 text-left">

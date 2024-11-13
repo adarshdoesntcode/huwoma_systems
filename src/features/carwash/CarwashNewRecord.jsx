@@ -41,6 +41,7 @@ import {
 import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
+import { Image } from "@unpic/react";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -382,7 +383,11 @@ const ServiceSelect = ({ customer, locationState }) => {
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
                           </Badge>
                         )}
-                        <img src={vehicle.vehicleIcon} />
+                        <Image
+                          src={vehicle.vehicleIcon}
+                          aspectRatio={1.5 / 1}
+                          alt="Vehicle Image"
+                        />
                       </div>
                       <p>{vehicle.vehicleTypeName}</p>
                     </div>

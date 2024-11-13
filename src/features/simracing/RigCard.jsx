@@ -21,6 +21,7 @@ import {
 import QRCode from "react-qr-code";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
+import { Image } from "@unpic/react";
 
 function RigCard({ rig, className }) {
   const canvasRef = useRef(null);
@@ -87,9 +88,12 @@ function RigCard({ rig, className }) {
                     className="flex flex-col items-center justify-center gap-8 p-6"
                   >
                     <div>
-                      <img
+                      <Image
                         src="/simracingbyhuwoma.webp"
-                        className="w-1/3 mx-auto"
+                        priority
+                        alt="Rig Image"
+                        width={140}
+                        aspectRatio={3 / 1}
                       />
                     </div>
                     <div className="border p-4 rounded-lg shadow-lg">
@@ -105,8 +109,13 @@ function RigCard({ rig, className }) {
             </Dialog>
           </div>
         </div>
-        <div className="w-4/12 aspect-auto hidden sm:flex items-center justify-center ">
-          <img src="rig.webp" />
+        <div className="w-4/12 aspect-auto hidden sm:flex items-center  justify-center ">
+          <Image
+            src="rig.webp"
+            aspectRatio={16 / 10}
+            priority
+            alt="Rig Image"
+          />
         </div>
       </div>
     </Card>

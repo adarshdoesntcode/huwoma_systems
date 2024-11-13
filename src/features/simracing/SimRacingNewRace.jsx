@@ -30,6 +30,7 @@ import {
   useRaceStartFromBookingMutation,
   useStartRaceMutation,
 } from "./simRacingApiSlice";
+import { Image } from "@unpic/react";
 
 function SimRacingNewRace() {
   const [customer, setCoustomer] = useState(null);
@@ -356,7 +357,11 @@ const RigSelect = ({ customer, locationState }) => {
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
                           </Badge>
                         )}
-                        <img src={"/rig.webp"} />
+                        <Image
+                          src={"/rig.webp"}
+                          aspectRatio={16 / 10}
+                          alt="Rig Image"
+                        />
                       </div>
                       <p className="font-medium text-sm">{rig.rigName}</p>
                     </div>
