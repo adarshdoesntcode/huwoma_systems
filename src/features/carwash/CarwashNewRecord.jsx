@@ -172,7 +172,6 @@ function CarwashNewRecord() {
                 </Label>
                 <Input
                   onWheel={(e) => e.target.blur()}
-                  id="serviceRate"
                   type="tel"
                   inputMode="numeric"
                   placeholder="+977"
