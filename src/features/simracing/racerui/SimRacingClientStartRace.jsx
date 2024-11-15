@@ -21,12 +21,13 @@ import { Label } from "@/components/ui/label";
 const SimRacingClientStartRace = () => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
-  console.log("🚀 ~ SimRacingClientStartRace ~ message:", message);
+
   const [error, setError] = useState("");
   const [showGrantButton, setShowGrantButton] = useState(false);
   const axiosInstance = useAxios();
-  const isRequestInProgress = useRef(false); // Prevent multiple simultaneous requests
   const [isLoading, setIsLoading] = useState(false);
+  const isRequestInProgress = useRef(false);
+
   const {
     handleSubmit,
     reset,
@@ -35,11 +36,9 @@ const SimRacingClientStartRace = () => {
   } = useForm();
 
   const requestLocation = async () => {
-    if (isRequestInProgress.current) return;
+    if (isRequestInProgress.current) return; // Prevent multiple calls
     isRequestInProgress.current = true;
-
-    setError(""); // Clear previous error
-
+    setError("");
     try {
       const getCoordinates = async (maxRetries = 3, retryDelay = 1000) => {
         for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -71,22 +70,23 @@ const SimRacingClientStartRace = () => {
         }
       };
 
-      const { latitude, longitude } = await getCoordinates();
+      const coordinates = await getCoordinates();
+
+      if (coordinates) setShowGrantButton(false);
 
       setIsLoading(true);
 
-      // Send data to backend
       const response = await axiosInstance.post(`/startrace/1`, {
         id,
-        coordinates: { latitude, longitude },
+        coordinates,
       });
-
-      setMessage(response.data); // Set success message
+      setIsLoading(false);
+      setMessage(response.data);
     } catch (err) {
+      console.error(err);
       setError(err.message || "Failed to send data.");
     } finally {
       isRequestInProgress.current = false; // Reset request state
-      setIsLoading(false);
     }
   };
 
@@ -97,23 +97,14 @@ const SimRacingClientStartRace = () => {
       });
 
       if (permissionStatus.state === "granted") {
-        requestLocation();
+        await requestLocation();
       } else if (permissionStatus.state === "denied") {
         setShowGrantButton(true);
         setError("Location permission denied. Please grant permission.");
       } else {
         setShowGrantButton(true);
       }
-
-      permissionStatus.onchange = () => {
-        if (permissionStatus.state === "granted") {
-          setShowGrantButton(false);
-          requestLocation();
-        } else {
-          setShowGrantButton(true);
-        }
-      };
-    } catch {
+    } catch (err) {
       setError("Unable to determine location permission state.");
       setShowGrantButton(true);
     }
@@ -121,11 +112,25 @@ const SimRacingClientStartRace = () => {
 
   useEffect(() => {
     checkPermission();
-  }, [id]);
+  }, []);
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosInstance.post(`/startrace/2`, {
+        customerName: data.customerName,
+        customerContact: data.customerContact,
+        rigId: id,
+      });
+      console.log(response);
+    } catch (err) {
+      console.error(err);
+      // setError(err.message || "Failed to send data.");
+    }
+  };
 
   return (
-    <div className="bg-[url('/bg.webp')] h-screen flex flex-col gap-2 items-center justify-center">
-      <Card className="w-[90%]">
+    <div className="bg-[url('/bg.webp')] min-h-screen py-8 flex flex-col gap-2 items-center justify-center">
+      <Card className="w-[90%] max-w-[400px]">
         <CardHeader className="pb-2">
           <CardTitle className="py-2">
             <Image
@@ -170,69 +175,75 @@ const SimRacingClientStartRace = () => {
           </div>
         </CardContent>
       </Card>
-      <Card className="w-[90%]">
-        <CardHeader></CardHeader>
-        <CardContent>
-          {message?.message === "RTR" && (
-            <form
-              // onSubmit={handleSubmit(onSubmit)}
-              className="grid gap-4"
-              // id="customer"
-            >
-              <div className="grid gap-2">
-                <Label>
-                  {errors.customerName ? (
-                    <span className="text-destructive">
-                      {errors.customerName.message}
-                    </span>
-                  ) : (
-                    <span>Name</span>
-                  )}
-                </Label>
-                <Input
-                  id="customerName"
-                  type="text"
-                  placeholder="Name"
-                  autoFocus
-                  {...register("customerName", {
-                    required: "Name is required",
-                    pattern: {
-                      value: /^[a-zA-Z\s]*$/,
-                      message: "Invalid Name",
-                    },
-                  })}
-                  className={errors.customerName ? "border-destructive" : ""}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label>
-                  {errors.customerContact ? (
-                    <span className="text-destructive">
-                      {errors.customerContact.message}
-                    </span>
-                  ) : (
-                    <span>Contact</span>
-                  )}
-                </Label>
-                <Input
-                  onWheel={(e) => e.target.blur()}
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="+977"
-                  {...register("customerContact", {
-                    required: "Number is required",
-                    valueAsNumber: true,
-                    validate: (value) =>
-                      String(value).length === 10 || "Number must be 10 digits",
-                  })}
-                  className={errors.serviceRate ? "border-destructive" : ""}
-                />
-              </div>
-              <Button className="mt-2">Start Race</Button>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+      {message?.message === "RTR" && (
+        <>
+          <Card className="w-[90%] max-w-[400px]">
+            <CardHeader>
+              <CardTitle className="text-lg">Your Details</CardTitle>
+              <CardDescription className="text-xs">
+                Fill up to start your timer
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label>
+                    {errors.customerName ? (
+                      <span className="text-destructive">
+                        {errors.customerName.message}
+                      </span>
+                    ) : (
+                      <span>Name</span>
+                    )}
+                  </Label>
+                  <Input
+                    id="customerName"
+                    type="text"
+                    placeholder="Name"
+                    autoFocus
+                    {...register("customerName", {
+                      required: "Name is required",
+                      pattern: {
+                        value: /^[a-zA-Z\s]*$/,
+                        message: "Invalid Name",
+                      },
+                    })}
+                    className={errors.customerName ? "border-destructive" : ""}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>
+                    {errors.customerContact ? (
+                      <span className="text-destructive">
+                        {errors.customerContact.message}
+                      </span>
+                    ) : (
+                      <span>Contact</span>
+                    )}
+                  </Label>
+                  <Input
+                    onWheel={(e) => e.target.blur()}
+                    type="tel"
+                    inputMode="numeric"
+                    placeholder="+977"
+                    {...register("customerContact", {
+                      required: "Number is required",
+                      valueAsNumber: true,
+                      validate: (value) =>
+                        String(value).length === 10 ||
+                        "Number must be 10 digits",
+                    })}
+                    className={
+                      errors.customerContact ? "border-destructive" : ""
+                    }
+                  />
+                </div>
+                <Button className="mt-2">Start Race</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 };

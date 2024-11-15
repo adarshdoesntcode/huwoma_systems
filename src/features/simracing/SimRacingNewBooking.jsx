@@ -164,7 +164,6 @@ function SimRacingNewBooking() {
                 </Label>
                 <Input
                   onWheel={(e) => e.target.blur()}
-                  id="serviceRate"
                   type="tel"
                   inputMode="numeric"
                   autoComplete="off"
@@ -176,7 +175,7 @@ function SimRacingNewBooking() {
                     validate: (value) =>
                       String(value).length === 10 || "Number must be 10 digits",
                   })}
-                  className={errors.serviceRate ? "border-destructive" : ""}
+                  className={errors.customerContact ? "border-destructive" : ""}
                 />
               </div>
               {newCustomer && (
