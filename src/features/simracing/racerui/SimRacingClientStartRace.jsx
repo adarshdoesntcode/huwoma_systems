@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import useAxios from "@/hooks/useAxios";
 import {
@@ -17,16 +17,21 @@ import { set } from "lodash";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import SubmitButton from "@/components/SubmitButton";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 const SimRacingClientStartRace = () => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
 
   const [error, setError] = useState("");
+
   const [showGrantButton, setShowGrantButton] = useState(false);
   const axiosInstance = useAxios();
   const [isLoading, setIsLoading] = useState(false);
   const isRequestInProgress = useRef(false);
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -80,11 +85,13 @@ const SimRacingClientStartRace = () => {
         id,
         coordinates,
       });
-      setIsLoading(false);
       setMessage(response.data);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
-      setError(err.message || "Failed to send data.");
+      setIsLoading(false);
+
+      setError(err.response.data.message || "Failed to send data.");
     } finally {
       isRequestInProgress.current = false; // Reset request state
     }
@@ -121,7 +128,12 @@ const SimRacingClientStartRace = () => {
         customerContact: data.customerContact,
         rigId: id,
       });
-      console.log(response);
+
+      if (response.status === 201 && response.data) {
+        const { simRacingKey } = response.data.data;
+        localStorage.setItem("simRacingKey", simRacingKey);
+        navigate(`/simracingbyhuwoma/myrace`);
+      }
     } catch (err) {
       console.error(err);
       // setError(err.message || "Failed to send data.");
@@ -141,18 +153,24 @@ const SimRacingClientStartRace = () => {
               className="mx-auto"
             />
           </CardTitle>
-          <CardDescription className="text-center">
-            {!error && showGrantButton && (
-              <span className="text-xs">Location permission is required</span>
-            )}
-            {error && <span className="text-destructive text-xs">{error}</span>}
-          </CardDescription>
+
+          {!error && showGrantButton && (
+            <CardDescription className="text-center text-xs">
+              Location permission is required to start race
+            </CardDescription>
+          )}
+          {error && (
+            <CardDescription className="text-destructive text-xs bg-destructive/10 text-center border border-destructive rounded-lg px-4 py-6">
+              {error}
+            </CardDescription>
+          )}
         </CardHeader>
         <CardContent>
           <div className="text-center">
             {isLoading && <Loader />}
             {showGrantButton && (
               <Button
+                className="mt-2"
                 onClick={() => {
                   setError("");
                   requestLocation();
@@ -162,8 +180,14 @@ const SimRacingClientStartRace = () => {
               </Button>
             )}
             {message?.message === "RTR" && (
-              <div className="flex items-center  py-2 pl-4 justify-between  rounded-lg gap-2 border shadow-md">
-                <div>{message?.data?.rigName}</div>
+              <div className="flex items-center mt-2  py-2 pl-4 justify-between  rounded-lg gap-2 border ">
+                <div className="flex flex-col justify-between gap-4 items-start h-full text-sm font-bold">
+                  <div>{message?.data?.rigName}</div>
+                  <div className="text-xs font-normal">
+                    {" "}
+                    Time : {format(new Date(), "hh:mm a")}
+                  </div>
+                </div>
                 <Image
                   src="/rig.webp"
                   alt="logo"
@@ -179,12 +203,12 @@ const SimRacingClientStartRace = () => {
         <>
           <Card className="w-[90%] max-w-[400px]">
             <CardHeader>
-              <CardTitle className="text-lg">Your Details</CardTitle>
+              <CardTitle className="text-lg ">Your Details</CardTitle>
               <CardDescription className="text-xs">
                 Fill up to start your timer
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="">
               <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
                 <div className="grid gap-2">
                   <Label>
@@ -238,11 +262,19 @@ const SimRacingClientStartRace = () => {
                     }
                   />
                 </div>
-                <Button className="mt-2">Start Race</Button>
+                <SubmitButton
+                  condition={isSubmitting}
+                  loadingText={"Starting Race"}
+                  buttonText={"Start Race"}
+                  className="mt-2"
+                />
               </form>
             </CardContent>
           </Card>
         </>
+      )}
+      {message?.message === "CTR" && (
+        <Navigate to={`/simracingbyhuwoma/myrace`} />
       )}
     </div>
   );

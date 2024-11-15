@@ -53,7 +53,7 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/simracingbyhuwoma/myrace/:id",
+    path: "/simracingbyhuwoma/myrace",
     element: <SimRacingClientMyRace />,
     errorElement: <Error />,
   },
