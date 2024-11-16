@@ -1,6 +1,6 @@
-import { useGetCarwashCustomersQuery } from "../carwashApiSlice";
-import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
+import { useGetSimRacingCustomersQuery } from "../simRacingApiSlice";
+import ApiError from "@/components/error/ApiError";
 import NavBackButton from "@/components/NavBackButton";
 import {
   Card,
@@ -9,13 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SimRacingCustomersDataTable } from "./SimRacingCustomersDataTable";
+import { SimRacingCustomersColumn } from "./SimRacingCustomersColumn";
 
-import { CarwashCustomersColumn } from "./CarwashCustomersColumn";
-import { CarwashCustomersDataTable } from "./CarwashCustomersDataTable";
-
-function CarwashCustomers() {
+function SimRacingCustomers() {
   const { data, isLoading, isSuccess, isFetching, isError, error } =
-    useGetCarwashCustomersQuery();
+    useGetSimRacingCustomersQuery();
   let content;
   if (isLoading || isFetching) {
     content = (
@@ -32,16 +31,16 @@ function CarwashCustomers() {
         <Card>
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-xl sm:text-2xl">
-              Carwash Customers
+              Sim Racing Customers
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              All the customers who have visited the car wash
+              All the customers who have visited the sim racing
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
-            <CarwashCustomersDataTable
+            <SimRacingCustomersDataTable
               data={customers}
-              columns={CarwashCustomersColumn}
+              columns={SimRacingCustomersColumn}
             />
           </CardContent>
         </Card>
@@ -54,4 +53,4 @@ function CarwashCustomers() {
   return content;
 }
 
-export default CarwashCustomers;
+export default SimRacingCustomers;

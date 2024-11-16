@@ -111,8 +111,9 @@ function RigCard({ rig, className }) {
         </div>
         <div className="w-4/12 aspect-auto hidden sm:flex items-center  justify-center ">
           <Image
-            src="rig.webp"
+            src="/rig.webp"
             aspectRatio={16 / 10}
+            width={200}
             priority
             alt="Rig Image"
           />

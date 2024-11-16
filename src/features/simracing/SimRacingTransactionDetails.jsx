@@ -26,7 +26,6 @@ const SimRacingTransactionDetails = ({
 
   if (transactionDetails) {
     raceStart = transactionDetails?.start;
-    console.log("🚀 ~ raceStart:", raceStart);
     raceEnd = transactionDetails?.end;
     raceTime = getTimeDifference(raceStart, raceEnd);
   }
@@ -105,7 +104,7 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
                   Start Time
                 </div>
                 <div className="text-xs ">
-                  {format(raceStart, "d MMM, yy - hh:mm a")}
+                  {raceStart ? format(raceStart, "d MMM, yy - hh:mm a") : null}
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -113,7 +112,7 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
                   End Time
                 </div>
                 <div className="text-xs ">
-                  {format(raceEnd, "d MMM, yy - hh:mm a")}
+                  {raceEnd ? format(raceEnd, "d MMM, yy - hh:mm a") : null}
                 </div>
               </div>
 

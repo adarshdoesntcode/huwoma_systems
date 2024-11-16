@@ -20,6 +20,8 @@ import SimRacingNewRace from "@/features/simracing/SimRacingNewRace";
 import SimRacingNewBooking from "@/features/simracing/SimRacingNewBooking";
 import Broadcast from "@/features/broadcast/Broadcast";
 import SimRacingCheckout from "@/features/simracing/SimRacingCheckout";
+import SimRacingCustomers from "@/features/simracing/simracing_customers/SimRacingCustomers";
+import SimRacingCustomerDetails from "@/features/simracing/simracing_customers/SimRacingCustomerDetails";
 
 const PrivateRoutes = [
   {
@@ -89,7 +91,12 @@ const PrivateRoutes = [
   },
   {
     path: "simracing/customers",
-    element: <SimRacing />,
+    element: <SimRacingCustomers />,
+    errorElement: <Error />,
+  },
+  {
+    path: "simracing/customers/:id",
+    element: <SimRacingCustomerDetails />,
     errorElement: <Error />,
   },
   {

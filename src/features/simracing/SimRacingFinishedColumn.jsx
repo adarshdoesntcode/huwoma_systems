@@ -113,9 +113,12 @@ export const SimRacingFinishedColumn = [
       );
     },
     cell: ({ row }) => {
-      let date = format(new Date(row.original.end), "d MMM, yyyy");
-      let time = format(new Date(row.original.end), "h:mm a");
-
+      let date = row.original.end
+        ? format(new Date(row.original.end), "d MMM, yyyy")
+        : "";
+      let time = row.original.end
+        ? format(new Date(row.original.end), "h:mm a")
+        : "";
       return (
         <TableCell className="hidden  lg:table-cell">
           <div className="flex flex-col items-start">

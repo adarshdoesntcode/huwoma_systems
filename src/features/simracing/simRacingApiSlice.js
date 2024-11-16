@@ -16,6 +16,27 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+    getSimRacingCustomers: builder.query({
+      query: () => ({
+        url: "/simracing/customers",
+        method: "GET",
+      }),
+    }),
+    getSimRacingCustomerById: builder.query({
+      query: (id) => ({
+        url: `/simracing/customer/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["SimRacingCustomer"],
+    }),
+    updateSimRacingCustomer: builder.mutation({
+      query: (credentials) => ({
+        url: `/simracing/customer/${credentials.id}`,
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingCustomer"],
+    }),
     getSimRacingTransactions: builder.query({
       query: () => ({
         url: "/simracing/transactions",
@@ -96,4 +117,7 @@ export const {
   useRaceStartFromBookingMutation,
   useGetSimracingCheckoutDetailsQuery,
   useSimracingCheckoutMutation,
+  useGetSimRacingCustomersQuery,
+  useGetSimRacingCustomerByIdQuery,
+  useUpdateSimRacingCustomerMutation,
 } = simRacingApiSlice;

@@ -35,7 +35,7 @@ function Login() {
 
   const home_path = window.location.origin;
 
-  const from = location.state?.from?.pathname || `dashboard`;
+  const from = location.state?.from?.pathname || `/dashboard`;
 
   const onSubmit = async ({ email, password }) => {
     try {
