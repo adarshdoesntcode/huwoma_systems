@@ -140,7 +140,7 @@ const SimRacingClientStartRace = () => {
       toast({
         variant: "destructive",
         title: "Something went wrong",
-        description: err.data.message || err.message,
+        description: err.response.data.message || err.message,
       });
       // setError(err.message || "Failed to send data.");
     }
