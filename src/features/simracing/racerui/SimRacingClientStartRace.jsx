@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import SubmitButton from "@/components/SubmitButton";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { toast } from "@/hooks/use-toast";
 
 const SimRacingClientStartRace = () => {
   const { id } = useParams();
@@ -136,6 +137,11 @@ const SimRacingClientStartRace = () => {
       }
     } catch (err) {
       console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: err.data.message || err.message,
+      });
       // setError(err.message || "Failed to send data.");
     }
   };
