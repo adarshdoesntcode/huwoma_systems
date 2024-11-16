@@ -62,7 +62,7 @@ const SimRacingClientStartRace = () => {
           } catch (error) {
             if (error.code === error.PERMISSION_DENIED) {
               throw new Error(
-                "Location permission denied. Please enable location."
+                "Location permission denied. Please enable location for this site in your browser settings."
               );
             }
             if (attempt < maxRetries - 1) {
@@ -92,9 +92,14 @@ const SimRacingClientStartRace = () => {
       console.error(err);
       setIsLoading(false);
 
-      setError(err.response.data.message || "Failed to send data.");
+      if (err.name === "AxiosError") {
+        setError(err.response.data.message);
+        return;
+      }
+
+      setError(err.message || "Something went wrong");
     } finally {
-      isRequestInProgress.current = false; // Reset request state
+      isRequestInProgress.current = false;
     }
   };
 
@@ -108,7 +113,9 @@ const SimRacingClientStartRace = () => {
         await requestLocation();
       } else if (permissionStatus.state === "denied") {
         setShowGrantButton(true);
-        setError("Location permission denied. Please grant permission.");
+        setError(
+          "Location permission denied. Please enable location for this site in your browser settings."
+        );
       } else {
         setShowGrantButton(true);
       }
@@ -142,7 +149,6 @@ const SimRacingClientStartRace = () => {
         title: "Something went wrong",
         description: err.response.data.message || err.message,
       });
-      // setError(err.message || "Failed to send data.");
     }
   };
 
