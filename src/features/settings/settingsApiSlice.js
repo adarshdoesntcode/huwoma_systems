@@ -133,6 +133,37 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
         { type: "AdminProfile", id },
       ],
     }),
+    getAllAdmins: builder.query({
+      query: () => ({
+        url: "/settings/admins",
+        method: "GET",
+      }),
+      providesTags: ["Admins"],
+    }),
+    createAdmin: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/admins",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["Admins"],
+    }),
+    deleteAdmin: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/admins",
+        method: "DELETE",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["Admins"],
+    }),
+    updateAdmin: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/admins",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["Admins"],
+    }),
     getSimRacingRigs: builder.query({
       query: () => ({
         url: "/settings/simracing",
@@ -229,4 +260,8 @@ export const {
   useDeleteSimRacingRigMutation,
   useGetSimRacingCoordinatesQuery,
   useUpdateSimRacingCoordinatesMutation,
+  useGetAllAdminsQuery,
+  useCreateAdminMutation,
+  useDeleteAdminMutation,
+  useUpdateAdminMutation,
 } = settingsApiSlice;

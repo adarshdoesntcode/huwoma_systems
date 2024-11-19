@@ -18,7 +18,7 @@ import { VEHICLE_ICON_PATHS } from "@/lib/config";
 import { ChevronLeft, Loader2, PlusCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   useServiceTypeQuery,
   useUpdateServiceTypeMutation,
@@ -44,9 +44,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { isEqual } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsSuper } from "@/hooks/useSuper";
 
 function CarwashEditConfig() {
+  const isSuper = useIsSuper();
   const navigate = useNavigate();
+
+  if (!isSuper) {
+    return <Navigate to="/settings/c-wash" />;
+  }
 
   return (
     <>

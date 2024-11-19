@@ -21,9 +21,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useIsSuper } from "@/hooks/useSuper";
 
 export function SettingsLayout() {
   const navigate = useNavigate();
+  const isSuper = useIsSuper();
   return (
     <div>
       <main className="flex flex-col gap-4">
@@ -80,16 +82,18 @@ export function SettingsLayout() {
             >
               Parking
             </NavLink>
-            <NavLink
-              to={"/settings/admins"}
-              className={({ isActive }) =>
-                isActive
-                  ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
-                  : " text-primary border-b-2 border-transparent"
-              }
-            >
-              Admins
-            </NavLink>
+            {isSuper && (
+              <NavLink
+                to={"/settings/admins"}
+                className={({ isActive }) =>
+                  isActive
+                    ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                    : " text-primary border-b-2 border-transparent"
+                }
+              >
+                Admins
+              </NavLink>
+            )}
             <NavLink
               to={"/settings/payments"}
               className={({ isActive }) =>

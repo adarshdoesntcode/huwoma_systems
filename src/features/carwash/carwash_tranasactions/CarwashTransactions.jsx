@@ -65,6 +65,8 @@ import PaymentsGraph from "./charts/PaymentsGraph";
 import VehicleIncomeGraph from "./charts/VehicleIncomeGraph";
 import { DailyIncomeGraph } from "./charts/DailyIncomeGraph";
 import { isMobile } from "react-device-detect";
+import { useIsSuper } from "@/hooks/useSuper";
+import { Navigate } from "react-router-dom";
 
 const initialState = {
   preset: {
@@ -103,6 +105,7 @@ const getLastDayOfPreviousMonth = () => {
 };
 
 function CarwashTransactions() {
+  const isSuper = useIsSuper();
   const [filter, setFilter] = useState(initialState);
   const [selectedVehicle, setSelectedVehicle] = useState(configInitialState);
   const [selectedService, setSelectedService] = useState(configInitialState);
@@ -118,6 +121,10 @@ function CarwashTransactions() {
     useGetPreFilterTransactionsQuery();
 
   const [getPostFilterTransactions] = useGetPostFilterTransactionsMutation();
+
+  if (!isSuper) {
+    return <Navigate to="/carwash" />;
+  }
 
   const handlePresetSelect = (value) => {
     let changedstate = {

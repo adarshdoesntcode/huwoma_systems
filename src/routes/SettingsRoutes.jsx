@@ -10,6 +10,7 @@ import PaymentSettings from "@/features/settings/payments/PaymentSettings";
 
 import SimrRacingSettings from "@/features/settings/simracing/SimRacingSettings";
 import PosSettings from "@/features/settings/pos/PosSettings";
+import AdminsSettings from "@/features/settings/admins/AdminsSettings";
 
 const SettingsRoutes = [
   {
@@ -35,6 +36,11 @@ const SettingsRoutes = [
   {
     path: "c-wash/edit/:id",
     element: <CarwashEditConfig />,
+    errorElement: <Error />,
+  },
+  {
+    path: "admins",
+    element: <AdminsSettings />,
     errorElement: <Error />,
   },
   {

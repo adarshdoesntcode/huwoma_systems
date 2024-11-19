@@ -47,6 +47,7 @@ import { CarwashBookingDataTable } from "./CarwashBookingDataTable";
 import { CarwashBookingColumn } from "./CarwashBookingColumn";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
+import { useIsSuper } from "@/hooks/useSuper";
 
 const chartConfig = {
   customers: {
@@ -57,7 +58,7 @@ const chartConfig = {
 
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
-
+  const isSuper = useIsSuper();
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
       pollingInterval: 30000,
@@ -159,15 +160,18 @@ function Carwash() {
 
               <Users className="sm:ml-2 w-4 h-4" />
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => navigate("/carwash/transactions")}
-            >
-              <span className="sr-only sm:not-sr-only">Transactions </span>
 
-              <ReceiptText className="sm:ml-2 w-4 h-4" />
-            </Button>
+            {isSuper && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigate("/carwash/transactions")}
+              >
+                <span className="sr-only sm:not-sr-only">Transactions </span>
+
+                <ReceiptText className="sm:ml-2 w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
         {!isMobile && (

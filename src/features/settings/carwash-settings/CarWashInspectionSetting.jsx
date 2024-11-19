@@ -36,8 +36,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { isEqual } from "lodash";
 import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsSuper } from "@/hooks/useSuper";
 
 const CarWashInspectionSetting = () => {
+  const isSuper = useIsSuper();
+
   const [initialInspections, setInitialInspections] = useState([]);
   const [inspections, setInspections] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
@@ -316,50 +319,57 @@ const CarWashInspectionSetting = () => {
                               </Badge>
                             </CardTitle>
                           </div>
-                          <div>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="text-muted-foreground"
-                              onClick={() => {
-                                setInspectionScope(inspection.scope);
-                                setEditIndex(index);
-                                setEditId(inspection._id);
-                              }}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
+
+                          <div className="h-8">
+                            {isSuper && (
+                              <>
                                 <Button
                                   size="icon"
                                   variant="ghost"
                                   className="text-muted-foreground"
+                                  onClick={() => {
+                                    setInspectionScope(inspection.scope);
+                                    setEditIndex(index);
+                                    setEditId(inspection._id);
+                                  }}
                                 >
-                                  <Trash className="w-4 h-4" />
+                                  <Edit className="w-4 h-4" />
                                 </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Are you sure?
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() =>
-                                      handleInspectionRemove(index)
-                                    }
-                                  >
-                                    Confirm
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="text-muted-foreground"
+                                    >
+                                      <Trash className="w-4 h-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Are you sure?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() =>
+                                          handleInspectionRemove(index)
+                                        }
+                                      >
+                                        Confirm
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </>
+                            )}
                           </div>
                         </div>
                       </CardHeader>
@@ -459,36 +469,38 @@ const CarWashInspectionSetting = () => {
             </form>
           )}
         </CardContent>
-        <CardFooter className="border-t px-4 sm:px-6  py-4  flex justify-between">
-          <Button
-            variant="outline"
-            className="gap-1"
-            onClick={() => {
-              reset();
-              if (!addNewInspection) {
-                setInspectionScope("exterior");
-              } else {
-                setInspectionScope("");
-              }
-              setAddNewinspection(!addNewInspection);
-            }}
-          >
-            {!addNewInspection && <PlusCircle className="h-3.5 w-3.5" />}
-            {addNewInspection ? "Cancel" : "Add"}
-          </Button>
-          <div>
-            {isSubmitting ? (
-              <Button disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving
-              </Button>
-            ) : (
-              <Button disabled={!isDirty} onClick={onSubmit}>
-                Save
-              </Button>
-            )}
-          </div>
-        </CardFooter>
+        {isSuper && (
+          <CardFooter className="border-t px-4 sm:px-6  py-4  flex justify-between">
+            <Button
+              variant="outline"
+              className="gap-1"
+              onClick={() => {
+                reset();
+                if (!addNewInspection) {
+                  setInspectionScope("exterior");
+                } else {
+                  setInspectionScope("");
+                }
+                setAddNewinspection(!addNewInspection);
+              }}
+            >
+              {!addNewInspection && <PlusCircle className="h-3.5 w-3.5" />}
+              {addNewInspection ? "Cancel" : "Add"}
+            </Button>
+            <div>
+              {isSubmitting ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving
+                </Button>
+              ) : (
+                <Button disabled={!isDirty} onClick={onSubmit}>
+                  Save
+                </Button>
+              )}
+            </div>
+          </CardFooter>
+        )}
       </Card>
     );
   } else if (isError) {

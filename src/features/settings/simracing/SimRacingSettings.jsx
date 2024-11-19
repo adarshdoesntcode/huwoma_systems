@@ -47,6 +47,7 @@ import {
   useGetPaymentModeQuery,
   useGetSimRacingCoordinatesQuery,
   useGetSimRacingRigsQuery,
+  useUpdateAdminMutation,
   useUpdatePaymentModeMutation,
   useUpdateSimRacingCoordinatesMutation,
   useUpdateSimRacingRigMutation,
@@ -68,8 +69,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Image } from "@unpic/react";
+import { useIsSuper } from "@/hooks/useSuper";
 
 const SimRacingSettings = () => {
+  const isSuper = useIsSuper();
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -125,7 +128,9 @@ const SimRacingSettings = () => {
                   Transactions
                 </TableHead>
 
-                <TableHead className="text-right">Action</TableHead>
+                {isSuper && (
+                  <TableHead className="text-right">Action</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -162,32 +167,34 @@ const SimRacingSettings = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-right p-1 px-0">
-                      <div className="flex gap-2 items-center justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedRig(rig);
-                            setEditOpen(true);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedRig(rig);
-                            setDeleteOpen(true);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </TableCell>
+                    {isSuper && (
+                      <TableCell className="text-right p-1 px-0">
+                        <div className="flex gap-2 items-center justify-end">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedRig(rig);
+                              setEditOpen(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedRig(rig);
+                              setDeleteOpen(true);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })}
@@ -234,9 +241,11 @@ const SimRacingSettings = () => {
           />
         )}
 
-        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-          <Button onClick={() => setCreateOpen(true)}>Add Rig</Button>
-        </CardFooter>
+        {isSuper && (
+          <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+            <Button onClick={() => setCreateOpen(true)}>Add Rig</Button>
+          </CardFooter>
+        )}
       </Card>
       <SimRacingLocation />
     </>
@@ -477,6 +486,7 @@ function EditPayment({ selectedRig, editOpen, setEditOpen }) {
 }
 
 function SimRacingLocation() {
+  const isSuper = useIsSuper();
   const { data, isLoading, isSuccess, isFetching, isError, error } =
     useGetSimRacingCoordinatesQuery();
 
@@ -541,9 +551,11 @@ function SimRacingLocation() {
             <Skeleton className="h-11 w-full" />
           </div>
         </CardContent>
-        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-          <Button disabled>Save</Button>
-        </CardFooter>
+        {isSuper && (
+          <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+            <Button disabled>Save</Button>
+          </CardFooter>
+        )}
       </Card>
     );
   } else if (isSuccess) {
@@ -572,58 +584,65 @@ function SimRacingLocation() {
             )}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            id="coordinates-change"
-            className="grid gap-2"
-          >
-            <Label>
-              {errors.coordinates ? (
-                <span className="text-destructive">
-                  {errors.coordinates.message}
-                </span>
+        {isSuper && (
+          <>
+            <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                id="coordinates-change"
+                className="grid gap-2"
+              >
+                <Label>
+                  {errors.coordinates ? (
+                    <span className="text-destructive">
+                      {errors.coordinates.message}
+                    </span>
+                  ) : (
+                    <span>Change Coordinates</span>
+                  )}
+                </Label>
+                <Input
+                  id="coordinates"
+                  type="text"
+                  autoComplete="off"
+                  placeholder="Latitude, Longitude"
+                  {...register("coordinates", {
+                    required: "Coordinates are required",
+                    pattern: {
+                      value:
+                        /^([-+]?\d{1,2}(\.\d+)?),\s*([-+]?\d{1,3}(\.\d+)?)$/,
+                      message:
+                        "Please enter valid coordinates in 'Latitude, Longitude' format",
+                    },
+                    validate: (value) => {
+                      const [latitude, longitude] = value
+                        .split(",")
+                        .map(Number);
+                      if (latitude < -90 || latitude > 90)
+                        return "Latitude must be between -90 and 90";
+                      if (longitude < -180 || longitude > 180)
+                        return "Longitude must be between -180 and 180";
+                      return true;
+                    },
+                  })}
+                  className={errors.coordinates ? "border-destructive" : ""}
+                />
+              </form>
+            </CardContent>
+            <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+              {isSubmitting ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving
+                </Button>
               ) : (
-                <span>Change Coordinates</span>
+                <Button type="submit" form="coordinates-change">
+                  Save
+                </Button>
               )}
-            </Label>
-            <Input
-              id="coordinates"
-              type="text"
-              autoComplete="off"
-              placeholder="Latitude, Longitude"
-              {...register("coordinates", {
-                required: "Coordinates are required",
-                pattern: {
-                  value: /^([-+]?\d{1,2}(\.\d+)?),\s*([-+]?\d{1,3}(\.\d+)?)$/,
-                  message:
-                    "Please enter valid coordinates in 'Latitude, Longitude' format",
-                },
-                validate: (value) => {
-                  const [latitude, longitude] = value.split(",").map(Number);
-                  if (latitude < -90 || latitude > 90)
-                    return "Latitude must be between -90 and 90";
-                  if (longitude < -180 || longitude > 180)
-                    return "Longitude must be between -180 and 180";
-                  return true;
-                },
-              })}
-              className={errors.coordinates ? "border-destructive" : ""}
-            />
-          </form>
-        </CardContent>
-        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-          {isSubmitting ? (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving
-            </Button>
-          ) : (
-            <Button type="submit" form="coordinates-change">
-              Save
-            </Button>
-          )}
-        </CardFooter>
+            </CardFooter>
+          </>
+        )}
       </Card>
     );
   }

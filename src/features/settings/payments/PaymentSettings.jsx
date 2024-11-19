@@ -61,8 +61,10 @@ import { isEqual } from "lodash";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsSuper } from "@/hooks/useSuper";
 
 const PaymentSettings = () => {
+  const isSuper = useIsSuper();
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -119,7 +121,9 @@ const PaymentSettings = () => {
                 <TableHead className="text-center hidden sm:table-cell">
                   QR Data
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                {isSuper && (
+                  <TableHead className="text-right">Action</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -163,32 +167,34 @@ const PaymentSettings = () => {
                       )}
                     </TableCell>
 
-                    <TableCell className="text-right p-1">
-                      <div className="flex gap-2 items-center justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPaymentMode(paymentMode);
-                            setEditOpen(true);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPaymentMode(paymentMode);
-                            setDeleteOpen(true);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </TableCell>
+                    {isSuper && (
+                      <TableCell className="text-right p-1">
+                        <div className="flex gap-2 items-center justify-end">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedPaymentMode(paymentMode);
+                              setEditOpen(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedPaymentMode(paymentMode);
+                              setDeleteOpen(true);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })}
@@ -236,9 +242,11 @@ const PaymentSettings = () => {
         />
       )}
 
-      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-        <Button onClick={() => setCreateOpen(true)}>Add Payment</Button>
-      </CardFooter>
+      {isSuper && (
+        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+          <Button onClick={() => setCreateOpen(true)}>Add Payment</Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };
@@ -252,7 +260,7 @@ function ConfigDetails({ setDetailsOpen, detailsOpen, selectedPaymentMode }) {
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <Separator />
-        <div className="max-h-[70vh] overflow-y-auto">
+        <div className="max-h-[50vh] overflow-y-auto">
           <div className="space-y-2  mb-2">
             <Label>Transactions</Label>
             <div className="pb-4 text-sm font-medium text-muted-foreground">

@@ -44,8 +44,11 @@ import { SimRacingBookingDataTable } from "./SimRacingBookingDataTable";
 import { SimRacingBookingColumn } from "./SimRacingBookingColumn";
 import { SimRacingFinishedColumn } from "./SimRacingFinishedColumn";
 import { SimRacingFinishedDataTable } from "./SimRacingFinishedDataTable";
+import { useIsSuper } from "@/hooks/useSuper";
 
 function SimRacing() {
+  const isSuper = useIsSuper();
+
   const navigate = useNavigate();
   const location = useLocation();
   const navigateState = useMemo(() => location.state || {}, [location.state]);
@@ -125,16 +128,17 @@ function SimRacing() {
 
               <Users className="sm:ml-2 w-4 h-4" />
             </Button>
+            {isSuper && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigate("/simracing/transactions")}
+              >
+                <span className="sr-only sm:not-sr-only">Transactions </span>
 
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => navigate("/simracing/transactions")}
-            >
-              <span className="sr-only sm:not-sr-only">Transactions </span>
-
-              <ReceiptText className="sm:ml-2 w-4 h-4" />
-            </Button>
+                <ReceiptText className="sm:ml-2 w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
         <div className="grid grid-cols-12 gap-4 sm:gap-6 mb-6">

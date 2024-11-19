@@ -52,12 +52,15 @@ import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Image } from "@unpic/react";
+import { useIsSuper } from "@/hooks/useSuper";
 
 function getTotalRate(services, key) {
   return services?.reduce((total, service) => total + service[key], 0);
 }
 
 const CarwashConfigSettings = () => {
+  const isSuper = useIsSuper();
+
   const [modelOpen, setModalOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVehicleId, setSelectedVehicleId] = useState("");
@@ -112,7 +115,9 @@ const CarwashConfigSettings = () => {
                 <TableHead className="text-center hidden sm:table-cell">
                   Services
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                {isSuper && (
+                  <TableHead className="text-right">Action</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,31 +163,33 @@ const CarwashConfigSettings = () => {
                     </Badge>
                   </TableCell>
 
-                  <TableCell className="text-right p-1">
-                    <div className="flex gap-2 items-center justify-end">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/settings/c-wash/edit/${vehicle._id}`);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedVehicleId(vehicle._id);
-                          setDialogOpen(true);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {isSuper && (
+                    <TableCell className="text-right p-1">
+                      <div className="flex gap-2 items-center justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/settings/c-wash/edit/${vehicle._id}`);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedVehicleId(vehicle._id);
+                            setDialogOpen(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
@@ -215,11 +222,13 @@ const CarwashConfigSettings = () => {
       <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pt-0">
         {content}
       </CardContent>
-      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-        <Button onClick={() => navigate("/settings/c-wash/new")}>
-          Add Config
-        </Button>
-      </CardFooter>
+      {isSuper && (
+        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+          <Button onClick={() => navigate("/settings/c-wash/new")}>
+            Add Config
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };
@@ -288,6 +297,7 @@ function ConfirmDelete({
 
 function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
   const navigate = useNavigate();
+  const isSuper = useIsSuper();
 
   return (
     <Dialog open={modelOpen} onOpenChange={setModalOpen}>
@@ -364,17 +374,19 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
             )}
           </div>
         </div>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              navigate(`/settings/c-wash/edit/${selectedVehicle._id}`)
-            }
-          >
-            Edit
-          </Button>
-        </DialogFooter>
+        {isSuper && (
+          <DialogFooter>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                navigate(`/settings/c-wash/edit/${selectedVehicle._id}`)
+              }
+            >
+              Edit
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

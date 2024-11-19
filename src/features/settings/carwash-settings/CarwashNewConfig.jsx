@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
   useCreateServiceTypeMutation,
   useCreateVehicleTypeMutation,
@@ -44,10 +44,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useIsSuper } from "@/hooks/useSuper";
 
 function CarwashNewConfig() {
+  const isSuper = useIsSuper();
   const [vehicle, setVehicle] = useState("");
   const navigate = useNavigate();
+
+  if (!isSuper) {
+    return <Navigate to="/settings/c-wash" />;
+  }
   return (
     <>
       <div className=" font-semibold tracking-tight flex items-center gap-4">

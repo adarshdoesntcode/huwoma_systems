@@ -57,8 +57,10 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useIsSuper } from "@/hooks/useSuper";
 
 function PosSettings() {
+  const isSuper = useIsSuper();
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedPOSAccess, setSelectedPOSAccess] = useState("");
@@ -100,7 +102,9 @@ function PosSettings() {
                 <TableHead className="hidden md:table-cell">POS Name</TableHead>
                 <TableHead>Code</TableHead>
 
-                <TableHead className="text-right">Action</TableHead>
+                {isSuper && (
+                  <TableHead className="text-right">Action</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -140,20 +144,21 @@ function PosSettings() {
                         </InputOTP>
                       </div>
                     </TableCell>
-
-                    <TableCell className="text-right">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedPOSAccess(POSAccess);
-                          setDeleteOpen(true);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
+                    {isSuper && (
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPOSAccess(POSAccess);
+                            setDeleteOpen(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })}
@@ -193,9 +198,11 @@ function PosSettings() {
           setSelectedPOSAccess={setSelectedPOSAccess}
         />
       )}
-      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-        <Button onClick={() => setCreateOpen(true)}>Add Access</Button>
-      </CardFooter>
+      {isSuper && (
+        <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+          <Button onClick={() => setCreateOpen(true)}>Add Access</Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }
