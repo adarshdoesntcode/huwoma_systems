@@ -441,7 +441,7 @@ function Carwash() {
       </div>
     );
   } else if (isError) {
-    content = <ApiError error={error} />;
+    content = <ApiError error={error} refetch={refetch} />;
   }
 
   return content;

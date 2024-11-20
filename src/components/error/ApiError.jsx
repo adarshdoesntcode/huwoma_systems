@@ -1,4 +1,6 @@
-function ApiError({ error }) {
+import { Button } from "../ui/button";
+
+function ApiError({ error, refetch }) {
   console.error(error);
   return (
     <div className="flex flex-1 items-center justify-center text-muted-foreground bg-inherit  py-6 ">
@@ -7,7 +9,20 @@ function ApiError({ error }) {
         <p className="text-sm text-muted-foreground">
           {error.status || `STATUS ${error.originalStatus}`}
         </p>
-        <div className="mt-4"> {JSON.stringify(error.data)}</div>
+        {error?.data?.message && (
+          <div className="mt-4"> {JSON.stringify(error?.data?.message)}</div>
+        )}
+        {refetch && (
+          <Button
+            className="mt-4"
+            size="sm"
+            onClick={() => {
+              refetch();
+            }}
+          >
+            Try Again
+          </Button>
+        )}
       </div>
     </div>
   );

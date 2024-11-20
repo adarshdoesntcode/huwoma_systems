@@ -253,6 +253,7 @@ function AdminsSettings() {
           setDetailsOpen={setDetailsOpen}
           detailsOpen={detailsOpen}
           selectedAdmin={selectedAdmin}
+          setEditOpen={setEditOpen}
         />
       )}
 
@@ -263,7 +264,12 @@ function AdminsSettings() {
   );
 }
 
-function ConfigDetails({ setDetailsOpen, detailsOpen, selectedAdmin }) {
+function ConfigDetails({
+  setDetailsOpen,
+  setEditOpen,
+  detailsOpen,
+  selectedAdmin,
+}) {
   return (
     <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
       <DialogContent className="p-8">
@@ -312,6 +318,7 @@ function ConfigDetails({ setDetailsOpen, detailsOpen, selectedAdmin }) {
             variant="outline"
             onClick={() => {
               setDetailsOpen(false);
+              setEditOpen(true);
             }}
           >
             Edit
