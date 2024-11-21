@@ -84,6 +84,7 @@ function AdminLayout() {
             <div className="relative ml-auto flex-1 md:grow-0">
               <div className="flex items-center justify-center sm:hidden">
                 <img
+                  loading="lazy"
                   src={IMAGE_DATA.huwoma_logo}
                   className=" h-6 aspect-auto mx-auto"
                 />

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import useAxios from "@/hooks/useAxios";
 import { IMAGE_DATA } from "@/lib/config";
-import { Image } from "@unpic/react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 
@@ -82,11 +81,11 @@ function SimRacingClientMyRace() {
       <Card className="w-[90%] max-w-[400px]">
         <CardHeader className="pb-2">
           <CardTitle className="py-2">
-            <Image
+            <img
               src={IMAGE_DATA.simracing_logo}
               alt="logo"
               width={120}
-              aspectRatio={3 / 1}
+              loading="lazy"
               className="mx-auto"
             />
           </CardTitle>
@@ -114,11 +113,11 @@ function SimRacingClientMyRace() {
                       )}`}
                   </div>
                 </div>
-                <Image
+                <img
                   src={IMAGE_DATA.rig}
                   alt="logo"
                   width={100}
-                  aspectRatio={16 / 10}
+                  loading="lazy"
                 />
               </div>
               <div className="font-mono text-2xl text-primary-foreground text-center p-6 rounded-lg bg-foreground mt-6">

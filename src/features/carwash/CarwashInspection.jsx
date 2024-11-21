@@ -148,7 +148,11 @@ function CarwashInspection() {
             <div className="border p-4 rounded-md shadow-sm bg-background">
               <div className="flex gap-4">
                 <div className="w-20 sm:w-24 ">
-                  <img src={`${service?.serviceVehicle?.vehicleIcon}`} />
+                  <img
+                    src={`${service?.serviceVehicle?.vehicleIcon}`}
+                    loading="lazy"
+                    alt={service?.serviceTypeName}
+                  />
                 </div>
                 <div className="flex flex-1 flex-col  pb-2 mb-2">
                   <div className="font-medium flex items-center justify-between">

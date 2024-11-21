@@ -50,6 +50,7 @@ import {
   useCancelRaceMutation,
   useDeleteSimracingTransactionMutation,
 } from "./simRacingApiSlice";
+import { IMAGE_DATA } from "@/lib/config";
 
 export const SimRacingDataTable = ({ columns, data }) => {
   const [showDelete, setShowDelete] = useState(false);
@@ -131,14 +132,6 @@ export const SimRacingDataTable = ({ columns, data }) => {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="hover:bg-inherit"
-                  onClick={() => {
-                    // navigate("/carwash/new", {
-                    //   state: {
-                    //     customer: row.original.customer,
-                    //     transaction: row.original._id,
-                    //   },
-                    // });
-                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
@@ -163,9 +156,10 @@ export const SimRacingDataTable = ({ columns, data }) => {
                       >
                         Cancel
                         <img
-                          src="/redflag.png"
+                          src={IMAGE_DATA.checkered_flag}
                           className="w-3 h-3 ml-2"
                           alt="delete"
+                          loading="lazy"
                         />
                       </Button>
 
@@ -181,9 +175,10 @@ export const SimRacingDataTable = ({ columns, data }) => {
                       >
                         Finish
                         <img
-                          src="/checkered.png"
+                          src={IMAGE_DATA.red_flag}
                           className="w-3 h-3 ml-2 "
                           alt="finish"
+                          loading="lazy"
                         />
                       </Button>
                     </div>

@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 import jsPDFInvoiceTemplate from "jspdf-invoice-template";
 
 import { twMerge } from "tailwind-merge";
-import { GOOGLE_CLIENT_ID } from "./config";
+import { GOOGLE_CLIENT_ID, IMAGE_DATA } from "./config";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -113,7 +113,7 @@ export const handlePrint = (data) => {
     orientationLandscape: false,
     compress: true,
     logo: {
-      src: "/receipt_logo.png",
+      src: IMAGE_DATA.receipt_logo,
       type: "PNG",
       width: 53.33,
       height: 53.33,

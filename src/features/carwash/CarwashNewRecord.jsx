@@ -41,7 +41,6 @@ import {
 import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
-import { Image } from "@unpic/react";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
@@ -288,7 +287,6 @@ const ServiceSelect = ({ customer, locationState }) => {
           actualRate: selectedService.serviceRate,
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
-          // serviceStart: new Date().toISOString(),
         });
       } else {
         res = await transactionOne({
@@ -297,8 +295,6 @@ const ServiceSelect = ({ customer, locationState }) => {
           actualRate: selectedService.serviceRate,
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
-          // serviceStart: new Date().toISOString(),
-          // clientDate: new Date().toISOString(),
         });
       }
       if (res.error) {
@@ -382,9 +378,9 @@ const ServiceSelect = ({ customer, locationState }) => {
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
                           </Badge>
                         )}
-                        <Image
+                        <img
                           src={vehicle.vehicleIcon}
-                          aspectRatio={1.5 / 1}
+                          loading="lazy"
                           alt="Vehicle Image"
                         />
                       </div>
@@ -444,14 +440,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                               Free!!
                             </Badge>
                           )}
-                          {/* {!isFree && washStreakApplicable && (
-                            <Badge
-                              variant="outline"
-                              className=" text-xs bg-primary-foreground normal-case     tracking-wider  shadow-lg absolute left-0 top-0 -translate-x-1/4 -translate-y-1/4 "
-                            >
-                              {getOrdinal(washStreak + 1)}
-                            </Badge>
-                          )} */}
+
                           {service.serviceTypeName}
                         </div>
                         <p>Rs. {service.serviceRate}</p>

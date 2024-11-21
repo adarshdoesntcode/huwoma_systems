@@ -187,6 +187,7 @@ function VehicleType() {
                 <img
                   src={`${vehicleIcon}`}
                   alt={vehicleIcon}
+                  loading="lazy"
                   className="h-16 object-cover"
                 />
               </div>
@@ -266,6 +267,7 @@ function VehicleType() {
                           <img
                             src={`${image}`}
                             alt={image}
+                            loading="lazy"
                             className="h-16 object-cover cursor-pointer hover:scale-110 transition-transform "
                           />
                         </div>

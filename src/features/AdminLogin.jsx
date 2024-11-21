@@ -77,7 +77,11 @@ function Login() {
       <div className="flex gap-14 flex-col">
         <div className="col-span-12 max-w-lg  mx-auto text-center">
           <div className="flex gap-2 text-center  text-muted-foreground text-sm flex-col items-center justify-center">
-            <img src={IMAGE_DATA.huwoma_logo} className="w-48 sm:w-64" />
+            <img
+              src={IMAGE_DATA.huwoma_logo}
+              loading="lazy"
+              className="w-48 sm:w-64"
+            />
             Management System
           </div>
         </div>

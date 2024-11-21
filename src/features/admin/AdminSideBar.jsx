@@ -29,7 +29,7 @@ function AdminSideBar() {
       <div className="sticky top-0 flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <div className="flex items-center justify-center w-full">
-            <img src={IMAGE_DATA.huwoma_logo} className="h-7" />
+            <img src={IMAGE_DATA.huwoma_logo} loading="lazy" className="h-7" />
           </div>
         </div>
         <div className="flex-1">

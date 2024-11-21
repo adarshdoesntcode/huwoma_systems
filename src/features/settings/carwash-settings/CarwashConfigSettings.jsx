@@ -51,7 +51,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Image } from "@unpic/react";
+
 import { useIsSuper } from "@/hooks/useSuper";
 
 function getTotalRate(services, key) {

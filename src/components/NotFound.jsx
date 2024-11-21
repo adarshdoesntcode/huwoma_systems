@@ -7,8 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { IMAGE_DATA } from "@/lib/config";
-import { Image } from "@unpic/react";
-import { Origami } from "lucide-react";
+
 import { Link, useNavigate } from "react-router-dom";
 
 const NotFound = () => {
@@ -26,7 +25,12 @@ const NotFound = () => {
       <div className="grid grid-cols-12 max-w-7xl mx-auto">
         <div className="col-span-12  self-center p-4 flex justify-between">
           <Link to={"/"} className="flex items-center  gap-2">
-            <Image src={IMAGE_DATA.huwoma_logo} alt="logo" width={120} />
+            <img
+              src={IMAGE_DATA.huwoma_logo}
+              loading="lazy"
+              alt="logo"
+              width={120}
+            />
           </Link>
           <div>
             <Button variant="link">Support</Button>

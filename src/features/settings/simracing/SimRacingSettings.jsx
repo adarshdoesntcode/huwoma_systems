@@ -8,14 +8,12 @@ import {
 } from "@/components/ui/card";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   Dialog,
@@ -24,51 +22,41 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import {
-  useCarwashconfigQuery,
-  useCreatePaymentModeMutation,
   useCreateSimRacingRigMutation,
-  useDeleteCarWashConfigMutation,
-  useDeletePaymentModeMutation,
   useDeleteSimRacingRigMutation,
-  useGetPaymentModeQuery,
   useGetSimRacingCoordinatesQuery,
   useGetSimRacingRigsQuery,
-  useUpdateAdminMutation,
-  useUpdatePaymentModeMutation,
   useUpdateSimRacingCoordinatesMutation,
   useUpdateSimRacingRigMutation,
 } from "../settingsApiSlice";
-import QRCode from "react-qr-code";
+
 import ApiError from "@/components/error/ApiError";
-import Loader from "@/components/Loader";
+
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
-import { ArrowUp, ArrowUpRight, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+
 import { useForm } from "react-hook-form";
-import { isEqual } from "lodash";
+
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Skeleton } from "@/components/ui/skeleton";
-import { Image } from "@unpic/react";
+
 import { useIsSuper } from "@/hooks/useSuper";
 import { IMAGE_DATA } from "@/lib/config";
 
@@ -145,6 +133,7 @@ const SimRacingSettings = () => {
                     <TableCell className="hidden md:table-cell px-0">
                       <div className="flex items-center gap-4 text-center">
                         <img
+                          loading="lazy"
                           src={IMAGE_DATA.rig}
                           width={64}
                           height={40}

@@ -30,7 +30,7 @@ import {
   useRaceStartFromBookingMutation,
   useStartRaceMutation,
 } from "./simRacingApiSlice";
-import { Image } from "@unpic/react";
+
 import { IMAGE_DATA } from "@/lib/config";
 
 function SimRacingNewRace() {
@@ -357,9 +357,11 @@ const RigSelect = ({ customer, locationState }) => {
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
                           </Badge>
                         )}
-                        <Image
+                        <img
                           src={IMAGE_DATA.rig}
-                          aspectRatio={16 / 10}
+                          loading="lazy"
+                          width={200}
+                          height={125}
                           alt="Rig Image"
                         />
                       </div>

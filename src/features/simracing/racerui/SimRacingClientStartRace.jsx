@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image } from "@unpic/react";
+
 import Loader from "@/components/Loader";
 import { set } from "lodash";
 import { useForm } from "react-hook-form";
@@ -163,11 +163,11 @@ const SimRacingClientStartRace = () => {
       <Card className="w-[90%] max-w-[400px]">
         <CardHeader className="pb-2">
           <CardTitle className="py-2">
-            <Image
+            <img
               src={IMAGE_DATA.simracing_logo}
               alt="logo"
               width={120}
-              aspectRatio={3 / 1}
+              loading="lazy"
               className="mx-auto"
             />
           </CardTitle>
@@ -206,11 +206,11 @@ const SimRacingClientStartRace = () => {
                     Time : {format(new Date(), "hh:mm a")}
                   </div>
                 </div>
-                <Image
+                <img
                   src={IMAGE_DATA.rig}
                   alt="logo"
                   width={100}
-                  aspectRatio={16 / 10}
+                  loading="lazy"
                 />
               </div>
             )}

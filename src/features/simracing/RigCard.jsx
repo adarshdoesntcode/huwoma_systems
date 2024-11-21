@@ -21,7 +21,6 @@ import {
 import QRCode from "react-qr-code";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
-import { Image } from "@unpic/react";
 import { IMAGE_DATA } from "@/lib/config";
 
 function RigCard({ rig, className }) {
@@ -89,12 +88,11 @@ function RigCard({ rig, className }) {
                     className="flex flex-col items-center justify-center gap-8 p-6"
                   >
                     <div>
-                      <Image
+                      <img
                         src={IMAGE_DATA.simracing_logo}
-                        priority
                         alt="Sim Racing Logo"
                         width={140}
-                        aspectRatio={3 / 1}
+                        loading="lazy"
                       />
                     </div>
                     <div className="border p-4 rounded-lg shadow-lg">
@@ -111,11 +109,11 @@ function RigCard({ rig, className }) {
           </div>
         </div>
         <div className="w-4/12 aspect-auto hidden sm:flex items-center  justify-center ">
-          <Image
+          <img
             src={IMAGE_DATA.rig}
-            aspectRatio={16 / 10}
+            loading="lazy"
             width={200}
-            priority
+            height={125}
             alt="Rig Image"
           />
         </div>

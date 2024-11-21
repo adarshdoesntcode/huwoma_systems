@@ -141,6 +141,7 @@ function VehicleType({ vehicle, setVehicle }) {
 
             <div>
               <img
+                loading="lazy"
                 src={`${vehicle.vehicleIcon}`}
                 alt={vehicle.vehicleTypeName}
                 className="h-16 object-cover"
@@ -162,6 +163,7 @@ function VehicleType({ vehicle, setVehicle }) {
             {selectedVehicleIcon && (
               <div>
                 <img
+                  loading="lazy"
                   src={`${selectedVehicleIcon}`}
                   alt={selectedVehicleIcon}
                   className="h-16 object-cover"
@@ -244,6 +246,7 @@ function VehicleType({ vehicle, setVehicle }) {
                           onClick={() => handleImageSelect(image)}
                         >
                           <img
+                            loading="lazy"
                             src={`${image}`}
                             alt={image}
                             className="h-16 object-cover cursor-pointer hover:scale-110 transition-transform "
