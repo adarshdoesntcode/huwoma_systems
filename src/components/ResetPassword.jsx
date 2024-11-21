@@ -45,7 +45,7 @@ export function ResetPassword({ forgotPassword, setForgotPassword }) {
 
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/forgotPassword/email`, {
+      const response = await fetch(`${API_BASE_URL}/password-reset/email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export function ResetPassword({ forgotPassword, setForgotPassword }) {
 
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/forgotPassword/OTP`, {
+      const response = await fetch(`${API_BASE_URL}/password-reset/OTP`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export function ResetPassword({ forgotPassword, setForgotPassword }) {
 
   const onSendPassword = async (data) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/forgotPassword/password`, {
+      const response = await fetch(`${API_BASE_URL}/password-reset/password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

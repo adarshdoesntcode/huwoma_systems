@@ -121,7 +121,7 @@ const SimRacingClientStartRace = () => {
         setShowGrantButton(true);
       }
     } catch (err) {
-      setError("Unable to determine location permission state.");
+      setError("Unable to determine location permission state. ");
       setShowGrantButton(true);
     }
   };
@@ -141,7 +141,8 @@ const SimRacingClientStartRace = () => {
       if (response.status === 201 && response.data) {
         const { simRacingKey } = response.data.data;
         localStorage.setItem("simRacingKey", simRacingKey);
-        navigate(`/simracingbyhuwoma/myrace`);
+        // navigate(`/simracingbyhuwoma/myrace`);
+        const tab = window.open("/simracingbyhuwoma/myrace", "_self");
       }
     } catch (err) {
       console.error(err);
@@ -155,7 +156,7 @@ const SimRacingClientStartRace = () => {
 
   return (
     <div
-      className=" min-h-screen py-8 flex flex-col gap-2 items-center justify-center"
+      className="min-h-dvh py-8 flex flex-col gap-2 items-center justify-center"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
@@ -173,12 +174,12 @@ const SimRacingClientStartRace = () => {
           </CardTitle>
 
           {!error && showGrantButton && (
-            <CardDescription className="text-center text-xs">
+            <CardDescription className="!text-center text-xs">
               Location permission is required to start race
             </CardDescription>
           )}
           {error && (
-            <CardDescription className="text-destructive text-xs bg-destructive/10 text-center border border-destructive rounded-lg px-4 py-6">
+            <CardDescription className="text-destructive text-xs bg-destructive/10 !text-center border border-destructive rounded-lg px-4 py-6">
               {error}
             </CardDescription>
           )}
@@ -220,22 +221,22 @@ const SimRacingClientStartRace = () => {
       {message?.message === "RTR" && (
         <>
           <Card className="w-[90%] max-w-[400px]">
-            <CardHeader>
-              <CardTitle className="text-lg ">Your Details</CardTitle>
-              <CardDescription className="text-xs">
-                Fill up to start your timer
+            <CardHeader className="pb-4 space-x-1">
+              <CardTitle className="text-lg ">Pit Pass</CardTitle>
+              <CardDescription className="text-xs !m-0">
+                Fill up to start your lap
               </CardDescription>
             </CardHeader>
             <CardContent className="">
-              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-                <div className="grid gap-2">
+              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
+                <div className="grid gap-1.5">
                   <Label>
                     {errors.customerName ? (
                       <span className="text-destructive">
                         {errors.customerName.message}
                       </span>
                     ) : (
-                      <span>Name</span>
+                      <span>Racer Alias</span>
                     )}
                   </Label>
                   <Input
@@ -253,7 +254,7 @@ const SimRacingClientStartRace = () => {
                     className={errors.customerName ? "border-destructive" : ""}
                   />
                 </div>
-                <div className="grid gap-2">
+                <div className="grid gap-1.5">
                   <Label>
                     {errors.customerContact ? (
                       <span className="text-destructive">

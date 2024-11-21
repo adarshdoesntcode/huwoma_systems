@@ -26,6 +26,7 @@ import { Loader2 } from "lucide-react";
 import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClientStartRace";
 import Error from "./components/error/Error";
 import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
+import SimRacingLayout from "./components/layout/SimRacingLayout";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/simracingbyhuwoma/startrace/:id",
     element: <SimRacingClientStartRace />,

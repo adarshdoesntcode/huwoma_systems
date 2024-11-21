@@ -1,4 +1,5 @@
 import Loader from "@/components/Loader";
+import { Button } from "@/components/ui/button";
 
 import {
   Card,
@@ -73,7 +74,7 @@ function SimRacingClientMyRace() {
 
   return (
     <div
-      className=" min-h-screen py-8 flex flex-col gap-2 items-center justify-center"
+      className=" min-h-dvh py-8 flex flex-col gap-2 items-center justify-center"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
@@ -134,8 +135,14 @@ function SimRacingClientMyRace() {
               <div className="text-center text-3xl text-primary bg-muted font-medium border rounded-lg mt-2 p-8">
                 Thank You !!
               </div>
+              <Button
+                className="w-full mt-4"
+                onClick={() => (window.location.href = "about:blank")}
+              >
+                Close
+              </Button>
             </CardContent>
-            <CardFooter className="text-[10px] text-muted-foreground text-center">
+            <CardFooter className="text-[10px] text-muted-foreground !text-center">
               The session has ended or you are not authorized to view this page
             </CardFooter>
           </>
