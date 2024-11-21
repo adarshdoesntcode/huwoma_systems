@@ -141,8 +141,7 @@ const SimRacingClientStartRace = () => {
       if (response.status === 201 && response.data) {
         const { simRacingKey } = response.data.data;
         localStorage.setItem("simRacingKey", simRacingKey);
-        // navigate(`/simracingbyhuwoma/myrace`);
-        const tab = window.open("/simracingbyhuwoma/myrace", "_self");
+        navigate(`/simracingbyhuwoma/myrace`);
       }
     } catch (err) {
       console.error(err);
@@ -228,8 +227,8 @@ const SimRacingClientStartRace = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="">
-              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
-                <div className="grid gap-1.5">
+              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+                <div className="grid gap-2">
                   <Label>
                     {errors.customerName ? (
                       <span className="text-destructive">
@@ -254,14 +253,14 @@ const SimRacingClientStartRace = () => {
                     className={errors.customerName ? "border-destructive" : ""}
                   />
                 </div>
-                <div className="grid gap-1.5">
+                <div className="grid gap-2">
                   <Label>
                     {errors.customerContact ? (
                       <span className="text-destructive">
                         {errors.customerContact.message}
                       </span>
                     ) : (
-                      <span>Contact</span>
+                      <span>Racer Contact</span>
                     )}
                   </Label>
                   <Input

@@ -23,7 +23,7 @@ function SimRacingClientMyRace() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!transactionDetails) return;
+    if (!transactionDetails || error) return;
 
     const start = new Date(transactionDetails?.data?.start);
 
@@ -43,7 +43,7 @@ function SimRacingClientMyRace() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [transactionDetails]);
+  }, [transactionDetails, error]);
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -133,7 +133,7 @@ function SimRacingClientMyRace() {
           <>
             <CardContent>
               <div className="text-center text-3xl text-primary bg-muted font-medium border rounded-lg mt-2 p-8">
-                Thank You !!
+                Finished !!
               </div>
               <Button
                 className="w-full mt-4"

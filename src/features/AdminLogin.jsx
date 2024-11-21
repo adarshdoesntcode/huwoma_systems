@@ -17,14 +17,19 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "./auth/authApiSlice";
 import { useToast } from "@/hooks/use-toast";
 import { ResetPassword } from "@/components/ResetPassword";
-import { IMAGE_DATA } from "@/lib/config";
+import {
+  GOOGLE_OAUTH_REDIRECT_URL,
+  IMAGE_DATA,
+  ROLES_LIST,
+} from "@/lib/config";
+import { getGoogleOAuthURL } from "@/lib/utils";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [login, { isLoading }] = useLoginMutation();
+  const [login] = useLoginMutation();
   const dispatch = useDispatch();
   const { toast } = useToast();
   const {
@@ -33,8 +38,6 @@ function Login() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm();
-
-  const home_path = window.location.origin;
 
   const from = location.state?.from?.pathname || `/dashboard`;
 
@@ -186,15 +189,9 @@ function Login() {
               </div>
 
               <Button className="w-full" asChild>
-                <a
-                // to={getGoogleOAuthURL(
-                //   GOOGLE_OAUTH_REDIRECT_URL,
-                //   ROLES_LIST.admin,
-                //   home_path
-                // )}
-                >
+                <Link to={getGoogleOAuthURL(GOOGLE_OAUTH_REDIRECT_URL)}>
                   Login with Google
-                </a>
+                </Link>
               </Button>
               <div className="  mx-auto text-center  text-muted-foreground text-xs">
                 <p>Use a registered Google Account</p>

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Image } from "@unpic/react";
-import { Origami } from "lucide-react";
+
 import { Link, useNavigate } from "react-router-dom";
 
 const Unauthorized = () => {

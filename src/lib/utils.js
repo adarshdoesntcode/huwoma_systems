@@ -2,6 +2,7 @@ import { clsx } from "clsx";
 import jsPDFInvoiceTemplate from "jspdf-invoice-template";
 
 import { twMerge } from "tailwind-merge";
+import { GOOGLE_CLIENT_ID } from "./config";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -10,6 +11,26 @@ export function cn(...inputs) {
 export const isTabActive = (currentPath, tab) => {
   return currentPath.includes(tab);
 };
+
+export function getGoogleOAuthURL(redirect_uri) {
+  const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+
+  const options = {
+    redirect_uri,
+    client_id: GOOGLE_CLIENT_ID,
+    access_type: "offline",
+    response_type: "code",
+    prompt: "consent",
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+    ].join(" "),
+  };
+
+  const qs = new URLSearchParams(options);
+
+  return `${rootUrl}?${qs.toString()}`;
+}
 
 export const getInitials = (fullName) => {
   const parts = fullName.split(" ");

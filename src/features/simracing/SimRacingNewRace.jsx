@@ -31,6 +31,7 @@ import {
   useStartRaceMutation,
 } from "./simRacingApiSlice";
 import { Image } from "@unpic/react";
+import { IMAGE_DATA } from "@/lib/config";
 
 function SimRacingNewRace() {
   const [customer, setCoustomer] = useState(null);
@@ -357,7 +358,7 @@ const RigSelect = ({ customer, locationState }) => {
                           </Badge>
                         )}
                         <Image
-                          src={"/rig.webp"}
+                          src={IMAGE_DATA.rig}
                           aspectRatio={16 / 10}
                           alt="Rig Image"
                         />

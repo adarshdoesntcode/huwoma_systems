@@ -19,7 +19,7 @@ import AdminSideBar from "../../features/admin/AdminSideBar";
 import AdminMobileSideBar from "../../features/admin/AdminMobileSideBar";
 import useLogout from "@/hooks/useLogout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { ROLES_LIST } from "@/lib/config";
+import { IMAGE_DATA, ROLES_LIST } from "@/lib/config";
 
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/features/auth/authSlice";
@@ -84,7 +84,7 @@ function AdminLayout() {
             <div className="relative ml-auto flex-1 md:grow-0">
               <div className="flex items-center justify-center sm:hidden">
                 <img
-                  src="/huwoma_logo.png"
+                  src={IMAGE_DATA.huwoma_logo}
                   className=" h-6 aspect-auto mx-auto"
                 />
               </div>
