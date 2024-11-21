@@ -273,7 +273,7 @@ function ConfirmDelete({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will remove your vehicle type and
-            its associated services and packages from the system.
+            its associated services from the system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

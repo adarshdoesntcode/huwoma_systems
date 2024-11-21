@@ -128,7 +128,7 @@ function VehicleType({ vehicle, setVehicle }) {
   if (vehicle) {
     return (
       <Card>
-        <CardHeader>
+        <CardHeader className="p-4 sm:p-6 sm:pb-2">
           <div className="flex h-16 items-center justify-between gap-4">
             <div>
               <CardTitle className="text-xl">
@@ -154,11 +154,15 @@ function VehicleType({ vehicle, setVehicle }) {
   } else {
     return (
       <Card>
-        <CardHeader>
+        <CardHeader className="p-4 sm:p-6 sm:pb-2">
           <div className="flex h-16 items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-xl">Vehicle Type</CardTitle>
-              <CardDescription>Create a new vehile type</CardDescription>
+              <CardTitle className="text-xl sm:text-2xl">
+                Vehicle Type
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Create a new vehile type
+              </CardDescription>
             </div>
             {selectedVehicleIcon && (
               <div>
@@ -172,7 +176,7 @@ function VehicleType({ vehicle, setVehicle }) {
             )}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pt-0">
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
             <div>
               <div className="grid gap-2 col-span-2">
@@ -188,6 +192,7 @@ function VehicleType({ vehicle, setVehicle }) {
                 <Input
                   id="vehicleTypeName"
                   type="text"
+                  autoComplete="off"
                   placeholder="Vehicle type name"
                   {...register("vehicleTypeName", {
                     required: "Name is required",
@@ -210,6 +215,7 @@ function VehicleType({ vehicle, setVehicle }) {
                 <Input
                   id="billAbbreviation"
                   type="text"
+                  autoComplete="off"
                   placeholder="Text printed on the bill"
                   {...register("billAbbreviation", {
                     required: "Abbreviation is required",
@@ -231,7 +237,7 @@ function VehicleType({ vehicle, setVehicle }) {
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full" type="button">
+                    <Button variant="outline" className="w-full " type="button">
                       {selectedVehicleIcon ? "Selected" : "Select"}
                       {selectedVehicleIcon && (
                         <CheckCheck className="text-muted-foreground w-4 h-4 ml-2" />
@@ -258,7 +264,7 @@ function VehicleType({ vehicle, setVehicle }) {
                 </Popover>
               </div>
             </div>
-            <CardFooter className="border-t px-6 py-4 pb-0 pr-0 flex justify-end">
+            <CardFooter className="border-t px-4  py-4 sm:pb-0 pr-0 flex justify-end">
               {isSubmitting || isLoading ? (
                 <Button disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -325,9 +331,10 @@ function Services({ vehicle }) {
       if (!res.error) {
         setServices(res.data.data);
         toast({
-          title: "Service Type Created!",
+          title: "Services Created!",
           description: res.data.data.serviceTypeName,
         });
+        navigate("/settings/c-wash");
       }
     } catch (error) {
       toast({
@@ -368,13 +375,13 @@ function Services({ vehicle }) {
   if (!services) {
     return (
       <Card className="mb-64">
-        <CardHeader>
-          <CardTitle className="text-xl">Services</CardTitle>
-          <CardDescription>
+        <CardHeader className="p-4 sm:p-6 sm:pb-2">
+          <CardTitle className="text-xl sm:text-2xl">Services</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             Create a new service for the created vehicle
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pt-0">
           <div className="grid gap-2 mt-2">
             {newServices.map((service, index) => {
               return (
@@ -393,7 +400,7 @@ function Services({ vehicle }) {
                       <Badge>Rs. {service.serviceRate}</Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="px-4 pb-4">
+                  <CardContent className="px-2 sm:px-4 pb-2 sm:pb-4">
                     <div>
                       <ul className="ml-6 text-xs mb-2 list-disc">
                         {service.serviceDescription.map(
@@ -451,11 +458,11 @@ function Services({ vehicle }) {
             <form
               ref={newForm}
               onSubmit={handleSubmit(onAdd)}
-              className="grid gap-4 border p-6 rounded-md mt-4"
+              className="grid gap-4 border p-4 sm:p-6 rounded-md mt-4"
             >
               <div>
                 <div className="grid gap-2 col-span-2">
-                  <Label>
+                  <Label className="text-xs sm:text-sm">
                     {errors.serviceTypeName ? (
                       <span className="text-destructive">
                         {errors.serviceTypeName.message}
@@ -467,6 +474,7 @@ function Services({ vehicle }) {
                   <Input
                     id="serviceTypeName"
                     type="text"
+                    autoComplete="off"
                     placeholder="Service type name"
                     {...register("serviceTypeName", {
                       required: "Name is required",
@@ -479,7 +487,7 @@ function Services({ vehicle }) {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="grid gap-2 col-span-2">
-                  <Label>
+                  <Label className="text-xs sm:text-sm">
                     {errors.billAbbreviation ? (
                       <span className="text-destructive">
                         {errors.billAbbreviation.message}
@@ -491,6 +499,7 @@ function Services({ vehicle }) {
                   <Input
                     id="billAbbreviation"
                     type="text"
+                    autoComplete="off"
                     placeholder="Text printed on the bill"
                     {...register("billAbbreviation", {
                       required: "Abbreviation is required",
@@ -501,7 +510,7 @@ function Services({ vehicle }) {
                   />
                 </div>
                 <div className="grid gap-2 col-span-1">
-                  <Label>
+                  <Label className="text-xs sm:text-sm">
                     {errors.serviceRate ? (
                       <span className="text-destructive">
                         {errors.serviceRate.message}
@@ -515,6 +524,7 @@ function Services({ vehicle }) {
                     id="serviceRate"
                     type="number"
                     placeholder="Rs."
+                    autoComplete="off"
                     {...register("serviceRate", {
                       required: "Cost is required",
                       min: {
@@ -527,7 +537,7 @@ function Services({ vehicle }) {
                   />
                 </div>
                 <div className="grid gap-2 col-span-3">
-                  <Label>
+                  <Label className="text-xs sm:text-sm">
                     {errors.serviceDescription ? (
                       <span className="text-destructive">
                         {errors.serviceDescription.message}
@@ -544,6 +554,7 @@ function Services({ vehicle }) {
                   <Input
                     id="serviceDescription"
                     type="text"
+                    autoComplete="off"
                     placeholder="item1,item2,item3.."
                     {...register("serviceDescription", {
                       required: "Desciption is required",
@@ -555,7 +566,9 @@ function Services({ vehicle }) {
                 </div>
                 <Separator className="col-span-3" />
                 <div className="flex col-span-3 items-center justify-between">
-                  <Label>Include Parking Fees</Label>
+                  <Label className="text-xs sm:text-sm">
+                    Include Parking Fees
+                  </Label>
                   <Switch
                     checked={parkingToggle}
                     onCheckedChange={setParkingToggle}
@@ -563,7 +576,7 @@ function Services({ vehicle }) {
                 </div>
                 {parkingToggle && (
                   <div className="flex col-span-3 items-center justify-between">
-                    <Label>
+                    <Label className="text-xs sm:text-sm">
                       {errors.parkingBuffer ? (
                         <span className="text-destructive">
                           {errors.parkingBuffer.message}
@@ -577,6 +590,7 @@ function Services({ vehicle }) {
                         onWheel={(e) => e.target.blur()}
                         id="parkingBuffer"
                         type="number"
+                        autoComplete="off"
                         placeholder="Minutes"
                         {...register("parkingBuffer", {
                           required: "A time is required",
@@ -594,7 +608,9 @@ function Services({ vehicle }) {
                 )}
                 <Separator className="col-span-3" />
                 <div className="flex col-span-3 items-center justify-between">
-                  <Label>Eligible for Free Wash</Label>
+                  <Label className="text-xs sm:text-sm">
+                    Eligible for Free Wash
+                  </Label>
                   <Switch
                     checked={streakToggle}
                     onCheckedChange={setStreakToggle}
@@ -602,7 +618,7 @@ function Services({ vehicle }) {
                 </div>
                 {streakToggle && (
                   <div className="flex items-center col-span-3 justify-between">
-                    <Label>
+                    <Label className="text-xs sm:text-sm">
                       {errors.washCount ? (
                         <span className="text-destructive">
                           {errors.washCount.message}
@@ -616,6 +632,7 @@ function Services({ vehicle }) {
                         onWheel={(e) => e.target.blur()}
                         id="washCount"
                         type="number"
+                        autoComplete="off"
                         placeholder="No of Washes"
                         {...register("washCount", {
                           required: "Count is required",
