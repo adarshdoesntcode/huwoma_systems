@@ -135,11 +135,10 @@ const CarwashConfigSettings = () => {
                   </TableCell>
                   <TableCell className="font-medium p-1 hidden sm:table-cell">
                     <div className="flex items-center gap-4 text-center">
-                      <Image
+                      <img
                         src={vehicle.vehicleIcon}
                         width={96}
                         height={64}
-                        layout="fixed"
                         alt="Vehicle Image"
                       />
                     </div>

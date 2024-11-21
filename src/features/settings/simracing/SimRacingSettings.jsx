@@ -70,6 +70,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Image } from "@unpic/react";
 import { useIsSuper } from "@/hooks/useSuper";
+import { IMAGE_DATA } from "@/lib/config";
 
 const SimRacingSettings = () => {
   const isSuper = useIsSuper();
@@ -143,11 +144,10 @@ const SimRacingSettings = () => {
                     </TableCell>
                     <TableCell className="hidden md:table-cell px-0">
                       <div className="flex items-center gap-4 text-center">
-                        <Image
-                          src={"/rig.webp"}
+                        <img
+                          src={IMAGE_DATA.rig}
                           width={64}
                           height={40}
-                          layout="fixed"
                           alt="Vehicle Image"
                         />
                       </div>

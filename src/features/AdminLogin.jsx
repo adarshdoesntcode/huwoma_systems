@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "./auth/authApiSlice";
 import { useToast } from "@/hooks/use-toast";
 import { ResetPassword } from "@/components/ResetPassword";
+import { IMAGE_DATA } from "@/lib/config";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -64,11 +65,16 @@ function Login() {
     }
   };
   return (
-    <div className="flex bg-[url('/bg.webp')] pt-12 sm:pt-0 items-start sm:items-center justify-center h-screen">
+    <div
+      className={`flex  pt-12 sm:pt-0 items-start sm:items-center justify-center h-screen`}
+      style={{
+        backgroundImage: `url(${IMAGE_DATA.background})`,
+      }}
+    >
       <div className="flex gap-14 flex-col">
         <div className="col-span-12 max-w-lg  mx-auto text-center">
           <div className="flex gap-2 text-center  text-muted-foreground text-sm flex-col items-center justify-center">
-            <img src="huwoma_logo.png" className="w-48 sm:w-64" />
+            <img src={IMAGE_DATA.huwoma_logo} className="w-48 sm:w-64" />
             Management System
           </div>
         </div>

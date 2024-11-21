@@ -11,6 +11,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { isTabActive } from "@/lib/utils";
 import CurrentClock from "../../components/CurrentClock";
+import { IMAGE_DATA } from "@/lib/config";
 
 function AdminSideBar() {
   const location = useLocation();
@@ -18,11 +19,16 @@ function AdminSideBar() {
   const date = new Date();
 
   return (
-    <div className="hidden  border-r bg-[url('/bg.webp')] bg-center bg-fixed md:block">
+    <div
+      className="hidden  border-r  bg-center bg-fixed md:block"
+      style={{
+        backgroundImage: `url(${IMAGE_DATA.background})`,
+      }}
+    >
       <div className="sticky top-0 flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <div className="flex items-center justify-center w-full">
-            <img src="/huwoma_logo.png" className="h-7" />
+            <img src={IMAGE_DATA.huwoma_logo} className="h-7" />
           </div>
         </div>
         <div className="flex-1">

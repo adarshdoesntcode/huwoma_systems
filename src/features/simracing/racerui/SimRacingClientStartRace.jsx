@@ -21,6 +21,7 @@ import SubmitButton from "@/components/SubmitButton";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
+import { IMAGE_DATA } from "@/lib/config";
 
 const SimRacingClientStartRace = () => {
   const { id } = useParams();
@@ -153,12 +154,17 @@ const SimRacingClientStartRace = () => {
   };
 
   return (
-    <div className="bg-[url('/bg.webp')] min-h-screen py-8 flex flex-col gap-2 items-center justify-center">
+    <div
+      className=" min-h-screen py-8 flex flex-col gap-2 items-center justify-center"
+      style={{
+        backgroundImage: `url(${IMAGE_DATA.background})`,
+      }}
+    >
       <Card className="w-[90%] max-w-[400px]">
         <CardHeader className="pb-2">
           <CardTitle className="py-2">
             <Image
-              src="/simracingbyhuwoma.webp"
+              src={IMAGE_DATA.simracing_logo}
               alt="logo"
               width={120}
               aspectRatio={3 / 1}
@@ -201,7 +207,7 @@ const SimRacingClientStartRace = () => {
                   </div>
                 </div>
                 <Image
-                  src="/rig.webp"
+                  src={IMAGE_DATA.rig}
                   alt="logo"
                   width={100}
                   aspectRatio={16 / 10}

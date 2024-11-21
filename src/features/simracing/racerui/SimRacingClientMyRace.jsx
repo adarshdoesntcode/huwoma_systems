@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import useAxios from "@/hooks/useAxios";
+import { IMAGE_DATA } from "@/lib/config";
 import { Image } from "@unpic/react";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
@@ -71,12 +72,17 @@ function SimRacingClientMyRace() {
   }, []);
 
   return (
-    <div className="bg-[url('/bg.webp')] min-h-screen py-8 flex flex-col gap-2 items-center justify-center">
+    <div
+      className=" min-h-screen py-8 flex flex-col gap-2 items-center justify-center"
+      style={{
+        backgroundImage: `url(${IMAGE_DATA.background})`,
+      }}
+    >
       <Card className="w-[90%] max-w-[400px]">
         <CardHeader className="pb-2">
           <CardTitle className="py-2">
             <Image
-              src="/simracingbyhuwoma.webp"
+              src={IMAGE_DATA.simracing_logo}
               alt="logo"
               width={120}
               aspectRatio={3 / 1}
@@ -108,7 +114,7 @@ function SimRacingClientMyRace() {
                   </div>
                 </div>
                 <Image
-                  src="/rig.webp"
+                  src={IMAGE_DATA.rig}
                   alt="logo"
                   width={100}
                   aspectRatio={16 / 10}

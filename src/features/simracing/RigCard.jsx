@@ -22,6 +22,7 @@ import QRCode from "react-qr-code";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import { Image } from "@unpic/react";
+import { IMAGE_DATA } from "@/lib/config";
 
 function RigCard({ rig, className }) {
   const canvasRef = useRef(null);
@@ -37,10 +38,10 @@ function RigCard({ rig, className }) {
 
   return (
     <Card
-      className={cn(
-        "p-2 sm:p-4 bg-[linear-gradient(to_right_bottom,rgba(256,256,256,1),rgba(256,256,256,.95),rgba(256,256,256,0.6)),url('/rig.webp')] bg-center sm:bg-none  bg-cover ",
-        className
-      )}
+      style={{
+        backgroundImage: `linear-gradient(to right bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6)), url('${IMAGE_DATA.rig}')`,
+      }}
+      className={cn("p-2 sm:p-4 bg-center sm:!bg-none  bg-cover ", className)}
     >
       <div className="flex ">
         <div className="sm:w-8/12 w-full sm:border-r sm:pr-2 flex flex-col justify-between">
@@ -89,9 +90,9 @@ function RigCard({ rig, className }) {
                   >
                     <div>
                       <Image
-                        src="/simracingbyhuwoma.webp"
+                        src={IMAGE_DATA.simracing_logo}
                         priority
-                        alt="Rig Image"
+                        alt="Sim Racing Logo"
                         width={140}
                         aspectRatio={3 / 1}
                       />
@@ -111,7 +112,7 @@ function RigCard({ rig, className }) {
         </div>
         <div className="w-4/12 aspect-auto hidden sm:flex items-center  justify-center ">
           <Image
-            src="/rig.webp"
+            src={IMAGE_DATA.rig}
             aspectRatio={16 / 10}
             width={200}
             priority

@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { IMAGE_DATA } from "@/lib/config";
 import { Image } from "@unpic/react";
 import { Origami } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,11 +17,16 @@ const NotFound = () => {
   const goBack = () => navigate(-1);
 
   return (
-    <div className="min-h-screen bg-[url('/bg.webp')] bg-center bg-fixed">
+    <div
+      className="min-h-screen  bg-center bg-fixed"
+      style={{
+        backgroundImage: `url(${IMAGE_DATA.background})`,
+      }}
+    >
       <div className="grid grid-cols-12 max-w-7xl mx-auto">
         <div className="col-span-12  self-center p-4 flex justify-between">
           <Link to={"/"} className="flex items-center  gap-2">
-            <Image src="/huwoma_logo.png" alt="logo" width={120} />
+            <Image src={IMAGE_DATA.huwoma_logo} alt="logo" width={120} />
           </Link>
           <div>
             <Button variant="link">Support</Button>
