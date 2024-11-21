@@ -381,7 +381,7 @@ function Services({ vehicle }) {
             Create a new service for the created vehicle
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pt-0">
+        <CardContent className="p-4  sm:p-6 pt-0 pb-4 sm:pt-0">
           <div className="grid gap-2 mt-2">
             {newServices.map((service, index) => {
               return (
@@ -400,7 +400,7 @@ function Services({ vehicle }) {
                       <Badge>Rs. {service.serviceRate}</Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="px-2 sm:px-4 pb-2 sm:pb-4">
+                  <CardContent className="px-4 py-4">
                     <div>
                       <ul className="ml-6 text-xs mb-2 list-disc">
                         {service.serviceDescription.map(

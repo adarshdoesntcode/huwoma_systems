@@ -524,7 +524,7 @@ function Services() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pt-0">
+        <CardContent className="p-4  sm:p-6 pt-0 pb-4 sm:pt-0">
           {services.length === 0 ? (
             <div className="h-20 text-xs flex items-center justify-center text-muted-foreground">
               No Services
@@ -538,7 +538,7 @@ function Services() {
                       ref={editForm}
                       key={`service-${index}`}
                       onSubmit={handleSubmit(onEdit)}
-                      className="grid gap-4 border p-4 sm:p-6 rounded-md mt-2"
+                      className="grid gap-4 border p-4 sm:p-6 rounded-md mt-4"
                     >
                       <div>
                         <div className="grid gap-2 col-span-2">
@@ -775,7 +775,7 @@ function Services() {
                           <Badge>Rs. {service.serviceRate}</Badge>
                         </div>
                       </CardHeader>
-                      <CardContent className="px-2 sm:px-4 pb-2 sm:pb-4">
+                      <CardContent className="px-4 py-4 ">
                         <div>
                           <ul className="ml-6 text-xs mb-2 list-disc">
                             {service.serviceDescription.map(
