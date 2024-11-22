@@ -6,8 +6,9 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ROLES_LIST } from "@/lib/config";
+import { IMAGE_DATA, ROLES_LIST } from "@/lib/config";
 import {
+  Activity,
   CalendarDays,
   Car,
   Cctv,
@@ -40,11 +41,11 @@ function AdminMobileSideBar() {
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
         <nav className="grid gap-2 text-muted-foreground text-lg font-medium">
-          <div className="hidden lg:flex items-center gap-2 text-base font-semibold ">
-            <span>HUWOMA</span>
-          </div>
-          <div className="flex lg:hidden items-center gap-2 text-base font-semibold ">
-            <span>HUWOMA</span>
+          {/* <div className="hidden lg:flex items-center gap-2 text-base font-semibold ">
+            <img src={IMAGE_DATA.huwoma_logo} width={100} />
+          </div> */}
+          <div className="flex lg:hidden items-center gap-2  ">
+            <img src={IMAGE_DATA.huwoma_logo} width={100} />
           </div>
           <SheetClose asChild>
             <Link
@@ -127,6 +128,25 @@ function AdminMobileSideBar() {
             >
               <Megaphone className="h-5 w-5" />
               Broadcast
+              {/* <Badge
+                variant="secondary"
+                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+              >
+                2336
+              </Badge> */}
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <Link
+              to={`/activity`}
+              className={`mx-[-0.65rem]  flex items-center ${
+                isTabActive(currentPath, "activity")
+                  ? "bg-foreground text-white"
+                  : ""
+              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
+            >
+              <Activity className="h-5 w-5" />
+              System Activity
               {/* <Badge
                 variant="secondary"
                 className="ml-auto flex  shrink-0 items-center justify-center rounded-full"

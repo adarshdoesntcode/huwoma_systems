@@ -359,6 +359,7 @@ function CreatePayment({ createOpen, setCreateOpen }) {
                 id="paymentModeName"
                 type="text"
                 placeholder="Name"
+                autoComplete="off"
                 {...register("paymentModeName", {
                   required: "Name is required",
                 })}
@@ -384,6 +385,7 @@ function CreatePayment({ createOpen, setCreateOpen }) {
                 id="qrCodeData"
                 type="text"
                 placeholder="decoded QR Code data"
+                autoComplete
                 {...register("qrCodeData")}
                 className={errors.qrCodeData ? "border-destructive" : ""}
               />
@@ -527,6 +529,7 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
               <Input
                 id="paymentModeName"
                 type="text"
+                autoComplete="off"
                 defaultValue={selectedPaymentMode.paymentModeName}
                 placeholder="Name"
                 {...register("paymentModeName", {
@@ -552,6 +555,7 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
               </Label>
               <Textarea
                 id="qrCodeData"
+                autoComplete="off"
                 type="text"
                 defaultValue={selectedPaymentMode.qrCodeData}
                 placeholder="decoded QR Code data"

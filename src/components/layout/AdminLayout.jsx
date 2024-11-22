@@ -122,11 +122,19 @@ function AdminLayout() {
           </main>
         </div>
         <div
-          className={`fixed inset-0 z-50 w-dvw  bg-muted-foreground/30 h-svh flex items-center justify-center ${
-            logoutLoader ? "block" : "hidden"
+          className={`fixed bg-black/80 inset-0 z-50 w-dvw   h-svh flex items-center  justify-center ${
+            logoutLoader
+              ? "block animate-in fade-in-0"
+              : "hidden animate-out  fade-out-0"
           }`}
         >
-          <div className="w-[200px] bg-white rounded-md shadow-lg px-4 py-6">
+          <div
+            className={`w-[200px] bg-white rounded-md shadow-lg px-4 py-6 ${
+              logoutLoader
+                ? " animate-in duration-200 fade-in-0 zoom-in-95 "
+                : "animate-out duration-200 fade-out-0 zoom-out-95"
+            }`}
+          >
             <div className="flex justify-center items-center ">
               <Loader2 className="h-6 w-6 animate-spin mr-4" />
               <span className="text-sm whitespace-nowrap">Logging Out</span>

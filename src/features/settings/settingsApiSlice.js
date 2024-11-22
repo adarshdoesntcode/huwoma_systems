@@ -1,4 +1,5 @@
 import { apiSlice } from "@/api/apiSlice";
+import { create } from "lodash";
 
 export const settingsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -121,6 +122,41 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
       invalidatesTags: ["PaymentModes"],
+    }),
+
+    getParkingVehicles: builder.query({
+      query: () => ({
+        url: "/settings/parking",
+        method: "GET",
+      }),
+      providesTags: ["ParkingVehicles"],
+    }),
+
+    createParkingVehicle: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/parking",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["ParkingVehicles"],
+    }),
+
+    deleteParkingVehicle: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/parking",
+        method: "DELETE",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["ParkingVehicles"],
+    }),
+
+    updateParkingVehicle: builder.mutation({
+      query: (credentials) => ({
+        url: "/settings/parking",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["ParkingVehicles"],
     }),
 
     updateAdminProfile: builder.mutation({
@@ -264,4 +300,8 @@ export const {
   useCreateAdminMutation,
   useDeleteAdminMutation,
   useUpdateAdminMutation,
+  useGetParkingVehiclesQuery,
+  useCreateParkingVehicleMutation,
+  useDeleteParkingVehicleMutation,
+  useUpdateParkingVehicleMutation,
 } = settingsApiSlice;

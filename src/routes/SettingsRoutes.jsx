@@ -11,6 +11,7 @@ import PaymentSettings from "@/features/settings/payments/PaymentSettings";
 import SimrRacingSettings from "@/features/settings/simracing/SimRacingSettings";
 import PosSettings from "@/features/settings/pos/PosSettings";
 import AdminsSettings from "@/features/settings/admins/AdminsSettings";
+import ParkingSettings from "@/features/settings/parking/ParkingSettings";
 
 const SettingsRoutes = [
   {
@@ -41,6 +42,11 @@ const SettingsRoutes = [
   {
     path: "admins",
     element: <AdminsSettings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "park",
+    element: <ParkingSettings />,
     errorElement: <Error />,
   },
   {

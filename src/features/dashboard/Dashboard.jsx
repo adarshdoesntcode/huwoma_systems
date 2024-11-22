@@ -259,10 +259,12 @@ export function Dashboard() {
       </div>
       <div className="grid mb-6 gap-4 grid-cols-12">
         <Card className="col-span-12">
-          <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+          <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row ">
             <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-              <CardTitle>Customer Traffic</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-2xl">
+                Customer Traffic
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-xs">
                 Showing total customers for the last 3 months
               </CardDescription>
             </div>
@@ -344,10 +346,10 @@ export function Dashboard() {
       </div>
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
-          <CardHeader className="flex flex-row items-center">
+          <CardHeader className="flex flex-row items-center p-4  pb-2">
             <div className="grid gap-2">
-              <CardTitle>Transactions</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-xl font-2xl">Transactions</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
                 Recent transactions from your store.
               </CardDescription>
             </div>
@@ -358,7 +360,7 @@ export function Dashboard() {
               variant="outline"
             >
               <Link href="#">
-                Export
+                <span className="sr-only sm:not-sr-only">Export</span>
                 <File className="h-4 w-4" />
               </Link>
             </Button>
@@ -368,9 +370,9 @@ export function Dashboard() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Customer</TableHead>
-                  <TableHead>Type</TableHead>
+                  <TableHead className="hidden md:table-cell">Type</TableHead>
                   <TableHead>Method</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead className="hidden md:table-cell">Date</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
@@ -382,7 +384,9 @@ export function Dashboard() {
                       liam@example.com
                     </div>
                   </TableCell>
-                  <TableCell>Car Wash</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    Car Wash
+                  </TableCell>
                   <TableCell>
                     <Badge className="text-xs" variant="outline">
                       Cash
@@ -400,7 +404,9 @@ export function Dashboard() {
                       olivia@example.com
                     </div>
                   </TableCell>
-                  <TableCell>Car Wash</TableCell>
+                  <TableCell className="hidden md:table-cell ">
+                    Car Wash
+                  </TableCell>
                   <TableCell>
                     <Badge className="text-xs" variant="outline">
                       Fonepay
@@ -418,7 +424,9 @@ export function Dashboard() {
                       noah@example.com
                     </div>
                   </TableCell>
-                  <TableCell>Sim Racing</TableCell>
+                  <TableCell className="hidden md:table-cell ">
+                    Sim Racing
+                  </TableCell>
                   <TableCell>
                     <Badge className="text-xs" variant="outline">
                       Card
@@ -436,7 +444,9 @@ export function Dashboard() {
                       emma@example.com
                     </div>
                   </TableCell>
-                  <TableCell>Parking</TableCell>
+                  <TableCell className="hidden md:table-cell ">
+                    Parking
+                  </TableCell>
                   <TableCell>
                     <Badge className="text-xs" variant="outline">
                       Cash
@@ -454,7 +464,9 @@ export function Dashboard() {
                       liam@example.com
                     </div>
                   </TableCell>
-                  <TableCell>Car Wash</TableCell>
+                  <TableCell className="hidden md:table-cell ">
+                    Car Wash
+                  </TableCell>
                   <TableCell>
                     <Badge className="text-xs" variant="outline">
                       Fonepay
