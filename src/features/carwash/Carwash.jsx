@@ -61,7 +61,7 @@ function Carwash() {
   const isSuper = useIsSuper();
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
-      pollingInterval: 30000,
+      pollingInterval: 60000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,

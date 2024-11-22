@@ -84,7 +84,6 @@ const ParkingSettings = () => {
 
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useGetParkingVehiclesQuery();
-  console.log("🚀 ~ ParkingSettings ~ data:", data);
 
   let content;
 

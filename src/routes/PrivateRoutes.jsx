@@ -22,6 +22,7 @@ import Broadcast from "@/features/broadcast/Broadcast";
 import SimRacingCheckout from "@/features/simracing/SimRacingCheckout";
 import SimRacingCustomers from "@/features/simracing/simracing_customers/SimRacingCustomers";
 import SimRacingCustomerDetails from "@/features/simracing/simracing_customers/SimRacingCustomerDetails";
+import ParkingCheckout from "@/features/parking/ParkingCheckout";
 
 const PrivateRoutes = [
   {
@@ -112,6 +113,11 @@ const PrivateRoutes = [
   {
     path: "parking",
     element: <Parking />,
+    errorElement: <Error />,
+  },
+  {
+    path: "parking/checkout/:id",
+    element: <ParkingCheckout />,
     errorElement: <Error />,
   },
   {

@@ -141,7 +141,7 @@ const SimRacingClientStartRace = () => {
       if (response.status === 201 && response.data) {
         const { simRacingKey } = response.data.data;
         localStorage.setItem("simRacingKey", simRacingKey);
-        navigate(`/simracingbyhuwoma/myrace`);
+        navigate(`/simracingbyhuwoma/myrace`, { replace: true });
       }
     } catch (err) {
       console.error(err);

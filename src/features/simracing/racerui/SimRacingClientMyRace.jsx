@@ -136,7 +136,7 @@ function SimRacingClientMyRace() {
               </div>
               <Button
                 className="w-full mt-4"
-                onClick={() => (window.location.href = "about:blank")}
+                onClick={() => window.location.replace("about:blank")}
               >
                 Close
               </Button>
