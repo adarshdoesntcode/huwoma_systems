@@ -154,7 +154,7 @@ const SimRacingClientStartRace = () => {
   };
 
   return (
-    <motion.div
+    <div
       className="min-h-dvh py-8 flex flex-col gap-2 items-center justify-center"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
@@ -162,9 +162,15 @@ const SimRacingClientStartRace = () => {
     >
       <motion.div
         className="w-[90%] max-w-[400px] space-y-2"
-        initial={{ scale: 0.9, opacity: 0.5, y: 10 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
+        initial={{ scale: 0.95, opacity: 0.95 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 15,
+          bounce: 0.1,
+          delay: 0.1,
+        }}
       >
         <Card>
           <CardHeader className="pb-2">
@@ -204,12 +210,7 @@ const SimRacingClientStartRace = () => {
                 </Button>
               )}
               {message?.message === "RTR" && (
-                <motion.div
-                  className="flex items-center mt-2  py-2 pl-4 justify-between  rounded-lg gap-2 border "
-                  initial={{ scale: 0.9, opacity: 0.5, y: 10 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.2 }}
-                >
+                <motion.div className="flex items-center mt-2  py-2 pl-4 justify-between  rounded-lg gap-2 border ">
                   <div className="flex flex-col justify-between gap-4 items-start h-full text-sm font-bold">
                     <div>{message?.data?.rigName}</div>
                     <div className="text-xs font-normal">
@@ -230,9 +231,9 @@ const SimRacingClientStartRace = () => {
         </Card>
         {message?.message === "RTR" && (
           <motion.div
-            initial={{ y: 50 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0.9 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
           >
             <Card>
               <CardHeader className="pb-4 space-x-1">
@@ -313,7 +314,7 @@ const SimRacingClientStartRace = () => {
       {message?.message === "CTR" && (
         <Navigate to={`/simracingbyhuwoma/myrace`} />
       )}
-    </motion.div>
+    </div>
   );
 };
 

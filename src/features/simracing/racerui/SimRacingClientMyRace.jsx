@@ -1,6 +1,6 @@
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
-
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -78,75 +78,89 @@ function SimRacingClientMyRace() {
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
     >
-      <Card className="w-[90%] max-w-[400px]">
-        <CardHeader className="pb-2">
-          <CardTitle className="py-2">
-            <img
-              src={IMAGE_DATA.simracing_logo}
-              alt="logo"
-              width={120}
-              loading="lazy"
-              className="mx-auto"
-            />
-          </CardTitle>
-        </CardHeader>
-        {isLoading ? (
-          <CardContent>
-            <Loader />
-          </CardContent>
-        ) : !error ? (
-          <>
+      <motion.div
+        className="w-full flex items-center justify-center"
+        initial={{ scale: 0.95, opacity: 0.95 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 15,
+          bounce: 0.1,
+          delay: 0.1,
+        }}
+      >
+        <Card className="w-[90%] max-w-[400px]">
+          <CardHeader className="pb-2">
+            <CardTitle className="py-2">
+              <img
+                src={IMAGE_DATA.simracing_logo}
+                alt="logo"
+                width={120}
+                loading="lazy"
+                className="mx-auto"
+              />
+            </CardTitle>
+          </CardHeader>
+          {isLoading ? (
             <CardContent>
-              <div className="flex items-center  py-2 pl-4 justify-between  rounded-lg gap-2 border ">
-                <div className="h-full flex flex-col justify-between items-start ">
-                  <div className="text-sm font-medium">
-                    {transactionDetails?.data?.customer?.customerName}
+              <Loader />
+            </CardContent>
+          ) : !error ? (
+            <>
+              <CardContent>
+                <div className="flex items-center  py-2 pl-4 justify-between  rounded-lg gap-2 border ">
+                  <div className="h-full flex flex-col justify-between items-start ">
+                    <div className="text-sm font-medium">
+                      {transactionDetails?.data?.customer?.customerName}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {transactionDetails?.data?.rig?.rigName}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {transactionDetails?.data?.start &&
+                        `Started ${format(
+                          transactionDetails?.data?.start,
+                          "hh:mm a"
+                        )}`}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {transactionDetails?.data?.rig?.rigName}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {transactionDetails?.data?.start &&
-                      `Started ${format(
-                        transactionDetails?.data?.start,
-                        "hh:mm a"
-                      )}`}
-                  </div>
+                  <img
+                    src={IMAGE_DATA.rig}
+                    alt="logo"
+                    width={100}
+                    loading="lazy"
+                  />
                 </div>
-                <img
-                  src={IMAGE_DATA.rig}
-                  alt="logo"
-                  width={100}
-                  loading="lazy"
-                />
-              </div>
-              <div className="font-mono text-2xl text-primary-foreground text-center p-6 rounded-lg bg-foreground mt-6">
-                {timeLapsed}
-              </div>
-            </CardContent>
-            <CardFooter className="text-xs text-muted-foreground text-center">
-              Contact the administrator to end your current session
-            </CardFooter>
-          </>
-        ) : (
-          <>
-            <CardContent>
-              <div className="text-center text-3xl text-primary bg-muted font-medium border rounded-lg mt-2 p-8">
-                Finished !!
-              </div>
-              <Button
-                className="w-full mt-4"
-                onClick={() => window.location.replace("about:blank")}
-              >
-                Close
-              </Button>
-            </CardContent>
-            <CardFooter className="text-[10px] text-muted-foreground !text-center">
-              The session has ended or you are not authorized to view this page
-            </CardFooter>
-          </>
-        )}
-      </Card>
+                <div className="font-mono text-2xl text-primary-foreground text-center p-6 rounded-lg bg-foreground mt-6">
+                  {timeLapsed}
+                </div>
+              </CardContent>
+              <CardFooter className="text-xs text-muted-foreground text-center">
+                Contact the administrator to end your current session
+              </CardFooter>
+            </>
+          ) : (
+            <>
+              <CardContent>
+                <div className="text-center text-3xl text-primary bg-muted font-medium border rounded-lg mt-2 p-8">
+                  Finished !!
+                </div>
+                <Button
+                  className="w-full mt-4"
+                  onClick={() => window.location.replace("about:blank")}
+                >
+                  Close
+                </Button>
+              </CardContent>
+              <CardFooter className="text-[10px] text-muted-foreground !text-center">
+                The session has ended or you are not authorized to view this
+                page
+              </CardFooter>
+            </>
+          )}
+        </Card>
+      </motion.div>
     </div>
   );
 }
