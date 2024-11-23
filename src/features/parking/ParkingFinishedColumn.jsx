@@ -47,7 +47,7 @@ export const ParkingFinishedColumn = [
           </div>
           <div>{number}</div>
           <div className="block lg:hidden text-muted-foreground text-xs font-normal">
-            Start: {format(new Date(row.original.start), "d MMM, yyyy h:mm a")}
+            Ended: {format(new Date(row.original.end), "d MMM, h:mm a")}
           </div>
         </TableCell>
       );

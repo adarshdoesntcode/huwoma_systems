@@ -85,7 +85,7 @@ function VehicleCard({ vehicle, className }) {
                 <div>
                   {vehicle?.vehicleTypeName}
 
-                  <CardDescription className="font-normal flex items-center gap-1  ">
+                  <CardDescription className="font-normal flex items-center gap-1 hidden sm:flex ">
                     <span className="text-xs  "> Rs {vehicle.rate}</span>
                     <span className="text-xs  text-muted-foreground">/hr</span>
                   </CardDescription>
@@ -167,7 +167,7 @@ function VehicleCard({ vehicle, className }) {
                 <span className="text-muted-foreground">Occupied:</span>{" "}
                 {vehicle?.currentlyAccomodated}
               </div>
-              <div className="text-xs">
+              <div className="text-xs hidden sm:block">
                 <span className="text-muted-foreground">Capacity:</span>{" "}
                 {vehicle?.totalAccomodationCapacity}
               </div>
@@ -178,6 +178,7 @@ function VehicleCard({ vehicle, className }) {
                   vehicle?.totalAccomodationCapacity) *
                 100
               }
+              className="h-3 sm:h-4"
             />
           </div>
         </div>
