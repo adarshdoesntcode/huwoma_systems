@@ -57,7 +57,9 @@ function SimRacingClientMyRace() {
         }
         setTransactionDetails(data);
       } catch (error) {
-        setError(true);
+        if (error.response.data.message === "FN") {
+          setError(true);
+        }
         setIsLoading(false);
       } finally {
         isRequestInProgress.current = false;
