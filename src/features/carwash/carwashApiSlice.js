@@ -124,6 +124,23 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+
+    rollBackFromPickup: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/rollback/pickup",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
+    rollBackFromCompleted: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/rollback/completed",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
   }),
 });
 
@@ -145,4 +162,6 @@ export const {
   useGetCarwashCustomersQuery,
   useGetCarwashCustomerByIdQuery,
   useUpdateCarwashCustomerMutation,
+  useRollBackFromPickupMutation,
+  useRollBackFromCompletedMutation,
 } = carwashApiSlice;

@@ -73,7 +73,7 @@ function VehicleCard({ vehicle, className }) {
         <div className="w-3/12 aspect-auto flex items-center  justify-center ">
           <img
             src={vehicle.vehicleIcon}
-            loading="lazy"
+            loading="defer"
             className="w-full"
             alt="Vehicle Image"
           />

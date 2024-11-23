@@ -9,7 +9,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Check, ChevronRight, OctagonX, Printer } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  OctagonX,
+  Printer,
+  Undo2Icon,
+} from "lucide-react";
 
 import {
   Sheet,
@@ -27,7 +33,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 
-import { getTimeDifference, handlePrint, timeDifference } from "@/lib/utils";
+import {
+  getDaysDifference,
+  getTimeDifference,
+  handlePrint,
+  timeDifference,
+} from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
 
 const CarwashTransactionDetails = ({
@@ -35,9 +46,11 @@ const CarwashTransactionDetails = ({
   setTransactionDetails,
   setShowDetails,
   transactionDetails,
-  showDelete,
   setShowDelete,
   setDeleteId,
+  setShowRollbackFromComplete,
+  setShowRollbackFromPickup,
+  setRollBackId,
 }) => {
   const location = useLocation();
 
@@ -72,6 +85,20 @@ const CarwashTransactionDetails = ({
     setShowDetails(false);
     setTransactionDetails(null);
     setShowDelete(true);
+  };
+
+  const handleRollbackFromPickup = () => {
+    setRollBackId(transactionDetails._id);
+    setShowDetails(false);
+    setTransactionDetails(null);
+    setShowRollbackFromPickup(true);
+  };
+
+  const handleRollbackFromComplete = () => {
+    setRollBackId(transactionDetails._id);
+    setShowDetails(false);
+    setTransactionDetails(null);
+    setShowRollbackFromComplete(true);
   };
 
   if (isMobile) {
@@ -129,6 +156,8 @@ const CarwashTransactionDetails = ({
               <DetailsFooter
                 transactionDetails={transactionDetails}
                 handleTermination={handleTermination}
+                handleRollbackFromComplete={handleRollbackFromComplete}
+                handleRollbackFromPickup={handleRollbackFromPickup}
               />
             </SheetFooter>
           </div>
@@ -437,7 +466,12 @@ const Details = ({
   }
 };
 
-const DetailsFooter = ({ transactionDetails, handleTermination }) => {
+const DetailsFooter = ({
+  transactionDetails,
+  handleTermination,
+  handleRollbackFromComplete,
+  handleRollbackFromPickup,
+}) => {
   const navigate = useNavigate();
 
   const handleReceiptPrint = () => {
@@ -499,6 +533,30 @@ const DetailsFooter = ({ transactionDetails, handleTermination }) => {
             <OctagonX className="h-4 w-4 mr-2" /> Terminate
           </Button>
         )}
+        {transactionDetails?.transactionStatus === "Ready for Pickup" &&
+          getDaysDifference(transactionDetails?.service.end, new Date()) <=
+            3 && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                handleRollbackFromPickup();
+              }}
+            >
+              <Undo2Icon className="h-4 w-4 mr-2" /> Rollback
+            </Button>
+          )}
+        {transactionDetails?.transactionStatus === "Completed" &&
+          getDaysDifference(transactionDetails?.transactionTime, new Date()) <=
+            3 && (
+            <Button
+              variant="secondary"
+              onClick={() => {
+                handleRollbackFromComplete();
+              }}
+            >
+              <Undo2Icon className="h-4 w-4 mr-2" /> Rollback
+            </Button>
+          )}
       </div>
       {transactionDetails?.transactionStatus === "In Queue" && (
         <Button

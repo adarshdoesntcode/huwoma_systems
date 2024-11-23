@@ -105,6 +105,13 @@ export const timeDifference = (date1, date2, buffer) => {
   }
 };
 
+export const getDaysDifference = (date1, date2) => {
+  const start = new Date(date1);
+  const end = new Date(date2);
+  const differenceInMilliseconds = Math.abs(end - start);
+  return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+};
+
 export const handlePrint = (data) => {
   let props = {
     outputType: "blob",

@@ -156,7 +156,7 @@ export const SimRacingDataTable = ({ columns, data }) => {
                       >
                         Cancel
                         <img
-                          src={IMAGE_DATA.checkered_flag}
+                          src={IMAGE_DATA.red_flag}
                           className="w-3 h-3 ml-2"
                           alt="delete"
                           loading="lazy"
@@ -175,7 +175,7 @@ export const SimRacingDataTable = ({ columns, data }) => {
                       >
                         Finish
                         <img
-                          src={IMAGE_DATA.red_flag}
+                          src={IMAGE_DATA.checkered_flag}
                           className="w-3 h-3 ml-2 "
                           alt="finish"
                           loading="lazy"
