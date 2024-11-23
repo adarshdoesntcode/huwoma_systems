@@ -85,7 +85,7 @@ function VehicleCard({ vehicle, className }) {
                 <div>
                   {vehicle?.vehicleTypeName}
 
-                  <CardDescription className="font-normal flex items-center gap-1 hidden sm:flex ">
+                  <CardDescription className="font-normal  items-center gap-1 hidden sm:flex ">
                     <span className="text-xs  "> Rs {vehicle.rate}</span>
                     <span className="text-xs  text-muted-foreground">/hr</span>
                   </CardDescription>

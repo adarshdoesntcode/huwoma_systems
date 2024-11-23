@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-
+import { motion } from "framer-motion";
 import useAxios from "@/hooks/useAxios";
 import {
   Card,
@@ -154,147 +154,166 @@ const SimRacingClientStartRace = () => {
   };
 
   return (
-    <div
+    <motion.div
       className="min-h-dvh py-8 flex flex-col gap-2 items-center justify-center"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
     >
-      <Card className="w-[90%] max-w-[400px]">
-        <CardHeader className="pb-2">
-          <CardTitle className="py-2">
-            <img
-              src={IMAGE_DATA.simracing_logo}
-              alt="logo"
-              width={120}
-              loading="lazy"
-              className="mx-auto"
-            />
-          </CardTitle>
+      <motion.div
+        className="w-[90%] max-w-[400px] space-y-2"
+        initial={{ scale: 0.9, opacity: 0.5, y: 10 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="py-2">
+              <img
+                src={IMAGE_DATA.simracing_logo}
+                alt="logo"
+                width={120}
+                loading="defer"
+                className="mx-auto"
+              />
+            </CardTitle>
 
-          {!error && showGrantButton && (
-            <CardDescription className="!text-center text-xs">
-              Location permission is required to start race
-            </CardDescription>
-          )}
-          {error && (
-            <CardDescription className="text-destructive text-xs bg-destructive/10 !text-center border border-destructive rounded-lg px-4 py-6">
-              {error}
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent>
-          <div className="text-center">
-            {isLoading && <Loader />}
-            {showGrantButton && (
-              <Button
-                className="mt-2"
-                onClick={() => {
-                  setError("");
-                  requestLocation();
-                }}
-              >
-                Grant Location Permission
-              </Button>
-            )}
-            {message?.message === "RTR" && (
-              <div className="flex items-center mt-2  py-2 pl-4 justify-between  rounded-lg gap-2 border ">
-                <div className="flex flex-col justify-between gap-4 items-start h-full text-sm font-bold">
-                  <div>{message?.data?.rigName}</div>
-                  <div className="text-xs font-normal">
-                    {" "}
-                    Time : {format(new Date(), "hh:mm a")}
-                  </div>
-                </div>
-                <img
-                  src={IMAGE_DATA.rig}
-                  alt="logo"
-                  width={100}
-                  loading="lazy"
-                />
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-      {message?.message === "RTR" && (
-        <>
-          <Card className="w-[90%] max-w-[400px]">
-            <CardHeader className="pb-4 space-x-1">
-              <CardTitle className="text-lg ">Pit Pass</CardTitle>
-              <CardDescription className="text-xs !m-0">
-                Fill up to start your lap
+            {!error && showGrantButton && (
+              <CardDescription className="!text-center text-xs">
+                Location permission is required to start race
               </CardDescription>
-            </CardHeader>
-            <CardContent className="">
-              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label>
-                    {errors.customerName ? (
-                      <span className="text-destructive">
-                        {errors.customerName.message}
-                      </span>
-                    ) : (
-                      <span>Racer Alias</span>
-                    )}
-                  </Label>
-                  <Input
-                    id="customerName"
-                    type="text"
-                    placeholder="Name"
-                    autoFocus
-                    {...register("customerName", {
-                      required: "Name is required",
-                      pattern: {
-                        value: /^[a-zA-Z\s]*$/,
-                        message: "Invalid Name",
-                      },
-                    })}
-                    className={errors.customerName ? "border-destructive" : ""}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label>
-                    {errors.customerContact ? (
-                      <span className="text-destructive">
-                        {errors.customerContact.message}
-                      </span>
-                    ) : (
-                      <span>Racer Contact</span>
-                    )}
-                  </Label>
-                  <Input
-                    onWheel={(e) => e.target.blur()}
-                    type="tel"
-                    inputMode="numeric"
-                    placeholder="+977"
-                    {...register("customerContact", {
-                      required: "Number is required",
-                      valueAsNumber: true,
-                      validate: (value) =>
-                        String(value).length === 10 ||
-                        "Number must be 10 digits",
-                    })}
-                    className={
-                      errors.customerContact ? "border-destructive" : ""
-                    }
-                  />
-                </div>
-                <SubmitButton
-                  condition={isSubmitting}
-                  loadingText={"Starting Race"}
-                  buttonText={"Start Race"}
+            )}
+            {error && (
+              <CardDescription className="text-destructive text-xs bg-destructive/10 !text-center border border-destructive rounded-lg px-4 py-6">
+                {error}
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent>
+            <div className="text-center">
+              {isLoading && <Loader />}
+              {showGrantButton && (
+                <Button
                   className="mt-2"
-                />
-              </form>
-            </CardContent>
-          </Card>
-        </>
-      )}
+                  onClick={() => {
+                    setError("");
+                    requestLocation();
+                  }}
+                >
+                  Grant Location Permission
+                </Button>
+              )}
+              {message?.message === "RTR" && (
+                <motion.div
+                  className="flex items-center mt-2  py-2 pl-4 justify-between  rounded-lg gap-2 border "
+                  initial={{ scale: 0.9, opacity: 0.5, y: 10 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
+                >
+                  <div className="flex flex-col justify-between gap-4 items-start h-full text-sm font-bold">
+                    <div>{message?.data?.rigName}</div>
+                    <div className="text-xs font-normal">
+                      {" "}
+                      Time : {format(new Date(), "hh:mm a")}
+                    </div>
+                  </div>
+                  <img
+                    src={IMAGE_DATA.rig}
+                    alt="logo"
+                    width={100}
+                    loading="defer"
+                  />
+                </motion.div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        {message?.message === "RTR" && (
+          <motion.div
+            initial={{ y: 50 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card>
+              <CardHeader className="pb-4 space-x-1">
+                <CardTitle className="text-lg ">Pit Pass</CardTitle>
+                <CardDescription className="text-xs !m-0">
+                  Fill up to start your lap
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="">
+                <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label>
+                      {errors.customerName ? (
+                        <span className="text-destructive">
+                          {errors.customerName.message}
+                        </span>
+                      ) : (
+                        <span>Racer Alias</span>
+                      )}
+                    </Label>
+                    <Input
+                      id="customerName"
+                      type="text"
+                      placeholder="Name"
+                      autoFocus
+                      {...register("customerName", {
+                        required: "Name is required",
+                        pattern: {
+                          value: /^[a-zA-Z\s]*$/,
+                          message: "Invalid Name",
+                        },
+                      })}
+                      className={
+                        errors.customerName ? "border-destructive" : ""
+                      }
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>
+                      {errors.customerContact ? (
+                        <span className="text-destructive">
+                          {errors.customerContact.message}
+                        </span>
+                      ) : (
+                        <span>Racer Contact</span>
+                      )}
+                    </Label>
+                    <Input
+                      onWheel={(e) => e.target.blur()}
+                      type="tel"
+                      inputMode="numeric"
+                      placeholder="+977"
+                      {...register("customerContact", {
+                        required: "Number is required",
+                        valueAsNumber: true,
+                        validate: (value) =>
+                          String(value).length === 10 ||
+                          "Number must be 10 digits",
+                      })}
+                      className={
+                        errors.customerContact ? "border-destructive" : ""
+                      }
+                    />
+                  </div>
+                  <SubmitButton
+                    condition={isSubmitting}
+                    loadingText={"Starting Race"}
+                    buttonText={"Start Race"}
+                    className="mt-2"
+                  />
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </motion.div>
+
       {message?.message === "CTR" && (
         <Navigate to={`/simracingbyhuwoma/myrace`} />
       )}
-    </div>
+    </motion.div>
   );
 };
 
