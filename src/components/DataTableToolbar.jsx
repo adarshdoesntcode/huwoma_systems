@@ -40,6 +40,30 @@ const carwashTransactionStatus = [
   },
 ];
 
+const simracingTransactionStatus = [
+  {
+    value: "Active",
+    label: "Active",
+    icon: Dot,
+  },
+
+  {
+    value: "Completed",
+    label: "Completed",
+    icon: Dot,
+  },
+  {
+    value: "Booked",
+    label: "Booked",
+    icon: Dot,
+  },
+  {
+    value: "Cancelled",
+    label: "Cancelled",
+    icon: Dot,
+  },
+];
+
 const paymentStatus = [
   {
     label: "Pending",
@@ -58,12 +82,17 @@ const paymentStatus = [
   },
 ];
 
-export function DataTableToolbar({ table }) {
+export function DataTableToolbar({
+  table,
+  transactionOption,
+  defaultSearchSelection,
+  searchOptions,
+}) {
   const isFiltered =
     table.getState().columnFilters.length > 0 ||
     table.getState().sorting.length > 0 ||
     Object.keys(table.getState().columnVisibility).length > 0;
-  const [filter, setFilter] = useState("billNo");
+  const [filter, setFilter] = useState(defaultSearchSelection);
 
   return (
     <div className="flex items-center justify-between">
@@ -74,9 +103,14 @@ export function DataTableToolbar({ table }) {
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="serviceTypeName">Vehicle No</SelectItem>
+              {searchOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+              {/* <SelectItem value="serviceTypeName">Vehicle No</SelectItem>
               <SelectItem value="customer">Contact</SelectItem>
-              <SelectItem value="billNo">Bill No</SelectItem>
+              <SelectItem value="billNo">Bill No</SelectItem> */}
             </SelectContent>
           </Select>
 
@@ -97,7 +131,11 @@ export function DataTableToolbar({ table }) {
             <DataTableFacetedFilter
               column={table.getColumn("transactionStatus")}
               title="Status"
-              options={carwashTransactionStatus}
+              options={
+                transactionOption === "carwash"
+                  ? carwashTransactionStatus
+                  : simracingTransactionStatus
+              }
             />
           )}
           {table.getColumn("paymentStatus") && (

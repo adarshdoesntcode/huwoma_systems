@@ -4,7 +4,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
-export const SimRacingFinishedColumn = [
+export const SimRacingFilteredTransactionsColumn = [
   {
     accessorKey: "billNo",
     header: () => <TableHead>Bill No</TableHead>,
@@ -30,9 +30,9 @@ export const SimRacingFinishedColumn = [
       const customer = row.original.customer;
 
       return (
-        <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
+        <TableCell className=" px-4 py-1 sm:py-1 sm:px-4">
           <div className="flex flex-col items-start">
-            <div className="font-medium text-sm">{customer.customerName}</div>
+            <div className="font-medium text-xs">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>
@@ -59,7 +59,7 @@ export const SimRacingFinishedColumn = [
       const rig = row.original.rig;
 
       return (
-        <TableCell className="px-4 py-1 text-sm sm:py-1 sm:px-4 hidden md:table-cell">
+        <TableCell className="px-4 py-2 text-xs sm:py-2 sm:px-4 hidden md:table-cell">
           {rig?.rigName}
         </TableCell>
       );
@@ -108,7 +108,7 @@ export const SimRacingFinishedColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden lg:table-cell px-1"
+          className="hidden lg:table-cell px-1 py-1"
         />
       );
     },
@@ -118,7 +118,7 @@ export const SimRacingFinishedColumn = [
         : "";
 
       return (
-        <TableCell className="hidden py-1  lg:table-cell">
+        <TableCell className="hidden  lg:table-cell py-1">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>

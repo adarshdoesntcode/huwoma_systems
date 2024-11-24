@@ -20,6 +20,7 @@ import {
 const colour = {
   "In Queue": "orange-500",
   "Ready for Pickup": "green-600",
+  Active: "green-600",
   Completed: "blue-500",
   Booked: "purple-600",
   Cancelled: "red-600",

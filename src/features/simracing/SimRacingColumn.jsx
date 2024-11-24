@@ -32,9 +32,9 @@ export const SimRacingColumn = [
       const date = format(new Date(row.original.createdAt), "d MMM, h:mm a");
 
       return (
-        <TableCell className=" border-t px-4 py-2 sm:py-2 sm:px-4">
+        <TableCell className=" border-t px-4 py-1 sm:py-1 sm:px-4">
           <div className="flex flex-col   items-start">
-            <div className="font-semibold">{customer.customerName}</div>
+            <div className="font-medium text-sm">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>

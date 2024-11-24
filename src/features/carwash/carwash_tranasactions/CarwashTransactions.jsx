@@ -618,29 +618,31 @@ function calculateVehicleServiceIncome(transactions) {
 
   transactions.forEach((transaction) => {
     const serviceVehicle = transaction.service?.id?.serviceVehicle;
-    const serviceType = transaction.service?.id?.serviceTypeName;
+    const serviceType = transaction.service?.id;
     const serviceCost = transaction.service?.cost;
 
     if (serviceVehicle && serviceType && serviceCost !== undefined) {
       let vehicleTypeEntry = result.find(
-        (entry) => entry.vehicleTypeName === serviceVehicle.vehicleTypeName
+        (entry) => entry.vehicleTypeId === serviceVehicle._id
       );
 
       if (!vehicleTypeEntry) {
         vehicleTypeEntry = {
           vehicleTypeName: serviceVehicle.vehicleTypeName,
+          vehicleTypeId: serviceVehicle._id,
           services: [],
         };
         result.push(vehicleTypeEntry);
       }
 
       let serviceEntry = vehicleTypeEntry.services.find(
-        (service) => service.serviceTypeName === serviceType
+        (service) => service.serviceTypeId === serviceType._id
       );
 
       if (!serviceEntry) {
         serviceEntry = {
-          serviceTypeName: serviceType,
+          serviceTypeName: serviceType.serviceTypeName,
+          serviceTypeId: serviceType._id,
           income: 0,
         };
         vehicleTypeEntry.services.push(serviceEntry);

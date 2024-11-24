@@ -42,7 +42,7 @@ export const ParkingColumn = [
       const number = row.original.vehicleNumber;
 
       return (
-        <TableCell className="tracking-wide text-lg font-medium">
+        <TableCell className="tracking-wide text-lg font-medium py-1">
           <div className="block lg:hidden text-muted-foreground text-xs font-normal">
             {row.original.vehicle.vehicleTypeName}
           </div>
@@ -63,7 +63,7 @@ export const ParkingColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden xl:table-cell px-1"
+          className="hidden xl:table-cell px-1 "
         />
       );
     },
@@ -72,7 +72,7 @@ export const ParkingColumn = [
       let time = format(new Date(row.original.start), "h:mm a");
 
       return (
-        <TableCell className="hidden  xl:table-cell ">
+        <TableCell className="hidden  xl:table-cell py-1">
           <div className="flex flex-col items-start text-center">
             <span className="font-medium ">{time}</span>
             <span className="text-xs text-muted-foreground">{date}</span>

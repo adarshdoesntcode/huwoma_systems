@@ -99,15 +99,12 @@ export const ParkingFinishedColumn = [
     },
     cell: ({ row }) => {
       let date = row.original.end
-        ? format(new Date(row.original.end), "d MMM, yyyy")
+        ? format(new Date(row.original.end), "d MMM, yyyy h:mm a")
         : "";
-      let time = row.original.end
-        ? format(new Date(row.original.end), "h:mm a")
-        : "";
+
       return (
         <TableCell className="hidden  lg:table-cell">
           <div className="flex flex-col items-start">
-            <div className="font-medium">{time}</div>
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
         </TableCell>

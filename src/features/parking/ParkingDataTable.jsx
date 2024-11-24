@@ -137,7 +137,7 @@ export const ParkingDataTable = ({ columns, data }) => {
                       )}
                     </React.Fragment>
                   ))}
-                  <TableCell className="text-center border-t px-4 py-2 sm:py-0 sm:px-4">
+                  <TableCell className="text-center border-t px-4 py-2 sm:py-1 sm:px-4">
                     <div className="flex gap-2  justify-center flex-col sm:flex-row">
                       <Button
                         size="sm"

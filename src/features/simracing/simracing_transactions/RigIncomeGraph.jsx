@@ -43,8 +43,8 @@ function createChartConfig(paymentData) {
   };
   paymentData.forEach((payment, index) => {
     const colorVar = `--chart-${index + 1}`;
-    chartConfig[payment.paymentModeId] = {
-      label: payment.paymentModeName,
+    chartConfig[payment.rigId] = {
+      label: payment.rigName,
       color: `hsl(var(${colorVar}))`,
     };
   });
@@ -79,35 +79,36 @@ function createChartConfig(paymentData) {
 // };
 
 function calculatePaymentModeTotals(transactions) {
-  const paymentModeTotals = {};
+  const rigTotals = {};
 
   transactions.forEach((transaction) => {
-    const paymentModeId = transaction.paymentMode?._id;
+    const rigId = transaction.rig?._id;
     const netAmount = transaction?.netAmount;
+    const rigName = transaction.rig?.rigName;
 
-    if (!paymentModeTotals[paymentModeId]) {
-      paymentModeTotals[paymentModeId] = {
+    if (!rigTotals[rigId]) {
+      rigTotals[rigId] = {
         total: 0,
-        paymentModeName: transaction.paymentMode?.paymentModeName,
+        rigName,
       };
     }
 
-    paymentModeTotals[paymentModeId].total += netAmount;
+    rigTotals[rigId].total += netAmount;
   });
 
-  const result = Object.entries(paymentModeTotals)
-    .map(([paymentModeId, { total, paymentModeName }]) => ({
-      paymentModeId,
-      paymentModeName,
+  const result = Object.entries(rigTotals)
+    .map(([rigId, { total, rigName }]) => ({
+      rigId,
+      rigName,
       total,
-      fill: `var(--color-${paymentModeId})`,
+      fill: `var(--color-${rigId})`,
     }))
     .filter(({ total }) => total > 0);
 
   return result;
 }
 
-function PaymentsGraph({ completetedTransactions, range }) {
+function RigIncomeGraph({ completetedTransactions, range }) {
   const paymentGraphData = calculatePaymentModeTotals(completetedTransactions);
   const chartConfig = useMemo(
     () => createChartConfig(paymentGraphData),
@@ -117,7 +118,7 @@ function PaymentsGraph({ completetedTransactions, range }) {
   return (
     <Card className="col-span-12 xl:col-span-6">
       <CardHeader className="pb-0 p-4 sm:p-6 sm:pb-0">
-        <CardTitle className="text-lg sm:text-xl">Payment Breakdown</CardTitle>
+        <CardTitle className="text-lg sm:text-xl">Rig Income</CardTitle>
         <CardDescription className="text-xs">
           {range.split("-")[0].trim() === range.split("-")[1].trim()
             ? range.split("-")[0]
@@ -137,12 +138,14 @@ function PaymentsGraph({ completetedTransactions, range }) {
             <CartesianGrid horizontal={false} />
 
             <YAxis
-              dataKey="paymentModeName"
+              dataKey="rigName"
               type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value}
+              tickFormatter={(value) => {
+                return value;
+              }}
             />
             <XAxis dataKey="total" type="number" hide />
 
@@ -167,4 +170,4 @@ function PaymentsGraph({ completetedTransactions, range }) {
   );
 }
 
-export default PaymentsGraph;
+export default RigIncomeGraph;

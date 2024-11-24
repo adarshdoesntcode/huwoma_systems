@@ -44,6 +44,13 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["SimRacingTransactions"],
     }),
+    getSimRacingFilteredTransactions: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/filteredtransactions",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
     startRace: builder.mutation({
       query: (credentials) => ({
         url: "/simracing/transaction/start",
@@ -120,4 +127,5 @@ export const {
   useGetSimRacingCustomersQuery,
   useGetSimRacingCustomerByIdQuery,
   useUpdateSimRacingCustomerMutation,
+  useGetSimRacingFilteredTransactionsMutation,
 } = simRacingApiSlice;

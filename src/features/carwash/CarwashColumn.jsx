@@ -32,9 +32,9 @@ export const CarwashColumn = [
       const customer = row.original.customer;
 
       return (
-        <TableCell className="text-gray-600 px-4 py-2 sm:py-2 sm:px-4">
+        <TableCell className="px-4 py-1 sm:py- sm:px-4">
           <div className="flex flex-col items-start">
-            <div className="font-semibold">{customer.customerName}</div>
+            <div className="font-medium text-sm">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>
@@ -61,14 +61,14 @@ export const CarwashColumn = [
       const service = row.original.service?.id;
 
       return (
-        <TableCell className="px-4 py-2 sm:py-2 sm:px-4">
+        <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
           <div className="flex flex-col items-start">
-            <div className="font-semibold">{service?.serviceTypeName}</div>
+            <div className="font-medium text-primary text-sm">
+              {row.original?.vehicleNumber}
+            </div>
             <div className="text-xs flex justify-between gap-2 text-muted-foreground">
-              {service?.serviceVehicle?.vehicleTypeName}
-              <span className="font-medium text-xs text-primary">
-                ({row.original?.vehicleNumber})
-              </span>
+              {service?.serviceVehicle?.billAbbreviation}_
+              {service?.billAbbreviation}
             </div>
           </div>
         </TableCell>
@@ -132,21 +132,20 @@ export const CarwashColumn = [
       );
     },
     cell: ({ row }) => {
-      let date = format(new Date(row.original.createdAt), "d MMM, yyyy");
-      let time = format(new Date(row.original.createdAt), "h:mm a");
+      let date = format(new Date(row.original.createdAt), "d MMM, yyyy h:mm a");
 
       if (row?.original.transactionStatus === "Ready for Pickup") {
-        date = format(new Date(row.original.service.end), "d MMM, yyyy");
-        time = format(new Date(row.original.service.end), "h:mm a");
+        date = format(new Date(row.original.service.end), "d MMM, yyyy h:mm a");
       } else if (row?.original.transactionStatus === "Completed") {
-        date = format(new Date(row.original.transactionTime), "d MMM, yyyy");
-        time = format(new Date(row.original.transactionTime), "h:mm a");
+        date = format(
+          new Date(row.original.transactionTime),
+          "d MMM, yyyy h:mm a"
+        );
       }
 
       return (
-        <TableCell className="hidden  lg:table-cell">
+        <TableCell className="hidden  lg:table-cell py-1">
           <div className="flex flex-col items-start">
-            <div className="font-medium">{time}</div>
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
         </TableCell>

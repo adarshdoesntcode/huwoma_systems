@@ -35,20 +35,21 @@ import { File, Loader2 } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 
-import CarwashTransactionDetails from "../CarwashTransactionDetails";
-import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
+// import CarwashTransactionDetails from "../CarwashTransactionDetails";
+// import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
 
 import { Workbook } from "exceljs";
 import { format } from "date-fns";
 import { DataTableToolbar } from "@/components/DataTableToolbar";
 import { DataTablePagination } from "@/components/DataTablePagination";
+import SimRacingTransactionDetails from "../SimRacingTransactionDetails";
 
 const exportExcel = (rows) => {
   try {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Transactions");
 
-    const titleRow = worksheet.addRow(["Huwoma Park N Wash"]);
+    const titleRow = worksheet.addRow(["SimRacing by HUWOMA"]);
     titleRow.font = { bold: true, size: 14 };
     titleRow.alignment = { horizontal: "center" };
 
@@ -62,11 +63,8 @@ const exportExcel = (rows) => {
       { width: 15 },
       { width: 24 },
       { width: 15 },
-      { width: 10 },
       { width: 15 },
-      { width: 20 },
-      { width: 14 },
-      { width: 14 },
+
       { width: 18 },
       { width: 18 },
       { width: 15 },
@@ -81,11 +79,7 @@ const exportExcel = (rows) => {
       "Bill No",
       "Customer Name",
       "Contact",
-      "VehicleNo.",
-      "Vehicle",
-      "Service",
-      "Service Cost",
-      "Parking Cost",
+      "Rig",
       "Transaction Status",
       "Payment Status",
       "Payment Mode",
@@ -108,13 +102,8 @@ const exportExcel = (rows) => {
       Bill_No: row.original?.billNo || "",
       Customer_Name: row.original?.customer?.customerName || "",
       Customer_Contact: row.original?.customer?.customerContact || "",
-      Vehicle_Number: row.original?.vehicleNumber
-        ? Number(row.original?.vehicleNumber)
-        : "",
-      Vehicle: row.original?.service?.id?.serviceVehicle?.vehicleTypeName || "",
-      Service: row.original?.service?.id?.serviceTypeName || "",
-      Service_Cost: row.original?.service?.cost || 0,
-      Parking_Cost: row.original?.parking?.cost || 0,
+      Rig: row.original?.rig?.rigName || "",
+
       Transaction_Status: row.original?.transactionStatus || "",
       Payment_Status: row.original?.paymentStatus || "",
       Payment_Mode: row.original?.paymentMode?.paymentModeName || "",
@@ -132,11 +121,7 @@ const exportExcel = (rows) => {
         row.Bill_No,
         row.Customer_Name,
         row.Customer_Contact,
-        row.Vehicle_Number,
-        row.Vehicle,
-        row.Service,
-        row.Service_Cost,
-        row.Parking_Cost,
+        row.Rig,
         row.Transaction_Status,
         row.Payment_Status,
         row.Payment_Mode,
@@ -154,7 +139,7 @@ const exportExcel = (rows) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "ParkNWashTransactions.xlsx";
+      a.download = "SimRacingTransactions.xlsx";
       a.click();
     });
     toast({
@@ -171,7 +156,7 @@ const exportExcel = (rows) => {
   }
 };
 
-export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
+export const SimRacingFilterTranasactionDataTable = ({ columns, data }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
@@ -207,15 +192,17 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
       <div className="flex justify-between items-center mb-4 space-x-2">
         <DataTableToolbar
           table={table}
+          transactionOption={"simRacing"}
           defaultSearchSelection={"billNo"}
-          transactionOption="carwash"
           searchOptions={[
             {
               value: "billNo",
               label: "Bill No",
             },
-            { value: "customer", label: "Contact" },
-            { value: "serviceTypeName", label: "Vehicle No" },
+            {
+              value: "customer",
+              label: "Contact",
+            },
           ]}
         />
         <div>
@@ -288,7 +275,7 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
       <div className="py-4 text-muted-foreground">
         <DataTablePagination table={table} />
       </div>
-      <CarwashTransactionDetails
+      <SimRacingTransactionDetails
         showDetails={showDetails}
         setShowDetails={setShowDetails}
         showDelete={showDelete}
@@ -297,75 +284,76 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
         setTransactionDetails={setTransactionDetails}
         transactionDetails={transactionDetails}
       />
-      <ConfirmDelete
+
+      {/* <ConfirmDelete
         showDelete={showDelete}
         setShowDelete={setShowDelete}
         setDeleteId={setDeleteId}
         deleteId={deleteId}
-      />
+      /> */}
     </>
   );
 };
 
-function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
-  const [deleteCarwashTransaction, { isLoading }] =
-    useDeleteCarwashTransactionMutation();
+// function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
+//   const [deleteCarwashTransaction, { isLoading }] =
+//     useDeleteCarwashTransactionMutation();
 
-  const handleCloseDelete = () => {
-    setShowDelete(false);
-    setDeleteId(null);
-  };
+//   const handleCloseDelete = () => {
+//     setShowDelete(false);
+//     setDeleteId(null);
+//   };
 
-  const handleDelete = async () => {
-    try {
-      if (!deleteId) return;
-      const res = await deleteCarwashTransaction({
-        id: deleteId,
-      });
+//   const handleDelete = async () => {
+//     try {
+//       if (!deleteId) return;
+//       const res = await deleteCarwashTransaction({
+//         id: deleteId,
+//       });
 
-      if (res.error) {
-        handleCloseDelete();
-        throw new Error(res.error.data.message);
-      }
+//       if (res.error) {
+//         handleCloseDelete();
+//         throw new Error(res.error.data.message);
+//       }
 
-      if (!res.error) {
-        handleCloseDelete();
-        toast({
-          title: "Transaction Terminated!",
-          description: "Successfully",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong!!",
-        description: error.message,
-      });
-    }
-  };
-  return (
-    <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will terminate this transaction
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {isLoading ? (
-            <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Terminating
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleDelete}>
-              Terminate
-            </Button>
-          )}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
+//       if (!res.error) {
+//         handleCloseDelete();
+//         toast({
+//           title: "Transaction Terminated!",
+//           description: "Successfully",
+//         });
+//       }
+//     } catch (error) {
+//       toast({
+//         variant: "destructive",
+//         title: "Something went wrong!!",
+//         description: error.message,
+//       });
+//     }
+//   };
+//   return (
+//     <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
+//       <AlertDialogContent>
+//         <AlertDialogHeader>
+//           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+//           <AlertDialogDescription>
+//             This action cannot be undone. This will terminate this transaction
+//           </AlertDialogDescription>
+//         </AlertDialogHeader>
+//         <AlertDialogFooter>
+//           <AlertDialogCancel>Cancel</AlertDialogCancel>
+//           {isLoading ? (
+//             <Button variant="destructive" disabled>
+//               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+//               Terminating
+//             </Button>
+//           ) : (
+//             <Button variant="destructive" onClick={handleDelete}>
+//               Terminate
+//             </Button>
+//           )}
+//         </AlertDialogFooter>
+//       </AlertDialogContent>
+//     </AlertDialog>
+//   );
+// }
