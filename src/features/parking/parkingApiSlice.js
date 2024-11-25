@@ -9,7 +9,13 @@ export const parkingApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["SimRacingTransactions"],
     }),
-
+    getParkingFilteredTransactions: builder.mutation({
+      query: (credentials) => ({
+        url: "/parking/filteredtransactions",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
     startParking: builder.mutation({
       query: (credentials) => ({
         url: "/parking/start",
@@ -48,4 +54,5 @@ export const {
   useCancelParkingMutation,
   useGetParkingCheckoutDetailsQuery,
   useParkingCheckoutMutation,
+  useGetParkingFilteredTransactionsMutation,
 } = parkingApiSlice;

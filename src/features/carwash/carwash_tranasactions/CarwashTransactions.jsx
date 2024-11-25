@@ -283,9 +283,9 @@ function CarwashTransactions() {
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
           <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
-            <CardTitle className="flex gap-3 text-lg sm:text-xl items-center">
+            <CardTitle className="flex gap-3 text-base sm:text-lg items-center">
               <Settings2 className="h-5 w-5" />
-              Transaction Filter
+              Cawash Transactions Analysis
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pb-0 sm:pt-0">
@@ -751,7 +751,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                +{totalNetRevenue.toLocaleString()}
+                {totalNetRevenue.toLocaleString()}
               </div>
               {pendingRevenue > 0 && (
                 <p className="text-xs text-muted-foreground">
@@ -773,7 +773,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
               </div>
               {freeWash > 0 && (
                 <p className="text-xs text-muted-foreground">
-                  -{freeWash.toLocaleString()} for free wash
+                  {freeWash.toLocaleString()} in free wash
                 </p>
               )}
             </CardContent>
@@ -835,6 +835,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
           <CarwashFilterTranasactionDataTable
             data={carwashTableData}
             columns={CarwashFilterTransactionColumn}
+            origin={"transactions"}
           />
         </CardContent>
       </Card>

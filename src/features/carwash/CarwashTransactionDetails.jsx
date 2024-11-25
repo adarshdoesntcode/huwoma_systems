@@ -51,6 +51,7 @@ const CarwashTransactionDetails = ({
   setShowRollbackFromComplete,
   setShowRollbackFromPickup,
   setRollBackId,
+  origin,
 }) => {
   const location = useLocation();
 
@@ -127,6 +128,9 @@ const CarwashTransactionDetails = ({
               <DetailsFooter
                 transactionDetails={transactionDetails}
                 handleTermination={handleTermination}
+                handleRollbackFromComplete={handleRollbackFromComplete}
+                handleRollbackFromPickup={handleRollbackFromPickup}
+                origin={origin}
               />
             </SheetFooter>
           </div>
@@ -158,6 +162,7 @@ const CarwashTransactionDetails = ({
                 handleTermination={handleTermination}
                 handleRollbackFromComplete={handleRollbackFromComplete}
                 handleRollbackFromPickup={handleRollbackFromPickup}
+                origin={origin}
               />
             </SheetFooter>
           </div>
@@ -471,6 +476,7 @@ const DetailsFooter = ({
   handleTermination,
   handleRollbackFromComplete,
   handleRollbackFromPickup,
+  origin,
 }) => {
   const navigate = useNavigate();
 
@@ -523,17 +529,19 @@ const DetailsFooter = ({
   return (
     <div className="flex justify-between gap-4 items-center w-full">
       <div>
-        {transactionDetails?.transactionStatus === "In Queue" && (
-          <Button
-            variant="destructive"
-            onClick={() => {
-              handleTermination();
-            }}
-          >
-            <OctagonX className="h-4 w-4 mr-2" /> Terminate
-          </Button>
-        )}
+        {transactionDetails?.transactionStatus === "In Queue" &&
+          origin !== "transactions" && (
+            <Button
+              variant="destructive"
+              onClick={() => {
+                handleTermination();
+              }}
+            >
+              <OctagonX className="h-4 w-4 mr-2" /> Terminate
+            </Button>
+          )}
         {transactionDetails?.transactionStatus === "Ready for Pickup" &&
+          origin !== "transactions" &&
           getDaysDifference(transactionDetails?.service.end, new Date()) <=
             3 && (
             <Button
@@ -546,6 +554,7 @@ const DetailsFooter = ({
             </Button>
           )}
         {transactionDetails?.transactionStatus === "Completed" &&
+          origin !== "transactions" &&
           getDaysDifference(transactionDetails?.transactionTime, new Date()) <=
             3 && (
             <Button
@@ -558,31 +567,33 @@ const DetailsFooter = ({
             </Button>
           )}
       </div>
-      {transactionDetails?.transactionStatus === "In Queue" && (
-        <Button
-          className="w-full"
-          onClick={() => {
-            navigate(`/carwash/inspection/${transactionDetails._id}`);
-          }}
-        >
-          Proceed
-          <ChevronRight className="h-4 w-4 ml-2" />{" "}
-        </Button>
-      )}
+      {transactionDetails?.transactionStatus === "In Queue" &&
+        origin !== "transactions" && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              navigate(`/carwash/inspection/${transactionDetails._id}`);
+            }}
+          >
+            Proceed
+            <ChevronRight className="h-4 w-4 ml-2" />{" "}
+          </Button>
+        )}
 
-      {transactionDetails?.transactionStatus === "Ready for Pickup" && (
-        <Button
-          className="w-full"
-          onClick={() => {
-            navigate("/carwash/checkout", {
-              state: { transactionDetails },
-            });
-          }}
-        >
-          Checkout
-          <ChevronRight className="h-4 w-4 ml-2" />{" "}
-        </Button>
-      )}
+      {transactionDetails?.transactionStatus === "Ready for Pickup" &&
+        origin !== "transactions" && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              navigate("/carwash/checkout", {
+                state: { transactionDetails },
+              });
+            }}
+          >
+            Checkout
+            <ChevronRight className="h-4 w-4 ml-2" />{" "}
+          </Button>
+        )}
       {transactionDetails?.transactionStatus === "Completed" && (
         <Button
           className="w-full"

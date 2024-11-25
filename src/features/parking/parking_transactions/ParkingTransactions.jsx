@@ -1,7 +1,7 @@
 import { useIsSuper } from "@/hooks/useSuper";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useGetSimRacingFilteredTransactionsMutation } from "../simRacingApiSlice";
+
 import {
   endOfDay,
   format,
@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import TextSeparator from "@/components/ui/TextSeparator";
+
 import {
   Select,
   SelectContent,
@@ -51,10 +51,9 @@ import NavBackButton from "@/components/NavBackButton";
 import { isMobile } from "react-device-detect";
 import { DailyIncomeGraph } from "@/features/carwash/carwash_tranasactions/charts/DailyIncomeGraph";
 import PaymentsGraph from "@/features/carwash/carwash_tranasactions/charts/PaymentsGraph";
-import RigIncomeGraph from "./RigIncomeGraph";
+
 import { Navigate } from "react-router-dom";
-import { SimRacingFilterTranasactionDataTable } from "./SimRacingFilteredTransactionsDataTable";
-import { SimRacingFilteredTransactionsColumn } from "./SimRacingFilteredTransactionsColumn";
+import { useGetParkingFilteredTransactionsMutation } from "../parkingApiSlice";
 
 const initialState = {
   preset: {
@@ -77,7 +76,7 @@ const initialState = {
   },
 };
 
-function SimRacingTransactions() {
+function ParkingTransactions() {
   const isSuper = useIsSuper();
   const [filter, setFilter] = useState(initialState);
   const [responseData, setResponseData] = useState("");
@@ -88,8 +87,8 @@ function SimRacingTransactions() {
     formState: { isSubmitting },
   } = useForm();
 
-  const [getSimRacingFilteredTransactions] =
-    useGetSimRacingFilteredTransactionsMutation();
+  const [getParkingFilteredTransactions] =
+    useGetParkingFilteredTransactionsMutation();
 
   if (!isSuper) {
     return <Navigate to="/carwash" />;
@@ -178,7 +177,7 @@ function SimRacingTransactions() {
       });
     }
     try {
-      const res = await getSimRacingFilteredTransactions({
+      const res = await getParkingFilteredTransactions({
         timeRange: { ...dateRange },
       });
       if (res.error) {
@@ -204,12 +203,12 @@ function SimRacingTransactions() {
         <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
           <CardTitle className="flex gap-3 text-base sm:text-lg items-center">
             <Settings2 className="h-5 w-5" />
-            SimRacing Transactions Analysis
+            Parking Transactions Analysis
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pb-0 sm:pt-0">
           <form
-            id="carwash-transaction-filter"
+            id="parking-transaction-filter"
             className="grid  grid-cols-12"
             onSubmit={handleSubmit(onSubmit)}
           >
@@ -371,7 +370,7 @@ function SimRacingTransactions() {
               }
               condition={isSubmitting}
               loadingText="Submitting"
-              form="carwash-transaction-filter"
+              form="parking-transaction-filter"
             />
           </div>
         </CardFooter>
@@ -500,10 +499,10 @@ const FilteredAnalytics = ({ responseData, range }) => {
       <div className="grid grid-cols-12 gap-6 ">
         {completetedTransactions.length > 0 && (
           <>
-            <RigIncomeGraph
+            {/* <RigIncomeGraph
               completetedTransactions={completetedTransactions}
               range={rangeString}
-            />
+            /> */}
             <PaymentsGraph
               completetedTransactions={completetedTransactions}
               range={rangeString}
@@ -522,14 +521,14 @@ const FilteredAnalytics = ({ responseData, range }) => {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-          <SimRacingFilterTranasactionDataTable
+          {/* <SimRacingFilterTranasactionDataTable
             data={simRacingTableData}
             columns={SimRacingFilteredTransactionsColumn}
-          />
+          /> */}
         </CardContent>
       </Card>
     </div>
   );
 };
 
-export default SimRacingTransactions;
+export default ParkingTransactions;

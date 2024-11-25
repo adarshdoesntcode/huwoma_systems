@@ -42,6 +42,9 @@ import { Workbook } from "exceljs";
 import { format } from "date-fns";
 import { DataTableToolbar } from "@/components/DataTableToolbar";
 import { DataTablePagination } from "@/components/DataTablePagination";
+import ConfirmDelete from "../transaction_mutation/ConfirmDelete";
+import ConfirmRollbackFromPickup from "../transaction_mutation/ConfirmRollbackFromPickup";
+import ConfirmRollbackFromComplete from "../transaction_mutation/ConfirmRollbackFromComplete";
 
 const exportExcel = (rows) => {
   try {
@@ -171,11 +174,29 @@ const exportExcel = (rows) => {
   }
 };
 
-export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
+export const CarwashFilterTranasactionDataTable = ({
+  columns,
+  data,
+  defaultSearchSelection = "billNo",
+  transactionOption = "carwash",
+  searchOptions = [
+    {
+      value: "billNo",
+      label: "Bill No",
+    },
+    { value: "customer", label: "Contact" },
+    { value: "serviceTypeName", label: "Vehicle No" },
+  ],
+  origin,
+}) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showRollbackFromPickup, setShowRollbackFromPickup] = useState(false);
+  const [showRollbackFromComplete, setShowRollbackFromComplete] =
+    useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [rollBackId, setRollBackId] = useState(null);
   const [sorting, setSorting] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -207,16 +228,9 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
       <div className="flex justify-between items-center mb-4 space-x-2">
         <DataTableToolbar
           table={table}
-          defaultSearchSelection={"billNo"}
-          transactionOption="carwash"
-          searchOptions={[
-            {
-              value: "billNo",
-              label: "Bill No",
-            },
-            { value: "customer", label: "Contact" },
-            { value: "serviceTypeName", label: "Vehicle No" },
-          ]}
+          transactionOption={transactionOption}
+          defaultSearchSelection={defaultSearchSelection}
+          searchOptions={searchOptions}
         />
         <div>
           <Button
@@ -296,6 +310,10 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
         setDeleteId={setDeleteId}
         setTransactionDetails={setTransactionDetails}
         transactionDetails={transactionDetails}
+        setShowRollbackFromComplete={setShowRollbackFromComplete}
+        setShowRollbackFromPickup={setShowRollbackFromPickup}
+        setRollBackId={setRollBackId}
+        origin={origin}
       />
       <ConfirmDelete
         showDelete={showDelete}
@@ -303,69 +321,20 @@ export const CarwashFilterTranasactionDataTable = ({ columns, data }) => {
         setDeleteId={setDeleteId}
         deleteId={deleteId}
       />
+      <ConfirmRollbackFromPickup
+        showRollbackFromPickup={showRollbackFromPickup}
+        setShowRollbackFromPickup={setShowRollbackFromPickup}
+        setRollBackId={setRollBackId}
+        rollBackId={rollBackId}
+        origin={origin}
+      />
+      <ConfirmRollbackFromComplete
+        showRollbackFromComplete={showRollbackFromComplete}
+        setShowRollbackFromComplete={setShowRollbackFromComplete}
+        setRollBackId={setRollBackId}
+        rollBackId={rollBackId}
+        origin={origin}
+      />
     </>
   );
 };
-
-function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
-  const [deleteCarwashTransaction, { isLoading }] =
-    useDeleteCarwashTransactionMutation();
-
-  const handleCloseDelete = () => {
-    setShowDelete(false);
-    setDeleteId(null);
-  };
-
-  const handleDelete = async () => {
-    try {
-      if (!deleteId) return;
-      const res = await deleteCarwashTransaction({
-        id: deleteId,
-      });
-
-      if (res.error) {
-        handleCloseDelete();
-        throw new Error(res.error.data.message);
-      }
-
-      if (!res.error) {
-        handleCloseDelete();
-        toast({
-          title: "Transaction Terminated!",
-          description: "Successfully",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong!!",
-        description: error.message,
-      });
-    }
-  };
-  return (
-    <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will terminate this transaction
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {isLoading ? (
-            <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Terminating
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleDelete}>
-              Terminate
-            </Button>
-          )}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}

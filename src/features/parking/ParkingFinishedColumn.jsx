@@ -41,7 +41,7 @@ export const ParkingFinishedColumn = [
       const number = row.original.vehicleNumber;
 
       return (
-        <TableCell className="tracking-wide text-lg font-medium">
+        <TableCell className="tracking-wide text-base font-medium py-1">
           <div className="block lg:hidden text-muted-foreground text-xs font-normal">
             {row.original.vehicle.vehicleTypeName}
           </div>

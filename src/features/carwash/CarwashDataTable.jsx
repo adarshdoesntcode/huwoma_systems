@@ -48,8 +48,12 @@ import { toast } from "@/hooks/use-toast";
 
 import CarwashTransactionDetails from "./CarwashTransactionDetails";
 import { DataTablePagination } from "@/components/DataTablePagination";
+import { useNavigate } from "react-router-dom";
+import ConfirmRollbackFromComplete from "./transaction_mutation/ConfirmRollbackFromComplete";
+import ConfirmRollbackFromPickup from "./transaction_mutation/ConfirmRollbackFromPickup";
+import ConfirmDelete from "./transaction_mutation/ConfirmDelete";
 
-export const CarwashDataTable = ({ columns, data }) => {
+export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showRollbackFromPickup, setShowRollbackFromPickup] = useState(false);
@@ -58,9 +62,7 @@ export const CarwashDataTable = ({ columns, data }) => {
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [rollBackId, setRollBackId] = useState(null);
-
   const [filter, setFilter] = useState("serviceTypeName");
-
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -174,6 +176,7 @@ export const CarwashDataTable = ({ columns, data }) => {
         setShowRollbackFromComplete={setShowRollbackFromComplete}
         setShowRollbackFromPickup={setShowRollbackFromPickup}
         setRollBackId={setRollBackId}
+        origin={origin}
       />
       <ConfirmDelete
         showDelete={showDelete}
@@ -186,216 +189,15 @@ export const CarwashDataTable = ({ columns, data }) => {
         setShowRollbackFromPickup={setShowRollbackFromPickup}
         setRollBackId={setRollBackId}
         rollBackId={rollBackId}
+        origin={origin}
       />
       <ConfirmRollbackFromComplete
         showRollbackFromComplete={showRollbackFromComplete}
         setShowRollbackFromComplete={setShowRollbackFromComplete}
         setRollBackId={setRollBackId}
         rollBackId={rollBackId}
+        origin={origin}
       />
     </>
   );
 };
-
-function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
-  const [deleteCarwashTransaction, { isLoading }] =
-    useDeleteCarwashTransactionMutation();
-
-  const handleCloseDelete = () => {
-    setShowDelete(false);
-    setDeleteId(null);
-  };
-
-  const handleDelete = async () => {
-    try {
-      if (!deleteId) return;
-      const res = await deleteCarwashTransaction({
-        id: deleteId,
-      });
-
-      if (res.error) {
-        handleCloseDelete();
-        throw new Error(res.error.data.message);
-      }
-
-      if (!res.error) {
-        handleCloseDelete();
-        toast({
-          title: "Transaction Terminated!",
-          description: "Successfully",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong!!",
-        description: error.message,
-      });
-    }
-  };
-  return (
-    <AlertDialog open={showDelete} onOpenChange={handleCloseDelete}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will terminate this transaction
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {isLoading ? (
-            <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Terminating
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleDelete}>
-              Terminate
-            </Button>
-          )}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-function ConfirmRollbackFromPickup({
-  showRollbackFromPickup,
-  setShowRollbackFromPickup,
-  rollBackId,
-  setRollBackId,
-}) {
-  const [rollBackFromPickup, { isLoading }] = useRollBackFromPickupMutation();
-
-  const handleCloseDelete = () => {
-    setShowRollbackFromPickup(false);
-    setRollBackId(null);
-  };
-
-  const handleRollbackFromPickup = async () => {
-    try {
-      if (!rollBackId) return;
-      const res = await rollBackFromPickup({
-        transactionId: rollBackId,
-      });
-
-      if (res.error) {
-        handleCloseDelete();
-        throw new Error(res.error.data.message);
-      }
-
-      if (!res.error) {
-        handleCloseDelete();
-        toast({
-          title: "Transaction Rolled back",
-          description: "to In Queue",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong!!",
-        description: error.message,
-      });
-    }
-  };
-  return (
-    <AlertDialog open={showRollbackFromPickup} onOpenChange={handleCloseDelete}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Do you want to Rollback?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will rollback this transaction from Ready for Pickup to In
-            Queue
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {isLoading ? (
-            <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Rolling back...
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleRollbackFromPickup}>
-              Rollback <Undo2 className="ml-2 h-4 w-4" />
-            </Button>
-          )}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-function ConfirmRollbackFromComplete({
-  showRollbackFromComplete,
-  setShowRollbackFromComplete,
-  rollBackId,
-  setRollBackId,
-}) {
-  const [rollBackFromCompleted, { isLoading }] =
-    useRollBackFromCompletedMutation();
-
-  const handleCloseDelete = () => {
-    setShowRollbackFromComplete(false);
-    setRollBackId(null);
-  };
-
-  const handleRollbackFromComplete = async () => {
-    try {
-      if (!rollBackId) return;
-      const res = await rollBackFromCompleted({
-        transactionId: rollBackId,
-      });
-
-      if (res.error) {
-        handleCloseDelete();
-        throw new Error(res.error.data.message);
-      }
-
-      if (!res.error) {
-        handleCloseDelete();
-        toast({
-          title: "Transaction Rolled Back",
-          description: "to Ready for Pickup",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong!!",
-        description: error.message,
-      });
-    }
-  };
-  return (
-    <AlertDialog
-      open={showRollbackFromComplete}
-      onOpenChange={handleCloseDelete}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Do you want to Rollback?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will rollback this transaction from Completed to Ready for
-            Pickup
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {isLoading ? (
-            <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Rolling back...
-            </Button>
-          ) : (
-            <Button variant="destructive" onClick={handleRollbackFromComplete}>
-              Rollback <Undo2 className="ml-2 h-4 w-4" />
-            </Button>
-          )}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}

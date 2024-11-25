@@ -35,6 +35,7 @@ import { toast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import SubmitButton from "@/components/SubmitButton";
+import { CarwashCustomerDetailsColumn } from "./CarwashCustomerDetailsColumn";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
@@ -311,7 +312,16 @@ function CarwashCustomerDetails() {
 
             <CarwashFilterTranasactionDataTable
               data={customer.customerTransactions}
-              columns={CarwashFilterTransactionColumn}
+              columns={CarwashCustomerDetailsColumn}
+              searchOptions={[
+                {
+                  value: "billNo",
+                  label: "Bill No",
+                },
+
+                { value: "serviceTypeName", label: "Vehicle No" },
+              ]}
+              origin={"customer"}
             />
           </CardContent>
         </Card>

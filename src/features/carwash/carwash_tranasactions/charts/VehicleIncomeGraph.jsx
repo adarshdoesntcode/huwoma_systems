@@ -86,7 +86,7 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
                   {chartConfig[chart].label}
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-2xl">
-                  +{total[key].toLocaleString()}
+                  {total[key].toLocaleString()}
                 </span>
               </button>
             );

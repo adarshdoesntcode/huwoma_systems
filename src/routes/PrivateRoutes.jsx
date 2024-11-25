@@ -24,6 +24,7 @@ import SimRacingCustomers from "@/features/simracing/simracing_customers/SimRaci
 import SimRacingCustomerDetails from "@/features/simracing/simracing_customers/SimRacingCustomerDetails";
 import ParkingCheckout from "@/features/parking/ParkingCheckout";
 import SimRacingTransactions from "@/features/simracing/simracing_transactions/SimRacingTransactions";
+import ParkingTransactions from "@/features/parking/parking_transactions/ParkingTransactions";
 
 const PrivateRoutes = [
   {
@@ -114,6 +115,11 @@ const PrivateRoutes = [
   {
     path: "parking",
     element: <Parking />,
+    errorElement: <Error />,
+  },
+  {
+    path: "parking/transactions",
+    element: <ParkingTransactions />,
     errorElement: <Error />,
   },
   {

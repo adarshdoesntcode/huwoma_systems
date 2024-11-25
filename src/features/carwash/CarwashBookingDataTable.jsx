@@ -142,7 +142,7 @@ export const CarwashBookingDataTable = ({ columns, data }) => {
                       )}
                     </React.Fragment>
                   ))}
-                  <TableCell className="text-center border-t px-4 py-2 sm:py-2 sm:px-4">
+                  <TableCell className="text-center border-t px-4 py-1 sm:py-1 sm:px-4">
                     <Button
                       variant="destructive"
                       size="sm"

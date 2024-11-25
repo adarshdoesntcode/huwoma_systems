@@ -102,7 +102,11 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         url: `/carwash/transaction/${credentials.id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: [
+        "CarwashTransactions",
+        "CarwashCustomer",
+        "PostFilterTransactions",
+      ],
     }),
     getTransactionForInspection: builder.query({
       query: (credentials) => ({
@@ -131,7 +135,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomer"],
     }),
     rollBackFromCompleted: builder.mutation({
       query: (credentials) => ({
@@ -139,7 +143,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomer"],
     }),
   }),
 });

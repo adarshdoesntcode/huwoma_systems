@@ -63,7 +63,7 @@ export const CarwashColumn = [
       return (
         <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
           <div className="flex flex-col items-start">
-            <div className="font-medium text-primary text-sm">
+            <div className="font-semibold text-primary text-sm">
               {row.original?.vehicleNumber}
             </div>
             <div className="text-xs flex justify-between gap-2 text-muted-foreground">

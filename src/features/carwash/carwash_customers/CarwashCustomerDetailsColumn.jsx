@@ -4,55 +4,53 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
-export const CarwashFilterTransactionColumn = [
+export const CarwashCustomerDetailsColumn = [
   {
     accessorKey: "billNo",
-    header: () => (
-      <TableHead className="hidden md:table-cell">Bill No</TableHead>
-    ),
+    header: () => <TableHead>Bill No</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground hidden md:table-cell px-4 py-2">
+        <TableCell className="text-muted-foreground  px-4 py-2">
           {row.original.billNo}
         </TableCell>
       );
     },
   },
 
-  {
-    accessorKey: "customer",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Customer"
-        className={"px-1"}
-      />
-    ),
-    cell: ({ row }) => {
-      const customer = row.original.customer;
+  // {
+  //   accessorKey: "customer",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader
+  //       column={column}
+  //       title="Customer"
+  //       className={"px-1"}
+  //     />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const customer = row.original.customer;
 
-      return (
-        <TableCell className="px-4 py-2">
-          <div className="flex flex-col items-start">
-            <div className="font-medium text-xs">{customer.customerName}</div>
-            <div className="text-xs text-muted-foreground">
-              {customer.customerContact}
-            </div>
-          </div>
-        </TableCell>
-      );
-    },
-    filterFn: (row, _, filterValue) => {
-      return row.original.customer.customerContact
-        .toString()
-        .includes(filterValue);
-    },
-    sortingFn: (a, b) => {
-      const nameA = a.original.customer?.customerName?.toLowerCase() || "";
-      const nameB = b.original.customer?.customerName?.toLowerCase() || "";
-      return nameA.localeCompare(nameB);
-    },
-  },
+  //     return (
+  //       <TableCell className="px-4 py-2">
+  //         <div className="flex flex-col items-start">
+  //           <div className="font-medium text-xs">{customer.customerName}</div>
+  //           <div className="text-xs text-muted-foreground">
+  //             {customer.customerContact}
+  //           </div>
+  //         </div>
+  //       </TableCell>
+  //     );
+  //   },
+  //   filterFn: (row, _, filterValue) => {
+  //     return row.original.customer.customerContact
+  //       .toString()
+  //       .includes(filterValue);
+  //   },
+  //   sortingFn: (a, b) => {
+  //     const nameA = a.original.customer?.customerName?.toLowerCase() || "";
+  //     const nameB = b.original.customer?.customerName?.toLowerCase() || "";
+  //     return nameA.localeCompare(nameB);
+  //   },
+  // },
   {
     accessorKey: "serviceTypeName",
 
@@ -61,7 +59,7 @@ export const CarwashFilterTransactionColumn = [
       const service = row.original.service?.id;
 
       return (
-        <TableCell className="px-4 py-2 sm:py-2 sm:px-4">
+        <TableCell className="px-4 py-1 sm:py-2 sm:px-4">
           <div className="flex flex-col items-start">
             <div className="font-semibold text-primary text-sm">
               {row.original?.vehicleNumber}

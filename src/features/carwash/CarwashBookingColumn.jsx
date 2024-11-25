@@ -36,9 +36,9 @@ export const CarwashBookingColumn = [
       );
 
       return (
-        <TableCell className=" border-t px-4 py-2 sm:py-2 sm:px-4">
+        <TableCell className=" border-t px-4 py-1 sm:py-1 sm:px-4">
           <div className="flex flex-col   items-start">
-            <div className="font-semibold">{customer.customerName}</div>
+            <div className="font-medium">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>
@@ -90,7 +90,7 @@ export const CarwashBookingColumn = [
       let time = format(new Date(row.original.bookingDeadline), "h:mm a");
 
       return (
-        <TableCell className="hidden  md:table-cell">
+        <TableCell className="hidden  md:table-cell py-1">
           <div className="flex flex-col items-start">
             <div className="font-medium">{time}</div>
             <div className="text-xs text-muted-foreground">{date}</div>
@@ -117,7 +117,7 @@ export const CarwashBookingColumn = [
       let time = format(new Date(row.original.createdAt), "h:mm a");
 
       return (
-        <TableCell className="hidden  xl:table-cell">
+        <TableCell className="hidden  xl:table-cell py-1">
           <div className="flex flex-col items-start">
             <div className="font-medium">{time}</div>
             <div className="text-xs text-muted-foreground">{date}</div>
