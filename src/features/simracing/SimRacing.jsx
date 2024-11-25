@@ -65,6 +65,10 @@ function SimRacing() {
     });
 
   useEffect(() => {
+    setTab(navigateState?.tab || "active");
+  }, [navigateState]);
+
+  useEffect(() => {
     if (isSuccess) {
       const date = format(new Date(), "hh:mm:ss a");
       setLastUpdated(date);
@@ -281,6 +285,7 @@ function SimRacing() {
                   <SimRacingFinishedDataTable
                     data={finishedTransactions}
                     columns={SimRacingFinishedColumn}
+                    origin={"simracing"}
                   />
                 </CardContent>
               </Card>

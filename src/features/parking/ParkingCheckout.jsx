@@ -210,6 +210,12 @@ function ParkingCheckout() {
                             autoFocus
                             {...register("parkingCost", {
                               required: "Cost is required",
+                              validate: (value) => {
+                                const regex = /^\d+$/;
+                                return (
+                                  regex.test(value) || "Not a valid amount"
+                                );
+                              },
                             })}
                             className={
                               errors.parkingCost
@@ -245,7 +251,14 @@ function ParkingCheckout() {
                           placeholder="0"
                           {...register("discountAmt", {
                             validate: (value) => {
-                              if (parseFloat(value) > parseFloat(grossAmt)) {
+                              const regex = /^\d*$/;
+                              if (!regex.test(value)) {
+                                return "Not a valid amount";
+                              }
+                              if (
+                                value &&
+                                parseFloat(value) > parseFloat(grossAmt)
+                              ) {
                                 return "Discount amount greater than gross amount";
                               }
                               return true;

@@ -44,7 +44,7 @@ import { toast } from "@/hooks/use-toast";
 import { DataTablePagination } from "@/components/DataTablePagination";
 import SimRacingTransactionDetails from "./SimRacingTransactionDetails";
 
-export const SimRacingFinishedDataTable = ({ columns, data }) => {
+export const SimRacingFinishedDataTable = ({ columns, data, origin }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const [transactionDetails, setTransactionDetails] = useState(null);
@@ -157,6 +157,7 @@ export const SimRacingFinishedDataTable = ({ columns, data }) => {
         setShowDetails={setShowDetails}
         setTransactionDetails={setTransactionDetails}
         transactionDetails={transactionDetails}
+        origin={origin}
       />
     </>
   );

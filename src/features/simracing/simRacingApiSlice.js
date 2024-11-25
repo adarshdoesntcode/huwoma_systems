@@ -95,6 +95,14 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SimRacingTransactions"],
     }),
+    simracingRollbackFromCompleted: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/rollback",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingTransactions", "SimRacingCustomer"],
+    }),
     cancelRace: builder.mutation({
       query: (credentials) => ({
         url: `/simracing/transaction/${credentials.id}`,
@@ -128,4 +136,5 @@ export const {
   useGetSimRacingCustomerByIdQuery,
   useUpdateSimRacingCustomerMutation,
   useGetSimRacingFilteredTransactionsMutation,
+  useSimracingRollbackFromCompletedMutation,
 } = simRacingApiSlice;

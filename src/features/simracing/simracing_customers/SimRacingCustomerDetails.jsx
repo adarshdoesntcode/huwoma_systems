@@ -207,6 +207,7 @@ function SimRacingCustomerDetails() {
             <SimRacingFinishedDataTable
               data={customer.customerTransactions}
               columns={SimRacingFinishedColumn}
+              origin="customer"
             />
           </CardContent>
         </Card>
