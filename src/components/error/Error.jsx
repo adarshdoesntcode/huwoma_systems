@@ -17,6 +17,7 @@ const Error = () => {
               <p>{error.statusText || error.message}</p>
             </>
           )}
+          {JSON.stringify(error)}
         </div>
       </div>
     </div>
