@@ -330,12 +330,7 @@ function CarwashCheckout() {
                                     if (!regex.test(value)) {
                                       return "Not a valid amount";
                                     }
-                                    if (
-                                      value &&
-                                      parseFloat(value) > parseFloat(grossAmt)
-                                    ) {
-                                      return "Discount amount greater than gross amount";
-                                    }
+
                                     return true;
                                   },
                                 })}

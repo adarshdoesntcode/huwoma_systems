@@ -70,8 +70,9 @@ function CarwashCustomerDetails() {
 
     vehicleWithServices = data?.data?.activeVehicleTypes || [];
 
-    vehicleWithServicesAndStats = vehicleWithServices.map(
-      (vehicleWithService) => {
+    vehicleWithServicesAndStats = vehicleWithServices
+      .filter((vehicleWithService) => vehicleWithService.services.length > 0)
+      .map((vehicleWithService) => {
         const services = vehicleWithService.services.map((service) => {
           const transactionsForService = customerTransactions.filter(
             (transaction) => transaction.service.id._id === service._id
@@ -91,8 +92,7 @@ function CarwashCustomerDetails() {
           vehicleTypeName: vehicleWithService.vehicleTypeName,
           services,
         };
-      }
-    );
+      });
   }
 
   const onSubmit = async (data) => {

@@ -12,7 +12,7 @@ function ApiError({ error, refetch }) {
         {error?.data?.message && (
           <div className="mt-4"> {JSON.stringify(error?.data?.message)}</div>
         )}
-        {JSON.stringify(error)}
+
         {refetch && (
           <Button
             className="mt-4"

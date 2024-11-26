@@ -17,9 +17,16 @@ export function DataTablePagination({ table }) {
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
-        Showing {table.getPaginationRowModel().rows.length} of{" "}
-        {table.getCoreRowModel().rows.length}
+        <span className="hidden md:inline">
+          Showing {table.getPaginationRowModel().rows.length} of{" "}
+          {table.getCoreRowModel().rows.length}
+        </span>
+        <span className="md:hidden">
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
+        </span>
       </div>
+
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className=" items-center space-x-2 hidden md:flex">
           <p className="text-sm font-medium">Rows per page</p>
