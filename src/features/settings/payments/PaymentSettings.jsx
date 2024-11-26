@@ -115,9 +115,9 @@ const PaymentSettings = () => {
               <TableRow>
                 <TableHead className="hidden sm:table-cell">SN</TableHead>
                 <TableHead>Payment Name</TableHead>
-                <TableHead className="pl-1 text-center hidden sm:table-cell">
+                {/* <TableHead className="pl-1 text-center hidden sm:table-cell">
                   Transactions
-                </TableHead>
+                </TableHead> */}
                 <TableHead className="text-center hidden sm:table-cell">
                   QR Data
                 </TableHead>
@@ -128,10 +128,10 @@ const PaymentSettings = () => {
             </TableHeader>
             <TableBody>
               {data.data.map((paymentMode, index) => {
-                const totalTransaction =
-                  paymentMode.carWashTransactions.length +
-                  paymentMode.simRacingTransactions.length +
-                  paymentMode.parkingTransactions.length;
+                // const totalTransaction =
+                //   paymentMode.carWashTransactions.length +
+                //   paymentMode.simRacingTransactions.length +
+                //   paymentMode.parkingTransactions.length;
                 return (
                   <TableRow
                     key={paymentMode._id}
@@ -147,7 +147,7 @@ const PaymentSettings = () => {
                     <TableCell className="font-medium p-4 ">
                       {paymentMode.paymentModeName}
                     </TableCell>
-                    <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
+                    {/* <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
                       <div>
                         <Badge
                           variant={
@@ -157,7 +157,7 @@ const PaymentSettings = () => {
                           {totalTransaction}
                         </Badge>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
 
                     <TableCell className="text-center p-1 hidden sm:table-cell">
                       {paymentMode.qrCodeData ? (
@@ -261,7 +261,7 @@ function ConfigDetails({ setDetailsOpen, detailsOpen, selectedPaymentMode }) {
         </DialogHeader>
         <Separator />
         <div className="max-h-[50vh] overflow-y-auto">
-          <div className="space-y-2  mb-2">
+          {/* <div className="space-y-2  mb-2">
             <Label>Transactions</Label>
             <div className="pb-4 text-sm font-medium text-muted-foreground">
               <div className="flex justify-between">
@@ -280,7 +280,7 @@ function ConfigDetails({ setDetailsOpen, detailsOpen, selectedPaymentMode }) {
               </div>
             </div>
           </div>
-          <Separator />
+          <Separator /> */}
 
           {selectedPaymentMode?.qrCodeData && (
             <div className="space-y-4 mt-4">

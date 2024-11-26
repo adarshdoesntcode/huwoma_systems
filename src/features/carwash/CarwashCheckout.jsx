@@ -370,6 +370,10 @@ function CarwashCheckout() {
                           placeholder="0"
                           {...register("discountAmt", {
                             validate: (value) => {
+                              const regex = /^\d*$/;
+                              if (!regex.test(value)) {
+                                return "Not a valid amount";
+                              }
                               if (parseFloat(value) > parseFloat(grossAmt)) {
                                 return "Discount amount greater than gross amount";
                               }

@@ -93,36 +93,31 @@ function Carwash() {
   let hourlyCounts;
 
   if (data) {
-    const filteredTransactions = data?.data?.filter(
-      (transaction) =>
-        transaction.transactionStatus !== "Cancelled" &&
-        transaction.paymentStatus !== "Cancelled"
+    // const filteredTransactions = data?.data?.transactions?.filter(
+    //   (transaction) =>
+    //     transaction.transactionStatus !== "Cancelled" &&
+    //     transaction.paymentStatus !== "Cancelled"
+    // );
+    hourlyCounts = Object.entries(data?.data?.hours).map(
+      ([hour, customers]) => ({
+        hour: hour,
+        Customers: Number(customers),
+      })
     );
-    hourlyCounts = Array.from({ length: 24 }, (_, i) => ({
-      hour: i,
-      count: 0,
-    })).map((hour) => {
-      const count = filteredTransactions.filter((transaction) => {
-        const createdAt = new Date(transaction.createdAt);
-
-        return createdAt.getHours() === hour.hour;
-      }).length;
-      return { hour: hour.hour.toString(), Customers: count };
-    });
   }
   if (data) {
-    bookedTransactions = data?.data
+    bookedTransactions = data?.data?.transactions
       ?.filter((transaction) => transaction.transactionStatus === "Booked")
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    inQueueTransactions = data?.data
+    inQueueTransactions = data?.data?.transactions
       ?.filter((transaction) => transaction.transactionStatus === "In Queue")
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    readyForPickupTransactions = data?.data
+    readyForPickupTransactions = data?.data?.transactions
       ?.filter(
         (transaction) => transaction.transactionStatus === "Ready for Pickup"
       )
       .sort((a, b) => new Date(b.service.end) - new Date(a.service.end));
-    completedTransactions = data?.data
+    completedTransactions = data?.data?.transactions
       ?.filter((transaction) => transaction.transactionStatus === "Completed")
       .sort(
         (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
@@ -179,7 +174,7 @@ function Carwash() {
             <div className="px-4 pt-3 text-xs text-muted-foreground">
               Hourly Customer Count
             </div>
-            <ChartContainer config={chartConfig} className="h-[8vh] w-full">
+            <ChartContainer config={chartConfig} className="h-[10vh] w-full">
               <LineChart
                 accessibilityLayer
                 data={hourlyCounts}
