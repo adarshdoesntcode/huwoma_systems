@@ -256,7 +256,6 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
 };
 
 const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
-  console.log(origin);
   const [openRollBack, setOpenRollBack] = useState(false);
   const navigate = useNavigate();
   const [simracingRollbackFromCompleted, { isLoading }] =

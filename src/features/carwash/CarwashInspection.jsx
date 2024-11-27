@@ -199,18 +199,18 @@ function CarwashInspection() {
                     </div>
                   </div>
                 )}
-                {data?.data?.transaction?.service?.cost >= 0 && (
-                  <div className="flex items-center justify-between  ">
-                    <div className="text-muted-foreground text-xs font-medium">
-                      Rate
-                    </div>
-                    <div className="text-xs font-medium">
-                      {data?.data?.transaction?.service?.cost > 0
-                        ? `Rs. ${data?.data?.transaction?.service?.cost}`
-                        : "Free"}
-                    </div>
+                {/* {data?.data?.transaction?.service?.cost >= 0 && ( */}
+                <div className="flex items-center justify-between  ">
+                  <div className="text-muted-foreground text-xs font-medium">
+                    Rate
                   </div>
-                )}
+                  <div className="text-xs font-medium">
+                    Rs. {data?.data?.transaction?.service?.actualRate}
+                    {/* {data?.data?.transaction?.service?.actulRate > 0 */}
+                    {/* : "Free"} */}
+                  </div>
+                </div>
+                {/* )} */}
               </div>
               {data?.data?.transaction?.parking && (
                 <div className="grid mt-2 gap-2">

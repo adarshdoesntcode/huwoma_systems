@@ -230,7 +230,7 @@ const Details = ({
                     </div>
                   </div>
                 )}
-                {transactionDetails?.service?.cost >= 0 && (
+                {transactionDetails?.transactionStatus === "Completed" ? (
                   <div className="flex items-center justify-between  ">
                     <div className="text-muted-foreground text-xs font-medium">
                       Cost
@@ -239,6 +239,15 @@ const Details = ({
                       {transactionDetails?.service?.cost > 0
                         ? `Rs. ${transactionDetails?.service?.cost}`
                         : "Free"}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between  ">
+                    <div className="text-muted-foreground text-xs font-medium">
+                      Rate
+                    </div>
+                    <div className="text-xs font-semibold">
+                      Rs. {transactionDetails?.service?.actualRate}
                     </div>
                   </div>
                 )}

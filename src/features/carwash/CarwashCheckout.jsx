@@ -116,6 +116,7 @@ function CarwashCheckout() {
         grossAmount: grossAmt,
         discountAmount: Number(data.discountAmt) || 0,
         netAmount: netAmt,
+        serviceCost: serviceCost,
         redeemed: serviceCost > 0 ? false : true,
         washCount: washStreakApplicable ? washCount : undefined,
       });
@@ -164,7 +165,7 @@ function CarwashCheckout() {
     serviceCost =
       washStreak >= washCount && washStreakApplicable
         ? 0
-        : transactionDetails?.service?.cost;
+        : transactionDetails?.service?.id.serviceRate;
 
     parkingBuffer =
       transactionDetails?.service?.id?.includeParking.parkingBuffer;
@@ -245,16 +246,16 @@ function CarwashCheckout() {
                         </div>
                       </div>
                     )}
-                    {transactionDetails?.service?.cost >= 0 && (
-                      <div className="flex items-center justify-between  ">
-                        <div className="text-muted-foreground text-xs font-medium">
-                          Cost
-                        </div>
-                        <div className="text-sm font-semibold">
-                          {serviceCost === 0 ? "Free!!" : "Rs. " + serviceCost}
-                        </div>
+                    {/* {transactionDetails?.service?.cost >= 0 && ( */}
+                    <div className="flex items-center justify-between  ">
+                      <div className="text-muted-foreground text-xs font-medium">
+                        Cost
                       </div>
-                    )}
+                      <div className="text-sm font-semibold">
+                        {serviceCost === 0 ? "Free" : "Rs. " + serviceCost}
+                      </div>
+                    </div>
+                    {/* )} */}
                   </div>
                 </div>
                 <form
