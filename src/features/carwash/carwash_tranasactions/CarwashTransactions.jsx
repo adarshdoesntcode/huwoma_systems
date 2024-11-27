@@ -687,27 +687,24 @@ const FilteredAnalytics = ({ responseData, range }) => {
   const freeWash = actualWashRevenue - WashRevenue;
 
   let dailyIncome = [];
-
   if (responseData) {
     dailyIncome = Array.from(
       new Set(
-        completetedTransactions.map(
-          (transaction) =>
-            new Date(transaction.createdAt).toLocaleDateString().split("T")[0]
+        completetedTransactions.map((transaction) =>
+          new Date(transaction.createdAt).toDateString()
         )
       )
     ).map((date) => {
       const income = completetedTransactions
         .filter(
           (transaction) =>
-            new Date(transaction.createdAt)
-              .toLocaleDateString()
-              .split("T")[0] === date
+            new Date(transaction.createdAt).toDateString() === date
         )
         .reduce((sum, transaction) => sum + transaction.netAmount, 0);
 
-      return { date: format(date, "MMM d, yyyy"), Income: income };
+      return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
     });
+    console.log("🚀 ~ FilteredAnalytics ~ dailyIncome:", dailyIncome);
   }
 
   useEffect(() => {
