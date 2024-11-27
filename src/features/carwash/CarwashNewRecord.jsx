@@ -287,6 +287,7 @@ const ServiceSelect = ({ customer, locationState }) => {
           actualRate: selectedService.serviceRate,
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
+          hour: new Date().getHours(),
         });
       } else {
         res = await transactionOne({
@@ -295,6 +296,7 @@ const ServiceSelect = ({ customer, locationState }) => {
           actualRate: selectedService.serviceRate,
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
+          hour: new Date().getHours(),
         });
       }
       if (res.error) {

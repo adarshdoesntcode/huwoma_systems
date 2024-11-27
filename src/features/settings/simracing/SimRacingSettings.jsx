@@ -113,9 +113,9 @@ const SimRacingSettings = () => {
                 <TableHead className="hidden sm:table-cell">SN</TableHead>
                 <TableHead className="hidden md:table-cell">Rig</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead className="pl-1 text-center hidden sm:table-cell">
+                {/* <TableHead className="pl-1 text-center hidden sm:table-cell">
                   Transactions
-                </TableHead>
+                </TableHead> */}
 
                 {isSuper && (
                   <TableHead className="text-right">Action</TableHead>
@@ -124,7 +124,7 @@ const SimRacingSettings = () => {
             </TableHeader>
             <TableBody>
               {data.data.map((rig, index) => {
-                const totalTransaction = rig.rigTransactions.length;
+                // const totalTransaction = rig.rigTransactions.length;
                 return (
                   <TableRow key={rig._id} className="hover:bg-inherit">
                     <TableCell className="p-1 pl-4 hidden sm:table-cell">
@@ -144,7 +144,7 @@ const SimRacingSettings = () => {
                     <TableCell className="font-medium p-4 ">
                       {rig.rigName}
                     </TableCell>
-                    <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
+                    {/* <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
                       <div>
                         <Badge
                           variant={
@@ -154,7 +154,7 @@ const SimRacingSettings = () => {
                           {totalTransaction}
                         </Badge>
                       </div>
-                    </TableCell>
+                    </TableCell> */}
 
                     {isSuper && (
                       <TableCell className="text-right p-1 px-0">
