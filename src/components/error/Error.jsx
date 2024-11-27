@@ -15,6 +15,7 @@ const Error = () => {
           {error && (
             <>
               <p>{error.statusText || error.message}</p>
+              <pre>{error.stack}</pre>
             </>
           )}
         </div>
