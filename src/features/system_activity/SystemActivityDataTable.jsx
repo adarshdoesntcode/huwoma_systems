@@ -5,14 +5,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from "@tanstack/react-table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import {
   Table,
@@ -24,36 +19,36 @@ import {
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 
-import { Input } from "@/components/ui/input";
-
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
-import { File, Loader2 } from "lucide-react";
+import { File } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 
-import CarwashTransactionDetails from "../CarwashTransactionDetails";
-import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
-
 import { Workbook } from "exceljs";
 import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { DataTableToolbar } from "@/components/DataTableToolbar";
 import { DataTablePagination } from "@/components/DataTablePagination";
+import { cn } from "@/lib/utils";
+import { SystemActivityDataTableToolbar } from "./SystemActivityDataTableToolbar";
+import { isMobile } from "react-device-detect";
+
+const activityColors = {
+  Rollback: "text-orange-600 !bg-orange-50", // A safe action, using blue for stability.
+  Booking: "text-purple-600 !bg-purple-50", // Positive action, green signifies success.
+  Create: "text-emerald-600 !bg-emerald-50", // Constructive action, emerald for creation.
+  Logout: "text-muted-foreground",
+  "Start Race": "text-blue-600 !bg-blue-50", // Technical, indigo for innovation.
+
+  Update: "text-yellow-600 !bg-yellow-50", // Informative, yellow for updates or changes.
+  Cancelled: "text-red-600 !bg-red-50", // Negative, red to signify cancellation.
+  Delete: "text-red-600 !bg-red-50", // Critical, rose for destructive actions.
+};
 
 const exportExcel = (rows) => {
   try {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Customers");
+    const worksheet = workbook.addWorksheet("System_Activity");
 
-    const titleRow = worksheet.addRow(["Huwoma Park N Wash"]);
+    const titleRow = worksheet.addRow(["System_Activity"]);
     titleRow.font = { bold: true, size: 14 };
     titleRow.alignment = { horizontal: "center" };
 
@@ -64,16 +59,22 @@ const exportExcel = (rows) => {
     worksheet.mergeCells(`A2:P2`);
     worksheet.columns = [
       { width: 25 },
-      { width: 15 },
       { width: 20 },
+      { width: 20 },
+      { width: 20 },
+      { width: 70 },
+      { width: 115 },
       { width: 25 },
     ];
 
     worksheet.getRow(3).values = [
-      "Customer",
-      "Contact",
-      "Total Spent",
-      "Customer Since",
+      "Time",
+      "Actor",
+      "Login",
+      "Module",
+      "Message",
+      "Agent",
+      "IP",
     ];
     worksheet.getRow(3).font = { bold: true, size: 12 };
     worksheet.getRow(3).fill = {
@@ -83,20 +84,26 @@ const exportExcel = (rows) => {
     };
 
     const rowData = rows.map((row, index) => ({
-      Customer_Name: row.original?.customerName || "",
-      Customer_Contact: row.original?.customerContact || "",
-      Customer_Transactions: row.original?.totalNetAmount || 0,
-      Customer_Since: row.original?.createdAt
-        ? format(row.original?.createdAt, "MMMM d, yyyy")
+      Time: row.original?.activityDate
+        ? format(row.original.activityDate, "MMM dd, yy hh:mm:ss ")
         : "",
+      Actor: row.original?.activityBy?.fullname || "",
+      Activity: row.original?.activityType || "",
+      Module: row?.original?.systemModule || "",
+      Message: row.original?.description || "",
+      Agent: row.original?.userAgent || "",
+      IP: row.original?.activityIpAddress || "",
     }));
 
     rowData.forEach((row) => {
       worksheet.addRow([
-        row.Customer_Name,
-        row.Customer_Contact,
-        row.Customer_Transactions,
-        row.Customer_Since,
+        row.Time,
+        row.Actor,
+        row.Activity,
+        row.Module,
+        row.Message,
+        row.Agent,
+        row.IP,
       ]);
     });
 
@@ -107,7 +114,7 @@ const exportExcel = (rows) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "ParkNWashCustomers.xlsx";
+      a.download = "System_Activity.xlsx";
       a.click();
     });
     toast({
@@ -124,58 +131,43 @@ const exportExcel = (rows) => {
   }
 };
 
-export const CarwashCustomersDataTable = ({ columns, data }) => {
-  const [filter, setFilter] = useState("customerContact");
+export const SystemActivityDataTable = ({ columns, data }) => {
   const [sorting, setSorting] = useState([]);
-  const navigate = useNavigate();
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-
     onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
       sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 50, // Set your initial page size here
+      },
     },
   });
 
   return (
     <>
       <div className="flex justify-between items-center mb-4 space-x-2">
-        <div className="flex items-center gap-2 space-x-2">
-          <Select
-            value={filter}
-            onValueChange={(value) => {
-              setFilter(value);
-              table.resetColumnFilters();
-              table.resetSorting();
-              table.resetColumnVisibility();
-            }}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="customerContact">Contact</SelectItem>
-              <SelectItem value="customerName">Name</SelectItem>
-            </SelectContent>
-          </Select>
+        <SystemActivityDataTableToolbar table={table} />
 
-          <Input
-            placeholder="Search.."
-            type={filter === "customerContact" ? "tel" : "text"}
-            autoComplete="off"
-            value={table.getColumn(filter)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(filter)?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
         <div>
           <Button
             size="sm"
@@ -188,7 +180,12 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
           </Button>
         </div>
       </div>
-      <div className="bg-white border rounded-md">
+      <div className="bg-white border rounded-md font-mono tracking-tighter">
+        {isMobile && (
+          <p className="text-center p-4 text-muted-foreground text-xs">
+            Information reduced in a mobile screen
+          </p>
+        )}
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -214,10 +211,11 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    navigate(`/carwash/customers/${row.original._id}`);
-                  }}
+                  className={cn(
+                    "cursor-pointer odd:bg-muted/40    border-none  ",
+                    activityColors[row.original.activityType] ??
+                      "text-secondary-foreground/80"
+                  )}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <React.Fragment key={cell.id}>
@@ -235,7 +233,7 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No Customers.
+                  No Activities.
                 </TableCell>
               </TableRow>
             )}
@@ -243,7 +241,12 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
         </Table>
       </div>
       <div className="py-4 text-muted-foreground">
-        <DataTablePagination table={table} />
+        <div>
+          <DataTablePagination
+            table={table}
+            sizes={[50, 100, 150, 200, 300, 400]}
+          />
+        </div>
       </div>
     </>
   );

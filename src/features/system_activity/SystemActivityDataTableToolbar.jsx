@@ -1,7 +1,6 @@
-import { Dot, X } from "lucide-react";
-import { Button } from "./ui/button";
-import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
-import { useState } from "react";
+import { DataTableFacetedFilter } from "@/components/DataTableFacetedFilter";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -9,70 +8,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Dot, X } from "lucide-react";
+import { useState } from "react";
 
-import { Input } from "./ui/input";
-
-const carwashTransactionStatus = [
+const activityTypeStatus = [
   {
-    value: "In Queue",
-    label: "In Queue",
+    label: "Rollback",
+    value: "Rollback",
     icon: Dot,
   },
   {
-    value: "Ready for Pickup",
-    label: "Ready for Pickup",
+    label: "Booking",
+    value: "Booking",
     icon: Dot,
   },
   {
-    value: "Completed",
-    label: "Completed",
+    label: "Create",
+    value: "Create",
     icon: Dot,
   },
   {
-    value: "Booked",
-    label: "Booked",
+    label: "Login",
+    value: "Login",
     icon: Dot,
   },
   {
-    value: "Cancelled",
-    label: "Cancelled",
-    icon: Dot,
-  },
-];
-
-const simracingTransactionStatus = [
-  {
-    value: "Active",
-    label: "Active",
-    icon: Dot,
-  },
-
-  {
-    value: "Completed",
-    label: "Completed",
+    label: "QR Scan",
+    value: "QR Scan",
     icon: Dot,
   },
   {
-    value: "Booked",
-    label: "Booked",
+    label: "Start Race",
+    value: "Start Race",
     icon: Dot,
   },
   {
-    value: "Cancelled",
-    label: "Cancelled",
-    icon: Dot,
-  },
-];
-
-const paymentStatus = [
-  {
-    label: "Pending",
-    value: "Pending",
+    label: "Logout",
+    value: "Logout",
     icon: Dot,
   },
   {
-    label: "Paid",
-    value: "Paid",
+    label: "Update",
+    value: "Update",
     icon: Dot,
   },
   {
@@ -80,13 +57,25 @@ const paymentStatus = [
     value: "Cancelled",
     icon: Dot,
   },
+  {
+    label: "Delete",
+    value: "Delete",
+    icon: Dot,
+  },
 ];
 
-export function DataTableToolbar({
+export function SystemActivityDataTableToolbar({
   table,
-  transactionOption,
-  defaultSearchSelection,
-  searchOptions,
+
+  defaultSearchSelection = "activityBy",
+  searchOptions = [
+    {
+      value: "activityBy",
+      label: "Actor",
+    },
+    { value: "systemModule", label: "Module" },
+    { value: "description", label: "Message" },
+  ],
 }) {
   const isFiltered =
     table.getState().columnFilters.length > 0 ||
@@ -135,22 +124,18 @@ export function DataTableToolbar({
           />
         </div>
         <div className="hidden   lg:flex  items-center gap-2">
-          {table.getColumn("transactionStatus") && (
+          {/* {table.getColumn("systemModule") && (
             <DataTableFacetedFilter
-              column={table.getColumn("transactionStatus")}
-              title="Status"
-              options={
-                transactionOption === "carwash"
-                  ? carwashTransactionStatus
-                  : simracingTransactionStatus
-              }
+              column={table.getColumn("systemModule")}
+              title="Module"
+              options={systemModuleStatus}
             />
-          )}
-          {table.getColumn("paymentStatus") && (
+          )} */}
+          {table.getColumn("activityType") && (
             <DataTableFacetedFilter
-              column={table.getColumn("paymentStatus")}
-              title="Payment"
-              options={paymentStatus}
+              column={table.getColumn("activityType")}
+              title="Activity"
+              options={activityTypeStatus}
             />
           )}
           {isFiltered && (

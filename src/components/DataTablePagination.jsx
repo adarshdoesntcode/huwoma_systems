@@ -13,7 +13,10 @@ import {
 } from "./ui/select";
 import { Button } from "./ui/button";
 
-export function DataTablePagination({ table }) {
+export function DataTablePagination({
+  table,
+  sizes = [10, 20, 30, 40, 50, 100],
+}) {
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
@@ -40,7 +43,7 @@ export function DataTablePagination({ table }) {
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50, 100].map((pageSize) => (
+              {sizes.map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>

@@ -25,6 +25,7 @@ import SimRacingCustomerDetails from "@/features/simracing/simracing_customers/S
 import ParkingCheckout from "@/features/parking/ParkingCheckout";
 import SimRacingTransactions from "@/features/simracing/simracing_transactions/SimRacingTransactions";
 import ParkingTransactions from "@/features/parking/parking_transactions/ParkingTransactions";
+import SystemActivity from "@/features/system_activity/SystemActivity";
 
 const PrivateRoutes = [
   {
@@ -125,6 +126,11 @@ const PrivateRoutes = [
   {
     path: "parking/checkout/:id",
     element: <ParkingCheckout />,
+    errorElement: <Error />,
+  },
+  {
+    path: "activity",
+    element: <SystemActivity />,
     errorElement: <Error />,
   },
   {

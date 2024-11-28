@@ -57,7 +57,15 @@ export const ParkingFinishedDataTable = ({ columns, data }) => {
     <>
       <div className="items-center mb-4 space-x-2">
         <div className="flex items-center gap-2 space-x-2">
-          <Select value={filter} onValueChange={setFilter}>
+          <Select
+            value={filter}
+            onValueChange={(value) => {
+              setFilter(value);
+              table.resetColumnFilters();
+              table.resetSorting();
+              table.resetColumnVisibility();
+            }}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
