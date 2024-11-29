@@ -45,6 +45,7 @@ function VehicleCard({ vehicle, className }) {
       const res = await startParking({
         ...data,
         vehicleId: vehicle._id,
+        today: new Date().toISOString().slice(0, 10),
       });
 
       if (res.error) {

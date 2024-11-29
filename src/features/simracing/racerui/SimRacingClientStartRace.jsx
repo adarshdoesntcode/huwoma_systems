@@ -136,6 +136,7 @@ const SimRacingClientStartRace = () => {
         customerName: data.customerName,
         customerContact: data.customerContact,
         rigId: id,
+        today: new Date().toISOString().slice(0, 10),
       });
 
       if (response.status === 201 && response.data) {

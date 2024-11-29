@@ -212,9 +212,9 @@ export const SystemActivityDataTable = ({ columns, data }) => {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className={cn(
-                    "cursor-pointer odd:bg-muted/40    border-none  ",
+                    "cursor-pointer odd:bg-muted/60    border-none  ",
                     activityColors[row.original.activityType] ??
-                      "text-secondary-foreground/80"
+                      "text-secondary-foreground/70"
                   )}
                 >
                   {row.getVisibleCells().map((cell) => (

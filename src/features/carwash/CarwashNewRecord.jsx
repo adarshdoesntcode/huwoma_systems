@@ -288,6 +288,7 @@ const ServiceSelect = ({ customer, locationState }) => {
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
           hour: new Date().getHours(),
+          today: new Date().toISOString().slice(0, 10),
         });
       } else {
         res = await transactionOne({
@@ -297,6 +298,7 @@ const ServiceSelect = ({ customer, locationState }) => {
           vehicleNumber: data.vehicleNumber,
           customer: customer._id,
           hour: new Date().getHours(),
+          today: new Date().toISOString().slice(0, 10),
         });
       }
       if (res.error) {

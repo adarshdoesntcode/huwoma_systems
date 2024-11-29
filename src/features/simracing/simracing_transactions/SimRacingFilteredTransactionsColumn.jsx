@@ -100,7 +100,34 @@ export const SimRacingFilteredTransactionsColumn = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "start",
+    header: ({ column }) => {
+      let header = "Started At";
+
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={header}
+          className="hidden lg:table-cell px-1"
+        />
+      );
+    },
+    cell: ({ row }) => {
+      let date = row.original.start
+        ? format(new Date(row.original.start), "d MMM, yy h:mm a")
+        : "";
+
+      return (
+        <TableCell className="hidden py-1  lg:table-cell">
+          <div className="flex flex-col items-start">
+            <div className="text-xs text-muted-foreground">{date}</div>
+          </div>
+        </TableCell>
+      );
+    },
+  },
+  {
+    accessorKey: "end",
     header: ({ column }) => {
       let header = "Finished At";
 
@@ -108,17 +135,17 @@ export const SimRacingFilteredTransactionsColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden lg:table-cell px-1 py-1"
+          className="hidden lg:table-cell px-1"
         />
       );
     },
     cell: ({ row }) => {
       let date = row.original.end
-        ? format(new Date(row.original.end), "d MMM, yyyy h:mm a")
+        ? format(new Date(row.original.end), "d MMM, yy h:mm a")
         : "";
 
       return (
-        <TableCell className="hidden  lg:table-cell py-1">
+        <TableCell className="hidden py-1  lg:table-cell">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>

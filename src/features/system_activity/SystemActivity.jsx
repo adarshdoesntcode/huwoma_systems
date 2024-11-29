@@ -171,8 +171,8 @@ function SystemActivity() {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="flex flex-col flex-1 gap-4 items-center justify-center">
-        {[...Array(15)].map((_, index) => (
+      <div className="flex flex-col flex-1 gap-2 items-center justify-center">
+        {[...Array(20)].map((_, index) => (
           <Skeleton className="h-8 w-full bg-muted-foreground/10" key={index} />
         ))}
       </div>

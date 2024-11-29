@@ -273,11 +273,13 @@ const RigSelect = ({ customer, locationState }) => {
           transactionId: locationState.transaction,
           rig: selectedRig._id,
           customer: customer._id,
+          today: new Date().toISOString().slice(0, 10),
         });
       } else {
         res = await startRace({
           rig: selectedRig._id,
           customer: customer._id,
+          today: new Date().toISOString().slice(0, 10),
         });
       }
       if (res.error) {
