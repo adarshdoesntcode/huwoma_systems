@@ -163,6 +163,7 @@ const CarWashInspectionSetting = () => {
         toast({
           title: "Inspection Template Modification",
           description: `Success`,
+          duration: 2000,
         });
       }
     } catch (error) {

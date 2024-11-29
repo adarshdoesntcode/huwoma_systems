@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { SimRacingFinishedDataTable } from "../SimRacingFinishedDataTable";
 import { SimRacingFinishedColumn } from "../SimRacingFinishedColumn";
 import { Separator } from "@/components/ui/separator";
+import { SimRacingCustomerDetailsColumn } from "./SimRacingCustomerDetailsColumn";
 
 function SimRacingCustomerDetails() {
   const { id } = useParams();
@@ -65,6 +66,7 @@ function SimRacingCustomerDetails() {
         toast({
           title: "Customer Updated!",
           description: "Customer details updated successfully",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -206,7 +208,7 @@ function SimRacingCustomerDetails() {
             <Separator className="my-4" />
             <SimRacingFinishedDataTable
               data={customer.customerTransactions}
-              columns={SimRacingFinishedColumn}
+              columns={SimRacingCustomerDetailsColumn}
               origin="customer"
             />
           </CardContent>

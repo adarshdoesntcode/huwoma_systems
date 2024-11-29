@@ -142,6 +142,7 @@ function VehicleType() {
         toast({
           title: "Vehicle Type Updated!",
           description: res.data.data.vehicleTypeName,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -469,6 +470,7 @@ function Services() {
         toast({
           title: "Services Updated!",
           description: `For ${res.data.data.vehicleTypeName}`,
+          duration: 2000,
         });
       }
     } catch (error) {

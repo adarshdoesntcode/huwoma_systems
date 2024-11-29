@@ -40,6 +40,9 @@ function Parking() {
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     });
+  useEffect(() => {
+    setTab(navigateState?.tab || "parked");
+  }, [navigateState]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -216,6 +219,7 @@ function Parking() {
                   <ParkingFinishedDataTable
                     data={finishedTransactions}
                     columns={ParkingFinishedColumn}
+                    origin={"parking"}
                   />
                 </CardContent>
               </Card>

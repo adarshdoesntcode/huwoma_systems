@@ -265,6 +265,7 @@ function CreatePayment({ createOpen, setCreateOpen }) {
         toast({
           title: "New Rig Created",
           description: `${res.data.data.rigName}`,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -350,6 +351,7 @@ function ConfirmDelete({
         toast({
           title: "Rig Deleted!",
           description: res.data.data.rigName,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -366,7 +368,7 @@ function ConfirmDelete({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will remove your payment mode
+            This action cannot be undone. This will remove this sim racing rig
             from the system.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -413,6 +415,7 @@ function EditPayment({ selectedRig, editOpen, setEditOpen }) {
         toast({
           title: "Rig Updated",
           description: `${res.data.data.rigName}`,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -510,6 +513,7 @@ function SimRacingLocation() {
         toast({
           title: "Location Updated!",
           description: "Successfully",
+          duration: 2000,
         });
         reset();
       }

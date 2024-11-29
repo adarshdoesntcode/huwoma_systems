@@ -163,6 +163,7 @@ const exportExcel = (rows) => {
     toast({
       title: "Exported Successfully!!",
       description: "Check your downloads folder",
+      duration: 2000,
     });
   } catch (e) {
     console.error(e);

@@ -58,7 +58,7 @@ function RigCard({ rig, className }) {
                 </div>
               </CardTitle>
               <CardDescription className="text-xs">
-                Active Racer : {rig?.activeRacer?.customerName}
+                On Seat : {rig?.activeRacer?.customerName || "None"}
                 <br />
                 On track since {format(rig?.createdAt, "MMM d, yyyy")}
               </CardDescription>

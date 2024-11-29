@@ -64,6 +64,26 @@ const simracingTransactionStatus = [
   },
 ];
 
+const parkingTransactionStatus = [
+  {
+    value: "Parked",
+    label: "Parked",
+    icon: Dot,
+  },
+
+  {
+    value: "Completed",
+    label: "Completed",
+    icon: Dot,
+  },
+
+  {
+    value: "Cancelled",
+    label: "Cancelled",
+    icon: Dot,
+  },
+];
+
 const paymentStatus = [
   {
     label: "Pending",
@@ -142,7 +162,9 @@ export function DataTableToolbar({
               options={
                 transactionOption === "carwash"
                   ? carwashTransactionStatus
-                  : simracingTransactionStatus
+                  : transactionOption === "simracing"
+                  ? simracingTransactionStatus
+                  : parkingTransactionStatus
               }
             />
           )}

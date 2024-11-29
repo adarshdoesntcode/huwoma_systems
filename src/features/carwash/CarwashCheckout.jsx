@@ -127,6 +127,7 @@ function CarwashCheckout() {
         toast({
           title: "Transaction Complete!",
           description: `Payment Received!`,
+          duration: 2000,
         });
         navigate("/carwash", { state: { tab: "complete" }, replace: true });
       }

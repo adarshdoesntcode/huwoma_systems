@@ -44,6 +44,7 @@ function ConfirmRollbackFromPickup({
         toast({
           title: "Transaction Rolled back",
           description: "to In Queue",
+          duration: 2000,
         });
         if (origin === "carwash") {
           navigate("/carwash", { state: { tab: "queue" }, replace: true });

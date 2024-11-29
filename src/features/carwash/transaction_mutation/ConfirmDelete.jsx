@@ -39,6 +39,7 @@ function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
         toast({
           title: "Transaction Terminated!",
           description: "Successfully",
+          duration: 2000,
         });
       }
     } catch (error) {

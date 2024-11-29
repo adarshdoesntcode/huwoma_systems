@@ -77,6 +77,7 @@ function AdminName() {
         toast({
           title: "Name Updated!",
           description: res.data.data.fullname,
+          duration: 2000,
         });
         reset();
       }
@@ -174,6 +175,7 @@ function AdminEmail() {
         toast({
           title: "Email Updated!",
           description: "You will be logged out",
+          duration: 2000,
         });
         reset();
         setTimeout(() => dispatch(logOut()), 2000);
@@ -309,6 +311,7 @@ function AdminContact() {
         toast({
           title: "Contact Updated!",
           description: res.data.data.phoneNumber,
+          duration: 2000,
         });
         reset();
       }
@@ -413,6 +416,7 @@ function AdminPassword() {
         toast({
           title: "Password Updated!",
           description: "Successfully",
+          duration: 2000,
         });
         reset();
       }

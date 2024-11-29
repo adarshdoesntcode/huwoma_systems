@@ -48,13 +48,13 @@ function calculatePaymentModeTotals(transactions) {
   const paymentModeTotals = {};
 
   transactions.forEach((transaction) => {
-    const paymentModeId = transaction.paymentMode?._id;
+    const paymentModeId = transaction.vehicle?._id;
     const netAmount = transaction?.netAmount;
 
     if (!paymentModeTotals[paymentModeId]) {
       paymentModeTotals[paymentModeId] = {
         total: 0,
-        paymentModeName: transaction.paymentMode?.paymentModeName,
+        paymentModeName: transaction.vehicle?.vehicleTypeName,
       };
     }
 
@@ -73,7 +73,7 @@ function calculatePaymentModeTotals(transactions) {
   return result;
 }
 
-function PaymentsGraph({ completetedTransactions, range }) {
+function ParkingVehicleIncomeGraph({ completetedTransactions, range }) {
   const paymentGraphData = calculatePaymentModeTotals(completetedTransactions);
   const chartConfig = useMemo(
     () => createChartConfig(paymentGraphData),
@@ -83,7 +83,9 @@ function PaymentsGraph({ completetedTransactions, range }) {
   return (
     <Card className="col-span-12 xl:col-span-6">
       <CardHeader className="pb-0 p-4 sm:p-6 sm:pb-0">
-        <CardTitle className="text-lg sm:text-xl">Payment Breakdown</CardTitle>
+        <CardTitle className="text-lg sm:text-xl">
+          Vehicle Type Breakdown
+        </CardTitle>
         <CardDescription className="text-xs">
           {range.split("-")[0].trim() === range.split("-")[1].trim()
             ? range.split("-")[0]
@@ -133,4 +135,4 @@ function PaymentsGraph({ completetedTransactions, range }) {
   );
 }
 
-export default PaymentsGraph;
+export default ParkingVehicleIncomeGraph;

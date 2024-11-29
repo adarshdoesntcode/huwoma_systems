@@ -256,6 +256,7 @@ function ConfirmDelete({
         toast({
           title: "Configuration Deleted!",
           description: res.data.data.vehicleTypeName,
+          duration: 2000,
         });
       }
     } catch (error) {

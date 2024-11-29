@@ -231,6 +231,7 @@ function CreatePOSAccess({ createOpen, setCreateOpen }) {
         toast({
           title: "POS Access Created",
           description: `${res.data.data.name}`,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -316,6 +317,7 @@ function ConfirmDelete({
         toast({
           title: "Access Deleted!",
           description: "Successfully",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -332,8 +334,8 @@ function ConfirmDelete({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will remove your payment mode
-            from the system.
+            This action cannot be undone. This will remove the access from the
+            system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

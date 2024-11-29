@@ -42,14 +42,14 @@ import { Workbook } from "exceljs";
 import { format } from "date-fns";
 import { DataTableToolbar } from "@/components/DataTableToolbar";
 import { DataTablePagination } from "@/components/DataTablePagination";
-import SimRacingTransactionDetails from "../SimRacingTransactionDetails";
+import ParkingTransactionDetails from "../ParkingTransactionDetails";
 
 const exportExcel = (rows) => {
   try {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet("Transactions");
 
-    const titleRow = worksheet.addRow(["SimRacing by HUWOMA"]);
+    const titleRow = worksheet.addRow(["Park N Wash by HUWOMA"]);
     titleRow.font = { bold: true, size: 14 };
     titleRow.alignment = { horizontal: "center" };
 
@@ -61,10 +61,8 @@ const exportExcel = (rows) => {
     worksheet.columns = [
       { width: 25 },
       { width: 15 },
-      { width: 24 },
       { width: 15 },
       { width: 15 },
-
       { width: 18 },
       { width: 18 },
       { width: 15 },
@@ -77,9 +75,9 @@ const exportExcel = (rows) => {
     worksheet.getRow(3).values = [
       "Initiated At",
       "Bill No",
-      "Customer Name",
-      "Contact",
-      "Rig",
+
+      "Vehicle Type",
+      "Vehicle No",
       "Transaction Status",
       "Payment Status",
       "Payment Mode",
@@ -100,10 +98,9 @@ const exportExcel = (rows) => {
         ? format(row.original?.createdAt, "d MMM, yyyy h:mm a")
         : "",
       Bill_No: row.original?.billNo || "",
-      Customer_Name: row.original?.customer?.customerName || "",
-      Customer_Contact: row.original?.customer?.customerContact || "",
-      Rig: row.original?.rig?.rigName || "",
 
+      Vehicle_Type: row.original?.vehicle?.vehicleTypeName || "",
+      Vehicle_No: row.original?.vehicleNumber || "",
       Transaction_Status: row.original?.transactionStatus || "",
       Payment_Status: row.original?.paymentStatus || "",
       Payment_Mode: row.original?.paymentMode?.paymentModeName || "",
@@ -119,9 +116,9 @@ const exportExcel = (rows) => {
       worksheet.addRow([
         row.Initiated_At,
         row.Bill_No,
-        row.Customer_Name,
-        row.Customer_Contact,
-        row.Rig,
+
+        row.Vehicle_Type,
+        row.Vehicle_No,
         row.Transaction_Status,
         row.Payment_Status,
         row.Payment_Mode,
@@ -139,7 +136,7 @@ const exportExcel = (rows) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "SimRacingTransactions.xlsx";
+      a.download = "ParkingTransactions.xlsx";
       a.click();
     });
     toast({
@@ -157,7 +154,7 @@ const exportExcel = (rows) => {
   }
 };
 
-export const SimRacingFilterTranasactionDataTable = ({ columns, data }) => {
+export const ParkingFilterTranasactionDataTable = ({ columns, data }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
@@ -193,7 +190,7 @@ export const SimRacingFilterTranasactionDataTable = ({ columns, data }) => {
       <div className="flex justify-between items-center mb-4 space-x-2">
         <DataTableToolbar
           table={table}
-          transactionOption={"simRacing"}
+          transactionOption={"parking"}
           defaultSearchSelection={"billNo"}
           searchOptions={[
             {
@@ -201,8 +198,8 @@ export const SimRacingFilterTranasactionDataTable = ({ columns, data }) => {
               label: "Bill No",
             },
             {
-              value: "customer",
-              label: "Contact",
+              value: "vehicleNumber",
+              label: "Vehicle No",
             },
           ]}
         />
@@ -276,7 +273,7 @@ export const SimRacingFilterTranasactionDataTable = ({ columns, data }) => {
       <div className="py-4 text-muted-foreground">
         <DataTablePagination table={table} />
       </div>
-      <SimRacingTransactionDetails
+      <ParkingTransactionDetails
         showDetails={showDetails}
         setShowDetails={setShowDetails}
         showDelete={showDelete}

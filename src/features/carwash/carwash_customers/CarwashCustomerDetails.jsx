@@ -111,6 +111,7 @@ function CarwashCustomerDetails() {
         toast({
           title: "Customer Updated!",
           description: "Customer details updated successfully",
+          duration: 2000,
         });
       }
     } catch (error) {

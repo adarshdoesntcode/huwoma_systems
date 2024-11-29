@@ -113,6 +113,7 @@ function CarwashInspection() {
         toast({
           title: "Inspection Complete!",
           description: `Vehicle Ready for Pickup!`,
+          duration: 2000,
         });
         navigate("/carwash", { state: { tab: "pickup" }, replace: true });
       }

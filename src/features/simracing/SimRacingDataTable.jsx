@@ -243,6 +243,7 @@ function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
         toast({
           title: "Race Cancelled!",
           description: "Successfully",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -261,7 +262,7 @@ function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
             Do you want to terminate this race?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will terminate this transaction
+            This action cannot be undone. This will cancel this transaction
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

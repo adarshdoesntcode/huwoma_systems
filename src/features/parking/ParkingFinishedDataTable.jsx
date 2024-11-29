@@ -30,7 +30,7 @@ import { DataTablePagination } from "@/components/DataTablePagination";
 
 import ParkingTransactionDetails from "./ParkingTransactionDetails";
 
-export const ParkingFinishedDataTable = ({ columns, data }) => {
+export const ParkingFinishedDataTable = ({ columns, data, origin }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const [transactionDetails, setTransactionDetails] = useState(null);
@@ -151,6 +151,7 @@ export const ParkingFinishedDataTable = ({ columns, data }) => {
         setShowDetails={setShowDetails}
         setTransactionDetails={setTransactionDetails}
         transactionDetails={transactionDetails}
+        origin={origin}
       />
     </>
   );

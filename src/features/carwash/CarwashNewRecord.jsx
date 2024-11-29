@@ -308,6 +308,7 @@ const ServiceSelect = ({ customer, locationState }) => {
         toast({
           title: "Transaction Initiated!",
           description: `Bill No: ${res.data.data.billNo}`,
+          duration: 2000,
         });
         navigate("/carwash", { state: { tab: "queue" }, replace: true });
       }

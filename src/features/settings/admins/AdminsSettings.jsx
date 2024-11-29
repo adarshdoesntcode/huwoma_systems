@@ -362,6 +362,7 @@ function CreateAdmin({ createOpen, setCreateOpen }) {
         toast({
           title: "Admin Created",
           description: "They must change the password",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -600,6 +601,7 @@ function ConfirmDelete({
         toast({
           title: "Admin Removed!",
           description: res.data.data.fullname,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -616,8 +618,8 @@ function ConfirmDelete({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will remove your payment mode
-            from the system.
+            This action cannot be undone. This will remove the admin from the
+            system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -667,6 +669,7 @@ function EditAdmin({ selectedAdmin, editOpen, setEditOpen }) {
         toast({
           title: "Admin Updated",
           description: "Account may logout",
+          duration: 2000,
         });
       }
     } catch (error) {

@@ -218,6 +218,7 @@ function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
         toast({
           title: "Booking Cancelled!",
           description: "Successfully",
+          duration: 2000,
         });
       }
     } catch (error) {

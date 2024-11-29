@@ -55,6 +55,7 @@ function VehicleCard({ vehicle, className }) {
         toast({
           title: "Parking Initiated!",
           description: `Bill No: ${res.data.data.billNo}`,
+          duration: 2000,
         });
         reset();
         setModalOpen(false);
@@ -77,7 +78,7 @@ function VehicleCard({ vehicle, className }) {
             loading="defer"
             // className="w-full"
             width={200}
-            height={133}
+            height={136}
             alt="Vehicle Image"
           />
         </div>

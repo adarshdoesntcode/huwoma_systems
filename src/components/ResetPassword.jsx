@@ -127,6 +127,7 @@ export function ResetPassword({ forgotPassword, setForgotPassword }) {
         toast({
           title: "Password Changed Successfully",
           description: "Login with the new password",
+          duration: 2000,
         });
       } else {
         throw new Error("Try again");

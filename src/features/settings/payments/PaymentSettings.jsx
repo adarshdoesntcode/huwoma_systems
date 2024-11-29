@@ -325,6 +325,7 @@ function CreatePayment({ createOpen, setCreateOpen }) {
         toast({
           title: "Payment Mode Created",
           description: `${res.data.data.paymentModeName}`,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -433,6 +434,7 @@ function ConfirmDelete({
         toast({
           title: "Payment Mode Deleted!",
           description: res.data.data.paymentModeName,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -496,6 +498,7 @@ function EditPayment({ selectedPaymentMode, editOpen, setEditOpen }) {
         toast({
           title: "Payment Mode Updated",
           description: `${res.data.data.paymentModeName}`,
+          duration: 2000,
         });
       }
     } catch (error) {

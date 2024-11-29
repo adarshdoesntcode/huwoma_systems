@@ -289,6 +289,7 @@ const RigSelect = ({ customer, locationState }) => {
         toast({
           title: "Race Started!",
           description: `Bill No: ${res.data.data.billNo}`,
+          duration: 2000,
         });
         navigate("/simracing", { state: { tab: "active" }, replace: true });
       }

@@ -7,7 +7,7 @@ export const parkingApiSlice = apiSlice.injectEndpoints({
         url: "/parking/transactions",
         method: "GET",
       }),
-      providesTags: ["SimRacingTransactions"],
+      providesTags: ["ParkingTransactions"],
     }),
     getParkingFilteredTransactions: builder.mutation({
       query: (credentials) => ({
@@ -22,7 +22,7 @@ export const parkingApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["SimRacingTransactions"],
+      invalidatesTags: ["ParkingTransactions"],
     }),
     getParkingCheckoutDetails: builder.query({
       query: (credentials) => ({
@@ -30,20 +30,28 @@ export const parkingApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    parkingRollbackFromCompleted: builder.mutation({
+      query: (credentials) => ({
+        url: "/parking/transaction/rollback",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["ParkingTransactions"],
+    }),
     parkingCheckout: builder.mutation({
       query: (credentials) => ({
         url: "/parking/transaction/checkout",
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["SimRacingTransactions"],
+      invalidatesTags: ["ParkingTransactions"],
     }),
     cancelParking: builder.mutation({
       query: (credentials) => ({
         url: `/parking/transaction/${credentials}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["SimRacingTransactions"],
+      invalidatesTags: ["ParkingTransactions"],
     }),
   }),
 });
@@ -55,4 +63,5 @@ export const {
   useGetParkingCheckoutDetailsQuery,
   useParkingCheckoutMutation,
   useGetParkingFilteredTransactionsMutation,
+  useParkingRollbackFromCompletedMutation,
 } = parkingApiSlice;

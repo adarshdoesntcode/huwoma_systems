@@ -268,6 +268,7 @@ const BookingTime = ({ customer }) => {
         toast({
           title: "Booking Successful!",
           description: `Bill No: ${res.data.data.billNo}`,
+          duration: 2000,
         });
         navigate("/carwash", { state: { tab: "booking" }, replace: true });
       }

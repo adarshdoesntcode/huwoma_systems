@@ -32,7 +32,7 @@ const colour = {
   Logout: "muted-foreground ",
   "Start Race": "blue-600 ", // Technical, indigo for innovation.
   Update: "yellow-600 ", // Informative, yellow for updates or changes.
-
+  Parked: "emerald-600",
   Delete: "red-600",
 };
 

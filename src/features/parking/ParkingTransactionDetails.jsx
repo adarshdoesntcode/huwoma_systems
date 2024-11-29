@@ -13,14 +13,30 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 
-import { getTimeDifference } from "@/lib/utils";
+import { getDaysDifference, getTimeDifference } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { Loader2, Undo2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParkingRollbackFromCompletedMutation } from "./parkingApiSlice";
 
 const ParkingTransactionDetails = ({
   showDetails,
   setTransactionDetails,
   setShowDetails,
   transactionDetails,
+  origin,
 }) => {
   let raceStart, raceEnd, raceTime;
 
@@ -56,6 +72,13 @@ const ParkingTransactionDetails = ({
                 raceTime={raceTime}
               />
             </div>
+            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+              <DetailsFooter
+                transactionDetails={transactionDetails}
+                origin={origin}
+                handleCloseSheet={handleCloseSheet}
+              />
+            </SheetFooter>
           </div>
         </SheetContent>
       </Sheet>
@@ -78,6 +101,13 @@ const ParkingTransactionDetails = ({
                 raceTime={raceTime}
               />
             </div>
+            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+              <DetailsFooter
+                transactionDetails={transactionDetails}
+                origin={origin}
+                handleCloseSheet={handleCloseSheet}
+              />
+            </SheetFooter>
           </div>
         </SheetContent>
       </Sheet>
@@ -212,6 +242,91 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
       </div>
     );
   }
+};
+
+const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
+  const [openRollBack, setOpenRollBack] = useState(false);
+  const navigate = useNavigate();
+  const [parkingRollbackFromCompleted, { isLoading }] =
+    useParkingRollbackFromCompletedMutation();
+
+  const handleRollbackFromComplete = async () => {
+    try {
+      if (!transactionDetails._id) return;
+      const res = await parkingRollbackFromCompleted({
+        transactionId: transactionDetails._id,
+      });
+
+      if (res.error) {
+        handleCloseSheet();
+        throw new Error(res.error.data.message);
+      }
+
+      if (!res.error) {
+        handleCloseSheet();
+        console.log(origin);
+        if (origin === "parking") {
+          navigate("/parking", { state: { tab: "parked" }, replace: true });
+        }
+        toast({
+          title: "Transaction Rolled Back",
+          description: "to Active",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
+  };
+
+  return (
+    <div className="flex justify-between gap-4 items-center w-full">
+      <AlertDialog open={openRollBack} onOpenChange={setOpenRollBack}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Do you want to Rollback?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will rollback this transaction from Completed to Parked
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            {isLoading ? (
+              <Button variant="destructive" disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Rolling back...
+              </Button>
+            ) : (
+              <Button
+                variant="destructive"
+                onClick={handleRollbackFromComplete}
+              >
+                Rollback <Undo2 className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {transactionDetails?.transactionStatus === "Completed" &&
+        origin !== "transactions" &&
+        getDaysDifference(transactionDetails?.end, new Date()) <= 3 && (
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={() => {
+              setOpenRollBack(true);
+            }}
+          >
+            Rollback
+            <Undo2 className="h-4 w-4 ml-2" />{" "}
+          </Button>
+        )}
+    </div>
+  );
 };
 
 export default ParkingTransactionDetails;

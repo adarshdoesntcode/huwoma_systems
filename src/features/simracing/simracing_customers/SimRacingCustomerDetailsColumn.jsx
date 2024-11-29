@@ -4,7 +4,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
 
-export const ParkingFinishedColumn = [
+export const SimRacingCustomerDetailsColumn = [
   {
     accessorKey: "billNo",
     header: () => <TableHead>Bill No</TableHead>,
@@ -17,43 +17,55 @@ export const ParkingFinishedColumn = [
     },
   },
 
-  {
-    accessorKey: "vehicle",
-    header: () => (
-      <TableHead className="hidden lg:table-cell">Vehicle</TableHead>
-    ),
-    cell: ({ row }) => {
-      const name = row.original.vehicle.vehicleTypeName;
+  // {
+  //   accessorKey: "customer",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader
+  //       column={column}
+  //       title="Customer"
+  //       className={"px-1"}
+  //     />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const customer = row.original.customer;
 
-      return <TableCell className="hidden lg:table-cell">{name}</TableCell>;
-    },
-  },
+  //     return (
+  //       <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
+  //         <div className="flex flex-col items-start">
+  //           <div className="font-medium text-sm">{customer.customerName}</div>
+  //           <div className="text-xs text-muted-foreground">
+  //             {customer.customerContact}
+  //           </div>
+  //         </div>
+  //       </TableCell>
+  //     );
+  //   },
+  //   filterFn: (row, _, filterValue) => {
+  //     return row.original.customer.customerContact
+  //       .toString()
+  //       .includes(filterValue);
+  //   },
+  //   sortingFn: (a, b) => {
+  //     const nameA = a.original.customer?.customerName?.toLowerCase() || "";
+  //     const nameB = b.original.customer?.customerName?.toLowerCase() || "";
+  //     return nameA.localeCompare(nameB);
+  //   },
+  // },
   {
-    accessorKey: "vehicleNumber",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Vehicle No"
-        className={"px-1 "}
-      />
-    ),
+    accessorKey: "rig",
+
+    header: () => <TableHead className="hidden md:table-cell"> Rig</TableHead>,
     cell: ({ row }) => {
-      const number = row.original.vehicleNumber;
+      const rig = row.original.rig;
 
       return (
-        <TableCell className="tracking-wide text-base font-medium py-1">
-          <div className="block lg:hidden text-muted-foreground text-xs font-normal">
-            {row.original.vehicle.vehicleTypeName}
-          </div>
-          <div>{number}</div>
-          <div className="block lg:hidden text-muted-foreground text-xs font-normal">
-            Ended:{" "}
-            {row.original.end
-              ? format(new Date(row.original.end), "d MMM, h:mm a")
-              : ""}
-          </div>
+        <TableCell className="px-4 py-1 text-sm sm:py-1 sm:px-4 hidden md:table-cell">
+          {rig?.rigName}
         </TableCell>
       );
+    },
+    filterFn: (row, _, filterValue) => {
+      return row.original.rig?.rigName.toString().includes(filterValue);
     },
   },
   {
@@ -102,11 +114,11 @@ export const ParkingFinishedColumn = [
     },
     cell: ({ row }) => {
       let date = row.original.start
-        ? format(new Date(row.original.start), "d MMM, yyyy h:mm a")
+        ? format(new Date(row.original.start), "d MMM, yy h:mm a")
         : "";
 
       return (
-        <TableCell className="hidden  lg:table-cell">
+        <TableCell className="hidden py-1  lg:table-cell">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
@@ -129,11 +141,11 @@ export const ParkingFinishedColumn = [
     },
     cell: ({ row }) => {
       let date = row.original.end
-        ? format(new Date(row.original.end), "d MMM, yyyy h:mm a")
+        ? format(new Date(row.original.end), "d MMM, yy h:mm a")
         : "";
 
       return (
-        <TableCell className="hidden  lg:table-cell">
+        <TableCell className="hidden py-1  lg:table-cell">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>

@@ -47,6 +47,7 @@ function ConfirmRollbackFromComplete({
         toast({
           title: "Transaction Rolled Back",
           description: "to Ready for Pickup",
+          duration: 2000,
         });
         if (origin === "carwash") {
           navigate("/carwash", { state: { tab: "pickup" }, replace: true });

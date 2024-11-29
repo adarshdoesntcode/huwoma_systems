@@ -182,7 +182,7 @@ export const ParkingDataTable = ({ columns, data }) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No one on track.
+                  No Parkings
                 </TableCell>
               </TableRow>
             )}
@@ -224,6 +224,7 @@ function ConfirmDelete({ showDelete, setShowDelete, deleteId, setDeleteId }) {
         toast({
           title: "Parking Cancelled!",
           description: "Successfully",
+          duration: 2000,
         });
       }
     } catch (error) {

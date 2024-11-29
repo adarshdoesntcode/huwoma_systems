@@ -95,6 +95,7 @@ function ParkingCheckout() {
         toast({
           title: "Transaction Complete!",
           description: `Payment Received!`,
+          duration: 2000,
         });
         navigate("/parking", { state: { tab: "finish" }, replace: true });
       }
@@ -148,7 +149,8 @@ function ParkingCheckout() {
                     <div className="flex gap-1 flex-col">
                       <div className="font-medium flex items-center justify-between">
                         <div className="font-semibold">
-                          {vehicle.vehicleTypeName}
+                          {vehicle.vehicleTypeName} ({" "}
+                          {transactionDetails.vehicleNumber} )
                         </div>
                         <div>{vehicle.rate}/hr</div>
                       </div>

@@ -97,6 +97,7 @@ function SimRacingCheckout() {
         toast({
           title: "Transaction Complete!",
           description: `Payment Received!`,
+          duration: 2000,
         });
         navigate("/simracing", { state: { tab: "finish" }, replace: true });
       }

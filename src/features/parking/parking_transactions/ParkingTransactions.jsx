@@ -54,6 +54,9 @@ import PaymentsGraph from "@/features/carwash/carwash_tranasactions/charts/Payme
 
 import { Navigate } from "react-router-dom";
 import { useGetParkingFilteredTransactionsMutation } from "../parkingApiSlice";
+import { ParkingFilterTranasactionDataTable } from "./ParkingFilteredTransactionsDataTable";
+import { ParkingFinishedColumn } from "../ParkingFinishedColumn";
+import ParkingVehicleIncomeGraph from "./ParkingVehicleIncomeGraph";
 
 const initialState = {
   preset: {
@@ -453,7 +456,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
     } - ${format(range.to, "dd MMM, yyy")}`;
   }
 
-  const simRacingTableData = [...responseData].sort(
+  const parkingTableData = [...responseData].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
@@ -499,6 +502,10 @@ const FilteredAnalytics = ({ responseData, range }) => {
               completetedTransactions={completetedTransactions}
               range={rangeString}
             /> */}
+            <ParkingVehicleIncomeGraph
+              completetedTransactions={completetedTransactions}
+              range={rangeString}
+            />
             <PaymentsGraph
               completetedTransactions={completetedTransactions}
               range={rangeString}
@@ -521,6 +528,10 @@ const FilteredAnalytics = ({ responseData, range }) => {
             data={simRacingTableData}
             columns={SimRacingFilteredTransactionsColumn}
           /> */}
+          <ParkingFilterTranasactionDataTable
+            data={parkingTableData}
+            columns={ParkingFinishedColumn}
+          />
         </CardContent>
       </Card>
     </div>

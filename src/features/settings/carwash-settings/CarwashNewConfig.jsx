@@ -114,6 +114,7 @@ function VehicleType({ vehicle, setVehicle }) {
         toast({
           title: "Vehicle Type Created!",
           description: res.data.data.vehicleTypeName,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -334,6 +335,7 @@ function Services({ vehicle }) {
         toast({
           title: "Services Created!",
           description: res.data.data.serviceTypeName,
+          duration: 2000,
         });
         navigate("/settings/c-wash");
       }

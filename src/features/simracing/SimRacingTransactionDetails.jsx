@@ -281,6 +281,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
         toast({
           title: "Transaction Rolled Back",
           description: "to Active",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -299,8 +300,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Do you want to Rollback?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will rollback this transaction from Completed to Ready for
-              Pickup
+              This will rollback this transaction from Completed to Active
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

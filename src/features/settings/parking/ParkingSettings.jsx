@@ -281,6 +281,7 @@ function CreateVehicle({ createOpen, setCreateOpen }) {
         toast({
           title: "Vehicle Created",
           description: `${res.data.data.vehicleTypeName}`,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -482,6 +483,7 @@ function ConfirmDelete({
         toast({
           title: "Vehicle Deleted!",
           description: res.data.data.vehicleTypeName,
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -560,6 +562,7 @@ function EditVehicle({ selectedVehicle, editOpen, setEditOpen }) {
         toast({
           title: "Vehicle Updated",
           description: `${res.data.data.vehicleTypeName}`,
+          duration: 2000,
         });
       }
     } catch (error) {
