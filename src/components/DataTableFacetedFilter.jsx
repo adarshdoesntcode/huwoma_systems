@@ -34,10 +34,14 @@ const colour = {
   Update: "yellow-600 ", // Informative, yellow for updates or changes.
   Parked: "emerald-600",
   Delete: "red-600",
+  Carwash: "teal-600",
+  Simracing: "orange-600 ",
+  Parking: "purple-600 ",
 };
 
 export function DataTableFacetedFilter({ column, title, options }) {
   const facets = column?.getFacetedUniqueValues();
+
   const selectedValues = new Set(column?.getFilterValue());
 
   return (

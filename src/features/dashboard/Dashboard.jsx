@@ -29,7 +29,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -47,28 +47,9 @@ import { Badge } from "@/components/ui/badge";
 import { useGetDashboardDataQuery } from "./dashboardApiSlice";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
-const invoices = [
-  {
-    totalAmount: "+9093.00",
-    paymentMethod: "Cash",
-  },
-  {
-    totalAmount: "+2929.00",
-    paymentMethod: "Fonepay",
-  },
-  {
-    totalAmount: "+10675.00",
-    paymentMethod: "Card",
-  },
-  {
-    totalAmount: "+3687.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    totalAmount: "+3531.00",
-    paymentMethod: "Others",
-  },
-];
+import { DashboardTransactionsDataTable } from "./DashboardTransactionsDataTable";
+import { DashboardTransactionsColumn } from "./DashboardTransactionsColumn";
+import { format } from "date-fns";
 
 function calculateTotalAmounts(
   paymentModes,
@@ -146,6 +127,8 @@ const chartConfig = {
 };
 
 export function Dashboard() {
+  const [lastUpdated, setLastUpdated] = useState(null);
+
   const [activeChart, setActiveChart] = useState("carwash");
   const navigate = useNavigate();
 
@@ -159,10 +142,13 @@ export function Dashboard() {
 
   let chartData = useMemo(() => [], []);
   let carwashTransactions;
+  let carwashCompletedTransactions;
   let carwashRevenue;
   let simracingTransactions;
+  let simracingCompletedTransactions;
   let simracingRevenue;
   let parkingTransactions;
+  let parkingCompletedTransactions;
   let parkingRevenue;
   let todayTotalVisitors;
   let yesterdayTotalVisitors;
@@ -170,25 +156,43 @@ export function Dashboard() {
   let yesterdaySimracingRevenue;
   let yesterdayParkingRevenue;
   let breakdownData;
-  console.log("🚀 ~ Dashboard ~ data:", data);
+  let tableData;
+
+  useEffect(() => {
+    if (isSuccess) {
+      const date = format(new Date(), "hh:mm:ss a");
+      setLastUpdated(date);
+    }
+  }, [isSuccess, isFetching]);
 
   if (data) {
     carwashTransactions = data?.data?.carwashTransactions;
-
-    carwashRevenue = carwashTransactions
-      .filter((transaction) => transaction.transactionStatus === "Completed")
-      .reduce((acc, curr) => acc + curr.netAmount, 0);
+    carwashCompletedTransactions = carwashTransactions.filter(
+      (transaction) => transaction.transactionStatus === "Completed"
+    );
+    carwashRevenue = carwashCompletedTransactions.reduce(
+      (acc, curr) => acc + curr.netAmount,
+      0
+    );
 
     simracingTransactions = data?.data?.simracingTransactions;
-    simracingRevenue = simracingTransactions
-      .filter((transaction) => transaction.transactionStatus === "Completed")
-      .reduce((acc, curr) => acc + curr.netAmount, 0);
+    simracingCompletedTransactions = simracingTransactions.filter(
+      (transaction) => transaction.transactionStatus === "Completed"
+    );
+    simracingRevenue = simracingCompletedTransactions.reduce(
+      (acc, curr) => acc + curr.netAmount,
+      0
+    );
 
     parkingTransactions = data?.data?.parkingTransactions;
+    parkingCompletedTransactions = parkingTransactions.filter(
+      (transaction) => transaction.transactionStatus === "Completed"
+    );
 
-    parkingRevenue = parkingTransactions
-      .filter((transaction) => transaction.transactionStatus === "Completed")
-      .reduce((acc, curr) => acc + curr.netAmount, 0);
+    parkingRevenue = parkingCompletedTransactions.reduce(
+      (acc, curr) => acc + curr.netAmount,
+      0
+    );
 
     todayTotalVisitors =
       carwashTransactions.length +
@@ -196,13 +200,14 @@ export function Dashboard() {
       parkingTransactions.length;
 
     yesterdayTotalVisitors =
-      data?.data?.yesterday?.carwash?.count ||
-      0 + data?.data?.yesterday?.simracing?.count ||
-      0 + data?.data?.yesterday?.parking?.count ||
-      0;
+      data?.data?.yesterday?.carwash?.count +
+      data?.data?.yesterday?.simracing?.count +
+      data?.data?.yesterday?.parking?.count;
 
     yesterdayCarwashRevenue = data?.data?.yesterday?.carwash?.total || 0;
+
     yesterdaySimracingRevenue = data?.data?.yesterday?.simracing?.total || 0;
+
     yesterdayParkingRevenue = data?.data?.yesterday?.parking?.total || 0;
 
     const allDates = [
@@ -221,6 +226,12 @@ export function Dashboard() {
         parking: data?.data?.counts.parking[date] || 0,
       };
     });
+
+    tableData = [
+      ...carwashCompletedTransactions,
+      ...simracingCompletedTransactions,
+      ...parkingCompletedTransactions,
+    ].sort((a, b) => new Date(b.transactionTime) - new Date(a.transactionTime));
 
     breakdownData = calculateTotalAmounts(
       data.data.activePaymentModes,
@@ -441,151 +452,43 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </div>
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
-            <CardHeader className="flex flex-row items-center p-4  pb-2">
-              <div className="grid gap-2">
-                <CardTitle className="text-xl font-2xl">Transactions</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
-                  Recent transactions from your store.
-                </CardDescription>
+        <div className="grid gap-4 md:gap-8  xl:grid-cols-3">
+          <Card className="xl:col-span-2">
+            <CardHeader className=" p-4 sm:p-6 sm:pb-2">
+              <div className="flex items-start justify-between">
+                <div>
+                  <CardTitle className="text-lg sm:text-xl">
+                    Transactions
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Recent transactions from your store.
+                  </CardDescription>
+                </div>
+                <div>
+                  <p className="text-end text-muted-foreground/70 text-[10px]">
+                    Last Updated{" "}
+                  </p>
+                  <p className="text-end text-[12px] text-muted-foreground">
+                    {lastUpdated}
+                  </p>
+                </div>
               </div>
-              <Button
-                asChild
-                size="sm"
-                className="ml-auto gap-2"
-                variant="outline"
-              >
-                <Link href="#">
-                  <span className="sr-only sm:not-sr-only">Export</span>
-                  <File className="h-4 w-4" />
-                </Link>
-              </Button>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Customer</TableHead>
-                    <TableHead className="hidden md:table-cell">Type</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead className="hidden md:table-cell">Date</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      Car Wash
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="text-xs" variant="outline">
-                        Cash
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      2023-06-23
-                    </TableCell>
-                    <TableCell className="text-right">+1200.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Olivia Smith</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        olivia@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      Car Wash
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="text-xs" variant="outline">
-                        Fonepay
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      2023-06-24
-                    </TableCell>
-                    <TableCell className="text-right">+600.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Noah Williams</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        noah@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      Sim Racing
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="text-xs" variant="outline">
-                        Card
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      2023-06-25
-                    </TableCell>
-                    <TableCell className="text-right">+750.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Emma Brown</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        emma@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      Parking
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="text-xs" variant="outline">
-                        Cash
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      2023-06-26
-                    </TableCell>
-                    <TableCell className="text-right">+450.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      Car Wash
-                    </TableCell>
-                    <TableCell>
-                      <Badge className="text-xs" variant="outline">
-                        Fonepay
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell ">
-                      2023-06-27
-                    </TableCell>
-                    <TableCell className="text-right">+850.00</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+            <CardContent className="p-4  sm:p-6 pt-2 sm:pt-2">
+              <DashboardTransactionsDataTable
+                data={tableData}
+                columns={DashboardTransactionsColumn}
+              />
             </CardContent>
           </Card>
-          <Card x-chunk="dashboard-01-chunk-5">
-            <CardHeader>
-              <CardTitle>Breakdown</CardTitle>
-              <CardDescription>
+          <Card className="max-h-fit">
+            <CardHeader className="p-4 sm:p-6 sm:pb-2">
+              <CardTitle className="text-lg sm:text-xl">Breakdown</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
                 Breakdown of today&apos;s collection
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
