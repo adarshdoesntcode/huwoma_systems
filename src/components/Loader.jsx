@@ -30,7 +30,7 @@ function Loader() {
   const number = getRandomNumber(17);
 
   return (
-    <div className="flex py-12  items-center justify-center ">
+    <div className="flex py-12  items-center justify-center animate-in  fade-in duration-200 ">
       {number === 1 && <Circuit1 className="w-24 h-24" />}
       {number === 2 && <Circuit2 className="w-24 h-24" />}
       {number === 3 && <Circuit3 className="w-24 h-24" />}

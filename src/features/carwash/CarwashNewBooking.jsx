@@ -102,7 +102,7 @@ function CarwashNewBooking() {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
+    <div className="mx-auto grid w-full max-w-xl mb-80 items-start gap-4 ">
       <NavBackButton buttonText={"Back"} navigateTo={-1} />
       {customer ? (
         <Card>

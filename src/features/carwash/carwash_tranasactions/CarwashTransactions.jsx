@@ -279,7 +279,7 @@ function CarwashTransactions() {
     const vehicleTypes = data?.data || [];
 
     content = (
-      <div className=" space-y-4 mb-64">
+      <div className=" space-y-4 mb-80">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
           <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
@@ -687,7 +687,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
   const freeWash = actualWashRevenue - WashRevenue;
 
   let dailyIncome = [];
-  if (responseData) {
+  if (responseData && !isMobile) {
     dailyIncome = Array.from(
       new Set(
         completetedTransactions.map((transaction) =>
@@ -704,7 +704,6 @@ const FilteredAnalytics = ({ responseData, range }) => {
 
       return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
     });
-    console.log("🚀 ~ FilteredAnalytics ~ dailyIncome:", dailyIncome);
   }
 
   useEffect(() => {

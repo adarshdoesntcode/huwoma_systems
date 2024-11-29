@@ -197,7 +197,7 @@ function ParkingTransactions() {
   };
 
   return (
-    <div className=" space-y-4 mb-64">
+    <div className=" space-y-4 mb-80">
       <NavBackButton buttonText={"Back"} navigateTo={-1} />
       <Card>
         <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
@@ -410,26 +410,22 @@ const FilteredAnalytics = ({ responseData, range }) => {
   const discountAmount = sumByKey("discountAmount", completetedTransactions);
 
   let dailyIncome = [];
-
-  if (responseData) {
+  if (responseData && !isMobile) {
     dailyIncome = Array.from(
       new Set(
-        completetedTransactions.map(
-          (transaction) =>
-            new Date(transaction.createdAt).toLocaleDateString().split("T")[0]
+        completetedTransactions.map((transaction) =>
+          new Date(transaction.createdAt).toDateString()
         )
       )
     ).map((date) => {
       const income = completetedTransactions
         .filter(
           (transaction) =>
-            new Date(transaction.createdAt)
-              .toLocaleDateString()
-              .split("T")[0] === date
+            new Date(transaction.createdAt).toDateString() === date
         )
         .reduce((sum, transaction) => sum + transaction.netAmount, 0);
 
-      return { date: format(date, "MMM d, yyyy"), Income: income };
+      return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
     });
   }
 
