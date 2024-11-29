@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -175,7 +177,7 @@ function Carwash() {
               Hourly Customer Count
             </div>
             <ChartContainer config={chartConfig} className="h-[10vh] w-full">
-              <LineChart
+              <AreaChart
                 accessibilityLayer
                 data={hourlyCounts}
                 margin={{ top: 20, left: 30, bottom: 10, right: 30 }}
@@ -200,14 +202,31 @@ function Carwash() {
                     />
                   }
                 />
-                <Line
+                <defs>
+                  <linearGradient id="fillIncome" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-customers)"
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-customers)"
+                      stopOpacity={0.1}
+                    />
+                  </linearGradient>
+                </defs>
+                <Area
                   dataKey="Customers"
                   type="natural"
+                  fill="url(#fillIncome)"
+                  fillOpacity={0.4}
                   stroke="var(--color-customers)"
-                  strokeWidth={2}
+                  // strokeWidth={2}
                   dot={false}
+                  stackId="a"
                 />
-              </LineChart>
+              </AreaChart>
             </ChartContainer>
           </div>
         )}
