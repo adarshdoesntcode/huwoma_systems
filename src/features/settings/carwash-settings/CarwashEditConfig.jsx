@@ -189,7 +189,7 @@ function VehicleType() {
               </CardDescription>
             </div>
             {vehicleIcon && (
-              <div>
+              <div className="animate-in  fade-in duration-500">
                 <img
                   src={`${vehicleIcon}`}
                   alt={vehicleIcon}
@@ -269,6 +269,7 @@ function VehicleType() {
                     <div className="flex flex-wrap gap-2 justify-evenly">
                       {VEHICLE_ICON_PATHS.map((image, index) => (
                         <div
+                          className="animate-in  fade-in duration-500"
                           key={index}
                           onClick={() => handleImageSelect(image)}
                         >

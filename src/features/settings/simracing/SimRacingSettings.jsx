@@ -131,7 +131,7 @@ const SimRacingSettings = () => {
                       {index + 1}
                     </TableCell>
                     <TableCell className="hidden md:table-cell px-0">
-                      <div className="flex items-center gap-4 text-center">
+                      <div className="flex items-center gap-4 animate-in  fade-in duration-500 text-center">
                         <img
                           loading="lazy"
                           src={IMAGE_DATA.rig}

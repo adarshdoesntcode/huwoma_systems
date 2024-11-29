@@ -71,11 +71,13 @@ function VehicleCard({ vehicle, className }) {
   return (
     <Card className={cn("p-2 sm:p-4 ", className)}>
       <div className="flex ">
-        <div className="w-3/12 aspect-auto flex items-center  justify-center ">
+        <div className="w-3/12 aspect-auto flex items-center animate-in  fade-in duration-500 justify-center ">
           <img
             src={vehicle.vehicleIcon}
             loading="defer"
-            className="w-full"
+            // className="w-full"
+            width={200}
+            height={133}
             alt="Vehicle Image"
           />
         </div>

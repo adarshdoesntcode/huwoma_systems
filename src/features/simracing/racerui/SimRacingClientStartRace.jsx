@@ -223,6 +223,8 @@ const SimRacingClientStartRace = () => {
                     src={IMAGE_DATA.rig}
                     alt="logo"
                     width={100}
+                    height={62}
+                    className="animate-in  fade-in duration-500"
                     loading="defer"
                   />
                 </motion.div>

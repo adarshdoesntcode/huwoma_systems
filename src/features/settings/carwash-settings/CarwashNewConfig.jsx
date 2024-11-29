@@ -139,7 +139,7 @@ function VehicleType({ vehicle, setVehicle }) {
               </CardDescription>
             </div>
 
-            <div>
+            <div className="animate-in  fade-in duration-500">
               <img
                 loading="lazy"
                 src={`${vehicle.vehicleIcon}`}
@@ -165,7 +165,7 @@ function VehicleType({ vehicle, setVehicle }) {
               </CardDescription>
             </div>
             {selectedVehicleIcon && (
-              <div>
+              <div className="animate-in  fade-in duration-500">
                 <img
                   loading="lazy"
                   src={`${selectedVehicleIcon}`}
@@ -250,6 +250,7 @@ function VehicleType({ vehicle, setVehicle }) {
                         <div
                           key={index}
                           onClick={() => handleImageSelect(image)}
+                          className="animate-in  fade-in duration-500"
                         >
                           <img
                             loading="lazy"

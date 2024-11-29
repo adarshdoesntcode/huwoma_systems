@@ -32,15 +32,15 @@ import { SystemActivityDataTableToolbar } from "./SystemActivityDataTableToolbar
 import { isMobile } from "react-device-detect";
 
 const activityColors = {
-  Rollback: "text-orange-600 !bg-orange-50", // A safe action, using blue for stability.
-  Booking: "text-purple-600 !bg-purple-50", // Positive action, green signifies success.
-  Create: "text-emerald-600 !bg-emerald-50", // Constructive action, emerald for creation.
-  Logout: "text-muted-foreground",
-  "Start Race": "text-blue-600 !bg-blue-50", // Technical, indigo for innovation.
+  Rollback: "text-orange-600 !bg-orange-50 hover:!bg-orange-200", // A safe action, using blue for stability.
+  Booking: "text-purple-600 !bg-purple-50 hover:!bg-purple-200", // Positive action, green signifies success.
+  Create: "text-emerald-600 !bg-emerald-50 hover:!bg-emerald-200", // Constructive action, emerald for creation.
+  Logout: "text-muted-foreground hover:!bg-slate-200",
+  "Start Race": "text-blue-600 !bg-blue-50 hover:!bg-blue-200", // Technical, indigo for innovation.
 
-  Update: "text-yellow-600 !bg-yellow-50", // Informative, yellow for updates or changes.
-  Cancelled: "text-red-600 !bg-red-50", // Negative, red to signify cancellation.
-  Delete: "text-red-600 !bg-red-50", // Critical, rose for destructive actions.
+  Update: "text-yellow-600 !bg-yellow-50 hover:!bg-yellow-200", // Informative, yellow for updates or changes.
+  Cancelled: "text-red-600 !bg-red-50 hover:!bg-red-200", // Negative, red to signify cancellation.
+  Delete: "text-red-600 !bg-red-50 hover:!bg-red-200", // Critical, rose for destructive actions.
 };
 
 const exportExcel = (rows) => {
@@ -212,9 +212,9 @@ export const SystemActivityDataTable = ({ columns, data }) => {
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className={cn(
-                    "cursor-pointer odd:bg-muted/60    border-none  ",
+                    "cursor-pointer odd:bg-muted/60 transition-all  border-none  ",
                     activityColors[row.original.activityType] ??
-                      "text-secondary-foreground/70"
+                      "text-secondary-foreground/70 hover:bg-slate-200"
                   )}
                 >
                   {row.getVisibleCells().map((cell) => (

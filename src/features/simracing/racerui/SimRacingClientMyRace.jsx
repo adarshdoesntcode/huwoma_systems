@@ -99,18 +99,19 @@ function SimRacingClientMyRace() {
                 src={IMAGE_DATA.simracing_logo}
                 alt="logo"
                 width={120}
+                height={43}
                 loading="lazy"
                 className="mx-auto"
               />
             </CardTitle>
           </CardHeader>
           {isLoading ? (
-            <CardContent>
+            <CardContent className="animate-in  fade-in duration-500">
               <Loader />
             </CardContent>
           ) : !error ? (
             <>
-              <CardContent>
+              <CardContent className="animate-in  fade-in duration-500">
                 <div className="flex items-center  py-2 pl-4 justify-between  rounded-lg gap-2 border ">
                   <div className="h-full flex flex-col justify-between items-start ">
                     <div className="text-sm font-medium">
@@ -129,12 +130,14 @@ function SimRacingClientMyRace() {
                   </div>
                   <img
                     src={IMAGE_DATA.rig}
+                    className="animate-in  fade-in duration-500"
                     alt="logo"
                     width={100}
+                    height={62}
                     loading="lazy"
                   />
                 </div>
-                <div className="font-mono text-2xl text-primary-foreground text-center p-6 rounded-lg bg-foreground mt-6">
+                <div className="font-mono text-2xl text-primary-foreground text-center p-6 rounded-lg animate-in  fade-in duration-500 bg-foreground mt-6">
                   {timeLapsed}
                 </div>
               </CardContent>
@@ -145,7 +148,7 @@ function SimRacingClientMyRace() {
           ) : (
             <>
               <CardContent>
-                <div className="text-center text-3xl text-primary bg-muted font-medium border rounded-lg mt-2 p-8">
+                <div className="text-center animate-in  fade-in duration-500 text-3xl text-primary bg-muted font-medium border rounded-lg mt-2 p-8">
                   Finished !!
                 </div>
                 <Button

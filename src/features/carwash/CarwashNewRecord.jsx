@@ -376,7 +376,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                         setSelectedService("");
                       }}
                     >
-                      <div className="w-24 sm:w-36 relative border  px-4 py-2 rounded-lg shadow-lg gap-2">
+                      <div className="w-24 sm:w-36 relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2">
                         {selectedVehicle._id === vehicle._id && (
                           <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />

@@ -85,17 +85,18 @@ function RigCard({ rig, className }) {
 
                   <div
                     ref={canvasRef}
-                    className="flex flex-col items-center justify-center gap-8 p-6"
+                    className="flex flex-col animate-in  fade-in duration-500 items-center justify-center gap-8 p-6"
                   >
                     <div>
                       <img
                         src={IMAGE_DATA.simracing_logo}
                         alt="Sim Racing Logo"
                         width={140}
+                        height={50}
                         loading="lazy"
                       />
                     </div>
-                    <div className="border p-4 rounded-lg shadow-lg">
+                    <div className="border p-4 rounded-lg shadow-lg ">
                       <QRCode
                         value={`https://huwoma.vercel.app/simracingbyhuwoma/startrace/${rig?._id}`}
                       />
@@ -108,7 +109,7 @@ function RigCard({ rig, className }) {
             </Dialog>
           </div>
         </div>
-        <div className="w-4/12 aspect-auto hidden sm:flex items-center  justify-center ">
+        <div className="w-4/12 aspect-auto hidden sm:flex animate-in  fade-in duration-500 items-center  justify-center ">
           <img
             src={IMAGE_DATA.rig}
             loading="lazy"

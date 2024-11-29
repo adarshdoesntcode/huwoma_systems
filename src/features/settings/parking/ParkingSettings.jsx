@@ -140,7 +140,7 @@ const ParkingSettings = () => {
                     </TableCell>
                     <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
                       <img
-                        className="w-24 mx-auto"
+                        className="w-24 mx-auto animate-in  fade-in duration-500"
                         src={vehicle.vehicleIcon}
                         alt="Vehicle Icon"
                       />
@@ -422,7 +422,7 @@ function CreateVehicle({ createOpen, setCreateOpen }) {
                   <div
                     key={index}
                     onClick={() => handleImageSelect(image)}
-                    className={`cursor-pointer border-2 hover:border-muted-foreground transition-transform rounded-md border-transparent ${
+                    className={`cursor-pointer border-2 hover:border-muted-foreground transition-transform animate-in  fade-in duration-500 rounded-md border-transparent ${
                       selectedVehicleIcon === image
                         ? "!border-muted-foreground"
                         : ""
@@ -702,7 +702,7 @@ function EditVehicle({ selectedVehicle, editOpen, setEditOpen }) {
                   <div
                     key={index}
                     onClick={() => handleImageSelect(image)}
-                    className={`cursor-pointer border-2 hover:border-muted-foreground transition-transform rounded-md border-transparent ${
+                    className={`cursor-pointer border-2 hover:border-muted-foreground animate-in  fade-in duration-500 transition-transform rounded-md border-transparent ${
                       vehicleIcon && vehicleIcon === image
                         ? "!border-muted-foreground"
                         : ""

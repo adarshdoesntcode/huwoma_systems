@@ -26,6 +26,14 @@ const colour = {
   Cancelled: "red-600",
   Paid: "emerald-600",
   Pending: "yellow-600",
+  Rollback: "orange-600 ",
+  Booking: "purple-600 ", // Positive action, green signifies success.
+  Create: "emerald-600 ", // Constructive action, emerald for creation.
+  Logout: "muted-foreground ",
+  "Start Race": "blue-600 ", // Technical, indigo for innovation.
+  Update: "yellow-600 ", // Informative, yellow for updates or changes.
+
+  Delete: "red-600",
 };
 
 export function DataTableFacetedFilter({ column, title, options }) {

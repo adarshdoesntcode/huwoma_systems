@@ -134,7 +134,7 @@ const CarwashConfigSettings = () => {
                     {index + 1}
                   </TableCell>
                   <TableCell className="font-medium p-1 hidden sm:table-cell">
-                    <div className="flex items-center gap-4 text-center">
+                    <div className="flex animate-in  fade-in duration-500 items-center gap-4 text-center">
                       <img
                         src={vehicle.vehicleIcon}
                         width={96}
