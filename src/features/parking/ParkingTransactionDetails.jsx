@@ -55,7 +55,7 @@ const ParkingTransactionDetails = ({
     return (
       <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
         <SheetContent
-          className="h-[80vh] flex-1 overflow-y-auto  sm:h-[75vh] pb-0"
+          className="h-[80dvh] flex-1 overflow-y-auto  sm:h-[75dvh] pb-0"
           side={"bottom"}
         >
           <SheetHeader className="mb-2">
@@ -88,7 +88,7 @@ const ParkingTransactionDetails = ({
       <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
         <SheetContent className="min-w-[350px]  sm:min-w-[450px] ">
           <SheetHeader className="mb-2">
-            <SheetTitle>Transaction Details</SheetTitle>
+            <SheetTitle>Parking Transaction Details</SheetTitle>
             <SheetDescription></SheetDescription>
           </SheetHeader>
 

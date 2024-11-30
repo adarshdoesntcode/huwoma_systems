@@ -55,11 +55,11 @@ const SimRacingTransactionDetails = ({
     return (
       <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
         <SheetContent
-          className="h-[80vh] flex-1 overflow-y-auto  sm:h-[75vh] pb-0"
+          className="h-[80dvh] flex-1 overflow-y-auto  sm:h-[75dvh] pb-0"
           side={"bottom"}
         >
           <SheetHeader className="mb-2">
-            <SheetTitle>Transaction Details</SheetTitle>
+            <SheetTitle>Simracing Transaction Details</SheetTitle>
             <SheetDescription></SheetDescription>
           </SheetHeader>
 

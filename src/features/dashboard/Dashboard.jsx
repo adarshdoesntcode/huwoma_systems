@@ -346,7 +346,7 @@ export function Dashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card x-chunk="dashboard-01-chunk-3">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Visitors</CardTitle>
               <Footprints className="h-4 w-4 text-muted-foreground" />
@@ -382,7 +382,7 @@ export function Dashboard() {
                     <button
                       key={chart}
                       data-active={activeChart === chart}
-                      className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                      className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left odd:border-x   data-[active=true]:bg-muted/50  sm:border-t-0 sm:px-8 sm:py-6"
                       onClick={() => setActiveChart(chart)}
                     >
                       <span className="text-xs text-muted-foreground text-nowrap">
@@ -455,7 +455,7 @@ export function Dashboard() {
         <div className="grid gap-4 md:gap-8  xl:grid-cols-3">
           <Card className="xl:col-span-2">
             <CardHeader className=" p-4 sm:p-6 sm:pb-2">
-              <div className="flex items-start justify-between">
+              <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg sm:text-xl">
                     Transactions

@@ -32,11 +32,7 @@ import ConfirmRollbackFromComplete from "../carwash/transaction_mutation/Confirm
 import ParkingTransactionDetails from "../parking/ParkingTransactionDetails";
 import SimRacingTransactionDetails from "../simracing/SimRacingTransactionDetails";
 
-export const DashboardTransactionsDataTable = ({
-  columns,
-  data,
-  origin = "carwash",
-}) => {
+export const DashboardTransactionsDataTable = ({ columns, data }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDetailsSim, setShowDetailsSim] = useState(false);
   const [showDetailsPark, setShowDetailsPark] = useState(false);
@@ -81,7 +77,6 @@ export const DashboardTransactionsDataTable = ({
 
   const handleTransactionDetail = (row) => {
     const billNo = row.original?.billNo;
-    console.log("🚀 ~ handleTransactionDetail ~ billNo:", billNo);
     const type = billNo.endsWith("W")
       ? "Carwash"
       : billNo.endsWith("R")

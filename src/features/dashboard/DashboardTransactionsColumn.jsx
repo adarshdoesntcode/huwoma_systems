@@ -30,7 +30,7 @@ export const DashboardTransactionsColumn = [
   {
     accessorKey: "serviceTypeName",
 
-    header: () => <TableHead> Service</TableHead>,
+    header: () => <TableHead className="px-2 sm:px-4"> Service</TableHead>,
     cell: ({ row }) => {
       const billNo = row.original?.billNo;
       const type = billNo.endsWith("W")
@@ -42,7 +42,7 @@ export const DashboardTransactionsColumn = [
         : "Unknown";
 
       return (
-        <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
+        <TableCell className="px-2 py-1 sm:py-1 sm:px-4 ">
           <div className="flex flex-col items-start">
             {type === "Carwash" && (
               <>
@@ -91,7 +91,7 @@ export const DashboardTransactionsColumn = [
   {
     accessorKey: "type",
 
-    header: () => <TableHead>Type</TableHead>,
+    header: () => <TableHead className="px-2 sm:px-4">Type</TableHead>,
     cell: ({ row }) => {
       const billNo = row.original?.billNo;
       const type = billNo.endsWith("W")
@@ -102,7 +102,7 @@ export const DashboardTransactionsColumn = [
         ? "Parking"
         : "Unknown";
       return (
-        <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
+        <TableCell className="px-2 py-1 sm:py-1 sm:px-4">
           <Badge variant={"outline"} className={badgeColours[type]}>
             {type}
           </Badge>
@@ -153,14 +153,15 @@ export const DashboardTransactionsColumn = [
     header: () => {
       let header = "Amount";
 
-      return <TableHead className="text-end pr-6">{header}</TableHead>;
+      return <TableHead className="text-end px-3 sm:pr-6">{header}</TableHead>;
     },
     cell: ({ row }) => {
       const amount = row.original.netAmount;
 
       return (
-        <TableCell className=" py-1 text-end pr-6 font-mono text-sm tracking-tight">
-          + {amount.toFixed(2)}
+        <TableCell className=" py-1 text-end px-3 sm:pr-6 font-mono text-sm tracking-tight">
+          <span className="sr-only sm:not-sr-only">+</span>
+          {amount.toFixed(2)}
         </TableCell>
       );
     },
