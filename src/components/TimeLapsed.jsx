@@ -6,11 +6,17 @@ const TimeLapsed = ({ createdAt }) => {
   useEffect(() => {
     const calculateTimeLapsed = () => {
       const now = new Date();
-      const timeLapsed = new Date(now - createdAt);
-      const hours = String(timeLapsed.getUTCHours()).padStart(2, "0");
-      const minutes = String(timeLapsed.getUTCMinutes()).padStart(2, "0");
-      const seconds = String(timeLapsed.getUTCSeconds()).padStart(2, "0");
-      return `${hours}:${minutes}:${seconds}`;
+      const diffInMs = now - new Date(createdAt);
+      const totalSeconds = Math.floor(diffInMs / 1000);
+
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+        2,
+        "0"
+      )}:${String(seconds).padStart(2, "0")}`;
     };
 
     // Set initial time immediately
@@ -25,4 +31,5 @@ const TimeLapsed = ({ createdAt }) => {
 
   return <div className="font-medium text-base text-center">{timeLapsed}</div>;
 };
+
 export default TimeLapsed;
