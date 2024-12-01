@@ -28,20 +28,26 @@ function SimRacingClientMyRace() {
 
     const calculateTimeLapsed = () => {
       const now = new Date();
-      const timeLapsed = new Date(now - start);
-      const hours = String(timeLapsed.getUTCHours()).padStart(2, "0");
-      const minutes = String(timeLapsed.getUTCMinutes()).padStart(2, "0");
-      const seconds = String(timeLapsed.getUTCSeconds()).padStart(2, "0");
-      return `${hours}:${minutes}:${seconds}`;
+      const diffInMs = now - start; // Difference in milliseconds
+      const totalSeconds = Math.floor(diffInMs / 1000);
+
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+        2,
+        "0"
+      )}:${String(seconds).padStart(2, "0")}`;
     };
 
-    setTimeLapsed(calculateTimeLapsed());
+    setTimeLapsed(calculateTimeLapsed()); // Set initial time
 
     const interval = setInterval(() => {
       setTimeLapsed(calculateTimeLapsed());
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, [transactionDetails, error]);
 
   useEffect(() => {
