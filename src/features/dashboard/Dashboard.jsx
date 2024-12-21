@@ -49,7 +49,7 @@ import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
 import { DashboardTransactionsDataTable } from "./DashboardTransactionsDataTable";
 import { DashboardTransactionsColumn } from "./DashboardTransactionsColumn";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 
 function calculateTotalAmounts(
   paymentModes,
@@ -195,9 +195,23 @@ export function Dashboard() {
     );
 
     todayTotalVisitors =
-      carwashTransactions.length +
-      simracingTransactions.length +
-      parkingTransactions.length;
+      carwashTransactions.filter(
+        (transaction) =>
+          transaction.transactionStatus !== "Cancelled" &&
+          transaction.transactionStatus !== "Booked" &&
+          isSameDay(new Date(transaction.createdAt), new Date())
+      ).length +
+      simracingTransactions.filter(
+        (transaction) =>
+          transaction.transactionStatus !== "Cancelled" &&
+          transaction.transactionStatus !== "Booked" &&
+          isSameDay(new Date(transaction.createdAt), new Date())
+      ).length +
+      parkingTransactions.filter(
+        (transaction) =>
+          transaction.transactionStatus !== "Cancelled" &&
+          isSameDay(new Date(transaction.createdAt), new Date())
+      ).length;
 
     yesterdayTotalVisitors =
       data?.data?.yesterday?.carwash?.count +
