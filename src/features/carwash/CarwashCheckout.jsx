@@ -7,7 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, ChevronLeft, Contact, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+
+import {
+  Check,
+  ChevronLeft,
+  Contact,
+  Cross,
+  Loader2,
+  Trash,
+  X,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -43,6 +53,13 @@ import NavBackButton from "@/components/NavBackButton";
 
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
+  const [addOns, setAddOns] = useState(false);
+  const [newAddOn, setNewAddOn] = useState({
+    name: "",
+    price: "",
+  });
+  const [addOnsList, setAddOnsList] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -94,9 +111,18 @@ function CarwashCheckout() {
     parkingEnd,
     parkingTime,
     parkingCost,
+    addOnTotal,
     grossAmt,
     discountAmt,
     netAmt;
+
+  const handleRemoveAddOn = (index) => {
+    setAddOnsList((prev) => {
+      return prev.filter((addOn, i) => {
+        return i !== index;
+      });
+    });
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -113,6 +139,7 @@ function CarwashCheckout() {
         parkingOut: parkingEligible && parkingIncluded ? parkingEnd : undefined,
         parkingCost: Number(data.parkingCost) || undefined,
         // transactionTime: new Date().toISOString(),
+        addOns: addOnsList.length > 0 ? addOnsList : undefined,
         grossAmount: grossAmt,
         discountAmount: Number(data.discountAmt) || 0,
         netAmount: netAmt,
@@ -180,7 +207,12 @@ function CarwashCheckout() {
     parkingEnd = new Date().toISOString();
     parkingTime = getTimeDifference(parkingStart, parkingEnd);
     parkingCost = Number(watch("parkingCost")) || 0;
-    grossAmt = (Number(watch("parkingCost")) || 0) + (serviceCost || 0);
+    addOnTotal = addOnsList.reduce((sum, addOn) => sum + addOn.price, 0);
+
+    grossAmt =
+      (Number(watch("parkingCost")) || 0) +
+      (serviceCost || 0) +
+      (addOns ? addOnTotal : 0);
     discountAmt = Number(watch("discountAmt")) || 0;
 
     netAmt = grossAmt - discountAmt;
@@ -348,6 +380,127 @@ function CarwashCheckout() {
                       </div>
                     </>
                   )}
+                  <div className="border p-4 rounded-md shadow-sm my-2">
+                    <div className="flex   gap-4 items-center  justify-between">
+                      <Label>Add Ons</Label>
+                      <Switch checked={addOns} onCheckedChange={setAddOns} />
+                    </div>
+                    {addOns && (
+                      <div className="flex flex-col gap-2 border-t pt-3 mt-4">
+                        {addOnsList.map((addOn, index) => (
+                          <div
+                            key={addOn.id}
+                            className="flex items-center justify-between"
+                          >
+                            <div className="text-muted-foreground text-xs font-medium">
+                              {index + 1}. {addOn.name}
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="text-sm font-semibold">
+                                {addOn.price === 0
+                                  ? "Free"
+                                  : "Rs. " + addOn.price}
+                              </div>
+                              <X
+                                className="w-4 h-4 hover:scale-110 text-muted-foreground hover:text-destructive transition-all cursor-pointer"
+                                onClick={() => handleRemoveAddOn(index)}
+                              />
+                            </div>
+                          </div>
+                        ))}
+
+                        <div className="flex items-center gap-4 mt-2  justify-between">
+                          <Input
+                            id="newAddOn"
+                            type="text"
+                            autoComplete="off"
+                            placeholder="Add On"
+                            autoFocus
+                            value={newAddOn.name}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                document.getElementById("addAddOn").click();
+                                e.target.blur();
+                              }
+                            }}
+                            onChange={(e) =>
+                              setNewAddOn((prev) => {
+                                return { ...prev, name: e.target.value };
+                              })
+                            }
+                            className="text-sm font-medium "
+                          />
+                          <Input
+                            onWheel={(e) => e.target.blur()}
+                            id="newAddOnPrice"
+                            type="tel"
+                            autoComplete="off"
+                            inputMode="numeric"
+                            placeholder="Rs"
+                            value={newAddOn.price}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                document.getElementById("addAddOn").click();
+                                e.target.blur();
+                              }
+                            }}
+                            onChange={(e) => {
+                              const value = e.target.value;
+
+                              setNewAddOn((prev) => {
+                                return {
+                                  ...prev,
+                                  price: value,
+                                };
+                              });
+                            }}
+                            className="text-sm font-medium "
+                          />
+                          <Button
+                            id="addAddOn"
+                            type="button"
+                            size="sm"
+                            onClick={() => {
+                              if (!newAddOn.name) {
+                                toast({
+                                  title: "Add On Name is required",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              if (isNaN(parseFloat(newAddOn.price))) {
+                                toast({
+                                  title: "Add On Price must be a number",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              if (!Number(newAddOn.price) > 0) {
+                                toast({
+                                  title: "Add On Price is required",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              setAddOnsList([
+                                ...addOnsList,
+                                {
+                                  name: newAddOn.name,
+                                  price: Number(newAddOn.price),
+                                },
+                              ]);
+                              setNewAddOn({
+                                name: "",
+                                price: "",
+                              });
+                            }}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="border p-4 rounded-md shadow-sm my-2">
                     <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">

@@ -304,6 +304,26 @@ const Details = ({
             </div>
           </div>
         )}
+        {transactionDetails?.addOns?.length > 0 && (
+          <div className="grid gap-2">
+            <Label>Add Ons</Label>
+            <div className="border p-4 rounded-md shadow-sm">
+              <div className="flex gap-1 flex-col">
+                {transactionDetails?.addOns?.map((addOn, index) => (
+                  <div
+                    key={addOn._id}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="text-muted-foreground text-xs font-medium">
+                      {index + 1}. {addOn.name}
+                    </div>
+                    <div className="text-xs font-medium">Rs. {addOn.price}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {transactionDetails.transactionStatus === "Ready for Pickup" &&
           parkingEligible &&

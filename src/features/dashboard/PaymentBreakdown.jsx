@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { format } from "date-fns";
 
 function calculateTotalAmounts(
   paymentModes,
@@ -88,7 +89,7 @@ function PaymentBreakdown({
           <div>
             <CardTitle className="text-lg sm:text-xl">Breakdown</CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Breakdown of today&apos;s collection
+              Breakdown for {format(new Date(), "do MMM ")}
             </CardDescription>
           </div>
           <Select value={breakdownFilter} onValueChange={setBreakdownFilter}>

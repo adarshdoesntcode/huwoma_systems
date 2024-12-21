@@ -435,7 +435,7 @@ export function Dashboard() {
                     Transactions
                   </CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
-                    Recent transactions from your store.
+                    Transactions for {format(new Date(), "do MMMM ")}
                   </CardDescription>
                 </div>
                 <div>

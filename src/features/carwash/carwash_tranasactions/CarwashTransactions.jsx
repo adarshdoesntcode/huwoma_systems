@@ -620,6 +620,10 @@ function calculateVehicleServiceIncome(transactions) {
     const serviceVehicle = transaction.service?.id?.serviceVehicle;
     const serviceType = transaction.service?.id;
     const serviceCost = transaction.service?.cost;
+    const addOns = transaction?.addOns?.reduce(
+      (sum, addOn) => sum + addOn.price,
+      0
+    );
 
     if (serviceVehicle && serviceType && serviceCost !== undefined) {
       let vehicleTypeEntry = result.find(
@@ -648,7 +652,7 @@ function calculateVehicleServiceIncome(transactions) {
         vehicleTypeEntry.services.push(serviceEntry);
       }
 
-      serviceEntry.income += serviceCost;
+      serviceEntry.income += serviceCost + addOns;
     }
   });
 
