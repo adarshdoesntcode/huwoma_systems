@@ -50,40 +50,7 @@ import Loader from "@/components/Loader";
 import { DashboardTransactionsDataTable } from "./DashboardTransactionsDataTable";
 import { DashboardTransactionsColumn } from "./DashboardTransactionsColumn";
 import { format, isSameDay } from "date-fns";
-
-function calculateTotalAmounts(
-  paymentModes,
-  carWashTransactions,
-  simRacingTransactions,
-  parkingTransactions
-) {
-  // Combine all transactions into one array
-  const allTransactions = [
-    ...carWashTransactions,
-    ...simRacingTransactions,
-    ...parkingTransactions,
-  ];
-
-  // Filter only Completed transactions
-  const completedTransactions = allTransactions.filter(
-    (transaction) => transaction.transactionStatus === "Completed"
-  );
-
-  // Create a result array by mapping over payment modes
-  const result = paymentModes.map((paymentMode) => {
-    // Calculate total amount for the current payment mode
-    const totalAmount = completedTransactions
-      .filter((transaction) => transaction.paymentMode._id === paymentMode._id)
-      .reduce((sum, transaction) => sum + transaction.netAmount, 0);
-
-    return {
-      totalAmount: totalAmount, // Format totalAmount to two decimal places
-      paymentMethod: paymentMode.paymentModeName,
-    };
-  });
-
-  return result;
-}
+import PaymentBreakdown from "./PaymentBreakdown";
 
 function calculateChange(today, yesterday, format = "percentage") {
   if (yesterday === 0) {
@@ -246,13 +213,6 @@ export function Dashboard() {
       ...simracingCompletedTransactions,
       ...parkingCompletedTransactions,
     ].sort((a, b) => new Date(b.transactionTime) - new Date(a.transactionTime));
-
-    breakdownData = calculateTotalAmounts(
-      data.data.activePaymentModes,
-      carwashTransactions,
-      simracingTransactions,
-      parkingTransactions
-    );
   }
 
   const total = useMemo(
@@ -495,45 +455,13 @@ export function Dashboard() {
               />
             </CardContent>
           </Card>
-          <Card className="max-h-fit">
-            <CardHeader className="p-4 sm:p-6 sm:pb-2">
-              <CardTitle className="text-lg sm:text-xl">Breakdown</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Breakdown of today&apos;s collection
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
-              <Table className="w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead colSpan={3}>Method</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {breakdownData.map((invoice, index) => (
-                    <TableRow key={index}>
-                      <TableCell colSpan={3}>{invoice.paymentMethod}</TableCell>
-                      <TableCell className="text-end">
-                        Rs {invoice.totalAmount.toLocaleString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3}>Total</TableCell>
-                    <TableCell className="text-right font-bold text-base">
-                      Rs{" "}
-                      {breakdownData
-                        .reduce((acc, curr) => acc + curr.totalAmount, 0)
-                        .toLocaleString()}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </CardContent>
-          </Card>
+
+          <PaymentBreakdown
+            paymentModes={data.data.activePaymentModes}
+            carWashTransactions={carwashTransactions}
+            simRacingTransactions={simracingTransactions}
+            parkingTransactions={parkingTransactions}
+          />
         </div>
       </div>
     );

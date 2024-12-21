@@ -85,7 +85,7 @@ function RigCard({ rig, className }) {
 
                   <div
                     ref={canvasRef}
-                    className="flex flex-col animate-in  fade-in duration-500 items-center justify-center gap-8 p-6"
+                    className="flex flex-col  items-center justify-center gap-8 p-6"
                   >
                     <div>
                       <img
