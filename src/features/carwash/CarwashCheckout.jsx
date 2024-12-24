@@ -460,6 +460,7 @@ function CarwashCheckout() {
                             id="addAddOn"
                             type="button"
                             size="sm"
+                            variant="secondary"
                             onClick={() => {
                               if (!newAddOn.name) {
                                 toast({

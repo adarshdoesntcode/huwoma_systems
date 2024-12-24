@@ -145,6 +145,20 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CarwashTransactions", "CarwashCustomer"],
     }),
+    getPreEditData: builder.query({
+      query: () => ({
+        url: "/carwash/transaction/edit",
+        method: "GET",
+      }),
+    }),
+    editCarwashTransaction: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/edit",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
   }),
 });
 
@@ -168,4 +182,6 @@ export const {
   useUpdateCarwashCustomerMutation,
   useRollBackFromPickupMutation,
   useRollBackFromCompletedMutation,
+  useEditCarwashTransactionMutation,
+  useGetPreEditDataQuery,
 } = carwashApiSlice;

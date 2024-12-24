@@ -36,7 +36,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { Loader2, Undo2 } from "lucide-react";
+import { Edit, Loader2, Undo2 } from "lucide-react";
 
 import {
   useDeleteCarwashTransactionMutation,
@@ -52,9 +52,11 @@ import { useNavigate } from "react-router-dom";
 import ConfirmRollbackFromComplete from "./transaction_mutation/ConfirmRollbackFromComplete";
 import ConfirmRollbackFromPickup from "./transaction_mutation/ConfirmRollbackFromPickup";
 import ConfirmDelete from "./transaction_mutation/ConfirmDelete";
+import EditCarwashTransaction from "./transaction_mutation/EditCarwashTransaction";
 
 export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showRollbackFromPickup, setShowRollbackFromPickup] = useState(false);
   const [showRollbackFromComplete, setShowRollbackFromComplete] =
@@ -155,6 +157,17 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                       )}
                     </React.Fragment>
                   ))}
+
+                  <TableCell className=" hidden sm:flex items-center justify-center max-w-12">
+                    <Edit
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTransactionDetails(row.original);
+                        setShowEdit(true);
+                      }}
+                      className="h-4 w-4  text-muted-foreground hover:text-primary hover:scale-110 transition-all"
+                    />
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -205,6 +218,12 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
         setRollBackId={setRollBackId}
         rollBackId={rollBackId}
         origin={origin}
+      />
+      <EditCarwashTransaction
+        showEdit={showEdit}
+        setShowEdit={setShowEdit}
+        transactionDetails={transactionDetails}
+        setTransactionDetails={setTransactionDetails}
       />
     </>
   );
