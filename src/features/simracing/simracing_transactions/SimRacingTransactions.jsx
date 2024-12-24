@@ -6,6 +6,7 @@ import {
   endOfDay,
   format,
   startOfDay,
+  subDays,
   subMonths,
   subWeeks,
   subYears,
@@ -100,6 +101,20 @@ function SimRacingTransactions() {
       from: null,
     };
     switch (value) {
+      case "Today":
+        changedstate = {
+          text: "Today",
+          from: startOfDay(new Date()),
+          to: endOfDay(new Date()),
+        };
+        break;
+      case "Yesterday":
+        changedstate = {
+          text: "Yesterday",
+          from: startOfDay(subDays(filter.preset.to || new Date(), 1)),
+          to: endOfDay(subDays(filter.preset.to || new Date(), 1)),
+        };
+        break;
       case "Last Week":
         changedstate = {
           text: "Last Week",
@@ -230,6 +245,8 @@ function SimRacingTransactions() {
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="Today">Today</SelectItem>
+                    <SelectItem value="Yesterday">Yesterday</SelectItem>
                     <SelectItem value="Last Week">Last Week</SelectItem>
                     <SelectItem value="Last Month">Last Month</SelectItem>
                     <SelectItem value="Last 3 Months">Last 3 Months</SelectItem>

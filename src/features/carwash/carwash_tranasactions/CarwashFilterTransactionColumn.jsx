@@ -75,7 +75,10 @@ export const CarwashFilterTransactionColumn = [
       );
     },
     filterFn: (row, _, filterValue) => {
-      return row.original.vehicleNumber.toString().includes(filterValue);
+      return row.original.vehicleNumber
+        .toString()
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
     },
   },
   {

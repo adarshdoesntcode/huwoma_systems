@@ -45,7 +45,8 @@ export const CarwashColumn = [
     filterFn: (row, _, filterValue) => {
       return row.original.customer.customerContact
         .toString()
-        .includes(filterValue);
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
     },
     sortingFn: (a, b) => {
       const nameA = a.original.customer?.customerName?.toLowerCase() || "";
@@ -75,7 +76,10 @@ export const CarwashColumn = [
       );
     },
     filterFn: (row, _, filterValue) => {
-      return row.original.vehicleNumber.toString().includes(filterValue);
+      return row.original.vehicleNumber
+        .toString()
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
     },
   },
   {

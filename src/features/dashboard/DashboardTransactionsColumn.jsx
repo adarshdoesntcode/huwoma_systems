@@ -81,7 +81,10 @@ export const DashboardTransactionsColumn = [
     },
     filterFn: (row, _, filterValue) => {
       if (row.original?.vehicleNumber) {
-        return row.original?.vehicleNumber?.toString().includes(filterValue);
+        return row.original?.vehicleNumber
+          ?.toString()
+          .toLowerCase()
+          .includes(filterValue.toLowerCase());
       } else {
         return false;
       }
