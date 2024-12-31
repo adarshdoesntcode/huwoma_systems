@@ -294,6 +294,7 @@ const ServiceSelect = ({ customer, locationState }) => {
 
   const handleColourPicker = () => {
     if (showColourPicker === true) {
+      if (!newColor) return setShowColourPicker(false);
       setCustomCarColors((prev) => [
         ...prev,
         {
