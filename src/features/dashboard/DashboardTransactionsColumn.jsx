@@ -20,7 +20,7 @@ export const DashboardTransactionsColumn = [
     ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground text-sm py-0 hidden md:table-cell">
+        <TableCell className="text-muted-foreground text-xs py-0 hidden md:table-cell">
           {row.original.billNo}
         </TableCell>
       );
