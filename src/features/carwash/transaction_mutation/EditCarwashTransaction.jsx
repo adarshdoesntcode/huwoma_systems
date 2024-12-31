@@ -115,6 +115,7 @@ function EditCarwashTransaction({
 
         payload = {
           transactionId: transactionDetails._id,
+          vehicleModel: data.vehicleModel,
           vehicleNumber: data.vehicleNumber,
           paymentMode: paymentMode._id,
         };
@@ -129,6 +130,7 @@ function EditCarwashTransaction({
         }
         payload = {
           transactionId: transactionDetails._id,
+          vehicleModel: data.vehicleModel,
           vehicleNumber: data.vehicleNumber,
           serviceId: selectedService._id,
         };
@@ -174,9 +176,26 @@ function EditCarwashTransaction({
           onSubmit={handleSubmit(handleEdit)}
         >
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Vehicle No.
-            </Label>
+            <Label className="text-right">Model</Label>
+            <Input
+              id="vehicleModel"
+              type="text"
+              autoComplete="off"
+              placeholder="Company/Model"
+              autoFocus
+              defaultValue={transactionDetails?.vehicleModel}
+              {...register("vehicleModel", {
+                required: "Vehicle name is required",
+              })}
+              className={
+                errors.vehicleModel
+                  ? "border-destructive col-span-3"
+                  : "col-span-3"
+              }
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Vehicle No</Label>
             <Input
               id="vehicleNumber"
               type="tel"
@@ -184,7 +203,6 @@ function EditCarwashTransaction({
               autoComplete="off"
               placeholder="Vehicle Identification Number"
               defaultValue={transactionDetails?.vehicleNumber}
-              autoFocus
               {...register("vehicleNumber", {
                 required: "Identification is required",
               })}

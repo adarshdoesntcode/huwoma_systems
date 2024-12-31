@@ -2,6 +2,13 @@ import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
 export const CarwashFilterTransactionColumn = [
@@ -54,21 +61,68 @@ export const CarwashFilterTransactionColumn = [
     },
   },
   {
+    accessorKey: "vehicleName",
+
+    header: () => <TableHead className="">Vehicle</TableHead>,
+    cell: ({ row }) => {
+      return (
+        <TableCell className="px-4 py-2 sm:py-1 sm:px-4 text-center">
+          <div className="flex items-center gap-2">
+            {row?.original?.vehicleColor && (
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <div
+                      className={cn(
+                        `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
+                      )}
+                      style={{
+                        backgroundColor: row?.original?.vehicleColor?.colorCode,
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">
+                      {row?.original?.vehicleColor?.colorName}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            <div className="flex flex-col items-start">
+              <div className="font-semibold text-primary text-xs">
+                {row.original?.vehicleModel}
+              </div>
+              <div className="text-xs flex justify-between gap-2 text-muted-foreground">
+                {row.original.vehicleNumber}
+              </div>
+            </div>
+          </div>
+        </TableCell>
+      );
+    },
+    filterFn: (row, _, filterValue) => {
+      return row?.original?.vehicleModel
+        .toString()
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    },
+  },
+  {
     accessorKey: "serviceTypeName",
 
-    header: () => <TableHead> Service</TableHead>,
+    header: () => <TableHead> Wash</TableHead>,
     cell: ({ row }) => {
       const service = row.original.service?.id;
 
       return (
-        <TableCell className="px-4 py-2 sm:py-2 sm:px-4">
+        <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
           <div className="flex flex-col items-start">
-            <div className="font-semibold text-primary text-sm">
-              {row.original?.vehicleNumber}
+            <div className="font-semibold text-primary text-xs">
+              {service?.serviceTypeName}
             </div>
             <div className="text-xs flex justify-between gap-2 text-muted-foreground">
-              {service?.serviceVehicle?.billAbbreviation}_
-              {service?.billAbbreviation}
+              {service?.serviceVehicle.vehicleTypeName}
             </div>
           </div>
         </TableCell>

@@ -142,6 +142,11 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
     state: {
       sorting,
     },
+    initialState: {
+      pagination: {
+        pageSize: 50, // Set your initial page size here
+      },
+    },
   });
 
   return (

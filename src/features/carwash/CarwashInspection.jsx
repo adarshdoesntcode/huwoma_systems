@@ -36,6 +36,13 @@ import { Separator } from "@/components/ui/separator";
 import SubmitButton from "@/components/SubmitButton";
 import StatusBadge from "@/components/ui/StatusBadge";
 import NavBackButton from "@/components/NavBackButton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 function CarwashInspection() {
   const navigate = useNavigate();
@@ -156,7 +163,7 @@ function CarwashInspection() {
                   />
                 </div>
                 <div className="flex flex-1 flex-col  pb-2 mb-2">
-                  <div className="font-medium flex items-center justify-between">
+                  <div className="font-medium text-xs flex items-center justify-between">
                     <div className="text-sm">{service?.serviceTypeName}</div>
                     <div className="hidden sm:block">
                       <StatusBadge
@@ -166,8 +173,16 @@ function CarwashInspection() {
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {service?.serviceVehicle?.vehicleTypeName}
-                    <div className="font-medium text-primary">
-                      Vehicle No: {data?.data?.transaction?.vehicleNumber}
+
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium text-primary text-xs">
+                        {data?.data?.transaction?.vehicleModel}
+                        {data?.data?.transaction?.vehicleModel
+                          ? " - "
+                          : "Vehicle No - "}
+
+                        {data?.data?.transaction?.vehicleNumber}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -47,8 +47,12 @@ export const DashboardTransactionsColumn = [
             {type === "Carwash" && (
               <>
                 <div className="font-medium text-primary text-xs">
+                  {row.original?.vehicleModel}
+                  {row.original?.vehicleModel ? " - " : "Vehicle No - "}
+
                   {row.original?.vehicleNumber}
                 </div>
+
                 <div className="text-[10px] flex justify-between gap-2 text-muted-foreground">
                   {row.original?.service?.id?.serviceVehicle?.billAbbreviation}_
                   {row.original?.service?.id?.billAbbreviation}

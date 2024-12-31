@@ -253,8 +253,14 @@ function CarwashCheckout() {
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {vehicleName}
-                      <div className="font-medium text-primary">
-                        Vehicle No: {vehicleNumber}
+
+                      <div className="font-medium text-primary text-xs">
+                        {transactionDetails?.vehicleModel}
+                        {transactionDetails?.vehicleModel
+                          ? " - "
+                          : "Vehicle No - "}
+
+                        {transactionDetails?.vehicleNumber}
                       </div>
                     </div>
                   </div>

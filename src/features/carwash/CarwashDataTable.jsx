@@ -18,6 +18,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -134,6 +135,7 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                     </React.Fragment>
                   );
                 })}
+                <TableHead className="hidden sm:table-cell"></TableHead>
               </TableRow>
             ))}
           </TableHeader>
@@ -158,14 +160,14 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                     </React.Fragment>
                   ))}
 
-                  <TableCell className=" hidden sm:flex items-center justify-center max-w-12">
+                  <TableCell className=" hidden sm:table-cell text-center max-w-12">
                     <Edit
                       onClick={(e) => {
                         e.stopPropagation();
                         setTransactionDetails(row.original);
                         setShowEdit(true);
                       }}
-                      className="h-4 w-4  text-muted-foreground hover:text-primary hover:scale-110 transition-all"
+                      className="h-4 w-4 cursor-pointer  text-muted-foreground hover:text-primary  hover:scale-110 transition-all"
                     />
                   </TableCell>
                 </TableRow>

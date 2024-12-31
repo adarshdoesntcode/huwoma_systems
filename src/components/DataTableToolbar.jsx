@@ -144,8 +144,8 @@ export function DataTableToolbar({
 
           <Input
             placeholder="Search.."
-            type="tel"
-            inputMode="numeric"
+            // type="tel"
+            // inputMode="numeric"
             autoComplete="off"
             value={table.getColumn(filter)?.getFilterValue() ?? ""}
             onChange={(event) =>

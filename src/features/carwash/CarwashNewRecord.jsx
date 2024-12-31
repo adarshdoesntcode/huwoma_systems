@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Contact,
   Loader2,
+  Pipette,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -34,6 +35,7 @@ import Loader from "@/components/Loader";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
+  cn,
   findWashCountForCustomer,
   generateBillNo,
   getOrdinal,
@@ -41,10 +43,19 @@ import {
 import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
+import { CAR_COLOR_OPTIONS } from "@/lib/config";
+import { ChromePicker, CirclePicker, SketchPicker } from "react-color";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { set } from "date-fns";
 
 function CarwashNewRecord() {
   const [customer, setCoustomer] = useState(null);
   const [newCustomer, setNewCustomer] = useState(false);
+
   const [findCustomer] = useFindCustomerMutation();
   const [createCutomer] = useCreateCutomerMutation();
 
@@ -261,6 +272,11 @@ function CarwashNewRecord() {
 const ServiceSelect = ({ customer, locationState }) => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [carColors, setCarColors] = useState(CAR_COLOR_OPTIONS);
+  const [customCarColors, setCustomCarColors] = useState([]);
+  const [showColourPicker, setShowColourPicker] = useState(false);
+  const [newColor, setNewColor] = useState("");
   const [serviceCost, setServiceCost] = useState("");
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useVehicleTypeWithServicesQuery();
@@ -276,7 +292,39 @@ const ServiceSelect = ({ customer, locationState }) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const handleColourPicker = () => {
+    if (showColourPicker === true) {
+      setCustomCarColors((prev) => [
+        ...prev,
+        {
+          colorName: newColor.hex.toUpperCase(),
+          colorCode: newColor.hex,
+        },
+      ]);
+      setShowColourPicker(false);
+      newColor("");
+    } else {
+      setShowColourPicker(true);
+    }
+  };
+
   const onSubmit = async (data) => {
+    if (!selectedService) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: "Please select a service",
+      });
+      return;
+    }
+    if (!selectedColor) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: "Please select a color",
+      });
+      return;
+    }
     try {
       let res;
       if (locationState) {
@@ -286,6 +334,8 @@ const ServiceSelect = ({ customer, locationState }) => {
           serviceRate: serviceCost,
           actualRate: selectedService.serviceRate,
           vehicleNumber: data.vehicleNumber,
+          vehicleModel: data.vehicleModel,
+          vehicleColor: selectedColor,
           customer: customer._id,
           hour: new Date().getHours(),
           today: new Date().toISOString().slice(0, 10),
@@ -296,6 +346,8 @@ const ServiceSelect = ({ customer, locationState }) => {
           serviceRate: serviceCost,
           actualRate: selectedService.serviceRate,
           vehicleNumber: data.vehicleNumber,
+          vehicleModel: data.vehicleModel,
+          vehicleColor: selectedColor,
           customer: customer._id,
           hour: new Date().getHours(),
           today: new Date().toISOString().slice(0, 10),
@@ -375,6 +427,8 @@ const ServiceSelect = ({ customer, locationState }) => {
                       onClick={() => {
                         setSelectedVehicle(vehicle);
                         setSelectedService("");
+                        setSelectedColor("");
+                        reset();
                       }}
                     >
                       <div className="w-24 sm:w-36 relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2">
@@ -460,19 +514,29 @@ const ServiceSelect = ({ customer, locationState }) => {
                 <form id="transaction-1" onSubmit={handleSubmit(onSubmit)}>
                   <Separator className="mb-2" />
                   <div className="grid gap-2 mt-6">
-                    <Label>
-                      Vehicle No.{" "}
-                      <span className="font-normal text-xs text-muted-foreground">
-                        (for your own convenience)
-                      </span>
-                    </Label>
+                    <Label>Vehicle Name</Label>
+                    <Input
+                      id="vehicleModel"
+                      type="text"
+                      autoComplete="off"
+                      placeholder="Company/Model"
+                      autoFocus
+                      {...register("vehicleModel", {
+                        required: "Vehicle name is required",
+                      })}
+                      className={
+                        errors.vehicleModel ? "border-destructive" : ""
+                      }
+                    />
+                  </div>
+                  <div className="grid gap-2 mt-6">
+                    <Label>Vehicle Number</Label>
                     <Input
                       id="vehicleNumber"
                       type="tel"
                       inputMode="numeric"
                       autoComplete="off"
-                      placeholder="Vehicle Identification Number"
-                      autoFocus
+                      placeholder="Number Plate"
                       {...register("vehicleNumber", {
                         required: "Identification is required",
                       })}
@@ -480,6 +544,85 @@ const ServiceSelect = ({ customer, locationState }) => {
                         errors.vehicleNumber ? "border-destructive" : ""
                       }
                     />
+                  </div>
+                  <div className="grid gap-2 mt-6">
+                    <Label>Vehicle Colour</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {carColors.map((color) => (
+                        <div
+                          key={color.colorCode}
+                          className={cn(
+                            "flex items-center gap-2  p-2 border-2 grayscale-0 rounded-lg  cursor-pointer hover:text-primary hover:scale-105 hover:grayscale-0 transition-all duration-150",
+                            !selectedColor
+                              ? ""
+                              : selectedColor === color
+                              ? "border-muted-foreground border-2 grayscale-0"
+                              : "grayscale text-slate-400"
+                          )}
+                          onClick={() => {
+                            selectedColor === color
+                              ? setSelectedColor("")
+                              : setSelectedColor(color);
+                          }}
+                        >
+                          <div
+                            className={cn(
+                              `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
+                            )}
+                            style={{ backgroundColor: color.colorCode }}
+                          />
+                          <span className="text-xs">{color.colorName}</span>
+                        </div>
+                      ))}
+                      {customCarColors.map((color) => (
+                        <div
+                          key={color.colorCode}
+                          className={cn(
+                            "flex items-center gap-2  p-2 border-2 grayscale-0 rounded-lg  cursor-pointer hover:text-primary hover:scale-105 hover:grayscale-0 transition-all duration-300",
+                            !selectedColor
+                              ? ""
+                              : selectedColor === color
+                              ? "border-muted-foreground border-2 grayscale-0"
+                              : "grayscale text-slate-400"
+                          )}
+                          onClick={() => {
+                            selectedColor === color
+                              ? setSelectedColor("")
+                              : setSelectedColor(color);
+                          }}
+                        >
+                          <div
+                            className={cn(
+                              `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
+                            )}
+                            style={{ backgroundColor: color.colorCode }}
+                          />
+                          <span className="text-xs">{color.colorName}</span>
+                        </div>
+                      ))}
+                      <Popover
+                        open={showColourPicker}
+                        onOpenChange={handleColourPicker}
+                      >
+                        <PopoverTrigger>
+                          <div
+                            className={cn(
+                              "flex items-center gap-2  p-2 border-2 grayscale-0 rounded-lg  cursor-pointer hover:text-primary hover:scale-105 hover:grayscale-0 "
+                            )}
+                            onClick={() => {}}
+                          >
+                            <Pipette className="w-5 h-5  text-muted-foreground" />
+                            <span className="text-xs">{"New Colour"}</span>
+                          </div>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0 w-50" align="center">
+                          <ChromePicker
+                            color={newColor}
+                            onChange={setNewColor}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                 </form>
               </>

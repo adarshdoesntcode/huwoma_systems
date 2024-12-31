@@ -18,6 +18,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -36,7 +37,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { Loader2 } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 
@@ -119,6 +120,7 @@ export const SimRacingFinishedDataTable = ({ columns, data, origin }) => {
                     </React.Fragment>
                   );
                 })}
+                <TableHead className="hidden  sm:table-cell"></TableHead>
               </TableRow>
             ))}
           </TableHeader>
@@ -142,6 +144,16 @@ export const SimRacingFinishedDataTable = ({ columns, data, origin }) => {
                       )}
                     </React.Fragment>
                   ))}
+                  <TableCell className=" hidden  sm:table-cell    text-center">
+                    <Edit
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // setTransactionDetails(row.original);
+                        // setShowEdit(true);
+                      }}
+                      className="h-4 w-4 cursor-pointer  text-muted-foreground hover:text-primary hover:scale-110 transition-all"
+                    />
+                  </TableCell>
                 </TableRow>
               ))
             ) : (

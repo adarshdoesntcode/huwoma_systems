@@ -34,12 +34,19 @@ import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 
 import {
+  cn,
   getDaysDifference,
   getTimeDifference,
   handlePrint,
   timeDifference,
 } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const CarwashTransactionDetails = ({
   showDetails,
@@ -198,8 +205,29 @@ const Details = ({
                     transactionDetails?.service?.id?.serviceVehicle
                       ?.vehicleTypeName
                   }
-                  <div className="font-medium text-primary">
+                  {/* <div className="font-medium text-primary">
                     Vehicle No: {transactionDetails?.vehicleNumber}
+                  </div> */}
+                  <div className="flex items-center gap-2">
+                    <div className="font-medium text-primary text-xs">
+                      {transactionDetails?.vehicleModel}
+                      {transactionDetails?.vehicleModel
+                        ? " - "
+                        : "Vehicle No - "}
+
+                      {transactionDetails?.vehicleNumber}
+                    </div>
+                    {transactionDetails?.vehicleColor && (
+                      <div
+                        className={cn(
+                          `w-5 h-5 border  rounded-full shadow-lg  cursor-pointer`
+                        )}
+                        style={{
+                          backgroundColor:
+                            transactionDetails?.vehicleColor?.colorCode,
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -454,7 +482,11 @@ const Details = ({
                 Status
               </div>
               <div className="text-xs font-medium">
-                {transactionDetails?.paymentStatus || "-"}
+                {transactionDetails?.paymentStatus ? (
+                  <StatusBadge status={transactionDetails?.paymentStatus} />
+                ) : (
+                  "-"
+                )}
               </div>
             </div>
             {transactionDetails?.transactionStatus === "Completed" && (

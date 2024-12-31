@@ -65,7 +65,8 @@ const exportExcel = (rows) => {
       { width: 15 },
       { width: 24 },
       { width: 15 },
-      { width: 10 },
+      { width: 25 },
+      { width: 20 },
       { width: 15 },
       { width: 20 },
       { width: 14 },
@@ -84,6 +85,7 @@ const exportExcel = (rows) => {
       "Bill No",
       "Customer Name",
       "Contact",
+      "Model",
       "VehicleNo.",
       "Vehicle",
       "Service",
@@ -111,8 +113,11 @@ const exportExcel = (rows) => {
       Bill_No: row.original?.billNo || "",
       Customer_Name: row.original?.customer?.customerName || "",
       Customer_Contact: row.original?.customer?.customerContact || "",
+      Vehicle_Model: row.original?.vehicleModel
+        ? row.original?.vehicleModel
+        : "",
       Vehicle_Number: row.original?.vehicleNumber
-        ? Number(row.original?.vehicleNumber)
+        ? row.original?.vehicleNumber
         : "",
       Vehicle: row.original?.service?.id?.serviceVehicle?.vehicleTypeName || "",
       Service: row.original?.service?.id?.serviceTypeName || "",
@@ -135,6 +140,7 @@ const exportExcel = (rows) => {
         row.Bill_No,
         row.Customer_Name,
         row.Customer_Contact,
+        row.Vehicle_Model,
         row.Vehicle_Number,
         row.Vehicle,
         row.Service,
