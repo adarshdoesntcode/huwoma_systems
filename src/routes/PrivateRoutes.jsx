@@ -26,6 +26,7 @@ import ParkingCheckout from "@/features/parking/ParkingCheckout";
 import SimRacingTransactions from "@/features/simracing/simracing_transactions/SimRacingTransactions";
 import ParkingTransactions from "@/features/parking/parking_transactions/ParkingTransactions";
 import SystemActivity from "@/features/system_activity/SystemActivity";
+import CarwashOldRecord from "@/features/carwash/CarwashOldRecord";
 
 const PrivateRoutes = [
   {
@@ -46,6 +47,11 @@ const PrivateRoutes = [
   {
     path: "carwash/new",
     element: <CarwashNewRecord />,
+    errorElement: <Error />,
+  },
+  {
+    path: "carwash/old-record",
+    element: <CarwashOldRecord />,
     errorElement: <Error />,
   },
   {
@@ -133,11 +139,11 @@ const PrivateRoutes = [
     element: <SystemActivity />,
     errorElement: <Error />,
   },
-  {
-    path: "broadcast",
-    element: <Broadcast />,
-    errorElement: <Error />,
-  },
+  // {
+  //   path: "broadcast",
+  //   element: <Broadcast />,
+  //   errorElement: <Error />,
+  // },
   {
     path: "/settings",
     element: <SettingsLayout />,

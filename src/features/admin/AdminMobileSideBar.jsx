@@ -117,7 +117,7 @@ function AdminMobileSideBar() {
               </Badge> */}
             </Link>
           </SheetClose>
-          <SheetClose asChild>
+          {/* <SheetClose asChild>
             <Link
               to={`/broadcast`}
               className={`mx-[-0.65rem]  flex items-center ${
@@ -128,14 +128,9 @@ function AdminMobileSideBar() {
             >
               <Megaphone className="h-5 w-5" />
               Broadcast
-              {/* <Badge
-                variant="secondary"
-                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
-              >
-                2336
-              </Badge> */}
+
             </Link>
-          </SheetClose>
+          </SheetClose> */}
           <SheetClose asChild>
             <Link
               to={`/activity`}

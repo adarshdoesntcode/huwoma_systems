@@ -48,7 +48,7 @@ export const DashboardTransactionsColumn = [
               <>
                 <div className="font-medium text-primary text-xs">
                   {row.original?.vehicleModel}
-                  {row.original?.vehicleModel ? " - " : "Vehicle No - "}
+                  {row.original?.vehicleModel ? " - " : ""}
 
                   {row.original?.vehicleNumber}
                 </div>
