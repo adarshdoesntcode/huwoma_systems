@@ -43,7 +43,7 @@ export const CarwashBookingColumn = [
               {customer.customerContact}
             </div>
           </div>
-          <div className="text-xs block sm:hidden">Deadline: {date}</div>
+          <div className="text-xs block md:hidden">Deadline: {date}</div>
         </TableCell>
       );
     },
@@ -82,7 +82,7 @@ export const CarwashBookingColumn = [
       <DataTableColumnHeader
         column={column}
         title={"Deadline"}
-        className="hidden lg:table-cell px-1"
+        className="hidden md:table-cell px-1"
       />
     ),
     cell: ({ row }) => {
@@ -117,7 +117,7 @@ export const CarwashBookingColumn = [
       let time = format(new Date(row.original.createdAt), "h:mm a");
 
       return (
-        <TableCell className="hidden  xl:table-cell py-1">
+        <TableCell className="hidden  lg:table-cell py-1">
           <div className="flex flex-col items-start">
             <div className="font-medium">{time}</div>
             <div className="text-xs text-muted-foreground">{date}</div>

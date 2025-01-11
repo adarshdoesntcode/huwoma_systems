@@ -160,7 +160,7 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                     </React.Fragment>
                   ))}
 
-                  <TableCell className=" hidden sm:table-cell text-center max-w-12">
+                  <TableCell className="  text-center max-w-10 px-0 pr-4 sm:max-w-12">
                     <Edit
                       onClick={(e) => {
                         e.stopPropagation();

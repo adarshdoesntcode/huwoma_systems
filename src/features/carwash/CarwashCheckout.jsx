@@ -54,6 +54,8 @@ import NavBackButton from "@/components/NavBackButton";
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
   const [addOns, setAddOns] = useState(false);
+  const [redeem, setRedeem] = useState();
+
   const [newAddOn, setNewAddOn] = useState({
     name: "",
     price: "",
@@ -104,6 +106,7 @@ function CarwashCheckout() {
     serviceStart,
     serviceEnd,
     serviceCost,
+    isFreeTransaction,
     parkingBuffer,
     parkingEligible,
     parkingIncluded,
@@ -189,9 +192,15 @@ function CarwashCheckout() {
     vehicleNumber = transactionDetails?.vehicleNumber;
     serviceStart = transactionDetails?.service?.start;
     serviceEnd = transactionDetails?.service?.end;
+    isFreeTransaction =
+      washStreak >= washCount && washStreakApplicable ? true : false;
+
+    if (isFreeTransaction === true && redeem === undefined) {
+      setRedeem(true);
+    }
 
     serviceCost =
-      washStreak >= washCount && washStreakApplicable
+      washStreak >= washCount && washStreakApplicable && redeem
         ? 0
         : transactionDetails?.service?.id.serviceRate;
 
@@ -285,7 +294,7 @@ function CarwashCheckout() {
                         </div>
                       </div>
                     )}
-                    {/* {transactionDetails?.service?.cost >= 0 && ( */}
+
                     <div className="flex items-center justify-between  ">
                       <div className="text-muted-foreground text-xs font-medium">
                         Cost
@@ -294,6 +303,19 @@ function CarwashCheckout() {
                         {serviceCost === 0 ? "Free" : "Rs. " + serviceCost}
                       </div>
                     </div>
+                    {isFreeTransaction && (
+                      <>
+                        <Separator className="my-2" />
+                        <div className="flex items-center justify-between  ">
+                          <div className="text-sm font-semibold">Redeem</div>
+
+                          <Switch
+                            checked={redeem}
+                            onCheckedChange={setRedeem}
+                          />
+                        </div>
+                      </>
+                    )}
                     {/* )} */}
                   </div>
                 </div>

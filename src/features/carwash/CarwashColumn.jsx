@@ -31,7 +31,7 @@ export const CarwashColumn = [
     header: () => <TableHead>Vehicle</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="px-4 py-2 sm:py-1 sm:px-4 text-center">
+        <TableCell className="px-4 py-2 pl-2 sm:py-1 sm:px-4 text-center">
           <div className="flex items-center gap-2">
             {row?.original?.vehicleColor && (
               <TooltipProvider delayDuration={0}>
@@ -55,7 +55,7 @@ export const CarwashColumn = [
               </TooltipProvider>
             )}
             <div className="flex flex-col items-start">
-              <div className="font-semibold text-primary text-xs">
+              <div className="font-semibold text-primary text-left text-xs">
                 {row.original?.vehicleModel}
               </div>
               <div className="text-xs flex justify-between gap-2 text-muted-foreground">

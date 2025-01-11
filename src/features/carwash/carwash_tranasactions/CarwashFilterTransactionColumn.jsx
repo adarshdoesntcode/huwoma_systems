@@ -19,45 +19,10 @@ export const CarwashFilterTransactionColumn = [
     ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground hidden md:table-cell px-4 py-2">
+        <TableCell className="text-muted-foreground text-xs hidden md:table-cell px-4 py-2">
           {row.original.billNo}
         </TableCell>
       );
-    },
-  },
-
-  {
-    accessorKey: "customer",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Customer"
-        className={"px-1"}
-      />
-    ),
-    cell: ({ row }) => {
-      const customer = row.original.customer;
-
-      return (
-        <TableCell className="px-4 py-2">
-          <div className="flex flex-col items-start">
-            <div className="font-medium text-xs">{customer.customerName}</div>
-            <div className="text-xs text-muted-foreground">
-              {customer.customerContact}
-            </div>
-          </div>
-        </TableCell>
-      );
-    },
-    filterFn: (row, _, filterValue) => {
-      return row.original.customer.customerContact
-        .toString()
-        .includes(filterValue);
-    },
-    sortingFn: (a, b) => {
-      const nameA = a.original.customer?.customerName?.toLowerCase() || "";
-      const nameB = b.original.customer?.customerName?.toLowerCase() || "";
-      return nameA.localeCompare(nameB);
     },
   },
   {
@@ -108,6 +73,43 @@ export const CarwashFilterTransactionColumn = [
         .includes(filterValue.toLowerCase());
     },
   },
+  {
+    accessorKey: "customer",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Customer"
+        className={"px-1"}
+      />
+    ),
+    cell: ({ row }) => {
+      const customer = row.original.customer;
+
+      return (
+        <TableCell className="px-4 py-2">
+          <div className="flex flex-col items-start">
+            <div className="font-semibold text-xs ">
+              {customer.customerName}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {customer.customerContact}
+            </div>
+          </div>
+        </TableCell>
+      );
+    },
+    filterFn: (row, _, filterValue) => {
+      return row.original.customer.customerContact
+        .toString()
+        .includes(filterValue);
+    },
+    sortingFn: (a, b) => {
+      const nameA = a.original.customer?.customerName?.toLowerCase() || "";
+      const nameB = b.original.customer?.customerName?.toLowerCase() || "";
+      return nameA.localeCompare(nameB);
+    },
+  },
+
   {
     accessorKey: "serviceTypeName",
 

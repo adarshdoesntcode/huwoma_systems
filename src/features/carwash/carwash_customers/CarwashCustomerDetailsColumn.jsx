@@ -17,7 +17,7 @@ export const CarwashCustomerDetailsColumn = [
     header: () => <TableHead>Bill No</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground  px-4 py-2">
+        <TableCell className="text-muted-foreground text-xs  px-4 py-2">
           {row.original.billNo}
         </TableCell>
       );
