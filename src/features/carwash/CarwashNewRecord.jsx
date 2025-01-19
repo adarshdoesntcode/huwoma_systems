@@ -352,6 +352,7 @@ function CarwashNewRecord() {
                         type="tel"
                         inputMode="numeric"
                         autoComplete="off"
+                        autoFocus
                         placeholder="Number Plate"
                         {...register("vehicleNumber", {
                           // required: "Identification is required",
