@@ -19,7 +19,7 @@ import {
   Loader2,
   Pipette,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -393,7 +393,7 @@ function CarwashNewRecord() {
                                 </div>
                                 <div className="flex gap-2 items-center flex-wrap">
                                   {customer.vehicleModels.map((vehicle) => (
-                                    <>
+                                    <Fragment key={vehicle._id}>
                                       {vehicle?.vehicleColor && (
                                         <TooltipProvider delayDuration={0}>
                                           <Tooltip>
@@ -428,7 +428,7 @@ function CarwashNewRecord() {
                                           {vehicle.vehicleNumber}
                                         </div>
                                       </div>
-                                    </>
+                                    </Fragment>
                                   ))}
                                 </div>
                               </div>
