@@ -375,16 +375,16 @@ function CarwashNewRecord() {
                               setVehicleCustomerList(null);
                             }}
                           >
-                            <CardHeader className=" py-4 px-6">
+                            <CardHeader className=" py-4 px-4 sm:px-6">
                               <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-4">
-                                  <Avatar className="w-12 h-12">
+                                  {/* <Avatar className="w-12 h-12">
                                     <AvatarFallback>
                                       <Contact />
                                     </AvatarFallback>
-                                  </Avatar>
+                                  </Avatar> */}
                                   <div>
-                                    <CardTitle className="text-md ">
+                                    <CardTitle className="text-xs">
                                       {customer.customerName}
                                     </CardTitle>
                                     <CardDescription className="text-xs flex flex-col">
@@ -495,16 +495,11 @@ function CarwashNewRecord() {
                                 setCustomerList(null);
                               }}
                             >
-                              <CardHeader className=" py-4 px-6">
+                              <CardHeader className=" py-4 px-4 sm:px-6">
                                 <div className="flex justify-between items-center">
                                   <div className="flex items-center gap-4">
-                                    <Avatar className="w-12 h-12">
-                                      <AvatarFallback>
-                                        <Contact />
-                                      </AvatarFallback>
-                                    </Avatar>
                                     <div>
-                                      <CardTitle className="text-md ">
+                                      <CardTitle className="text-xs ">
                                         {customer.customerName}
                                       </CardTitle>
                                       {/* <CardDescription className="text-xs flex flex-col">
@@ -512,7 +507,9 @@ function CarwashNewRecord() {
                                       </CardDescription> */}
                                     </div>
                                   </div>
-                                  <Label>{customer?.customerContact}</Label>
+                                  <Label className="text-xs">
+                                    {customer?.customerContact}
+                                  </Label>
                                 </div>
                               </CardHeader>
                             </Card>
