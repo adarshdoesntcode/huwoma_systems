@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Car,
   Check,
   CheckCheck,
   ChevronLeft,
@@ -44,16 +45,25 @@ import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
 import { CAR_COLOR_OPTIONS } from "@/lib/config";
-import { ChromePicker, CirclePicker, SketchPicker } from "react-color";
+import { ChromePicker } from "react-color";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { set } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function CarwashNewRecord() {
-  const [customer, setCoustomer] = useState(null);
+  const [tab, setTab] = useState("number");
+  const [customer, setCustomer] = useState(null);
+  const [customerList, setCustomerList] = useState(null);
+  const [vehicleCustomerList, setVehicleCustomerList] = useState(null);
   const [newCustomer, setNewCustomer] = useState(false);
 
   const [findCustomer] = useFindCustomerMutation();
@@ -62,7 +72,7 @@ function CarwashNewRecord() {
   const locationState = useLocation().state || null;
   useEffect(() => {
     if (locationState?.customer) {
-      setCoustomer(locationState.customer);
+      setCustomer(locationState.customer);
     }
   }, [locationState]);
 
@@ -74,7 +84,7 @@ function CarwashNewRecord() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    if (newCustomer) {
+    if (newCustomer && tab !== "vehicle") {
       try {
         const res = await createCutomer({
           customerContact: data.customerContact,
@@ -84,7 +94,7 @@ function CarwashNewRecord() {
           throw new Error(res.error.data.message);
         }
         if (!res.error) {
-          setCoustomer(res.data.data);
+          setCustomer(res.data.data);
         }
       } catch (error) {
         toast({
@@ -93,20 +103,55 @@ function CarwashNewRecord() {
           description: error.message,
         });
       }
-    } else if (!newCustomer) {
+    } else if (tab === "vehicle" || !newCustomer) {
       try {
-        const res = await findCustomer({
-          customerContact: data.customerContact,
-        });
+        let payload;
+
+        if (tab === "number") {
+          payload = {
+            customerContact: data.customerContact,
+          };
+        } else if (tab === "vehicle") {
+          payload = {
+            vehicleNumber: data.vehicleNumber,
+          };
+        } else if (tab === "name") {
+          payload = {
+            customerName: data.customerName,
+          };
+        }
+        const res = await findCustomer(payload);
         if (res.error) {
           if (res.error.status === 404) {
-            setNewCustomer(true);
+            if (tab === "vehicle") {
+              toast({
+                variant: "destructive",
+                title: "Vehicle Not Found",
+                description: "No Customer with this vehicle number",
+              });
+            } else {
+              setNewCustomer(true);
+            }
           } else {
             throw new Error(res.error.data.message);
           }
         }
         if (!res.error) {
-          setCoustomer(res.data.data);
+          if (tab === "number") {
+            setCustomer(res.data.data);
+          } else if (tab === "vehicle") {
+            if (res.data.data.length === 1) {
+              setCustomer(res.data.data[0]);
+            } else if (res.data.data.length > 1) {
+              setVehicleCustomerList(res.data.data);
+            }
+          } else if (tab === "name") {
+            if (res.data.data.length === 1) {
+              setCustomer(res.data.data[0]);
+            } else if (res.data.data.length > 1) {
+              setCustomerList(res.data.data);
+            }
+          }
         }
       } catch (error) {
         toast({
@@ -124,7 +169,7 @@ function CarwashNewRecord() {
 
       {customer ? (
         <Card>
-          <CardHeader className="p-4 sm:p-6">
+          <CardHeader className="p-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
@@ -133,10 +178,10 @@ function CarwashNewRecord() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="text-md">
+                  <CardTitle className="text-md ">
                     {customer.customerName}
                   </CardTitle>
-                  <CardDescription className="text-xs">
+                  <CardDescription className="text-xs flex flex-col">
                     {customer.customerContact}
                   </CardDescription>
                 </div>
@@ -147,7 +192,9 @@ function CarwashNewRecord() {
                     size="sm"
                     variant="outline"
                     onClick={() => {
-                      setCoustomer(null);
+                      setCustomer(null);
+                      setCustomerList(null);
+                      setVehicleCustomerList(null);
                       reset();
                     }}
                   >
@@ -157,107 +204,457 @@ function CarwashNewRecord() {
               </div>
             </div>
           </CardHeader>
+          {customer.vehicleModels?.length > 0 && (
+            <CardFooter className="border-t py-3 flex items-center justify-center">
+              <div className="flex items-center gap-2">
+                {customer.vehicleModels.map((vehicle) => (
+                  <>
+                    {vehicle?.vehicleColor && (
+                      <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <div
+                              className={cn(
+                                `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
+                              )}
+                              style={{
+                                backgroundColor:
+                                  vehicle?.vehicleColor?.colorCode,
+                              }}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-xs">
+                              {vehicle?.vehicleColor?.colorName}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                    <div className="flex gap-2 items-start">
+                      <div className="font-semibold text-primary text-left text-xs">
+                        {vehicle?.model}
+                      </div>
+                      <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                        {vehicle.vehicleNumber}
+                      </div>
+                    </div>
+                  </>
+                ))}
+              </div>
+            </CardFooter>
+          )}
         </Card>
       ) : (
         <Card>
-          <CardHeader className="p-4 sm:p-6">
+          <CardHeader className="p-4 sm:p-6 sm:pb-4 ">
             <CardTitle className="text-xl sm:text-2xl">New Wash</CardTitle>
             <CardDescription>Customer for the new wash record</CardDescription>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="grid gap-4"
-              id="customer"
-            >
-              <div className="grid gap-2">
-                <Label>
-                  {errors.customerContact ? (
-                    <span className="text-destructive">
-                      {errors.customerContact.message}
-                    </span>
-                  ) : (
-                    <span>Customer Number</span>
-                  )}
-                </Label>
-                <Input
-                  onWheel={(e) => e.target.blur()}
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="+977"
-                  autoComplete="off"
-                  autoFocus
-                  {...register("customerContact", {
-                    required: "Number is required",
-                    valueAsNumber: true,
-                    validate: (value) =>
-                      String(value).length === 10 || "Number must be 10 digits",
-                  })}
-                  className={errors.customerContact ? "border-destructive" : ""}
-                />
-              </div>
-              {newCustomer && (
-                <div className="grid gap-2">
-                  <Label>
-                    {errors.customerName ? (
-                      <span className="text-destructive">
-                        {errors.customerName.message}
-                      </span>
-                    ) : (
-                      <span>Customer Name</span>
+            <form onSubmit={handleSubmit(onSubmit)} id="customer">
+              <Tabs value={tab} onValueChange={setTab}>
+                <TabsList>
+                  <TabsTrigger value="number">Contact</TabsTrigger>
+                  <TabsTrigger value="vehicle">Vehicle</TabsTrigger>
+                  <TabsTrigger value="name">Name</TabsTrigger>
+                </TabsList>
+                <TabsContent value="number">
+                  <div className="grid gap-2">
+                    <Label className="mt-2">
+                      {errors.customerContact ? (
+                        <span className="text-destructive">
+                          {errors.customerContact.message}
+                        </span>
+                      ) : (
+                        <span>Customer Number</span>
+                      )}
+                    </Label>
+                    <Input
+                      onWheel={(e) => e.target.blur()}
+                      type="tel"
+                      inputMode="numeric"
+                      placeholder="+977"
+                      autoComplete="off"
+                      autoFocus
+                      {...register("customerContact", {
+                        required:
+                          tab === "number" ? "Number is required" : false,
+
+                        validate:
+                          tab === "number"
+                            ? (value) =>
+                                String(value).length === 10 ||
+                                "Number must be 10 digits"
+                            : () => true,
+                      })}
+                      className={
+                        errors.customerContact ? "border-destructive" : ""
+                      }
+                    />
+                    {newCustomer && (
+                      <div className="grid gap-2">
+                        <Label className="mt-2">
+                          {errors.customerName ? (
+                            <span className="text-destructive">
+                              {errors.customerName.message}
+                            </span>
+                          ) : (
+                            <span>Customer Name</span>
+                          )}
+                        </Label>
+                        <Input
+                          id="customerName"
+                          type="text"
+                          placeholder="Name"
+                          autoFocus
+                          autoComplete="off"
+                          {...register("customerName", {
+                            // required: "Name is required",
+                            pattern: {
+                              value: /^[a-zA-Z\s]*$/,
+                              message: "Invalid Name",
+                            },
+                            onChange: (e) => {
+                              const words = e.target.value.split(" ");
+                              const newWords = words.map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              );
+                              const newValue = newWords.join(" ");
+                              if (e.target.value !== newValue) {
+                                e.target.value = newValue;
+                              }
+                            },
+                          })}
+                          className={
+                            errors.customerName ? "border-destructive" : ""
+                          }
+                        />
+                      </div>
                     )}
-                  </Label>
-                  <Input
-                    id="customerName"
-                    type="text"
-                    placeholder="Name"
-                    autoFocus
-                    autoComplete="off"
-                    {...register("customerName", {
-                      required: "Name is required",
-                      pattern: {
-                        value: /^[a-zA-Z\s]*$/,
-                        message: "Invalid Name",
-                      },
-                    })}
-                    className={errors.customerName ? "border-destructive" : ""}
-                  />
-                </div>
-              )}
+                  </div>
+                </TabsContent>
+                <TabsContent value="vehicle">
+                  {!vehicleCustomerList && (
+                    <div className="grid gap-2">
+                      <Label className="mt-2">
+                        {errors.vehicleNumber ? (
+                          <span className="text-destructive">
+                            {errors.vehicleNumber.message}
+                          </span>
+                        ) : (
+                          <span>Vehicle Number</span>
+                        )}
+                      </Label>
+                      <Input
+                        id="vehicleNumber"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        placeholder="Number Plate"
+                        {...register("vehicleNumber", {
+                          // required: "Identification is required",
+                        })}
+                        className={
+                          errors.vehicleNumber ? "border-destructive" : ""
+                        }
+                      />
+                    </div>
+                  )}
+                  <div className="grid gap-2 mt-4">
+                    {vehicleCustomerList &&
+                      vehicleCustomerList.map((customer) => {
+                        return (
+                          <Card
+                            key={customer._id}
+                            className="cursor-pointer hover:border-primary transition-all "
+                            onClick={() => {
+                              setCustomer(customer);
+                              setVehicleCustomerList(null);
+                            }}
+                          >
+                            <CardHeader className=" py-4 px-6">
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-4">
+                                  <Avatar className="w-12 h-12">
+                                    <AvatarFallback>
+                                      <Contact />
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <CardTitle className="text-md ">
+                                      {customer.customerName}
+                                    </CardTitle>
+                                    <CardDescription className="text-xs flex flex-col">
+                                      {customer.customerContact}
+                                    </CardDescription>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2 items-center flex-wrap">
+                                  {customer.vehicleModels.map((vehicle) => (
+                                    <>
+                                      {vehicle?.vehicleColor && (
+                                        <TooltipProvider delayDuration={0}>
+                                          <Tooltip>
+                                            <TooltipTrigger>
+                                              <div
+                                                className={cn(
+                                                  `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
+                                                )}
+                                                style={{
+                                                  backgroundColor:
+                                                    vehicle?.vehicleColor
+                                                      ?.colorCode,
+                                                }}
+                                              />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                              <p className="text-xs">
+                                                {
+                                                  vehicle?.vehicleColor
+                                                    ?.colorName
+                                                }
+                                              </p>
+                                            </TooltipContent>
+                                          </Tooltip>
+                                        </TooltipProvider>
+                                      )}
+                                      <div className="flex flex-col items-start">
+                                        <div className="font-semibold text-primary text-left text-xs">
+                                          {vehicle?.model}
+                                        </div>
+                                        <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                                          {vehicle.vehicleNumber}
+                                        </div>
+                                      </div>
+                                    </>
+                                  ))}
+                                </div>
+                              </div>
+                            </CardHeader>
+                          </Card>
+                        );
+                      })}
+                  </div>
+                </TabsContent>
+                <TabsContent value="name">
+                  <div className="grid gap-2">
+                    {!customerList && (
+                      <>
+                        <Label className="mt-2">
+                          {errors.customerName ? (
+                            <span className="text-destructive">
+                              {errors.customerName.message}
+                            </span>
+                          ) : (
+                            <span>Customer Name</span>
+                          )}
+                        </Label>
+                        <Input
+                          id="customerName"
+                          type="text"
+                          placeholder="Name"
+                          autoFocus
+                          autoComplete="off"
+                          {...register("customerName", {
+                            // required: "Name is required",
+                            pattern: {
+                              value: /^[a-zA-Z\s]*$/,
+                              message: "Invalid Name",
+                            },
+                            onChange: (e) => {
+                              const words = e.target.value.split(" ");
+                              const newWords = words.map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              );
+                              const newValue = newWords.join(" ");
+                              if (e.target.value !== newValue) {
+                                e.target.value = newValue;
+                              }
+                            },
+                          })}
+                          className={
+                            errors.customerName ? "border-destructive" : ""
+                          }
+                        />
+                      </>
+                    )}
+
+                    <div className="grid gap-2 ">
+                      {customerList &&
+                        customerList.map((customer) => {
+                          return (
+                            <Card
+                              key={customer._id}
+                              className="cursor-pointer hover:border-primary transition-all "
+                              onClick={() => {
+                                setCustomer(customer);
+                                setCustomerList(null);
+                              }}
+                            >
+                              <CardHeader className=" py-4 px-6">
+                                <div className="flex justify-between items-center">
+                                  <div className="flex items-center gap-4">
+                                    <Avatar className="w-12 h-12">
+                                      <AvatarFallback>
+                                        <Contact />
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                      <CardTitle className="text-md ">
+                                        {customer.customerName}
+                                      </CardTitle>
+                                      {/* <CardDescription className="text-xs flex flex-col">
+                                        {customer.customerContact}
+                                      </CardDescription> */}
+                                    </div>
+                                  </div>
+                                  <Label>{customer?.customerContact}</Label>
+                                </div>
+                              </CardHeader>
+                            </Card>
+                          );
+                        })}
+                    </div>
+                    {newCustomer && (
+                      <div className="grid gap-2">
+                        <Label>
+                          {errors.customerContact ? (
+                            <span className="text-destructive">
+                              {errors.customerContact.message}
+                            </span>
+                          ) : (
+                            <span>Customer Number</span>
+                          )}
+                        </Label>
+                        <Input
+                          onWheel={(e) => e.target.blur()}
+                          type="tel"
+                          inputMode="numeric"
+                          placeholder="+977"
+                          autoComplete="off"
+                          autoFocus
+                          {...register("customerContact", {
+                            // required: "Number is required",
+
+                            validate: (value) =>
+                              String(value).length === 10 ||
+                              "Number must be 10 digits",
+                          })}
+                          className={
+                            errors.customerContact ? "border-destructive" : ""
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </form>
           </CardContent>
           <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
             <div className="flex w-full items-center justify-between gap-4">
-              <div>
-                {newCustomer && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      reset();
-                      setNewCustomer(false);
-                    }}
-                  >
-                    Reset
-                  </Button>
-                )}
-              </div>
-              <SubmitButton
-                condition={isSubmitting}
-                loadingText={newCustomer ? "Creating" : "Finding"}
-                buttonText={
-                  newCustomer ? (
+              {tab === "number" && (
+                <div>
+                  {newCustomer && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        reset();
+                        setNewCustomer(false);
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+              )}
+              {tab === "vehicle" && (
+                <div>
+                  {vehicleCustomerList && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        reset();
+                        setVehicleCustomerList(null);
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+              )}
+              {tab === "name" && (
+                <div>
+                  {(newCustomer || customerList) && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        reset();
+                        setNewCustomer(false);
+                        setCustomerList(null);
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {tab === "number" && (
+                <SubmitButton
+                  condition={isSubmitting}
+                  loadingText={newCustomer ? "Creating" : "Finding"}
+                  buttonText={
+                    newCustomer ? (
+                      <>
+                        Create <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    ) : (
+                      <>
+                        Next <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    )
+                  }
+                  type="submit"
+                  form="customer"
+                />
+              )}
+              {tab === "vehicle" && (
+                <SubmitButton
+                  condition={isSubmitting}
+                  loadingText={"Finding"}
+                  disabled={vehicleCustomerList}
+                  buttonText={
                     <>
-                      Create <ChevronRight className="w-4 h-4 ml-2" />
+                      Find <ChevronRight className="w-4 h-4 ml-2" />
                     </>
-                  ) : (
-                    <>
-                      Next <ChevronRight className="w-4 h-4 ml-2" />
-                    </>
-                  )
-                }
-                type="submit"
-                form="customer"
-              />
+                  }
+                  type="submit"
+                  form="customer"
+                />
+              )}
+              {tab === "name" && (
+                <SubmitButton
+                  condition={isSubmitting}
+                  loadingText={newCustomer ? "Creating" : "Finding"}
+                  buttonText={
+                    newCustomer ? (
+                      <>
+                        Create <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    ) : (
+                      <>
+                        Next <ChevronRight className="w-4 h-4 ml-2" />
+                      </>
+                    )
+                  }
+                  type="submit"
+                  form="customer"
+                />
+              )}
             </div>
           </CardFooter>
         </Card>
@@ -272,7 +669,9 @@ function CarwashNewRecord() {
 const ServiceSelect = ({ customer, locationState }) => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedColor, setSelectedColor] = useState(
+    customer?.vehicleModels?.[0]?.vehicleColor || ""
+  );
   const [carColors, setCarColors] = useState(CAR_COLOR_OPTIONS);
   const [customCarColors, setCustomCarColors] = useState([]);
   const [showColourPicker, setShowColourPicker] = useState(false);
@@ -428,7 +827,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                       onClick={() => {
                         setSelectedVehicle(vehicle);
                         setSelectedService("");
-                        setSelectedColor("");
+                        // setSelectedColor("");
                         reset();
                       }}
                     >
@@ -519,11 +918,23 @@ const ServiceSelect = ({ customer, locationState }) => {
                     <Input
                       id="vehicleModel"
                       type="text"
+                      defaultValue={customer?.vehicleModels?.[0]?.model}
                       autoComplete="off"
                       placeholder="Company/Model"
                       autoFocus
                       {...register("vehicleModel", {
                         required: "Vehicle name is required",
+                        onChange: (e) => {
+                          const words = e.target.value.split(" ");
+                          const newWords = words.map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          );
+                          const newValue = newWords.join(" ");
+                          if (e.target.value !== newValue) {
+                            e.target.value = newValue;
+                          }
+                        },
                       })}
                       className={
                         errors.vehicleModel ? "border-destructive" : ""
@@ -535,6 +946,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                     <Input
                       id="vehicleNumber"
                       type="tel"
+                      defaultValue={customer?.vehicleModels?.[0]?.vehicleNumber}
                       inputMode="numeric"
                       autoComplete="off"
                       placeholder="Number Plate"
@@ -556,7 +968,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                             "flex items-center gap-2  p-2 border-2 grayscale-0 rounded-lg  cursor-pointer hover:text-primary hover:scale-105 hover:grayscale-0 transition-all duration-150",
                             !selectedColor
                               ? ""
-                              : selectedColor === color
+                              : selectedColor.colorCode == color.colorCode
                               ? "border-muted-foreground border-2 grayscale-0"
                               : "grayscale text-slate-400"
                           )}
@@ -582,7 +994,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                             "flex items-center gap-2  p-2 border-2 grayscale-0 rounded-lg  cursor-pointer hover:text-primary hover:scale-105 hover:grayscale-0 transition-all duration-300",
                             !selectedColor
                               ? ""
-                              : selectedColor === color
+                              : selectedColor.colorCode == color.colorCode
                               ? "border-muted-foreground border-2 grayscale-0"
                               : "grayscale text-slate-400"
                           )}

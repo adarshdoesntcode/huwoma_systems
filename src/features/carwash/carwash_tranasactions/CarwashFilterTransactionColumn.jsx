@@ -55,7 +55,7 @@ export const CarwashFilterTransactionColumn = [
               </TooltipProvider>
             )}
             <div className="flex flex-col items-start">
-              <div className="font-semibold text-primary text-xs">
+              <div className="font-semibold text-primary text-start text-xs">
                 {row.original?.vehicleModel}
               </div>
               <div className="text-xs flex justify-between gap-2 text-muted-foreground">
@@ -113,12 +113,12 @@ export const CarwashFilterTransactionColumn = [
   {
     accessorKey: "serviceTypeName",
 
-    header: () => <TableHead> Wash</TableHead>,
+    header: () => <TableHead className="hidden sm:table-cell"> Wash</TableHead>,
     cell: ({ row }) => {
       const service = row.original.service?.id;
 
       return (
-        <TableCell className="px-4 py-1 sm:py-1 sm:px-4">
+        <TableCell className="px-4 py-1 sm:py-1 sm:px-4 hidden sm:table-cell">
           <div className="flex flex-col items-start">
             <div className="font-semibold text-primary text-xs">
               {service?.serviceTypeName}

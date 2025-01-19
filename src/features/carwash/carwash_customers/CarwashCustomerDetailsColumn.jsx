@@ -14,10 +14,12 @@ import { format } from "date-fns";
 export const CarwashCustomerDetailsColumn = [
   {
     accessorKey: "billNo",
-    header: () => <TableHead>Bill No</TableHead>,
+    header: () => (
+      <TableHead className="hidden sm:table-cell">Bill No</TableHead>
+    ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground text-xs  px-4 py-2">
+        <TableCell className="text-muted-foreground text-xs  px-4 py-2 hidden sm:table-cell">
           {row.original.billNo}
         </TableCell>
       );
@@ -88,7 +90,7 @@ export const CarwashCustomerDetailsColumn = [
               </TooltipProvider>
             )}
             <div className="flex flex-col items-start">
-              <div className="font-semibold text-primary text-xs">
+              <div className="font-semibold text-primary text-xs text-start">
                 {row.original?.vehicleModel}
               </div>
               <div className="text-xs flex justify-between gap-2 text-muted-foreground">

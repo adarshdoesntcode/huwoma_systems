@@ -1,6 +1,9 @@
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { TableCell, TableHead } from "@/components/ui/table";
+import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+
+import { Copy } from "lucide-react";
 
 export const CarwashCustomersColumn = [
   {
@@ -48,13 +51,61 @@ export const CarwashCustomersColumn = [
       const customer = row.original;
 
       return (
-        <TableCell className="px-4 py-2">
-          <div className="text-xs ">{customer.customerContact}</div>
+        <TableCell className="px-4 py-3">
+          <div className="flex  items-center gap-2">
+            <div className="text-xs ">{customer.customerContact}</div>
+            <Copy
+              className="text-muted-foreground w-4 h-4 hover:text-primary hover:cursor-pointer hover:scale-110"
+              title="Copy"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(customer.customerContact);
+                toast({
+                  description: `${customer.customerContact} copied to clipboard.`,
+                  duration: 1000,
+                });
+              }}
+            />
+          </div>
         </TableCell>
       );
     },
     filterFn: (row, _, filterValue) => {
       return row.original.customerContact.toString().includes(filterValue);
+    },
+  },
+  {
+    accessorKey: "customerTransactionsNumber",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="No of Washes"
+        className={"px-1 hidden lg:table-cell"}
+        buttonClass={"mx-auto"}
+      />
+    ),
+    cell: ({ row }) => {
+      const transactions = row.original.transactions.filter(
+        (transaction) => transaction.transactionStatus === "Completed"
+      );
+      const total = transactions.length;
+
+      return (
+        <TableCell className="hidden lg:table-cell px-4 text-xs text-muted-foreground text-center py-2">
+          {total}
+        </TableCell>
+      );
+    },
+
+    sortingFn: (a, b) => {
+      const A = a.original.transactions.filter(
+        (transaction) => transaction.transactionStatus === "Completed"
+      ).length;
+      const B = b.original.transactions.filter(
+        (transaction) => transaction.transactionStatus === "Completed"
+      ).length;
+
+      return B - A;
     },
   },
 

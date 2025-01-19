@@ -60,7 +60,7 @@ function CurrentClock({ dateObject }) {
             {clock.date}
             <Popover>
               <PopoverTrigger asChild>
-                <Button className="mt-2 w-full">View Calander</Button>
+                <Button className="mt-2 w-full">View Calendar</Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
