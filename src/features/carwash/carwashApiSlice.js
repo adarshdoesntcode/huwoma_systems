@@ -30,7 +30,14 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CarwashCustomer"],
     }),
-
+    resetStreak: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/customer/resetstreak",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashCustomer"],
+    }),
     createCutomer: builder.mutation({
       query: (credentials) => ({
         url: "/carwash/customer/new",
@@ -184,4 +191,5 @@ export const {
   useRollBackFromCompletedMutation,
   useEditCarwashTransactionMutation,
   useGetPreEditDataQuery,
+  useResetStreakMutation,
 } = carwashApiSlice;

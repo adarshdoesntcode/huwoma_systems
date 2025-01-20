@@ -205,7 +205,7 @@ function CarwashNewRecord() {
             </div>
           </CardHeader>
           {customer.vehicleModels?.length > 0 && (
-            <CardFooter className="border-t py-3 flex items-center justify-center">
+            <CardFooter className="border-t py-3 flex items-center flex-wrap justify-center">
               <div className="flex items-center gap-2">
                 {customer.vehicleModels.map((vehicle) => (
                   <>

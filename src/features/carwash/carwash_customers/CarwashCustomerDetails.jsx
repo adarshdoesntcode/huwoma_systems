@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import {
   useGetCarwashCustomerByIdQuery,
+  useResetStreakMutation,
   useUpdateCarwashCustomerMutation,
 } from "../carwashApiSlice";
 import Loader from "@/components/Loader";
@@ -29,17 +30,29 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Edit, Save } from "lucide-react";
+import { Edit, Loader2, Save, Undo2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import SubmitButton from "@/components/SubmitButton";
 import { CarwashCustomerDetailsColumn } from "./CarwashCustomerDetailsColumn";
+import { ResetIcon } from "@radix-ui/react-icons";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
   const [isEdit, setIsEdit] = useState(false);
+  const [isReset, setIsReset] = useState(false);
+  const [serviceId, setServiceId] = useState("");
 
   const {
     register,
@@ -53,6 +66,11 @@ function CarwashCustomerDetails() {
 
   const { data, isLoading, isFetching, isSuccess, isError, error } =
     useGetCarwashCustomerByIdQuery(id);
+
+  const handleReset = (serviceId) => {
+    setIsReset(true);
+    setServiceId(serviceId);
+  };
 
   let customer = {};
   let customerTransactions = [];
@@ -83,6 +101,7 @@ function CarwashCustomerDetails() {
           ).length;
           return {
             serviceTypeName: service.serviceTypeName,
+            serviceId: service._id,
             washCount: service.streakApplicable.washCount,
             totalTransactions,
             streak,
@@ -272,12 +291,18 @@ function CarwashCustomerDetails() {
                             <TableHead className=" py-0 text-center ">
                               Total Washes{" "}
                             </TableHead>
+                            <TableHead className=" py-0 text-center ">
+                              Reset
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {vehicleWithService.services.map((service, index) => {
                             return (
-                              <TableRow key={index}>
+                              <TableRow
+                                key={index}
+                                className="hover:bg-inherit"
+                              >
                                 <TableCell className="font-medium">
                                   <span>{service.serviceTypeName}</span>
                                 </TableCell>
@@ -298,6 +323,18 @@ function CarwashCustomerDetails() {
                                 </TableCell>
                                 <TableCell className="text-center text-xs font-medium">
                                   <span>{service.totalTransactions}</span>
+                                </TableCell>
+                                <TableCell className="text-center text-xs font-bold">
+                                  <Button
+                                    disabled={service.streak === 0}
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleReset(service.serviceId)
+                                    }
+                                  >
+                                    <Undo2 className="h-4 w-4" />
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             );
@@ -326,6 +363,13 @@ function CarwashCustomerDetails() {
             />
           </CardContent>
         </Card>
+        <ResetStreak
+          customerId={id}
+          serviceId={serviceId}
+          setServiceId={setServiceId}
+          isReset={isReset}
+          setIsReset={setIsReset}
+        />
       </div>
     );
   } else if (isError) {
@@ -334,5 +378,75 @@ function CarwashCustomerDetails() {
 
   return content;
 }
+
+const ResetStreak = ({
+  customerId,
+  serviceId,
+  setServiceId,
+  isReset,
+  setIsReset,
+}) => {
+  const [resetStreak, { isLoading }] = useResetStreakMutation();
+
+  const handleCloseReset = () => {
+    setIsReset(false);
+    setServiceId("");
+  };
+
+  const handleResetStreak = async () => {
+    try {
+      if (!customerId && !serviceId) return;
+      const res = await resetStreak({
+        customerId,
+        serviceId,
+      });
+
+      if (res.error) {
+        handleCloseReset();
+        throw new Error(res.error.data.message);
+      }
+
+      if (!res.error) {
+        handleCloseReset();
+        toast({
+          title: "Streak Reset!",
+          description: "Successfully",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
+  };
+  return (
+    <AlertDialog open={isReset} onOpenChange={handleCloseReset}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will reset the streak to zero.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          {isLoading ? (
+            <Button variant="destructive" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Terminating
+            </Button>
+          ) : (
+            <Button variant="destructive" onClick={handleResetStreak}>
+              Reset
+            </Button>
+          )}
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
 
 export default CarwashCustomerDetails;
