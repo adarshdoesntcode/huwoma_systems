@@ -301,7 +301,6 @@ function CarwashOldRecord() {
                     type="text"
                     autoComplete="off"
                     placeholder="Company/Model"
-                    autoFocus
                     {...register("vehicleModel", {
                       required: "Vehicle name is required",
                       onChange: (e) => {

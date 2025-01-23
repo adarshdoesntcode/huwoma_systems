@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
 import {
+  useEditCarwashTransactionMutation,
+  useEditCustomerVehicleMutation,
   useGetCarwashCustomerByIdQuery,
   useResetStreakMutation,
   useUpdateCarwashCustomerMutation,
@@ -30,7 +32,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Edit, Loader2, Save, Undo2 } from "lucide-react";
+import { CheckCheck, Edit, Loader2, Merge, Save, Undo2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
@@ -40,6 +42,7 @@ import { CarwashCustomerDetailsColumn } from "./CarwashCustomerDetailsColumn";
 import { ResetIcon } from "@radix-ui/react-icons";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -47,12 +50,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import EditCustomerVehicle from "../vehicle_mutation/EditCustomerVehicle";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
   const [isEdit, setIsEdit] = useState(false);
   const [isReset, setIsReset] = useState(false);
   const [serviceId, setServiceId] = useState("");
+  const [vehicleDetails, setVehicleDetails] = useState("");
+
+  const [showVehicleEdit, setShowVehicleEdit] = useState(false);
+  const [mergeItems, setMergeItems] = useState([]);
 
   const {
     register,
@@ -76,6 +100,7 @@ function CarwashCustomerDetails() {
   let customerTransactions = [];
   let vehicleWithServices = [];
   let vehicleWithServicesAndStats;
+  let customerVehicles = [];
 
   if (data) {
     customer = data?.data.customer || {};
@@ -112,7 +137,30 @@ function CarwashCustomerDetails() {
           services,
         };
       });
+
+    customerVehicles = customerTransactions.reduce((acc, transaction) => {
+      const { vehicleModel, vehicleNumber, vehicleColor } = transaction;
+      const key = `${vehicleModel}-${vehicleNumber}-${vehicleColor?.colorCode}-${vehicleColor?.colorName}`;
+      const existing = acc.find((item) => item.key === key);
+      if (existing) {
+        existing.transactions.push(transaction);
+      } else {
+        acc.push({
+          key,
+          vehicleModel,
+          vehicleNumber,
+          vehicleColor,
+          transactions: [transaction],
+        });
+      }
+      return acc;
+    }, []);
   }
+
+  const handleEditVehicle = (vehicle) => {
+    setShowVehicleEdit(true);
+    setVehicleDetails(vehicle);
+  };
 
   const onSubmit = async (data) => {
     if (!customer) return;
@@ -346,6 +394,77 @@ function CarwashCustomerDetails() {
                 );
               })}
             </div>
+            <Separator className="my-4" />
+            <div className="space-y-4">
+              <Label>Customer Vehicles</Label>
+
+              <div>
+                <div className="flex  gap-4 flex-wrap">
+                  {customerVehicles.map((vehicle, index) => (
+                    <div
+                      key={index}
+                      className=" cursor-grab border rounded-md shadow-md"
+                      draggable
+                      onDragOver={(e) => e.preventDefault()}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData(
+                          "vehicle",
+                          JSON.stringify(vehicle)
+                        );
+                      }}
+                      onDrop={(e) => {
+                        const droppedVehicle = JSON.parse(
+                          e.dataTransfer.getData("vehicle")
+                        );
+                        if (droppedVehicle.key !== vehicle.key) {
+                          setMergeItems([vehicle, droppedVehicle]);
+                        }
+                      }}
+                    >
+                      <div className="flex p-4 pb-2 gap-2 items-start">
+                        {vehicle?.vehicleColor ? (
+                          <div
+                            className={cn(
+                              `w-7 h-7 border-2  rounded-full shadow-lg`
+                            )}
+                            style={{
+                              backgroundColor: vehicle?.vehicleColor?.colorCode,
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className={cn(
+                              `w-7 h-7 border-2 flex items-center justify-center text-muted-foreground  text-[8px] rounded-full shadow-lg`
+                            )}
+                          >
+                            N/A
+                          </div>
+                        )}
+                        <div className="flex flex-col  items-start ">
+                          <div className="font-semibold text-primary text-left text-xs">
+                            {vehicle?.vehicleModel || "Not Set"}
+                          </div>
+                          <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                            {vehicle?.vehicleNumber || "Not Set"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="border-t flex justify-evenly">
+                        <Button
+                          variant="ghost"
+                          className="w-full text-muted-foreground text-xs "
+                          size="sm"
+                          onClick={() => handleEditVehicle(vehicle)}
+                        >
+                          Edit <Edit className="h-3 w-3 ml-2" />
+                        </Button>
+                        <Separator orientation="vertical" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
             <Separator className="my-6" />
 
             <CarwashFilterTranasactionDataTable
@@ -369,6 +488,21 @@ function CarwashCustomerDetails() {
           setServiceId={setServiceId}
           isReset={isReset}
           setIsReset={setIsReset}
+        />
+        {showVehicleEdit && (
+          <EditCustomerVehicle
+            showVehicleEdit={showVehicleEdit}
+            setShowVehicleEdit={setShowVehicleEdit}
+            vehicleDetails={vehicleDetails}
+            setVehicleDetails={setVehicleDetails}
+            customerId={id}
+          />
+        )}
+
+        <MergeVehicles
+          mergeItems={mergeItems}
+          setMergeItems={setMergeItems}
+          customerId={id}
         />
       </div>
     );
@@ -446,6 +580,134 @@ const ResetStreak = ({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  );
+};
+
+const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
+  const [selectedVehicle, setSelectedVehicle] = useState("");
+
+  const [editCustomerVehicle, { isLoading: isSubmitting }] =
+    useEditCustomerVehicleMutation();
+  const handleCloseMerge = () => {
+    setMergeItems([]);
+    setSelectedVehicle("");
+  };
+
+  const handleMerge = async () => {
+    try {
+      if (!selectedVehicle) return;
+      let payload;
+
+      payload = {
+        transactions: mergeItems.flatMap((item) =>
+          item.transactions.map((i) => i._id)
+        ),
+        customerId: customerId,
+        vehicleModel: selectedVehicle?.vehicleModel,
+        vehicleNumber: selectedVehicle?.vehicleNumber,
+        vehicleColor: selectedVehicle?.vehicleColor,
+      };
+
+      const res = await editCustomerVehicle(payload);
+      if (res.error) {
+        handleCloseMerge();
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        handleCloseMerge();
+        toast({
+          title: "Vehicles Merged!",
+          description: "Successfully",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
+  };
+
+  return (
+    <Dialog open={mergeItems.length === 2} onOpenChange={handleCloseMerge}>
+      <DialogContent className="sm:max-w-[425px] ">
+        <DialogHeader>
+          <DialogTitle>Merge Vehicle</DialogTitle>
+          <DialogDescription>
+            Select the vehicle you want to keep
+          </DialogDescription>
+        </DialogHeader>
+        {
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
+            <div className="grid gap-4">
+              {mergeItems.map((vehicle, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "border-2 cursor-pointer relative hover:border-muted-foreground p-4 pb-2  transition-all  rounded-xl shadow-md",
+                    selectedVehicle.key === vehicle.key ? "border-primary" : ""
+                  )}
+                  onClick={() => setSelectedVehicle(vehicle)}
+                >
+                  {selectedVehicle.key === vehicle.key && (
+                    <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
+                      <CheckCheck className="w-4 h-4 " />
+                    </Badge>
+                  )}
+                  <div className="flex py-2 pb-2 gap-4 items-start">
+                    {vehicle?.vehicleColor ? (
+                      <div
+                        className={cn(
+                          `w-7 h-7 border-2  rounded-full shadow-lg`
+                        )}
+                        style={{
+                          backgroundColor: vehicle?.vehicleColor?.colorCode,
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className={cn(
+                          `w-7 h-7 border-2 flex items-center justify-center text-muted-foreground  text-[8px] rounded-full shadow-lg`
+                        )}
+                      >
+                        N/A
+                      </div>
+                    )}
+                    <div className="flex  flex-col gap-1  items-start ">
+                      <p className="text-sm font-medium leading-none">
+                        {vehicle?.vehicleModel || "Not Set"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {vehicle?.vehicleNumber}
+                      </p>
+                    </div>
+                  </div>
+                  <div></div>
+                  <p className="text-xs flex items-center justify-center border-t gap-2 mt-1 pt-2 text-muted-foreground">
+                    Records:{" "}
+                    <span className="font-semibold ">
+                      {" "}
+                      {vehicle.transactions.length}{" "}
+                    </span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        }
+        <DialogFooter>
+          <SubmitButton
+            disabled={!selectedVehicle}
+            condition={isSubmitting}
+            loadingText="Saving..."
+            buttonText="Save Changes"
+            onClick={handleMerge}
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

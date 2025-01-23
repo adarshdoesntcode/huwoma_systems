@@ -205,8 +205,8 @@ function CarwashNewRecord() {
             </div>
           </CardHeader>
           {customer.vehicleModels?.length > 0 && (
-            <CardFooter className="border-t py-3 flex items-center flex-wrap justify-center">
-              <div className="flex items-center gap-2">
+            <CardFooter className="border-t py-3 flex items-center justify-center">
+              <div className="flex items-center flex-wrap  gap-2">
                 {customer.vehicleModels.map((vehicle) => (
                   <>
                     {vehicle?.vehicleColor && (
@@ -376,7 +376,7 @@ function CarwashNewRecord() {
                             }}
                           >
                             <CardHeader className=" py-4 px-4 sm:px-6">
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between gap-4  items-center">
                                 <div className="flex items-center gap-4">
                                   {/* <Avatar className="w-12 h-12">
                                     <AvatarFallback>
@@ -394,7 +394,10 @@ function CarwashNewRecord() {
                                 </div>
                                 <div className="flex gap-2 items-center flex-wrap">
                                   {customer.vehicleModels.map((vehicle) => (
-                                    <Fragment key={vehicle._id}>
+                                    <div
+                                      className="flex gap-2 items-center"
+                                      key={vehicle._id}
+                                    >
                                       {vehicle?.vehicleColor && (
                                         <TooltipProvider delayDuration={0}>
                                           <Tooltip>
@@ -429,7 +432,7 @@ function CarwashNewRecord() {
                                           {vehicle.vehicleNumber}
                                         </div>
                                       </div>
-                                    </Fragment>
+                                    </div>
                                   ))}
                                 </div>
                               </div>
