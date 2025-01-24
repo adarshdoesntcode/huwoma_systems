@@ -593,7 +593,7 @@ const DetailsFooter = ({
   };
 
   return (
-    <div className="flex justify-between gap-4 items-center w-full">
+    <div className="flex justify-between gap-4 items-start sm:items-center w-full">
       <div>
         {transactionDetails?.transactionStatus === "In Queue" &&
           origin !== "transactions" && (
@@ -635,10 +635,10 @@ const DetailsFooter = ({
       </div>
       {transactionDetails?.transactionStatus === "In Queue" &&
         origin !== "transactions" && (
-          <>
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
             <Button
               variant="secondary"
-              className=" hover:border-primary border"
+              className=" hover:border-primary border w-full"
               onClick={() => {
                 navigate("/carwash/checkout", {
                   state: { transactionDetails, origin: "queue" },
@@ -658,7 +658,7 @@ const DetailsFooter = ({
               Inspection
               <ChevronRight className="h-4 w-4 ml-2" />{" "}
             </Button>
-          </>
+          </div>
         )}
 
       {transactionDetails?.transactionStatus === "Ready for Pickup" &&

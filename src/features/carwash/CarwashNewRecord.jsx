@@ -207,8 +207,8 @@ function CarwashNewRecord() {
           {customer.vehicleModels?.length > 0 && (
             <CardFooter className="border-t py-3 flex items-center justify-center">
               <div className="flex items-center flex-wrap  gap-2">
-                {customer.vehicleModels.map((vehicle) => (
-                  <>
+                {customer.vehicleModels.map((vehicle, index) => (
+                  <Fragment key={index}>
                     {vehicle?.vehicleColor && (
                       <TooltipProvider delayDuration={0}>
                         <Tooltip>
@@ -239,7 +239,7 @@ function CarwashNewRecord() {
                         {vehicle.vehicleNumber}
                       </div>
                     </div>
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </CardFooter>

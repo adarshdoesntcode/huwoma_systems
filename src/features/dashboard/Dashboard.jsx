@@ -274,8 +274,8 @@ export function Dashboard() {
                 +{carwashRevenue.toLocaleString()}
               </div>
               {pendingCarwashAmount > 0 && (
-                <p className="text-xs text-orange-500">
-                  ~ {pendingCarwashAmount.toLocaleString()} Pending
+                <p className="text-xs font-medium text-orange-500">
+                  ~ {pendingCarwashAmount.toLocaleString()} pending
                 </p>
               )}
               {pendingCarwashAmount === 0 && (
