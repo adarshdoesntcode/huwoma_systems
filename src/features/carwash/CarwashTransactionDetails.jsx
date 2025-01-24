@@ -47,6 +47,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const CarwashTransactionDetails = ({
   showDetails,
@@ -147,7 +152,7 @@ const CarwashTransactionDetails = ({
   } else {
     return (
       <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
-        <SheetContent className="min-w-[350px]  sm:min-w-[450px] ">
+        <SheetContent className="min-w-[350px]  sm:min-w-[500px] ">
           <SheetHeader className="mb-2">
             <SheetTitle>Carwash Transaction Details</SheetTitle>
             <SheetDescription></SheetDescription>
@@ -593,12 +598,12 @@ const DetailsFooter = ({
         {transactionDetails?.transactionStatus === "In Queue" &&
           origin !== "transactions" && (
             <Button
-              variant="destructive"
+              className="border-destructive bg-bg border text-destructive hover:bg-destructive hover:text-white"
               onClick={() => {
                 handleTermination();
               }}
             >
-              <OctagonX className="h-4 w-4 mr-2" /> Terminate
+              <OctagonX className="h-4 w-4 mr-2" /> Cancel
             </Button>
           )}
         {transactionDetails?.transactionStatus === "Ready for Pickup" &&
@@ -630,15 +635,30 @@ const DetailsFooter = ({
       </div>
       {transactionDetails?.transactionStatus === "In Queue" &&
         origin !== "transactions" && (
-          <Button
-            className="w-full"
-            onClick={() => {
-              navigate(`/carwash/inspection/${transactionDetails._id}`);
-            }}
-          >
-            Proceed
-            <ChevronRight className="h-4 w-4 ml-2" />{" "}
-          </Button>
+          <>
+            <Button
+              variant="secondary"
+              className=" hover:border-primary border"
+              onClick={() => {
+                navigate("/carwash/checkout", {
+                  state: { transactionDetails, origin: "queue" },
+                });
+              }}
+            >
+              Checkout
+              <ChevronRight className="h-4 w-4 ml-2" />{" "}
+            </Button>
+            <Button
+              className="w-full"
+              onClick={() => {
+                console.log("object");
+                navigate(`/carwash/inspection/${transactionDetails._id}`);
+              }}
+            >
+              Inspection
+              <ChevronRight className="h-4 w-4 ml-2" />{" "}
+            </Button>
+          </>
         )}
 
       {transactionDetails?.transactionStatus === "Ready for Pickup" &&
@@ -647,7 +667,7 @@ const DetailsFooter = ({
             className="w-full"
             onClick={() => {
               navigate("/carwash/checkout", {
-                state: { transactionDetails },
+                state: { transactionDetails, origin: "pickup" },
               });
             }}
           >

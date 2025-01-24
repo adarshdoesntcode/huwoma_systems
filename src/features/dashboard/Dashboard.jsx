@@ -124,6 +124,7 @@ export function Dashboard() {
   let yesterdayParkingRevenue;
   let breakdownData;
   let tableData;
+  let pendingCarwashAmount;
 
   useEffect(() => {
     if (isSuccess) {
@@ -141,6 +142,10 @@ export function Dashboard() {
       (acc, curr) => acc + curr.netAmount,
       0
     );
+
+    pendingCarwashAmount = carwashTransactions
+      .filter((transaction) => transaction.paymentStatus === "Pending")
+      .reduce((acc, curr) => acc + curr.service.actualRate, 0);
 
     simracingTransactions = data?.data?.simracingTransactions;
     simracingCompletedTransactions = simracingTransactions.filter(
@@ -268,14 +273,21 @@ export function Dashboard() {
               <div className="text-2xl font-bold">
                 +{carwashRevenue.toLocaleString()}
               </div>
-              <p className="text-xs text-muted-foreground">
-                {calculateChange(
-                  carwashRevenue,
-                  yesterdayCarwashRevenue,
-                  "percentage"
-                )}{" "}
-                than yesterday
-              </p>
+              {pendingCarwashAmount > 0 && (
+                <p className="text-xs text-orange-500">
+                  ~ {pendingCarwashAmount.toLocaleString()} Pending
+                </p>
+              )}
+              {pendingCarwashAmount === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {calculateChange(
+                    carwashRevenue,
+                    yesterdayCarwashRevenue,
+                    "percentage"
+                  )}{" "}
+                  than yesterday
+                </p>
+              )}
             </CardContent>
           </Card>
           <Card>

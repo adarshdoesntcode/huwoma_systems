@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 
 import {
   Check,
+  CheckCircle,
   ChevronLeft,
   Contact,
   Cross,
@@ -50,11 +51,14 @@ import {
 } from "@/lib/utils";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ResetIcon } from "@radix-ui/react-icons";
 
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
   const [addOns, setAddOns] = useState(false);
   const [redeem, setRedeem] = useState();
+  const [checkAll, setCheckAll] = useState(true);
 
   const [newAddOn, setNewAddOn] = useState({
     name: "",
@@ -68,6 +72,7 @@ function CarwashCheckout() {
   const {
     register,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -76,6 +81,7 @@ function CarwashCheckout() {
   });
 
   const transactionDetails = location.state?.transactionDetails;
+  const origin = location.state?.origin;
 
   const { data, isLoading, isError, error, isFetching, isSuccess } =
     useGetCheckoutDetailsQuery({
@@ -84,6 +90,23 @@ function CarwashCheckout() {
   const [transactionThree] = useTransactionThreeMutation();
 
   const qrCodeRef = useRef(null);
+  const serviceBoxRef = useRef(null);
+
+  useEffect(() => {
+    if (data) {
+      const inspectionForm = data.data.inspectionTemplates.map((template) => ({
+        categoryName: template.categoryName,
+        items: template.items.map((item) => ({
+          itemName: item,
+          response: true,
+        })),
+      }));
+
+      reset({
+        inspections: inspectionForm,
+      });
+    }
+  }, [data, reset]);
 
   useEffect(() => {
     if (paymentMode && qrCodeRef.current) {
@@ -93,6 +116,41 @@ function CarwashCheckout() {
       });
     }
   }, [paymentMode]);
+
+  useEffect(() => {
+    if (data && isSuccess && serviceBoxRef.current) {
+      serviceBoxRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [data, isSuccess]);
+
+  const handleCheckAll = () => {
+    reset({
+      inspections: data.data.inspectionTemplates.map((template) => ({
+        categoryName: template.categoryName,
+        items: template.items.map((item) => ({
+          itemName: item,
+          response: true,
+        })),
+      })),
+    });
+    setCheckAll(true);
+  };
+
+  const handleReset = () => {
+    reset({
+      inspections: data.data.inspectionTemplates.map((template) => ({
+        categoryName: template.categoryName,
+        items: template.items.map((item) => ({
+          itemName: item,
+          response: false,
+        })),
+      })),
+    });
+    setCheckAll(false);
+  };
 
   let applicableTransactions,
     paymentModes,
@@ -129,27 +187,58 @@ function CarwashCheckout() {
 
   const onSubmit = async (data) => {
     try {
-      const res = await transactionThree({
-        transactionId: transactionDetails._id,
-        serviceId: service._id,
-        transactionStatus: "Completed",
-        paymentStatus: "Paid",
-        paymentMode: paymentMode._id,
-        parkingIn:
-          parkingEligible && parkingIncluded
-            ? parkingStart.toISOString()
-            : undefined,
-        parkingOut: parkingEligible && parkingIncluded ? parkingEnd : undefined,
-        parkingCost: Number(data.parkingCost) || undefined,
-        // transactionTime: new Date().toISOString(),
-        addOns: addOnsList.length > 0 ? addOnsList : undefined,
-        grossAmount: grossAmt,
-        discountAmount: Number(data.discountAmt) || 0,
-        netAmount: netAmt,
-        serviceCost: serviceCost,
-        redeemed: serviceCost > 0 ? false : true,
-        washCount: washStreakApplicable ? washCount : undefined,
-      });
+      let payload;
+      if (origin === "queue") {
+        payload = {
+          transactionId: transactionDetails._id,
+          serviceId: service._id,
+          transactionStatus: "Completed",
+          paymentStatus: "Paid",
+          paymentMode: paymentMode._id,
+          parkingIn:
+            parkingEligible && parkingIncluded
+              ? parkingStart.toISOString()
+              : undefined,
+          parkingOut:
+            parkingEligible && parkingIncluded ? parkingEnd : undefined,
+          parkingCost: Number(data.parkingCost) || undefined,
+
+          addOns: addOnsList.length > 0 ? addOnsList : undefined,
+          grossAmount: grossAmt,
+          discountAmount: Number(data.discountAmt) || 0,
+          netAmount: netAmt,
+          serviceCost: serviceCost,
+          redeemed: serviceCost > 0 ? false : true,
+          washCount: washStreakApplicable ? washCount : undefined,
+          origin: origin,
+          inspections: data.inspections,
+        };
+      } else {
+        payload = {
+          transactionId: transactionDetails._id,
+          serviceId: service._id,
+          transactionStatus: "Completed",
+          paymentStatus: "Paid",
+          paymentMode: paymentMode._id,
+          parkingIn:
+            parkingEligible && parkingIncluded
+              ? parkingStart.toISOString()
+              : undefined,
+          parkingOut:
+            parkingEligible && parkingIncluded ? parkingEnd : undefined,
+          parkingCost: Number(data.parkingCost) || undefined,
+
+          addOns: addOnsList.length > 0 ? addOnsList : undefined,
+          grossAmount: grossAmt,
+          discountAmount: Number(data.discountAmt) || 0,
+          netAmount: netAmt,
+          serviceCost: serviceCost,
+          redeemed: serviceCost > 0 ? false : true,
+          washCount: washStreakApplicable ? washCount : undefined,
+          origin: origin,
+        };
+      }
+      const res = await transactionThree(payload);
       if (res.error) {
         throw new Error(res.error.data.message);
       }
@@ -191,7 +280,7 @@ function CarwashCheckout() {
       transactionDetails?.service?.id?.serviceVehicle?.vehicleTypeName;
     vehicleNumber = transactionDetails?.vehicleNumber;
     serviceStart = transactionDetails?.service?.start;
-    serviceEnd = transactionDetails?.service?.end;
+    serviceEnd = transactionDetails?.service?.end || new Date();
     isFreeTransaction =
       washStreak >= washCount && washStreakApplicable ? true : false;
 
@@ -251,8 +340,84 @@ function CarwashCheckout() {
             </div>
           </CardHeader>
           <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            {origin === "queue" && (
+              <div className="grid gap-4">
+                <Separator />
+
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-bold">Inspection</Label>
+                  <div className="w-full flex justify-end">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        if (checkAll) {
+                          handleReset();
+                        } else {
+                          handleCheckAll();
+                        }
+                      }}
+                    >
+                      {!checkAll ? (
+                        <>
+                          Check All <CheckCircle className="h-4 w-4 ml-2" />
+                        </>
+                      ) : (
+                        <>
+                          Reset <ResetIcon className="h-4 w-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {data.data.inspectionTemplates.map(
+                  (inspection, categoryIndex) => (
+                    <div key={inspection.categoryName} className="space-y-2">
+                      <div className="text-sm font-semibold bg-muted py-2 pl-4 pr-2 rounded-md flex justify-between">
+                        <span>{inspection.categoryName}</span>
+                        <Badge
+                          variant="outline"
+                          className="bg-background font-medium "
+                        >
+                          {inspection.scope}
+                        </Badge>
+                      </div>
+
+                      <div className="space-y-2">
+                        {inspection.items.map((item, itemIndex) => (
+                          <div
+                            key={`item${itemIndex}`}
+                            className="flex items-center ml-4"
+                          >
+                            <Checkbox
+                              checked={watch(
+                                `inspections.${categoryIndex}.items.${itemIndex}.response`
+                              )}
+                              {...register(
+                                `inspections.${categoryIndex}.items.${itemIndex}.response`
+                              )}
+                              onCheckedChange={(e) => {
+                                setValue(
+                                  `inspections.${categoryIndex}.items.${itemIndex}.response`,
+                                  e
+                                );
+                              }}
+                            />
+                            <span className="ml-2 text-sm">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+
+                <Separator className="mb-6" />
+              </div>
+            )}
             {service && (
-              <div className="grid gap-2">
+              <div className="grid gap-2" ref={serviceBoxRef}>
                 <Label>Service</Label>
                 <div className="border p-4 rounded-md shadow-sm">
                   <div className="flex flex-col border-b pb-2 mb-2">

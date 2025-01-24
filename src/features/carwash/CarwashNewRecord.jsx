@@ -393,47 +393,49 @@ function CarwashNewRecord() {
                                   </div>
                                 </div>
                                 <div className="flex gap-2 items-center flex-wrap">
-                                  {customer.vehicleModels.map((vehicle) => (
-                                    <div
-                                      className="flex gap-2 items-center"
-                                      key={vehicle._id}
-                                    >
-                                      {vehicle?.vehicleColor && (
-                                        <TooltipProvider delayDuration={0}>
-                                          <Tooltip>
-                                            <TooltipTrigger>
-                                              <div
-                                                className={cn(
-                                                  `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
-                                                )}
-                                                style={{
-                                                  backgroundColor:
+                                  {customer.vehicleModels.map(
+                                    (vehicle, index) => (
+                                      <div
+                                        className="flex gap-2 items-center"
+                                        key={index}
+                                      >
+                                        {vehicle?.vehicleColor && (
+                                          <TooltipProvider delayDuration={0}>
+                                            <Tooltip>
+                                              <TooltipTrigger>
+                                                <div
+                                                  className={cn(
+                                                    `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
+                                                  )}
+                                                  style={{
+                                                    backgroundColor:
+                                                      vehicle?.vehicleColor
+                                                        ?.colorCode,
+                                                  }}
+                                                />
+                                              </TooltipTrigger>
+                                              <TooltipContent>
+                                                <p className="text-xs">
+                                                  {
                                                     vehicle?.vehicleColor
-                                                      ?.colorCode,
-                                                }}
-                                              />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                              <p className="text-xs">
-                                                {
-                                                  vehicle?.vehicleColor
-                                                    ?.colorName
-                                                }
-                                              </p>
-                                            </TooltipContent>
-                                          </Tooltip>
-                                        </TooltipProvider>
-                                      )}
-                                      <div className="flex flex-col items-start">
-                                        <div className="font-semibold text-primary text-left text-xs">
-                                          {vehicle?.model}
-                                        </div>
-                                        <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
-                                          {vehicle.vehicleNumber}
+                                                      ?.colorName
+                                                  }
+                                                </p>
+                                              </TooltipContent>
+                                            </Tooltip>
+                                          </TooltipProvider>
+                                        )}
+                                        <div className="flex flex-col items-start">
+                                          <div className="font-semibold text-primary text-left text-xs">
+                                            {vehicle?.model}
+                                          </div>
+                                          <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                                            {vehicle.vehicleNumber}
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    )
+                                  )}
                                 </div>
                               </div>
                             </CardHeader>
