@@ -59,6 +59,30 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SimRacingTransactions"],
     }),
+    pauseRace: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/pause",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
+    resumeRace: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/resume",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
+    changeRig: builder.mutation({
+      query: (credentials) => ({
+        url: "/simracing/transaction/changerig",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["SimRacingTransactions"],
+    }),
     getAvailableRigs: builder.query({
       query: () => ({
         url: "/simracing/rigs",
@@ -126,6 +150,9 @@ export const {
   useCreateRacerMutation,
   useGetAvailableRigsQuery,
   useStartRaceMutation,
+  usePauseRaceMutation,
+  useResumeRaceMutation,
+  useChangeRigMutation,
   useDeleteSimracingTransactionMutation,
   useSimracingBookingMutation,
   useCancelRaceMutation,

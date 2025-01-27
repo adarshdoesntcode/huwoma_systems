@@ -78,10 +78,18 @@ export function getOrdinal(n) {
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-export const getTimeDifference = (startTime, endTime) => {
+export const getTimeDifference = (startTime, endTime, pauseHistory = []) => {
   const start = new Date(startTime);
   const end = new Date(endTime);
-  const differenceInMilliseconds = Math.abs(end - start);
+  let totalPausedTime = 0;
+
+  pauseHistory.forEach(({ pausedAt, resumedAt }) => {
+    const paused = new Date(pausedAt);
+    const resumed = resumedAt ? new Date(resumedAt) : end;
+    totalPausedTime += resumed - paused;
+  });
+
+  const differenceInMilliseconds = Math.abs(end - start - totalPausedTime);
   const differenceInHours = Math.floor(
     differenceInMilliseconds / (1000 * 60 * 60)
   );
@@ -91,7 +99,7 @@ export const getTimeDifference = (startTime, endTime) => {
 
   return {
     hours: differenceInHours,
-    minutes: differenceInMinutes,
+    minutes: differenceInMinutes < 1 ? `1` : differenceInMinutes,
   };
 };
 

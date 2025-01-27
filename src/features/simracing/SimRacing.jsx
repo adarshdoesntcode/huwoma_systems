@@ -3,34 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Car,
-  ChevronLeft,
-  Droplets,
-  Edit,
-  PlusCircle,
-  QrCode,
-  ReceiptText,
-  RefreshCcw,
-  Users,
-} from "lucide-react";
+import { Car, PlusCircle, ReceiptText, RefreshCcw, Users } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import RigCard from "./RigCard";
 import { useEffect, useMemo, useState } from "react";
@@ -48,13 +27,15 @@ import { useIsSuper } from "@/hooks/useSuper";
 
 function SimRacing() {
   const isSuper = useIsSuper();
-
   const navigate = useNavigate();
   const location = useLocation();
   const navigateState = useMemo(() => location.state || {}, [location.state]);
   const [tab, setTab] = useState(navigateState?.tab || "active");
 
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [isMutating, setIsMutating] = useState(false);
+  const [mutatingId, setMutatingId] = useState(null);
+  const [changeRigId, setChangeRigId] = useState(null);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetSimRacingTransactionsQuery(undefined, {
@@ -75,6 +56,13 @@ function SimRacing() {
     }
   }, [isSuccess, isFetching]);
 
+  useEffect(() => {
+    if (!isFetching && !isMutating) {
+      setMutatingId(null);
+      setChangeRigId(null);
+    }
+  }, [isFetching, isMutating]);
+
   let rigs = [];
   let transactions = [];
 
@@ -92,7 +80,11 @@ function SimRacing() {
       ?.filter((transaction) => transaction.transactionStatus === "Booked")
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     activeTransactions = transactions
-      ?.filter((transaction) => transaction.transactionStatus === "Active")
+      ?.filter(
+        (transaction) =>
+          transaction.transactionStatus === "Active" ||
+          transaction.transactionStatus === "Paused"
+      )
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     finishedTransactions = transactions
       ?.filter((transaction) => transaction.transactionStatus === "Completed")
@@ -244,7 +236,16 @@ function SimRacing() {
                 <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
                   <SimRacingDataTable
                     data={activeTransactions}
-                    columns={SimRacingColumn}
+                    columns={SimRacingColumn(
+                      isFetching,
+                      isMutating,
+                      setIsMutating,
+                      mutatingId,
+                      setMutatingId,
+                      changeRigId,
+                      setChangeRigId,
+                      rigs
+                    )}
                   />
                 </CardContent>
               </Card>

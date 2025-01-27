@@ -74,6 +74,7 @@ function SimRacingCheckout() {
     customer,
     raceStart,
     raceEnd,
+    pauseHistory,
     raceTime,
     raceCost,
     grossAmt,
@@ -122,11 +123,12 @@ function SimRacingCheckout() {
     transactionDetails = data?.data?.transaction || {};
     customer = transactionDetails.customer;
     paymentModes = data?.data?.paymentModes || [];
+    pauseHistory = transactionDetails?.pauseHistory || [];
 
     raceStart = transactionDetails?.start;
 
     raceEnd = new Date().toISOString();
-    raceTime = getTimeDifference(raceStart, raceEnd);
+    raceTime = getTimeDifference(raceStart, raceEnd, pauseHistory);
     raceCost = Number(watch("raceCost")) || 0;
     grossAmt = raceCost;
     discountAmt = Number(watch("discountAmt")) || 0;

@@ -1,9 +1,20 @@
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
-import TimeLapsed from "@/components/TimeLapsed";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { format } from "date-fns";
+import RaceTimeLapsed from "./RaceTimeLapsed";
+import StatusBadge from "@/components/ui/StatusBadge";
+import RaceRigChange from "./RaceRigChange";
 
-export const SimRacingColumn = [
+export const SimRacingColumn = (
+  isFetching,
+  isMutating,
+  setIsMutating,
+  mutatingId,
+  setMutatingId,
+  changeRigId,
+  setChangeRigId,
+  rigs
+) => [
   {
     accessorKey: "billNo",
     header: () => (
@@ -57,11 +68,22 @@ export const SimRacingColumn = [
 
   {
     accessorKey: "rigName",
-    header: () => <TableHead className="hidden lg:table-cell">Rig</TableHead>,
+    header: () => <TableHead className="hidden  lg:table-cell">Rig</TableHead>,
     cell: ({ row }) => {
-      const name = row.original.rig.rigName;
-
-      return <TableCell className="hidden lg:table-cell">{name}</TableCell>;
+      return (
+        <TableCell className="hidden  lg:table-cell">
+          <RaceRigChange
+            rigs={rigs}
+            currentRig={row.original.rig._id}
+            transaction={row.original._id}
+            isFetching={isFetching}
+            isMutating={isMutating}
+            setIsMutating={setIsMutating}
+            showLoader={changeRigId === row.original._id ? true : false}
+            setChangeRigId={setChangeRigId}
+          />
+        </TableCell>
+      );
     },
   },
   {
@@ -92,6 +114,21 @@ export const SimRacingColumn = [
     },
   },
   {
+    accessorKey: "transactionStatus",
+    header: () => (
+      <TableHead className="hidden lg:table-cell">Status</TableHead>
+    ),
+    cell: ({ row }) => {
+      const status = row.original.transactionStatus;
+
+      return (
+        <TableCell className="hidden lg:table-cell">
+          <StatusBadge status={status} />
+        </TableCell>
+      );
+    },
+  },
+  {
     accessorKey: "timeLapsed",
     header: () => (
       <TableHead className="hidden md:table-cell text-center">
@@ -102,8 +139,22 @@ export const SimRacingColumn = [
       const start = new Date(row.original.start);
 
       return (
-        <TableCell className="hidden md:table-cell font-mono">
-          <TimeLapsed createdAt={start} />
+        <TableCell className="hidden md:table-cell  font-mono">
+          <div className="flex items-center justify-center">
+            <RaceTimeLapsed
+              start={start}
+              transactionId={row.original._id}
+              pauseHistory={row.original.pauseHistory}
+              isPaused={
+                row.original.transactionStatus === "Paused" ? true : false
+              }
+              isFetching={isFetching}
+              isMutating={isMutating}
+              setIsMutating={setIsMutating}
+              showLoader={mutatingId === row.original._id ? true : false}
+              setMutatingId={setMutatingId}
+            />
+          </div>
         </TableCell>
       );
     },

@@ -12,6 +12,8 @@ import useAxios from "@/hooks/useAxios";
 import { IMAGE_DATA } from "@/lib/config";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Pause, PauseCircle } from "lucide-react";
 
 function SimRacingClientMyRace() {
   const axiosInstance = useAxios();
@@ -28,8 +30,17 @@ function SimRacingClientMyRace() {
 
     const calculateTimeLapsed = () => {
       const now = new Date();
+      let totalPausedTime = 0;
 
-      const diffInMs = now - start;
+      transactionDetails?.data?.pauseHistory?.forEach(
+        ({ pausedAt, resumedAt }) => {
+          const paused = new Date(pausedAt);
+          const resumed = resumedAt ? new Date(resumedAt) : now;
+          totalPausedTime += resumed - paused;
+        }
+      );
+
+      const diffInMs = now - new Date(start) - totalPausedTime;
       const totalSeconds = Math.floor(diffInMs / 1000);
 
       const hours = Math.floor(totalSeconds / 3600);
@@ -45,6 +56,7 @@ function SimRacingClientMyRace() {
     setTimeLapsed(calculateTimeLapsed());
 
     const interval = setInterval(() => {
+      if (transactionDetails?.data?.transactionStatus === "Paused") return;
       setTimeLapsed(calculateTimeLapsed());
     }, 1000);
 
@@ -144,7 +156,17 @@ function SimRacingClientMyRace() {
                     loading="lazy"
                   />
                 </div>
-                <div className="font-mono text-2xl text-primary-foreground text-center p-6 rounded-lg animate-in  fade-in duration-500 bg-foreground mt-6">
+                <div
+                  className={cn(
+                    "relative font-mono text-2xl text-primary-foreground text-center p-6 py-7  rounded-lg  animate-in fade-in duration-500  mt-6",
+                    transactionDetails?.data?.transactionStatus === "Paused"
+                      ? "bg-gray-500 "
+                      : " bg-foreground"
+                  )}
+                >
+                  {transactionDetails?.data?.transactionStatus === "Paused" && (
+                    <Pause className="w-5 h-5 top-3 right-2 absolute animate-pulse duration-1000" />
+                  )}
                   {timeLapsed}
                 </div>
               </CardContent>

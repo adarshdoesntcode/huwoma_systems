@@ -6,9 +6,9 @@ const TimeLapsed = ({ createdAt }) => {
   useEffect(() => {
     const calculateTimeLapsed = () => {
       const now = new Date();
+
       const diffInMs = now - new Date(createdAt);
       const totalSeconds = Math.floor(diffInMs / 1000);
-
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;

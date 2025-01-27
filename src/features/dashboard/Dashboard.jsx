@@ -123,6 +123,7 @@ export function Dashboard() {
   let yesterdaySimracingRevenue;
   let yesterdayParkingRevenue;
   let breakdownData;
+  let activeRaces;
   let tableData;
   let pendingCarwashAmount;
 
@@ -150,6 +151,12 @@ export function Dashboard() {
     simracingTransactions = data?.data?.simracingTransactions;
     simracingCompletedTransactions = simracingTransactions.filter(
       (transaction) => transaction.transactionStatus === "Completed"
+    );
+
+    activeRaces = simracingTransactions.filter(
+      (transaction) =>
+        transaction.transactionStatus === "Active" ||
+        transaction.transactionStatus === "Paused"
     );
     simracingRevenue = simracingCompletedTransactions.reduce(
       (acc, curr) => acc + curr.netAmount,
@@ -302,12 +309,21 @@ export function Dashboard() {
                 +{simracingRevenue.toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">
-                {calculateChange(
-                  simracingRevenue,
-                  yesterdaySimracingRevenue,
-                  "percentage"
-                )}{" "}
-                than yesterday
+                {activeRaces.length > 0 && (
+                  <p className="text-xs font-medium text-green-600">
+                    {activeRaces.length} races active
+                  </p>
+                )}
+                {activeRaces.length === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {calculateChange(
+                      simracingRevenue,
+                      yesterdaySimracingRevenue,
+                      "percentage"
+                    )}{" "}
+                    than yesterday
+                  </p>
+                )}
               </p>
             </CardContent>
           </Card>

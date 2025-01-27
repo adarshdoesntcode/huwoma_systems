@@ -58,7 +58,10 @@ function RigCard({ rig, className }) {
                 </div>
               </CardTitle>
               <CardDescription className="text-xs">
-                On Seat : {rig?.activeRacer?.customerName || "None"}
+                On Seat :{" "}
+                {rig?.activeRacer
+                  ?.map((racer) => racer.customerName)
+                  .join(", ") || "None"}
                 <br />
                 On track since {format(rig?.createdAt, "MMM d, yyyy")}
               </CardDescription>

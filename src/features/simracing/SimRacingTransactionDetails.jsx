@@ -43,7 +43,11 @@ const SimRacingTransactionDetails = ({
   if (transactionDetails) {
     raceStart = transactionDetails?.start;
     raceEnd = transactionDetails?.end;
-    raceTime = getTimeDifference(raceStart, raceEnd);
+    raceTime = getTimeDifference(
+      raceStart,
+      raceEnd,
+      transactionDetails?.pauseHistory
+    );
   }
 
   const handleCloseSheet = () => {
@@ -148,7 +152,7 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
 
               <div className="flex items-center justify-between">
                 <div className="text-muted-foreground text-xs font-medium">
-                  Total Time
+                  Total Play Time
                 </div>
                 <div className="text-sm font-semibold ">
                   {`${raceTime?.hours > 0 ? `${raceTime?.hours}h ` : ""} ${
