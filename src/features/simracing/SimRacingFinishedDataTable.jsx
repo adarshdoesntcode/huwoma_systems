@@ -44,9 +44,11 @@ import { toast } from "@/hooks/use-toast";
 // import CarwashTransactionDetails from "./CarwashTransactionDetails";
 import { DataTablePagination } from "@/components/DataTablePagination";
 import SimRacingTransactionDetails from "./SimRacingTransactionDetails";
+import EditSimracingTransaction from "./EditSimracingTransaction";
 
 export const SimRacingFinishedDataTable = ({ columns, data, origin }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const [transactionDetails, setTransactionDetails] = useState(null);
 
@@ -148,8 +150,8 @@ export const SimRacingFinishedDataTable = ({ columns, data, origin }) => {
                     <Edit
                       onClick={(e) => {
                         e.stopPropagation();
-                        // setTransactionDetails(row.original);
-                        // setShowEdit(true);
+                        setTransactionDetails(row.original);
+                        setShowEdit(true);
                       }}
                       className="h-4 w-4 cursor-pointer  text-muted-foreground hover:text-primary hover:scale-110 transition-all"
                     />
@@ -178,6 +180,12 @@ export const SimRacingFinishedDataTable = ({ columns, data, origin }) => {
         setTransactionDetails={setTransactionDetails}
         transactionDetails={transactionDetails}
         origin={origin}
+      />
+      <EditSimracingTransaction
+        setTransactionDetails={setTransactionDetails}
+        transactionDetails={transactionDetails}
+        showEdit={showEdit}
+        setShowEdit={setShowEdit}
       />
     </>
   );

@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
   Accordion,
@@ -10,8 +10,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
+  ArrowUpRightIcon,
   Check,
   ChevronRight,
+  Copy,
   OctagonX,
   Printer,
   Undo2Icon,
@@ -471,14 +473,20 @@ const Details = ({
                 Customer
               </div>
               <div className="text-xs ">
-                {transactionDetails?.customer?.customerName || "-"}
+                <Link
+                  to={`/carwash/customers/${transactionDetails?.customer?._id}`}
+                  className="text-sm flex items-center gap-1 underline underline-offset-4 font-medium "
+                >
+                  {transactionDetails?.customer?.customerName}
+                  <ArrowUpRightIcon className="w-4 h-4" />
+                </Link>
               </div>
             </div>
             <div className="flex items-center justify-between  ">
               <div className="text-muted-foreground text-xs font-medium">
                 Contact
               </div>
-              <div className="text-xs font-medium">
+              <div className="text-sm font-medium">
                 {transactionDetails?.customer?.customerContact || "-"}
               </div>
             </div>

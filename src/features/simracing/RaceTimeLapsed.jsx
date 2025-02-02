@@ -7,7 +7,6 @@ import {
   useResumeRaceMutation,
 } from "./simRacingApiSlice";
 import { toast } from "@/hooks/use-toast";
-import { set } from "date-fns";
 
 function RaceTimeLapsed({
   start,
@@ -57,13 +56,13 @@ function RaceTimeLapsed({
       if (res.error) {
         throw new Error(res.error.data.message);
       }
-      if (!res.error) {
-        toast({
-          title: "Race Resumed!",
-          description: `Successfully`,
-          duration: 2000,
-        });
-      }
+      // if (!res.error) {
+      //   toast({
+      //     title: "Race Resumed!",
+      //     description: `Successfully`,
+      //     duration: 2000,
+      //   });
+      // }
     } catch (error) {
       toast({
         variant: "destructive",

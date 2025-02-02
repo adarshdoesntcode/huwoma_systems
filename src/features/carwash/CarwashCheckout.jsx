@@ -56,7 +56,7 @@ import { ResetIcon } from "@radix-ui/react-icons";
 
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
-  const [addOns, setAddOns] = useState(false);
+
   const [redeem, setRedeem] = useState();
   const [checkAll, setCheckAll] = useState(true);
 
@@ -64,7 +64,6 @@ function CarwashCheckout() {
     name: "",
     price: "",
   });
-  const [addOnsList, setAddOnsList] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -81,12 +80,19 @@ function CarwashCheckout() {
   });
 
   const transactionDetails = location.state?.transactionDetails;
+  const [addOnsList, setAddOnsList] = useState(
+    transactionDetails?.addOns || []
+  );
+  const [addOns, setAddOns] = useState(
+    transactionDetails?.addOns.length > 0 ? true : false
+  );
   const origin = location.state?.origin;
 
   const { data, isLoading, isError, error, isFetching, isSuccess } =
     useGetCheckoutDetailsQuery({
       customerId: transactionDetails?.customer?._id,
     });
+
   const [transactionThree] = useTransactionThreeMutation();
 
   const qrCodeRef = useRef(null);
@@ -203,7 +209,7 @@ function CarwashCheckout() {
             parkingEligible && parkingIncluded ? parkingEnd : undefined,
           parkingCost: Number(data.parkingCost) || undefined,
 
-          addOns: addOnsList.length > 0 ? addOnsList : undefined,
+          addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
           grossAmount: grossAmt,
           discountAmount: Number(data.discountAmt) || 0,
           netAmount: netAmt,
@@ -228,7 +234,7 @@ function CarwashCheckout() {
             parkingEligible && parkingIncluded ? parkingEnd : undefined,
           parkingCost: Number(data.parkingCost) || undefined,
 
-          addOns: addOnsList.length > 0 ? addOnsList : undefined,
+          addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
           grossAmount: grossAmt,
           discountAmount: Number(data.discountAmt) || 0,
           netAmount: netAmt,
@@ -582,7 +588,7 @@ function CarwashCheckout() {
                       <div className="flex flex-col gap-2 border-t pt-3 mt-4">
                         {addOnsList.map((addOn, index) => (
                           <div
-                            key={addOn.id}
+                            key={index}
                             className="flex items-center justify-between"
                           >
                             <div className="text-muted-foreground text-xs font-medium">
@@ -608,7 +614,11 @@ function CarwashCheckout() {
                             type="text"
                             autoComplete="off"
                             placeholder="Add On"
-                            autoFocus
+                            autoFocus={
+                              transactionDetails?.addOns.length > 0
+                                ? false
+                                : true
+                            }
                             value={newAddOn.name}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {

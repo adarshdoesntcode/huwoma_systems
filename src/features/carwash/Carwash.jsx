@@ -147,7 +147,7 @@ function Carwash() {
             Carwash
           </div>
           <div className=" flex justify-end">
-            {/* <Button
+            <Button
               size="sm"
               variant="outline"
               className="mr-2"
@@ -156,7 +156,7 @@ function Carwash() {
               <span>Old </span>
               <span className="sm:ml-1 sr-only sm:not-sr-only">Record</span>
               <PlusCircle className="ml-2 w-4 h-4" />
-            </Button> */}
+            </Button>
             <Button
               size="sm"
               variant="outline"

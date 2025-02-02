@@ -19,7 +19,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import { useGetPreEditDataQuery } from "./carwashApiSlice";
+import {
+  useCreateOldRecordMutation,
+  useGetPreEditDataQuery,
+} from "./carwashApiSlice";
 import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
 import { useState } from "react";
@@ -37,6 +40,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { TimePicker } from "@/components/ui/time-picker";
 import { CAR_COLOR_OPTIONS } from "@/lib/config";
+import { useNavigate } from "react-router-dom";
 
 const configInitialState = {
   text: "",
@@ -53,6 +57,7 @@ function CarwashOldRecord() {
   const [parkingEnd, setParkingEnd] = useState(new Date());
   const [serviceStart, setServiceStart] = useState(new Date());
   const [serviceEnd, setServiceEnd] = useState(new Date());
+  const [transactionTime, setTransactionTime] = useState(new Date());
 
   const [selectedColor, setSelectedColor] = useState("");
   const [carColors, setCarColors] = useState(CAR_COLOR_OPTIONS);
@@ -66,13 +71,20 @@ function CarwashOldRecord() {
 
   const { data, isLoading, isSuccess, isError, error, refetch } =
     useGetPreEditDataQuery();
-  console.log("🚀 ~ CarwashOldRecord ~ data:", data);
+
+  const [createOldRecord] = useCreateOldRecordMutation();
+
   const {
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     register,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm();
+
+  const navigate = useNavigate();
 
   const handleVehicleSelect = (vehicles, value) => {
     if (value !== "All") {
@@ -98,6 +110,7 @@ function CarwashOldRecord() {
         text: value,
         value: service,
       });
+      clearErrors("service");
     } else {
       setSelectedService(configInitialState);
     }
@@ -111,6 +124,87 @@ function CarwashOldRecord() {
   };
 
   let content;
+  let serviceCost, addOnTotal, grossAmt, discountAmt, netAmt, parkingCost;
+
+  const onSubmit = async (data) => {
+    if (!selectedService.value._id) {
+      setError("service", {
+        type: "manual",
+        message: "Please select a service.",
+      });
+      return;
+    }
+
+    if (!selectedColor) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: "Please select a vehicle color",
+      });
+      return;
+    }
+
+    if (!paymentMode._id) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: "Please select a payment mode",
+      });
+      return;
+    }
+
+    try {
+      const payload = {
+        customerName: data.customerName,
+        customerContact: data.customerContact,
+        serviceId: selectedService._id,
+        transactionStatus: "Completed",
+        paymentStatus: "Paid",
+        service: selectedService.value._id,
+        serviceStart: serviceStart.toISOString(),
+        serviceEnd: serviceEnd.toISOString(),
+        serviceCost: serviceCost,
+        vehicleModel: data.vehicleModel,
+        vehicleNumber: data.vehicleNumber,
+        vehicleColor: selectedColor,
+        parkingIn: parking ? parkingStart.toISOString() : undefined,
+        parkingOut: parking ? parkingEnd.toISOString() : undefined,
+        parkingCost: Number(data.parkingCost) || undefined,
+        addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
+        grossAmount: grossAmt,
+        discountAmount: Number(data.discountAmt) || 0,
+        paymentMode: paymentMode._id,
+        transactionTime: transactionTime.toISOString(),
+        netAmount: netAmt,
+        redeemed: false,
+      };
+
+      const res = await createOldRecord(payload);
+      if (res.error) {
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        toast({
+          title: "Transaction Inserted!",
+          description: `Successfully!`,
+          duration: 2000,
+        });
+
+        if (res.data?.data?.customer) {
+          navigate(`/carwash/customers/${res.data?.data?.customer}`);
+        } else {
+          reset();
+          navigate("/carwash");
+        }
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
+  };
 
   if (isLoading) {
     content = (
@@ -121,6 +215,18 @@ function CarwashOldRecord() {
   } else if (isSuccess) {
     const vehicleTypes = data?.data?.vehicleTypes || [];
     const paymentModes = data?.data?.paymentModes || [];
+
+    serviceCost = selectedService?.value?.serviceRate || 0;
+    parkingCost = Number(watch("parkingCost")) || 0;
+    addOnTotal = addOnsList.reduce((sum, addOn) => sum + addOn.price, 0);
+    grossAmt =
+      (Number(watch("parkingCost")) || 0) +
+      (serviceCost || 0) +
+      (addOns ? addOnTotal : 0);
+    discountAmt = Number(watch("discountAmt")) || 0;
+
+    netAmt = grossAmt - discountAmt;
+
     content = (
       <div className="mx-auto grid w-full max-w-2xl items-start gap-4 ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
@@ -133,7 +239,8 @@ function CarwashOldRecord() {
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
             <form
-              // onSubmit={handleSubmit(onSubmit)}
+              id="old-record"
+              onSubmit={handleSubmit(onSubmit)}
               className="grid gap-2"
             >
               <Label className="flex items-center text-muted-foreground">
@@ -232,7 +339,13 @@ function CarwashOldRecord() {
                   </Select>
                 </div>
                 <div className="flex items-center justify-between">
-                  <Label>Service Type</Label>
+                  {errors.service ? (
+                    <Label className="text-destructive">
+                      {errors.service.message}
+                    </Label>
+                  ) : (
+                    <Label>Service Type</Label>
+                  )}
 
                   <Select
                     value={selectedService.text}
@@ -279,11 +392,29 @@ function CarwashOldRecord() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className=" text-xs font-medium">End Time</div>
+                    {errors.serviceEnd ? (
+                      <span className="text-destructive text-xs font-medium">
+                        {errors.serviceEnd.message}
+                      </span>
+                    ) : (
+                      <div className=" text-xs font-medium">End Time</div>
+                    )}
+
                     <div className="text-xs ">
                       <DateTimePicker
                         date={serviceEnd}
-                        setDate={setServiceEnd}
+                        setDate={(date) => {
+                          if (date >= serviceStart) {
+                            clearErrors("serviceEnd");
+                          } else {
+                            setError("serviceEnd", {
+                              type: "manual",
+                              message:
+                                "Service end time must come after service start time.",
+                            });
+                          }
+                          setServiceEnd(date);
+                        }}
                       />
                     </div>
                   </div>
@@ -362,7 +493,7 @@ function CarwashOldRecord() {
                 </div>
               </div>
 
-              <div className="border p-4 rounded-md shadow-sm my-2">
+              <div className="border p-4 rounded-md shadow-sm mt-2">
                 <div className="flex   gap-4 items-center  justify-between">
                   <Label>Add Ons</Label>
                   <Switch checked={addOns} onCheckedChange={setAddOns} />
@@ -482,7 +613,7 @@ function CarwashOldRecord() {
                   </div>
                 )}
               </div>
-              <div className="border p-4 rounded-md shadow-sm">
+              <div className="border p-4 rounded-md shadow-sm mt-2">
                 <div className="flex   gap-4 items-center  justify-between">
                   <Label>Parking</Label>
                   <Switch checked={parking} onCheckedChange={setParking} />
@@ -490,21 +621,57 @@ function CarwashOldRecord() {
                 {parking && (
                   <div className="flex gap-2 flex-col border-t pt-3 mt-4">
                     <div className="flex items-center justify-between">
-                      <div className=" text-xs font-medium">Parking Start</div>
+                      {errors.parkingStart ? (
+                        <span className="text-destructive text-xs font-medium">
+                          {errors.parkingStart.message}
+                        </span>
+                      ) : (
+                        <div className=" text-xs font-medium">
+                          Parking Start
+                        </div>
+                      )}
                       <div className="text-xs ">
                         <DateTimePicker
                           date={parkingStart}
-                          setDate={setParkingStart}
+                          setDate={(date) => {
+                            if (date >= serviceEnd) {
+                              clearErrors("parkingStart");
+                            } else {
+                              setError("parkingStart", {
+                                type: "manual",
+                                message:
+                                  "parking start time must come after service end time.",
+                              });
+                            }
+                            setParkingStart(date);
+                          }}
                         />
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <div className=" text-xs font-medium">Parking End</div>
+                      {errors.parkingEnd ? (
+                        <span className="text-destructive text-xs font-medium">
+                          {errors.parkingEnd.message}
+                        </span>
+                      ) : (
+                        <div className=" text-xs font-medium">Parking End</div>
+                      )}
                       <div className="text-xs ">
                         <DateTimePicker
                           date={parkingEnd}
-                          setDate={setParkingEnd}
+                          setDate={(date) => {
+                            if (date >= parkingStart) {
+                              clearErrors("parkingEnd");
+                            } else {
+                              setError("parkingEnd", {
+                                type: "manual",
+                                message:
+                                  "parking end time must come after parking start time.",
+                              });
+                            }
+                            setParkingEnd(date);
+                          }}
                         />
                       </div>
                     </div>
@@ -553,7 +720,7 @@ function CarwashOldRecord() {
                   </div>
                 )}
               </div>
-              <div className="border p-4 rounded-md shadow-sm my-2">
+              <div className="border p-4 rounded-md shadow-sm mt-2">
                 <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
                   <Label>
                     {errors.discountAmt ? (
@@ -580,9 +747,9 @@ function CarwashOldRecord() {
                           if (!regex.test(value)) {
                             return "Not a valid amount";
                           }
-                          // if (parseFloat(value) > parseFloat(grossAmt)) {
-                          //   return "Discount amount greater than gross amount";
-                          // }
+                          if (parseFloat(value) > parseFloat(grossAmt)) {
+                            return "Discount amount greater than gross amount";
+                          }
                           return true;
                         },
                       })}
@@ -595,7 +762,7 @@ function CarwashOldRecord() {
                   </div>
                 </div>
               </div>
-              <div className="border p-4 rounded-md shadow-sm my-2">
+              <div className="border p-4 rounded-md shadow-sm mt-2">
                 <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
                   <Label>Payment Mode</Label>
                   <div className="flex items-center gap-2 w-full sm:w-[180px]">
@@ -621,31 +788,67 @@ function CarwashOldRecord() {
                   </div>
                 </div>
               </div>
-              <div className="grid gap-2 mb-2 px-2">
+              <div className="border p-4 rounded-md shadow-sm mt-2">
+                <div className="flex items-center justify-between">
+                  {errors.transactionTime ? (
+                    <span className="text-destructive text-xs font-medium">
+                      {errors.transactionTime.message}
+                    </span>
+                  ) : (
+                    <Label>Transaction Time</Label>
+                  )}
+
+                  <div className="text-xs ">
+                    <DateTimePicker
+                      date={transactionTime}
+                      setDate={(date) => {
+                        if (parking) {
+                          if (date >= parkingEnd) {
+                            clearErrors("transactionTime");
+                          } else {
+                            setError("transactionTime", {
+                              type: "manual",
+                              message:
+                                "Transaction time must come after parking end time.",
+                            });
+                          }
+                        } else {
+                          if (date >= serviceEnd) {
+                            clearErrors("transactionTime");
+                          } else {
+                            setError("transactionTime", {
+                              type: "manual",
+                              message:
+                                "Transaction time must come after service end time.",
+                            });
+                          }
+                        }
+
+                        setTransactionTime(date);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="grid gap-2 my-2 px-2">
                 <Label>Details</Label>
                 <div className="flex items-center justify-between  ">
                   <div className="text-muted-foreground text-xs font-medium">
                     Gross Amt
                   </div>
-                  <div className="text-xs font-medium">
-                    {/* Rs. {grossAmt} */}
-                  </div>
+                  <div className="text-xs font-medium">Rs. {grossAmt}</div>
                 </div>
                 <div className="flex items-center justify-between  ">
                   <div className="text-muted-foreground text-xs font-medium">
                     Discount Amt
                   </div>
-                  <div className="text-xs font-medium">
-                    {/* Rs. {discountAmt} */}
-                  </div>
+                  <div className="text-xs font-medium">Rs. {discountAmt}</div>
                 </div>
                 <div className="flex items-center justify-between  ">
                   <div className="text-muted-foreground text-xs font-medium">
                     Net Amt
                   </div>
-                  <div className="text-base font-semibold">
-                    {/* Rs. {netAmt} */}
-                  </div>
+                  <div className="text-base font-semibold">Rs. {netAmt}</div>
                 </div>
               </div>
             </form>
@@ -653,16 +856,21 @@ function CarwashOldRecord() {
           <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
             <div className="flex w-full items-center justify-between gap-4">
               <div>
-                <Button
+                {/* <Button
                   variant="outline"
                   onClick={() => {
                     reset();
                   }}
                 >
                   Reset
-                </Button>
+                </Button> */}
               </div>
-              <SubmitButton buttonText={"Insert"} />
+              <SubmitButton
+                form="old-record"
+                buttonText={"Insert Record"}
+                loadingText={"Inserting..."}
+                condition={isSubmitting}
+              />
             </div>
           </CardFooter>
         </Card>

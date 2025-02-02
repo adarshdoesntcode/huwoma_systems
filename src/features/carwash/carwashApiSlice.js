@@ -83,6 +83,14 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CarwashTransactions"],
     }),
+    createOldRecord: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/old-record",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions"],
+    }),
     transactionBooking: builder.mutation({
       query: (credentials) => ({
         url: "/carwash/transaction/booking",
@@ -201,4 +209,5 @@ export const {
   useGetPreEditDataQuery,
   useResetStreakMutation,
   useEditCustomerVehicleMutation,
+  useCreateOldRecordMutation,
 } = carwashApiSlice;

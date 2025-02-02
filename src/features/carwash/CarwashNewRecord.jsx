@@ -18,6 +18,7 @@ import {
   Contact,
   Loader2,
   Pipette,
+  X,
 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,6 +59,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
 
 function CarwashNewRecord() {
   const [tab, setTab] = useState("number");
@@ -680,6 +682,13 @@ const ServiceSelect = ({ customer, locationState }) => {
   const [showColourPicker, setShowColourPicker] = useState(false);
   const [newColor, setNewColor] = useState("");
   const [serviceCost, setServiceCost] = useState("");
+  const [newAddOn, setNewAddOn] = useState({
+    name: "",
+    price: "",
+  });
+  const [addOns, setAddOns] = useState(false);
+
+  const [addOnsList, setAddOnsList] = useState([]);
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useVehicleTypeWithServicesQuery();
 
@@ -709,6 +718,13 @@ const ServiceSelect = ({ customer, locationState }) => {
     } else {
       setShowColourPicker(true);
     }
+  };
+  const handleRemoveAddOn = (index) => {
+    setAddOnsList((prev) => {
+      return prev.filter((addOn, i) => {
+        return i !== index;
+      });
+    });
   };
 
   const onSubmit = async (data) => {
@@ -740,6 +756,7 @@ const ServiceSelect = ({ customer, locationState }) => {
           vehicleModel: data.vehicleModel,
           vehicleColor: selectedColor,
           customer: customer._id,
+          addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
           hour: new Date().getHours(),
           today: new Date().toISOString().slice(0, 10),
         });
@@ -752,6 +769,7 @@ const ServiceSelect = ({ customer, locationState }) => {
           vehicleModel: data.vehicleModel,
           vehicleColor: selectedColor,
           customer: customer._id,
+          addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
           hour: new Date().getHours(),
           today: new Date().toISOString().slice(0, 10),
         });
@@ -915,7 +933,127 @@ const ServiceSelect = ({ customer, locationState }) => {
             {selectedService && (
               <>
                 <form id="transaction-1" onSubmit={handleSubmit(onSubmit)}>
-                  <Separator className="mb-2" />
+                  <div className="flex   gap-4 items-center  justify-between">
+                    <Label>Add Ons</Label>
+                    <Switch checked={addOns} onCheckedChange={setAddOns} />
+                  </div>
+                  {addOns && (
+                    <div className="flex flex-col gap-2 border-t pt-3 mt-4">
+                      {addOnsList.map((addOn, index) => (
+                        <div
+                          key={addOn.id}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="text-muted-foreground text-xs font-medium">
+                            {index + 1}. {addOn.name}
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-sm font-semibold">
+                              {addOn.price === 0
+                                ? "Free"
+                                : "Rs. " + addOn.price}
+                            </div>
+                            <X
+                              className="w-4 h-4 hover:scale-110 text-muted-foreground hover:text-destructive transition-all cursor-pointer"
+                              onClick={() => handleRemoveAddOn(index)}
+                            />
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="flex items-center gap-4 mt-2  justify-between">
+                        <Input
+                          id="newAddOn"
+                          type="text"
+                          autoComplete="off"
+                          placeholder="Add On"
+                          autoFocus
+                          value={newAddOn.name}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              document.getElementById("addAddOn").click();
+                              e.target.blur();
+                            }
+                          }}
+                          onChange={(e) =>
+                            setNewAddOn((prev) => {
+                              return { ...prev, name: e.target.value };
+                            })
+                          }
+                          className="text-sm font-medium "
+                        />
+                        <Input
+                          onWheel={(e) => e.target.blur()}
+                          id="newAddOnPrice"
+                          type="tel"
+                          autoComplete="off"
+                          inputMode="numeric"
+                          placeholder="Rs"
+                          value={newAddOn.price}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              document.getElementById("addAddOn").click();
+                              e.target.blur();
+                            }
+                          }}
+                          onChange={(e) => {
+                            const value = e.target.value;
+
+                            setNewAddOn((prev) => {
+                              return {
+                                ...prev,
+                                price: value,
+                              };
+                            });
+                          }}
+                          className="text-sm font-medium "
+                        />
+                        <Button
+                          id="addAddOn"
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            if (!newAddOn.name) {
+                              toast({
+                                title: "Add On Name is required",
+                                variant: "destructive",
+                              });
+                              return;
+                            }
+                            if (isNaN(parseFloat(newAddOn.price))) {
+                              toast({
+                                title: "Add On Price must be a number",
+                                variant: "destructive",
+                              });
+                              return;
+                            }
+                            if (!Number(newAddOn.price) > 0) {
+                              toast({
+                                title: "Add On Price is required",
+                                variant: "destructive",
+                              });
+                              return;
+                            }
+                            setAddOnsList([
+                              ...addOnsList,
+                              {
+                                name: newAddOn.name,
+                                price: Number(newAddOn.price),
+                              },
+                            ]);
+                            setNewAddOn({
+                              name: "",
+                              price: "",
+                            });
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  <Separator className="mt-4 mb-2" />
                   <div className="grid gap-2 mt-6">
                     <Label>Vehicle Name</Label>
                     <Input
@@ -976,7 +1114,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                               : "grayscale text-slate-400"
                           )}
                           onClick={() => {
-                            selectedColor === color
+                            selectedColor.colorCode == color.colorCode
                               ? setSelectedColor("")
                               : setSelectedColor(color);
                           }}
@@ -1002,7 +1140,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                               : "grayscale text-slate-400"
                           )}
                           onClick={() => {
-                            selectedColor === color
+                            selectedColor.colorCode == color.colorCode
                               ? setSelectedColor("")
                               : setSelectedColor(color);
                           }}
@@ -1016,7 +1154,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                           <span className="text-xs">{color.colorName}</span>
                         </div>
                       ))}
-                      <Popover
+                      {/* <Popover
                         open={showColourPicker}
                         onOpenChange={handleColourPicker}
                       >
@@ -1037,7 +1175,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                             onChange={setNewColor}
                           />
                         </PopoverContent>
-                      </Popover>
+                      </Popover> */}
                     </div>
                   </div>
                 </form>
