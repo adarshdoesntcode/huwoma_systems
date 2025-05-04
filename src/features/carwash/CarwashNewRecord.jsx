@@ -656,7 +656,7 @@ function CarwashNewRecord() {
 }
 
 const ServiceSelect = ({ customer, locationState }) => {
-  const vehicleData = getMostDetailedObject(customer?.vehicleModels);
+  const vehicleData = getMostDetailedObject(customer?.vehicleModels || []);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedColor, setSelectedColor] = useState(
