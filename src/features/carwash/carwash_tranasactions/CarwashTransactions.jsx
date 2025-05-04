@@ -740,20 +740,23 @@ const FilteredAnalytics = ({ responseData, range }) => {
       });
     }
   }, [responseData]);
+  console.log("🚀 ~ FilteredAnalytics ~ responseData:", responseData);
 
   let rangeString;
 
   if (responseData.length > 0) {
     rangeString = `${
       !range.from
-        ? format(responseData[0].transactionTime, "dd MMM, yyyy")
+        ? format(completetedTransactions[0].transactionTime, "dd MMM, yyyy")
         : format(range.from, "dd MMM, yyyy")
     } - ${format(range.to, "dd MMM, yyy")}`;
   }
 
-  const carwashTableData = [...responseData].sort(
-    (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
-  );
+  const carwashTableData = [...responseData];
+
+  // .sort(
+  //   (a, b) => new Date(b.creartedAt) - new Date(a.creartedAt)
+  // );
 
   return (
     <div className="space-y-6 " ref={analyticsRef}>
