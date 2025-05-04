@@ -9,18 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Car,
-  Check,
-  CheckCheck,
-  ChevronLeft,
-  ChevronRight,
-  Contact,
-  Loader2,
-  Pipette,
-  X,
-} from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { CheckCheck, ChevronRight, Contact, Loader2, X } from "lucide-react";
+import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -39,19 +29,13 @@ import { Separator } from "@/components/ui/separator";
 import {
   cn,
   findWashCountForCustomer,
-  generateBillNo,
-  getOrdinal,
+  getMostDetailedObject,
 } from "@/lib/utils";
 import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
 import { CAR_COLOR_OPTIONS } from "@/lib/config";
-import { ChromePicker } from "react-color";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
@@ -62,7 +46,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 
 function CarwashNewRecord() {
-  const [tab, setTab] = useState("number");
+  const [tab, setTab] = useState("vehicle");
   const [customer, setCustomer] = useState(null);
   const [customerList, setCustomerList] = useState(null);
   const [vehicleCustomerList, setVehicleCustomerList] = useState(null);
@@ -257,8 +241,8 @@ function CarwashNewRecord() {
             <form onSubmit={handleSubmit(onSubmit)} id="customer">
               <Tabs value={tab} onValueChange={setTab}>
                 <TabsList>
-                  <TabsTrigger value="number">Contact</TabsTrigger>
                   <TabsTrigger value="vehicle">Vehicle</TabsTrigger>
+                  <TabsTrigger value="number">Contact</TabsTrigger>
                   <TabsTrigger value="name">Name</TabsTrigger>
                 </TabsList>
                 <TabsContent value="number">
@@ -273,12 +257,12 @@ function CarwashNewRecord() {
                       )}
                     </Label>
                     <Input
+                      autoFocus
                       onWheel={(e) => e.target.blur()}
                       type="tel"
                       inputMode="numeric"
                       placeholder="+977"
                       autoComplete="off"
-                      autoFocus
                       {...register("customerContact", {
                         required:
                           tab === "number" ? "Number is required" : false,
@@ -350,11 +334,11 @@ function CarwashNewRecord() {
                         )}
                       </Label>
                       <Input
+                        autoFocus
                         id="vehicleNumber"
                         type="tel"
                         inputMode="numeric"
                         autoComplete="off"
-                        autoFocus
                         placeholder="Number Plate"
                         {...register("vehicleNumber", {
                           // required: "Identification is required",
@@ -460,10 +444,10 @@ function CarwashNewRecord() {
                           )}
                         </Label>
                         <Input
+                          autoFocus
                           id="customerName"
                           type="text"
                           placeholder="Name"
-                          autoFocus
                           autoComplete="off"
                           {...register("customerName", {
                             // required: "Name is required",
@@ -672,10 +656,11 @@ function CarwashNewRecord() {
 }
 
 const ServiceSelect = ({ customer, locationState }) => {
+  const vehicleData = getMostDetailedObject(customer?.vehicleModels);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedColor, setSelectedColor] = useState(
-    customer?.vehicleModels?.[0]?.vehicleColor || ""
+    vehicleData?.vehicleColor || ""
   );
   const [carColors, setCarColors] = useState(CAR_COLOR_OPTIONS);
   const [customCarColors, setCustomCarColors] = useState([]);
@@ -1059,7 +1044,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                     <Input
                       id="vehicleModel"
                       type="text"
-                      defaultValue={customer?.vehicleModels?.[0]?.model}
+                      defaultValue={vehicleData?.model}
                       autoComplete="off"
                       placeholder="Company/Model"
                       autoFocus
@@ -1087,7 +1072,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                     <Input
                       id="vehicleNumber"
                       type="tel"
-                      defaultValue={customer?.vehicleModels?.[0]?.vehicleNumber}
+                      defaultValue={vehicleData?.vehicleNumber}
                       inputMode="numeric"
                       autoComplete="off"
                       placeholder="Number Plate"

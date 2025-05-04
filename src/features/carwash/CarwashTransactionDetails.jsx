@@ -615,9 +615,10 @@ const DetailsFooter = ({
             </Button>
           )}
         {transactionDetails?.transactionStatus === "Ready for Pickup" &&
-          origin !== "transactions" &&
-          getDaysDifference(transactionDetails?.service.end, new Date()) <=
-            3 && (
+          origin !== "transactions" && (
+            // getDaysDifference(transactionDetails?.service.end, new Date()) <=
+            //   3 &&
+
             <Button
               variant="outline"
               onClick={() => {
@@ -628,9 +629,10 @@ const DetailsFooter = ({
             </Button>
           )}
         {transactionDetails?.transactionStatus === "Completed" &&
-          origin !== "transactions" &&
-          getDaysDifference(transactionDetails?.transactionTime, new Date()) <=
-            3 && (
+          origin !== "transactions" && (
+            // getDaysDifference(transactionDetails?.transactionTime, new Date()) <=
+            //   3
+            //   &&
             <Button
               variant="secondary"
               onClick={() => {
@@ -659,7 +661,6 @@ const DetailsFooter = ({
             <Button
               className="w-full"
               onClick={() => {
-                console.log("object");
                 navigate(`/carwash/inspection/${transactionDetails._id}`);
               }}
             >
@@ -683,16 +684,31 @@ const DetailsFooter = ({
             <ChevronRight className="h-4 w-4 ml-2" />{" "}
           </Button>
         )}
-      {transactionDetails?.transactionStatus === "Completed" && (
-        <Button
-          className="w-full"
-          variant="outline"
-          onClick={handleReceiptPrint}
-        >
-          Print
-          <Printer className="h-4 w-4 ml-2" />{" "}
-        </Button>
-      )}
+      {transactionDetails?.transactionStatus === "Completed" &&
+        transactionDetails.paymentStatus === "Pending" && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              navigate("/carwash/checkout", {
+                state: { transactionDetails, origin: "pedning" },
+              });
+            }}
+          >
+            Checkout
+            <ChevronRight className="h-4 w-4 ml-2" />{" "}
+          </Button>
+        )}
+      {transactionDetails?.transactionStatus === "Completed" &&
+        transactionDetails.paymentStatus === "Paid" && (
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={handleReceiptPrint}
+          >
+            Print
+            <Printer className="h-4 w-4 ml-2" />{" "}
+          </Button>
+        )}
     </div>
   );
 };

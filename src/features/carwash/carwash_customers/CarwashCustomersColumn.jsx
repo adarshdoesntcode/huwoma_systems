@@ -1,6 +1,13 @@
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { TableCell, TableHead } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
 import { Copy } from "lucide-react";
@@ -39,8 +46,7 @@ export const CarwashCustomersColumn = [
     filterFn: (row, _, filterValue) => {
       return row.original.customerName
         .toLowerCase()
-        .split(" ")
-        .some((name) => name.startsWith(filterValue.toLowerCase()));
+        .includes(filterValue.toLowerCase());
     },
   },
 
@@ -74,41 +80,70 @@ export const CarwashCustomersColumn = [
       return row.original.customerContact.toString().includes(filterValue);
     },
   },
+
   {
-    accessorKey: "customerTransactionsNumber",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="No of Washes"
-        className={"px-1 hidden lg:table-cell"}
-        buttonClass={"mx-auto"}
-      />
+    accessorKey: "customerVehicles",
+    header: () => (
+      <TableHead className="px-1 hidden lg:table-cell">Vehicles</TableHead>
     ),
     cell: ({ row }) => {
-      const transactions = row.original.transactions.filter(
-        (transaction) => transaction.transactionStatus === "Completed"
-      );
-      const total = transactions.length;
+      const vehicles = row.original.customerVehicles;
 
       return (
-        <TableCell className="hidden lg:table-cell px-4 text-xs text-muted-foreground text-center py-2">
-          {total}
+        <TableCell className="hidden lg:table-cell max-w-32 px-4 text-xs text-muted-foreground text-center py-2">
+          <div className="flex gap-2 items-center  flex-wrap">
+            {vehicles.map((vehicle, index) => (
+              <div className="flex gap-2 items-center" key={index}>
+                {vehicle?.vehicleColor && (
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div
+                          className={cn(
+                            `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
+                          )}
+                          style={{
+                            backgroundColor: vehicle?.vehicleColor?.colorCode,
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">
+                          {vehicle?.vehicleColor?.colorName}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                <div className="flex flex-col items-start">
+                  <div className="font-semibold text-primary text-left text-xs">
+                    {vehicle?.vehicleModel}
+                  </div>
+                  <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                    {vehicle.vehicleNumber}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </TableCell>
       );
     },
 
-    sortingFn: (a, b) => {
-      const A = a.original.transactions.filter(
-        (transaction) => transaction.transactionStatus === "Completed"
-      ).length;
-      const B = b.original.transactions.filter(
-        (transaction) => transaction.transactionStatus === "Completed"
-      ).length;
-
-      return B - A;
+    filterFn: (row, _, filterValue) => {
+      return row.original.customerVehicles.some(
+        (vehicle) =>
+          vehicle.vehicleModel
+            ?.toString()
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          vehicle.vehicleNumber
+            ?.toString()
+            .toLowerCase()
+            .includes(filterValue.toLowerCase())
+      );
     },
   },
-
   {
     accessorKey: "customerTransactions",
     header: ({ column }) => (
@@ -136,7 +171,6 @@ export const CarwashCustomersColumn = [
       return B - A;
     },
   },
-
   {
     accessorKey: "createdAt",
     header: ({ column }) => {

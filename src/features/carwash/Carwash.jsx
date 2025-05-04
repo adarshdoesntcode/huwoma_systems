@@ -20,19 +20,8 @@ import {
   RefreshCcw,
   Users,
 } from "lucide-react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  LabelList,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CarwashDataTable } from "./CarwashDataTable";
@@ -44,12 +33,12 @@ import ApiError from "@/components/error/ApiError";
 import { isMobile } from "react-device-detect";
 import { Badge } from "@/components/ui/badge";
 
-import NavBackButton from "@/components/NavBackButton";
 import { CarwashBookingDataTable } from "./CarwashBookingDataTable";
 import { CarwashBookingColumn } from "./CarwashBookingColumn";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { useIsSuper } from "@/hooks/useSuper";
+import { ReviewModal } from "@/components/ReviewModal";
 
 const chartConfig = {
   customers: {
@@ -89,6 +78,7 @@ function Carwash() {
 
   let inQueueTransactions = [];
   let readyForPickupTransactions = [];
+  let pendingPaymentTransactions = [];
   let bookedTransactions = [];
   let completedTransactions = [];
 
@@ -119,8 +109,22 @@ function Carwash() {
         (transaction) => transaction.transactionStatus === "Ready for Pickup"
       )
       .sort((a, b) => new Date(b.service.end) - new Date(a.service.end));
+    pendingPaymentTransactions = data?.data?.transactions
+      ?.filter(
+        (transaction) =>
+          transaction.transactionStatus === "Completed" &&
+          transaction.paymentStatus === "Pending"
+      )
+      .sort(
+        (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
+      );
+
     completedTransactions = data?.data?.transactions
-      ?.filter((transaction) => transaction.transactionStatus === "Completed")
+      ?.filter(
+        (transaction) =>
+          transaction.transactionStatus === "Completed" &&
+          transaction.paymentStatus === "Paid"
+      )
       .sort(
         (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
       );
@@ -248,12 +252,12 @@ function Carwash() {
               setTab(value);
             }}
           >
-            <div className="flex flex-col  items-start sm:items-center sm:flex-row gap-4 justify-between">
-              <TabsList className="order-2 md:order-1">
+            <div className="flex flex-col h-max-content  items-start sm:items-center sm:flex-row gap-4  justify-between">
+              <TabsList className="order-2 md:order-1 flex-wrap   justify-start h-20 md:h-10 ">
                 <TabsTrigger value="queue">
                   Queue
                   {inQueueTransactions.length > 0 && (
-                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
+                    <Badge className="ml-2   py-0 text-[10px]">
                       {inQueueTransactions.length}
                     </Badge>
                   )}
@@ -261,15 +265,23 @@ function Carwash() {
                 <TabsTrigger value="pickup">
                   PickUp
                   {readyForPickupTransactions.length > 0 && (
-                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
+                    <Badge className="ml-2   py-0 text-[10px]">
                       {readyForPickupTransactions.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="pending">
+                  Pending
+                  {pendingPaymentTransactions.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {pendingPaymentTransactions.length}
                     </Badge>
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="complete">
                   Complete
                   {completedTransactions.length > 0 && (
-                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
+                    <Badge className="ml-2   py-0 text-[10px]">
                       {completedTransactions.length}
                     </Badge>
                   )}
@@ -277,7 +289,7 @@ function Carwash() {
                 <TabsTrigger value="booking">
                   Booking
                   {bookedTransactions.length > 0 && (
-                    <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
+                    <Badge className="ml-2   py-0 text-[10px]">
                       {bookedTransactions.length}
                     </Badge>
                   )}
@@ -381,6 +393,45 @@ function Carwash() {
                 </CardContent>
               </Card>
             </TabsContent>
+            <TabsContent value="pending">
+              <Card>
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-xl sm:text-2xl">
+                        Pending
+                      </CardTitle>
+                      <CardDescription className="text-xs sm:text-sm">
+                        Vehicles with pending payment
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-end gap-2 flex-col">
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <span className="sr-only sm:not-sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={`w-4 h-4 sm:ml-2 ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+                      <span className="text-[10px] text-muted-foreground hidden sm:block">
+                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                  <CarwashDataTable
+                    data={pendingPaymentTransactions}
+                    columns={CarwashColumn}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
             <TabsContent value="complete">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
@@ -462,6 +513,7 @@ function Carwash() {
             </TabsContent>
           </Tabs>
         </div>
+        <ReviewModal />
       </div>
     );
   } else if (isError) {

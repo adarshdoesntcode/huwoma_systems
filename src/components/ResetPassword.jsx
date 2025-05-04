@@ -86,8 +86,6 @@ export function ResetPassword({ forgotPassword, setForgotPassword }) {
         body: JSON.stringify({ OTP: otp }),
       });
 
-      console.log(response);
-
       if (response.status === 200) {
         const token = await response.json();
         setToken(token.accessToken);

@@ -218,3 +218,27 @@ export const handlePrint = (data) => {
   const printWindow = window.open(blobUrl, "_blank");
   printWindow.onload = () => printWindow.print();
 };
+
+export function getMostDetailedObject(arr) {
+  const getDetailScore = (obj) => {
+    let score = 0;
+    for (const key in obj) {
+      if (
+        obj[key] &&
+        typeof obj[key] === "object" &&
+        !Array.isArray(obj[key])
+      ) {
+        score += getDetailScore(obj[key]);
+      } else {
+        score++;
+      }
+    }
+    return score;
+  };
+
+  return arr.reduce((mostDetailed, current) => {
+    return getDetailScore(current) > getDetailScore(mostDetailed)
+      ? current
+      : mostDetailed;
+  }, {});
+}

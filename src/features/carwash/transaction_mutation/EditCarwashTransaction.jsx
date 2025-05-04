@@ -262,32 +262,33 @@ function EditCarwashTransaction({
               </Select>
             </div>
           )}
-          {transactionDetails?.transactionStatus === "Completed" && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Payment
-              </Label>
-              <Select
-                value={paymentMode?._id}
-                onValueChange={(e) => {
-                  setPaymentMode(
-                    paymentModes?.find((mode) => e === mode._id) || ""
-                  );
-                }}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {paymentModes?.map((mode) => (
-                    <SelectItem key={mode._id} value={mode._id}>
-                      {mode.paymentModeName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {transactionDetails?.transactionStatus === "Completed" &&
+            transactionDetails.paymentStatus === "Paid" && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="username" className="text-right">
+                  Payment
+                </Label>
+                <Select
+                  value={paymentMode?._id}
+                  onValueChange={(e) => {
+                    setPaymentMode(
+                      paymentModes?.find((mode) => e === mode._id) || ""
+                    );
+                  }}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentModes?.map((mode) => (
+                      <SelectItem key={mode._id} value={mode._id}>
+                        {mode.paymentModeName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
         </form>
         <DialogFooter>
           <SubmitButton

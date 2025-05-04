@@ -26,22 +26,9 @@ import React, { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
-import { File, Loader2 } from "lucide-react";
+import { File } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
-
-import CarwashTransactionDetails from "../CarwashTransactionDetails";
-import { useDeleteCarwashTransactionMutation } from "../carwashApiSlice";
 
 import { Workbook } from "exceljs";
 import { format } from "date-fns";
@@ -67,6 +54,7 @@ const exportExcel = (rows) => {
       { width: 15 },
       { width: 20 },
       { width: 25 },
+      { width: 200 },
     ];
 
     worksheet.getRow(3).values = [
@@ -74,6 +62,7 @@ const exportExcel = (rows) => {
       "Contact",
       "Total Spent",
       "Customer Since",
+      "Customer Vehicles",
     ];
     worksheet.getRow(3).font = { bold: true, size: 12 };
     worksheet.getRow(3).fill = {
@@ -89,6 +78,14 @@ const exportExcel = (rows) => {
       Customer_Since: row.original?.createdAt
         ? format(row.original?.createdAt, "MMMM d, yyyy")
         : "",
+      Customer_Vehicles: row.original.customerVehicles
+        .map(
+          (vehicle) =>
+            `${vehicle.vehicleModel}  ${
+              vehicle.vehicleNumber && `(${vehicle.vehicleNumber})`
+            }`
+        )
+        .join(", "),
     }));
 
     rowData.forEach((row) => {
@@ -97,6 +94,7 @@ const exportExcel = (rows) => {
         row.Customer_Contact,
         row.Customer_Transactions,
         row.Customer_Since,
+        row.Customer_Vehicles,
       ]);
     });
 
@@ -167,6 +165,7 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="customerContact">Contact</SelectItem>
+              <SelectItem value="customerVehicles">Vehicle</SelectItem>
               <SelectItem value="customerName">Name</SelectItem>
             </SelectContent>
           </Select>

@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   Contact,
   Cross,
+  Hourglass,
   Loader2,
   Trash,
   X,
@@ -199,8 +200,8 @@ function CarwashCheckout() {
           transactionId: transactionDetails._id,
           serviceId: service._id,
           transactionStatus: "Completed",
-          paymentStatus: "Paid",
-          paymentMode: paymentMode._id,
+          paymentStatus: paymentMode._id ? "Paid" : "Pending",
+          paymentMode: paymentMode._id ?? undefined,
           parkingIn:
             parkingEligible && parkingIncluded
               ? parkingStart.toISOString()
@@ -214,7 +215,7 @@ function CarwashCheckout() {
           discountAmount: Number(data.discountAmt) || 0,
           netAmount: netAmt,
           serviceCost: serviceCost,
-          redeemed: serviceCost > 0 ? false : true,
+          redeemed: serviceCost === 0 && paymentMode?._id ? true : false,
           washCount: washStreakApplicable ? washCount : undefined,
           origin: origin,
           inspections: data.inspections,
@@ -224,8 +225,8 @@ function CarwashCheckout() {
           transactionId: transactionDetails._id,
           serviceId: service._id,
           transactionStatus: "Completed",
-          paymentStatus: "Paid",
-          paymentMode: paymentMode._id,
+          paymentStatus: paymentMode._id ? "Paid" : "Pending",
+          paymentMode: paymentMode._id ?? undefined,
           parkingIn:
             parkingEligible && parkingIncluded
               ? parkingStart.toISOString()
@@ -239,7 +240,8 @@ function CarwashCheckout() {
           discountAmount: Number(data.discountAmt) || 0,
           netAmount: netAmt,
           serviceCost: serviceCost,
-          redeemed: serviceCost > 0 ? false : true,
+          redeemed: serviceCost === 0 && paymentMode?._id ? true : false,
+
           washCount: washStreakApplicable ? washCount : undefined,
           origin: origin,
         };
@@ -251,10 +253,13 @@ function CarwashCheckout() {
       if (!res.error) {
         toast({
           title: "Transaction Complete!",
-          description: `Payment Received!`,
+          description: `Payment ${paymentMode._id ? "Received" : "Pending"}`,
           duration: 2000,
         });
-        navigate("/carwash", { state: { tab: "complete" }, replace: true });
+        navigate("/carwash", {
+          state: { tab: paymentMode._id ? "complete" : "pending" },
+          replace: true,
+        });
       }
     } catch (error) {
       toast({
@@ -775,7 +780,7 @@ function CarwashCheckout() {
                   </div>
 
                   <div className="border p-4 rounded-md shadow-sm">
-                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
+                    {/* <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
                       <Label>Payment Mode</Label>
                       <div className="flex items-center gap-2 w-full sm:w-[180px]">
                         <Select
@@ -789,16 +794,36 @@ function CarwashCheckout() {
                           <SelectTrigger>
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {paymentModes?.map((mode) => (
-                              <SelectItem key={mode._id} value={mode._id}>
-                                {mode.paymentModeName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <SelectContent> */}
+                    <div className="grid gap-4">
+                      <Label>Payment Mode</Label>
+                      <div className="flex flex-wrap gap-2 text-sm text-normal">
+                        {paymentModes?.map((mode) => (
+                          <Button
+                            className="rounded-full"
+                            variant={
+                              mode._id === paymentMode?._id ? "" : "outline"
+                            }
+                            size="sm"
+                            type="button"
+                            onClick={() => {
+                              if (mode._id === paymentMode?._id) {
+                                setPaymentMode("");
+                              } else {
+                                setPaymentMode(mode);
+                              }
+                            }}
+                            key={mode._id}
+                          >
+                            {mode.paymentModeName}
+                          </Button>
+                        ))}
                       </div>
                     </div>
+                    {/* </SelectContent>
+                        </Select>
+                      </div>
+                    </div> */}
                     <div>
                       {paymentMode?.qrCodeData && (
                         <div className="space-y-4 mt-4" ref={qrCodeRef}>
@@ -825,11 +850,16 @@ function CarwashCheckout() {
               loadingText="Receiving"
               type="submit"
               form="final-transaction"
-              disabled={!paymentMode}
               buttonText={
-                <>
-                  Payment Received <Check className="w-4 h-4 ml-2" />
-                </>
+                !paymentMode ? (
+                  <>
+                    Payment Pending <Hourglass className="w-4 h-4 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    Payment Received <Check className="w-4 h-4 ml-2" />
+                  </>
+                )
               }
             />
           </CardFooter>

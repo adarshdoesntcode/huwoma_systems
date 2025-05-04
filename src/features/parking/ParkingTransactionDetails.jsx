@@ -264,7 +264,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
 
       if (!res.error) {
         handleCloseSheet();
-        console.log(origin);
+
         if (origin === "parking") {
           navigate("/parking", { state: { tab: "parked" }, replace: true });
         }

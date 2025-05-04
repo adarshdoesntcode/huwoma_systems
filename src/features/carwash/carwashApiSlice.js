@@ -14,6 +14,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         url: "/carwash/customers",
         method: "GET",
       }),
+      providesTags: ["CarwashCustomers"],
     }),
     getCarwashCustomerById: builder.query({
       query: (id) => ({
@@ -44,7 +45,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashCustomer"],
+      invalidatesTags: ["CarwashCustomer", "CarwashCustomers"],
     }),
     createCutomer: builder.mutation({
       query: (credentials) => ({
@@ -65,7 +66,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     transactionTwo: builder.mutation({
       query: (credentials) => ({
@@ -73,7 +74,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     transactionThree: builder.mutation({
       query: (credentials) => ({
@@ -81,7 +82,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     createOldRecord: builder.mutation({
       query: (credentials) => ({
@@ -89,7 +90,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     transactionBooking: builder.mutation({
       query: (credentials) => ({
@@ -97,7 +98,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     transactionStartFromBooking: builder.mutation({
       query: (credentials) => ({
@@ -105,14 +106,14 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     getCarwashTransactions: builder.query({
       query: () => ({
         url: "/carwash/transactions",
         method: "GET",
       }),
-      providesTags: ["CarwashTransactions"],
+      providesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
     getCheckoutDetails: builder.query({
       query: (credentials) => ({
@@ -129,6 +130,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         "CarwashTransactions",
         "CarwashCustomer",
         "PostFilterTransactions",
+        "CarwashCustomers",
       ],
     }),
     getTransactionForInspection: builder.query({
@@ -158,7 +160,11 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions", "CarwashCustomer"],
+      invalidatesTags: [
+        "CarwashTransactions",
+        "CarwashCustomer",
+        "CarwashCustomers",
+      ],
     }),
     rollBackFromCompleted: builder.mutation({
       query: (credentials) => ({
@@ -166,7 +172,11 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions", "CarwashCustomer"],
+      invalidatesTags: [
+        "CarwashTransactions",
+        "CarwashCustomer",
+        "CarwashCustomers",
+      ],
     }),
     getPreEditData: builder.query({
       query: () => ({
@@ -180,7 +190,7 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: { ...credentials },
       }),
-      invalidatesTags: ["CarwashTransactions"],
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
   }),
 });
