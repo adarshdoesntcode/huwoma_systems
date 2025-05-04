@@ -712,14 +712,14 @@ const FilteredAnalytics = ({ responseData, range }) => {
     dailyIncome = Array.from(
       new Set(
         completetedTransactions.map((transaction) =>
-          new Date(transaction.createdAt).toDateString()
+          new Date(transaction.transactionTime).toDateString()
         )
       )
     ).map((date) => {
       const income = completetedTransactions
         .filter(
           (transaction) =>
-            new Date(transaction.createdAt).toDateString() === date
+            new Date(transaction.transactionTime).toDateString() === date
         )
         .reduce((sum, transaction) => sum + transaction.netAmount, 0);
 
@@ -746,13 +746,13 @@ const FilteredAnalytics = ({ responseData, range }) => {
   if (responseData.length > 0) {
     rangeString = `${
       !range.from
-        ? format(responseData[0].createdAt, "dd MMM, yyyy")
+        ? format(responseData[0].transactionTime, "dd MMM, yyyy")
         : format(range.from, "dd MMM, yyyy")
     } - ${format(range.to, "dd MMM, yyy")}`;
   }
 
   const carwashTableData = [...responseData].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
   );
 
   return (
