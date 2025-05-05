@@ -32,7 +32,7 @@ export function ReviewModal() {
           <div className="p-4 border rounded-md shadow-lg">
             <QRCode
               value={
-                "https://www.google.com/search?sca_esv=1dda3acef72a6239&hl=en-US&gl=np&output=search&kgmid=/g/11y8_qg_ns&q=Park+N+Wash+by+Huwoma&shndl=30&shem=lstuoe&source=sh/x/loc/act/m1/3&kgs=3148b8d1dbbb02fd"
+                "https://search.google.com/local/writereview?placeid=ChIJX7h_TQAb6zkRwutDM9cd9qo"
               }
             />
           </div>
