@@ -36,10 +36,13 @@ function calculateTotalAmounts(
     ...simRacingTransactions,
     ...parkingTransactions,
   ];
+  console.log("🚀 ~ allTransactions:", allTransactions);
 
   // Filter only Completed transactions
   const completedTransactions = allTransactions.filter(
-    (transaction) => transaction.transactionStatus === "Completed"
+    (transaction) =>
+      transaction.transactionStatus === "Completed" &&
+      transaction.paymentStatus === "Paid"
   );
 
   // Create a result array by mapping over payment modes

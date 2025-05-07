@@ -137,7 +137,9 @@ export function Dashboard() {
   if (data) {
     carwashTransactions = data?.data?.carwashTransactions;
     carwashCompletedTransactions = carwashTransactions.filter(
-      (transaction) => transaction.transactionStatus === "Completed"
+      (transaction) =>
+        transaction.transactionStatus === "Completed" &&
+        transaction.paymentStatus === "Paid"
     );
     carwashRevenue = carwashCompletedTransactions.reduce(
       (acc, curr) => acc + curr.netAmount,
@@ -150,7 +152,9 @@ export function Dashboard() {
 
     simracingTransactions = data?.data?.simracingTransactions;
     simracingCompletedTransactions = simracingTransactions.filter(
-      (transaction) => transaction.transactionStatus === "Completed"
+      (transaction) =>
+        transaction.transactionStatus === "Completed" &&
+        transaction.paymentStatus === "Paid"
     );
 
     activeRaces = simracingTransactions.filter(
@@ -165,7 +169,9 @@ export function Dashboard() {
 
     parkingTransactions = data?.data?.parkingTransactions;
     parkingCompletedTransactions = parkingTransactions.filter(
-      (transaction) => transaction.transactionStatus === "Completed"
+      (transaction) =>
+        transaction.transactionStatus === "Completed" &&
+        transaction.paymentStatus === "Paid"
     );
 
     parkingRevenue = parkingCompletedTransactions.reduce(
