@@ -1112,7 +1112,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                       defaultValue={vehicleData?.model}
                       autoComplete="off"
                       placeholder="Company/Model"
-                      autoFocus={!vehicleData.vehicleModel ? true : false}
+                      autoFocus={vehicleData.model ? false : true}
                       {...register("vehicleModel", {
                         required: "Vehicle name is required",
                         onChange: (e) => {
