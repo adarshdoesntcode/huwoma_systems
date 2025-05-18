@@ -723,7 +723,7 @@ const ServiceSelect = ({ customer, locationState }) => {
         block: "center",
       });
     }
-  }, [selectedVehicle]);
+  }, [selectedVehicle, vehicleData]);
 
   useEffect(() => {
     if (
