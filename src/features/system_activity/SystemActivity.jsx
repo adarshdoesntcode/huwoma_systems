@@ -36,10 +36,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { SystemActivityDataTable } from "./SystemActivityDataTable";
 import { SystemActivityColumn } from "./SystemActivityColumn";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 const initialState = {
   preset: {
@@ -182,6 +184,13 @@ function SystemActivity() {
   } else if (isError) {
     content = <ApiError error={error} refetch={refetch} />;
   }
+
+  const role = useRole();
+
+  if (role !== ROLES_LIST.SUPERADMIN && role !== ROLES_LIST.ADMIN) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
   return (
     <div className="space-y-2">
       <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">

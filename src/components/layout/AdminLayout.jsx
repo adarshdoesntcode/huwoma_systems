@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import BreadCrumbGenerator from "../BreadCrumbGenerator";
 import { Badge } from "../ui/badge";
+import { useRole } from "@/hooks/useRole";
 
 function AdminLayout() {
   const [logoutLoader, setLogoutLoader] = useState(false);
@@ -37,6 +38,7 @@ function AdminLayout() {
   const navigate = useNavigate();
 
   const user = useSelector(selectCurrentUser);
+  const role = useRole();
 
   const logout = useLogout();
 
@@ -105,9 +107,11 @@ function AdminLayout() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  Settings
-                </DropdownMenuItem>
+                {role !== ROLES_LIST.STAFF && (
+                  <DropdownMenuItem onClick={() => navigate("/settings")}>
+                    Settings
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem>Support</DropdownMenuItem>
 
                 <DropdownMenuSeparator />

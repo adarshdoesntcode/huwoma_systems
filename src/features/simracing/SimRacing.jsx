@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Car, PlusCircle, ReceiptText, RefreshCcw, Users } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import RigCard from "./RigCard";
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
@@ -24,6 +24,8 @@ import { SimRacingBookingColumn } from "./SimRacingBookingColumn";
 import { SimRacingFinishedColumn } from "./SimRacingFinishedColumn";
 import { SimRacingFinishedDataTable } from "./SimRacingFinishedDataTable";
 import { useIsSuper } from "@/hooks/useSuper";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 function SimRacing() {
   const isSuper = useIsSuper();
@@ -96,6 +98,12 @@ function SimRacing() {
   const handleRefresh = () => {
     refetch();
   };
+
+  const role = useRole();
+
+  if (role !== ROLES_LIST.SUPERADMIN && role !== ROLES_LIST.ADMIN) {
+    return <Navigate to="/unauthorized" replace />;
+  }
 
   let content;
 

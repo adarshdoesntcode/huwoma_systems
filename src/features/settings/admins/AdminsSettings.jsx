@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   useCreateAdminMutation,
-  useCreatePaymentModeMutation,
   useDeleteAdminMutation,
   useGetAllAdminsQuery,
   useUpdateAdminMutation,
@@ -23,7 +22,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   Select,
@@ -41,15 +39,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -64,7 +59,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
@@ -72,7 +66,6 @@ import { useIsSuper } from "@/hooks/useSuper";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/features/auth/authSlice";
 import { Navigate } from "react-router-dom";
-import { set } from "lodash";
 
 function AdminsSettings() {
   const isSuper = useIsSuper();
@@ -470,6 +463,7 @@ function CreateAdmin({ createOpen, setCreateOpen }) {
                     <SelectLabel>Role</SelectLabel>
                     <SelectItem value="ADMIN">Admin</SelectItem>
                     <SelectItem value="SUPERADMIN">Super Admin</SelectItem>
+                    <SelectItem value="STAFF">Staff</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

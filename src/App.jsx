@@ -24,7 +24,11 @@ const router = createBrowserRouter([
   {
     element: (
       <ProtectedRoute
-        allowedRoles={[ROLES_LIST.ADMIN, ROLES_LIST.SUPERADMIN]}
+        allowedRoles={[
+          ROLES_LIST.ADMIN,
+          ROLES_LIST.SUPERADMIN,
+          ROLES_LIST.STAFF,
+        ]}
       />
     ),
     children: [

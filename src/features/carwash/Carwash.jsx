@@ -39,6 +39,9 @@ import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { useIsSuper } from "@/hooks/useSuper";
 import { ReviewModal } from "@/components/ReviewModal";
+import { ROLES_LIST } from "@/lib/config";
+import { useRole } from "@/hooks/useRole";
+import { cn } from "@/lib/utils";
 
 const chartConfig = {
   customers: {
@@ -50,6 +53,8 @@ const chartConfig = {
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const isSuper = useIsSuper();
+  const role = useRole();
+
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
       pollingInterval: 60000,
@@ -151,26 +156,31 @@ function Carwash() {
             Carwash
           </div>
           <div className=" flex justify-end">
-            <Button
-              size="sm"
-              variant="outline"
-              className="mr-2"
-              onClick={() => navigate("/carwash/old-record")}
-            >
-              <span>Old </span>
-              <span className="sm:ml-1 sr-only sm:not-sr-only">Record</span>
-              <PlusCircle className="ml-2 w-4 h-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="mr-2"
-              onClick={() => navigate("/carwash/customers")}
-            >
-              <span className="sr-only sm:not-sr-only">Customers </span>
+            {role !== ROLES_LIST.STAFF && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="mr-2"
+                onClick={() => navigate("/carwash/old-record")}
+              >
+                <span>Old </span>
+                <span className="sm:ml-1 sr-only sm:not-sr-only">Record</span>
+                <PlusCircle className="ml-2 w-4 h-4" />
+              </Button>
+            )}
 
-              <Users className="sm:ml-2 w-4 h-4" />
-            </Button>
+            {role !== ROLES_LIST.STAFF && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="mr-2"
+                onClick={() => navigate("/carwash/customers")}
+              >
+                <span className="sr-only sm:not-sr-only">Customers </span>
+
+                <Users className="sm:ml-2 w-4 h-4" />
+              </Button>
+            )}
 
             {isSuper && (
               <Button
@@ -296,19 +306,25 @@ function Carwash() {
                 </TabsTrigger>
               </TabsList>
               <div className="w-full sm:w-fit order-1 sm:order-2 flex justify-end ">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="mr-2 w-full"
-                  onClick={() => navigate("/carwash/booking")}
-                >
-                  <span>Booking</span>
-                  <PlusCircle className="ml-2 w-4 h-4" />
-                </Button>
+                {role !== ROLES_LIST.STAFF && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="mr-2 w-full"
+                    onClick={() => navigate("/carwash/booking")}
+                  >
+                    <span>Booking</span>
+                    <PlusCircle className="ml-2 w-4 h-4" />
+                  </Button>
+                )}
+
                 <Button
                   size="sm"
                   onClick={() => navigate("/carwash/new")}
-                  className="w-full"
+                  className={cn(
+                    "w-full",
+                    role === ROLES_LIST.STAFF && " h-14 sm:h-10"
+                  )}
                 >
                   <span>Record</span>
                   <PlusCircle className="ml-2  w-4 h-4" />

@@ -26,11 +26,12 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { isTabActive } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { useRole } from "@/hooks/useRole";
 
 function AdminMobileSideBar() {
   const location = useLocation();
   const currentPath = location.pathname;
+  const role = useRole();
 
   return (
     <Sheet>
@@ -47,19 +48,22 @@ function AdminMobileSideBar() {
           <div className="flex lg:hidden items-center gap-2  ">
             <img src={IMAGE_DATA.huwoma_logo} width={100} />
           </div>
-          <SheetClose asChild>
-            <Link
-              to={`/dashboard`}
-              className={`mx-[-0.65rem] mt-4 flex items-center ${
-                isTabActive(currentPath, "dashboard")
-                  ? "bg-foreground text-white"
-                  : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
-            >
-              <Home className="h-5 w-5" />
-              Dashboard
-            </Link>
-          </SheetClose>
+          {role !== ROLES_LIST.STAFF && (
+            <SheetClose asChild>
+              <Link
+                to={`/dashboard`}
+                className={`mx-[-0.65rem] mt-4 flex items-center ${
+                  isTabActive(currentPath, "dashboard")
+                    ? "bg-foreground text-white"
+                    : ""
+                }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
+              >
+                <Home className="h-5 w-5" />
+                Dashboard
+              </Link>
+            </SheetClose>
+          )}
+
           <SheetClose asChild>
             <Link
               to={`/carwash`}
@@ -67,7 +71,9 @@ function AdminMobileSideBar() {
                 isTabActive(currentPath, "carwash")
                   ? "bg-foreground text-white"
                   : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
+              }  gap-4 rounded-xl px-3 py-2 ${
+                role === ROLES_LIST.STAFF && "mt-4"
+              } text-muted-foreground hover:text-foreground`}
             >
               <Droplets className="h-5 w-5" />
               Car Wash
@@ -79,25 +85,28 @@ function AdminMobileSideBar() {
               </Badge> */}
             </Link>
           </SheetClose>
-          <SheetClose asChild>
-            <Link
-              to={`/simracing`}
-              className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "simracing")
-                  ? "bg-foreground text-white"
-                  : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
-            >
-              <Car className="h-5 w-5" />
-              Sim Racing
-              {/* <Badge
-                variant="secondary"
-                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+          {role !== ROLES_LIST.STAFF && (
+            <SheetClose asChild>
+              <Link
+                to={`/simracing`}
+                className={`mx-[-0.65rem]  flex items-center ${
+                  isTabActive(currentPath, "simracing")
+                    ? "bg-foreground text-white"
+                    : ""
+                }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
               >
-                3
-              </Badge> */}
-            </Link>
-          </SheetClose>
+                <Car className="h-5 w-5" />
+                Sim Racing
+                {/* <Badge
+                  variant="secondary"
+                  className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+                >
+                  3
+                </Badge> */}
+              </Link>
+            </SheetClose>
+          )}
+
           <SheetClose asChild>
             <Link
               to={`/parking`}
@@ -131,25 +140,27 @@ function AdminMobileSideBar() {
 
             </Link>
           </SheetClose> */}
-          <SheetClose asChild>
-            <Link
-              to={`/activity`}
-              className={`mx-[-0.65rem]  flex items-center ${
-                isTabActive(currentPath, "activity")
-                  ? "bg-foreground text-white"
-                  : ""
-              }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
-            >
-              <Activity className="h-5 w-5" />
-              System Activity
-              {/* <Badge
-                variant="secondary"
-                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+          {role !== ROLES_LIST.STAFF && (
+            <SheetClose asChild>
+              <Link
+                to={`/activity`}
+                className={`mx-[-0.65rem]  flex items-center ${
+                  isTabActive(currentPath, "activity")
+                    ? "bg-foreground text-white"
+                    : ""
+                }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
               >
-                2336
-              </Badge> */}
-            </Link>
-          </SheetClose>
+                <Activity className="h-5 w-5" />
+                System Activity
+                {/* <Badge
+                  variant="secondary"
+                  className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+                >
+                  2336
+                </Badge> */}
+              </Link>
+            </SheetClose>
+          )}
         </nav>
       </SheetContent>
     </Sheet>

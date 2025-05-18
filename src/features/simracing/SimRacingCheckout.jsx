@@ -36,6 +36,7 @@ import {
   useGetSimracingCheckoutDetailsQuery,
   useSimracingCheckoutMutation,
 } from "./simRacingApiSlice";
+import { Button } from "@/components/ui/button";
 
 function SimRacingCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
@@ -324,7 +325,29 @@ function SimRacingCheckout() {
                   <div className="border p-4 rounded-md shadow-sm">
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
                       <Label>Payment Mode</Label>
-                      <div className="flex items-center gap-2 w-full sm:w-[180px]">
+                      <div className="flex flex-wrap gap-2 text-sm text-normal">
+                        {paymentModes?.map((mode) => (
+                          <Button
+                            className="rounded-full"
+                            variant={
+                              mode._id === paymentMode?._id ? "" : "outline"
+                            }
+                            size="sm"
+                            type="button"
+                            onClick={() => {
+                              if (mode._id === paymentMode?._id) {
+                                setPaymentMode("");
+                              } else {
+                                setPaymentMode(mode);
+                              }
+                            }}
+                            key={mode._id}
+                          >
+                            {mode.paymentModeName}
+                          </Button>
+                        ))}
+                      </div>
+                      {/* <div className="flex items-center gap-2 w-full sm:w-[180px]">
                         <Select
                           value={paymentMode._id}
                           onValueChange={(e) => {
@@ -344,7 +367,7 @@ function SimRacingCheckout() {
                             ))}
                           </SelectContent>
                         </Select>
-                      </div>
+                      </div> */}
                     </div>
                     <div>
                       {paymentMode?.qrCodeData && (
@@ -352,7 +375,10 @@ function SimRacingCheckout() {
                           <Label>Qr Code</Label>
                           <div className="flex items-center flex-col gap-4 justify-center ">
                             <div className="p-4 border rounded-md">
-                              <QRCode value={paymentMode.qrCodeData} />
+                              <QRCode
+                                value={paymentMode.qrCodeData}
+                                size={220}
+                              />
                             </div>
                             <p className="text-muted-foreground uppercase font-medium">
                               {paymentMode?.paymentModeName}

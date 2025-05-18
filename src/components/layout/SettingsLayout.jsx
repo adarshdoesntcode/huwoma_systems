@@ -1,31 +1,23 @@
-import { ChevronLeft, CircleUser, Menu, Package2, Search } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+
+import { Navigate, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useIsSuper } from "@/hooks/useSuper";
+
+import { ROLES_LIST } from "@/lib/config";
+
+import { useRole } from "@/hooks/useRole";
 
 export function SettingsLayout() {
   const navigate = useNavigate();
   const isSuper = useIsSuper();
+  const role = useRole();
+
+  if (role !== ROLES_LIST.SUPERADMIN && role !== ROLES_LIST.ADMIN) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
   return (
     <div>
       <main className="flex flex-col gap-4">

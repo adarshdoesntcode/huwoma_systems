@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ParkingCircle, ReceiptText, RefreshCcw } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
@@ -24,6 +24,8 @@ import { ParkingDataTable } from "./ParkingDataTable";
 import { ParkingColumn } from "./ParkingColumn";
 import { ParkingFinishedDataTable } from "./ParkingFinishedDataTable";
 import { ParkingFinishedColumn } from "./ParkingFinishedColumn";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 function Parking() {
   const isSuper = useIsSuper();

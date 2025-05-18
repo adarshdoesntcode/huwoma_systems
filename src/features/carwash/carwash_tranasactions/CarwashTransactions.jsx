@@ -300,7 +300,7 @@ function CarwashTransactions() {
           <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
             <CardTitle className="flex gap-3 text-base sm:text-lg items-center">
               <Settings2 className="h-5 w-5" />
-              Cawash Transactions Analysis
+              Carwash Transactions Analysis
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pb-0 sm:pt-0">
@@ -740,7 +740,6 @@ const FilteredAnalytics = ({ responseData, range }) => {
       });
     }
   }, [responseData]);
-  console.log("🚀 ~ FilteredAnalytics ~ responseData:", responseData);
 
   let rangeString;
 

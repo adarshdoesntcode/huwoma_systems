@@ -54,6 +54,8 @@ import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ResetIcon } from "@radix-ui/react-icons";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
@@ -68,6 +70,8 @@ function CarwashCheckout() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const role = useRole();
 
   const {
     register,
@@ -711,48 +715,51 @@ function CarwashCheckout() {
                     )}
                   </div>
 
-                  <div className="border p-4 rounded-md shadow-sm my-2">
-                    <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
-                      <Label>
-                        {errors.discountAmt ? (
-                          <span className="text-destructive">
-                            {errors.discountAmt.message}
-                          </span>
-                        ) : (
-                          <span>Discount</span>
-                        )}
-                      </Label>
-                      <div className="flex items-center gap-6 sm:gap-2 w-full  sm:w-[180px] ">
-                        <Label>Rs.</Label>
+                  {role !== ROLES_LIST.STAFF && (
+                    <div className="border p-4 rounded-md shadow-sm my-2">
+                      <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                        <Label>
+                          {errors.discountAmt ? (
+                            <span className="text-destructive">
+                              {errors.discountAmt.message}
+                            </span>
+                          ) : (
+                            <span>Discount</span>
+                          )}
+                        </Label>
+                        <div className="flex items-center gap-6 sm:gap-2 w-full  sm:w-[180px] ">
+                          <Label>Rs.</Label>
 
-                        <Input
-                          onWheel={(e) => e.target.blur()}
-                          id="discountAmt"
-                          type="tel"
-                          autoComplete="off"
-                          inputMode="numeric"
-                          placeholder="0"
-                          {...register("discountAmt", {
-                            validate: (value) => {
-                              const regex = /^\d*$/;
-                              if (!regex.test(value)) {
-                                return "Not a valid amount";
-                              }
-                              if (parseFloat(value) > parseFloat(grossAmt)) {
-                                return "Discount amount greater than gross amount";
-                              }
-                              return true;
-                            },
-                          })}
-                          className={
-                            errors.discountAmt
-                              ? "border-destructive text-end "
-                              : "text-end "
-                          }
-                        />
+                          <Input
+                            onWheel={(e) => e.target.blur()}
+                            id="discountAmt"
+                            type="tel"
+                            autoComplete="off"
+                            inputMode="numeric"
+                            placeholder="0"
+                            {...register("discountAmt", {
+                              validate: (value) => {
+                                const regex = /^\d*$/;
+                                if (!regex.test(value)) {
+                                  return "Not a valid amount";
+                                }
+                                if (parseFloat(value) > parseFloat(grossAmt)) {
+                                  return "Discount amount greater than gross amount";
+                                }
+                                return true;
+                              },
+                            })}
+                            className={
+                              errors.discountAmt
+                                ? "border-destructive text-end "
+                                : "text-end "
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+
                   <div className="grid gap-2 mb-2 px-2">
                     <Label>Details</Label>
                     <div className="flex items-center justify-between  ">
@@ -830,7 +837,10 @@ function CarwashCheckout() {
                           <Label>Qr Code</Label>
                           <div className="flex items-center flex-col gap-4 justify-center ">
                             <div className="p-4 border rounded-md">
-                              <QRCode value={paymentMode.qrCodeData} />
+                              <QRCode
+                                value={paymentMode.qrCodeData}
+                                size={220}
+                              />
                             </div>
                             <p className="text-muted-foreground uppercase font-medium">
                               {paymentMode?.paymentModeName}

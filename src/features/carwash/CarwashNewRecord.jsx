@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCheck, ChevronRight, Contact, Loader2, X } from "lucide-react";
-import { Fragment, useEffect, useLayoutEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -672,8 +672,12 @@ const ServiceSelect = ({ customer, locationState }) => {
     price: "",
   });
   const [addOns, setAddOns] = useState(false);
-
   const [addOnsList, setAddOnsList] = useState([]);
+
+  const serviceSelectRef = useRef(null);
+  const vehicleSelectRef = useRef(null);
+  const submitButtonRef = useRef(null);
+
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useVehicleTypeWithServicesQuery();
 
@@ -687,6 +691,53 @@ const ServiceSelect = ({ customer, locationState }) => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      const serviceIds = customer.customerTransactions
+        .filter(
+          (transaction) =>
+            transaction.vehicleNumber === vehicleData?.vehicleNumber &&
+            transaction.service?.id
+        )
+        .map((transaction) => transaction.service.id);
+
+      const uniqueServiceIds = [...new Set(serviceIds)];
+
+      const vehicle = data.data.find((vehicle) => {
+        return vehicle.services.some((service) =>
+          uniqueServiceIds.includes(service._id)
+        );
+      });
+
+      if (vehicle) {
+        setSelectedVehicle(vehicle);
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (selectedVehicle && serviceSelectRef.current) {
+      serviceSelectRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [selectedVehicle]);
+
+  useEffect(() => {
+    if (
+      vehicleData.vehicleNumber &&
+      vehicleData.vehicleColor &&
+      vehicleData.model &&
+      submitButtonRef.current
+    ) {
+      submitButtonRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [selectedService, vehicleData]);
 
   const handleColourPicker = () => {
     if (showColourPicker === true) {
@@ -824,7 +875,11 @@ const ServiceSelect = ({ customer, locationState }) => {
                 </span>
               </Label>
               <Separator className="mt-2" />
-              <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
+              <div
+                // className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6"
+                className="grid grid-cols-3 gap-2 sm:gap-4 my-6"
+                ref={vehicleSelectRef}
+              >
                 {data.data.map((vehicle) => {
                   return (
                     <div
@@ -837,7 +892,10 @@ const ServiceSelect = ({ customer, locationState }) => {
                         reset();
                       }}
                     >
-                      <div className="w-24 sm:w-36 relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2">
+                      <div
+                        className=" relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2"
+                        // className="w-24 sm:w-36 relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2"
+                      >
                         {selectedVehicle._id === vehicle._id && (
                           <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                             <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
@@ -866,7 +924,11 @@ const ServiceSelect = ({ customer, locationState }) => {
                 </Label>
                 <Separator className="mt-2" />
 
-                <div className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6">
+                <div
+                  // className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6"
+                  className="grid grid-cols-3 gap-5 sm:gap-6  my-6"
+                  ref={serviceSelectRef}
+                >
                   {selectedVehicle.services.map((service) => {
                     let washCount = service.streakApplicable.washCount;
                     let washStreak = findWashCountForCustomer(
@@ -885,13 +947,16 @@ const ServiceSelect = ({ customer, locationState }) => {
                     return (
                       <div
                         key={service._id}
-                        className="flex flex-col  items-center gap-3 text-xs text-primary font-medium   cursor-pointer hover:scale-105 transition-transform hover:text-primary"
+                        className="flex flex-col   items-center gap-3 text-xs text-primary font-medium   cursor-pointer hover:scale-105 transition-transform hover:text-primary"
                         onClick={() => {
                           setSelectedService(service);
                           setServiceCost(isFree ? 0 : service.serviceRate);
                         }}
                       >
-                        <div className="w-24 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg">
+                        <div
+                          // className="w-24 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg"
+                          className="relative border  text-sm px-2 w-full h-full py-6 sm:py-8 uppercase text-center rounded-lg shadow-lg"
+                        >
                           {selectedService._id === service._id && (
                             <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
                               <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
@@ -1047,7 +1112,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                       defaultValue={vehicleData?.model}
                       autoComplete="off"
                       placeholder="Company/Model"
-                      autoFocus
+                      autoFocus={!vehicleData.vehicleModel ? true : false}
                       {...register("vehicleModel", {
                         required: "Vehicle name is required",
                         onChange: (e) => {
@@ -1175,6 +1240,7 @@ const ServiceSelect = ({ customer, locationState }) => {
               </Button>
             ) : (
               <Button
+                ref={submitButtonRef}
                 type="submit"
                 disabled={!selectedVehicle || !selectedService}
                 form="transaction-1"

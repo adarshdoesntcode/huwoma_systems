@@ -54,9 +54,14 @@ function Login() {
       }
 
       if (!userData.error) {
+        const role = userData.data.user.role[0];
         dispatch(setCredentials({ ...userData }));
         reset();
-        navigate(from, { replace: true });
+        if (role === ROLES_LIST.STAFF) {
+          navigate("/carwash", { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
       }
     } catch (error) {
       toast({

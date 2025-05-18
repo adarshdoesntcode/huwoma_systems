@@ -54,6 +54,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 const CarwashTransactionDetails = ({
   showDetails,
@@ -554,6 +556,8 @@ const DetailsFooter = ({
 }) => {
   const navigate = useNavigate();
 
+  const role = useRole();
+
   const handleReceiptPrint = () => {
     let tableList = [
       [
@@ -601,10 +605,18 @@ const DetailsFooter = ({
   };
 
   return (
-    <div className="flex justify-between gap-4 items-start sm:items-center w-full">
+    <div
+      className={cn(
+        "flex justify-between gap-4 items-start sm:items-center w-full",
+        role === ROLES_LIST.STAFF &&
+          transactionDetails?.transactionStatus === "In Queue" &&
+          "gap-0"
+      )}
+    >
       <div>
         {transactionDetails?.transactionStatus === "In Queue" &&
-          origin !== "transactions" && (
+          origin !== "transactions" &&
+          role !== ROLES_LIST.STAFF && (
             <Button
               className="border-destructive bg-bg border text-destructive hover:bg-destructive hover:text-white"
               onClick={() => {
@@ -614,6 +626,7 @@ const DetailsFooter = ({
               <OctagonX className="h-4 w-4 mr-2" /> Cancel
             </Button>
           )}
+
         {transactionDetails?.transactionStatus === "Ready for Pickup" &&
           origin !== "transactions" && (
             // getDaysDifference(transactionDetails?.service.end, new Date()) <=
@@ -645,7 +658,7 @@ const DetailsFooter = ({
       </div>
       {transactionDetails?.transactionStatus === "In Queue" &&
         origin !== "transactions" && (
-          <div className="flex flex-col sm:flex-row gap-2 w-full">
+          <div className="flex flex-col sm:flex-row  w-full gap-2">
             <Button
               variant="secondary"
               className=" hover:border-primary border w-full"

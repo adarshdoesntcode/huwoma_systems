@@ -10,6 +10,7 @@ export const GOOGLE_OAUTH_REDIRECT_URL = `${API_BASE_URL}/oauth/google`;
 export const ROLES_LIST = {
   ADMIN: 4200,
   SUPERADMIN: 8848,
+  STAFF: 6969,
 };
 
 export const CAR_COLOR_OPTIONS = [

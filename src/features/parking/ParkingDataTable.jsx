@@ -47,11 +47,14 @@ import { DataTablePagination } from "@/components/DataTablePagination";
 
 import { useCancelRaceMutation } from "../simracing/simRacingApiSlice";
 import { useCancelParkingMutation } from "./parkingApiSlice";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 export const ParkingDataTable = ({ columns, data }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+  const role = useRole();
 
   const [filter, setFilter] = useState("vehicleNumber");
 
@@ -147,19 +150,21 @@ export const ParkingDataTable = ({ columns, data }) => {
                   ))}
                   <TableCell className="text-center border-t px-4 py-2 sm:py-1 sm:px-4">
                     <div className="flex gap-2  justify-center flex-col sm:flex-row">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        title="Cancel Race"
-                        className="h-9 text-xs order-2 sm:order-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowDelete(true);
-                          setDeleteId(row.original._id);
-                        }}
-                      >
-                        Cancel
-                      </Button>
+                      {role !== ROLES_LIST.STAFF && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          title="Cancel Race"
+                          className="h-9 text-xs order-2 sm:order-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDelete(true);
+                            setDeleteId(row.original._id);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      )}
 
                       <Button
                         size="sm"

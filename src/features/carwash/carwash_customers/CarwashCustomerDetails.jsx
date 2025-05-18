@@ -67,6 +67,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
@@ -77,6 +79,8 @@ function CarwashCustomerDetails() {
 
   const [showVehicleEdit, setShowVehicleEdit] = useState(false);
   const [mergeItems, setMergeItems] = useState([]);
+
+  const role = useRole();
 
   const {
     register,
@@ -217,14 +221,16 @@ function CarwashCustomerDetails() {
                   </CardDescription>
                 </div>
                 <div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsEdit(true)}
-                  >
-                    <Edit className="sm:mr-2 h-4 w-4" />
-                    <span className="ml-2 sr-only sm:not-sr-only">Edit</span>
-                  </Button>
+                  {role !== ROLES_LIST.STAFF && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEdit(true)}
+                    >
+                      <Edit className="sm:mr-2 h-4 w-4" />
+                      <span className="ml-2 sr-only sm:not-sr-only">Edit</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             ) : (
@@ -339,9 +345,11 @@ function CarwashCustomerDetails() {
                             <TableHead className=" py-0 text-center ">
                               Total Washes{" "}
                             </TableHead>
-                            <TableHead className=" py-0 text-center ">
-                              Reset
-                            </TableHead>
+                            {role !== ROLES_LIST.STAFF && (
+                              <TableHead className=" py-0 text-center ">
+                                Reset
+                              </TableHead>
+                            )}
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -372,18 +380,20 @@ function CarwashCustomerDetails() {
                                 <TableCell className="text-center text-xs font-medium">
                                   <span>{service.totalTransactions}</span>
                                 </TableCell>
-                                <TableCell className="text-center text-xs font-bold">
-                                  <Button
-                                    disabled={service.streak === 0}
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() =>
-                                      handleReset(service.serviceId)
-                                    }
-                                  >
-                                    <Undo2 className="h-4 w-4" />
-                                  </Button>
-                                </TableCell>
+                                {role !== ROLES_LIST.STAFF && (
+                                  <TableCell className="text-center text-xs font-bold">
+                                    <Button
+                                      disabled={service.streak === 0}
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleReset(service.serviceId)
+                                      }
+                                    >
+                                      <Undo2 className="h-4 w-4" />
+                                    </Button>
+                                  </TableCell>
+                                )}
                               </TableRow>
                             );
                           })}
@@ -404,7 +414,7 @@ function CarwashCustomerDetails() {
                     <div
                       key={index}
                       className=" cursor-grab border rounded-md shadow-md"
-                      draggable
+                      draggable={role !== ROLES_LIST.STAFF}
                       onDragOver={(e) => e.preventDefault()}
                       onDragStart={(e) => {
                         e.dataTransfer.setData(
@@ -455,6 +465,7 @@ function CarwashCustomerDetails() {
                           className="w-full text-muted-foreground text-xs "
                           size="sm"
                           onClick={() => handleEditVehicle(vehicle)}
+                          disabled={role === ROLES_LIST.STAFF}
                         >
                           Edit <Edit className="h-3 w-3 ml-2" />
                         </Button>

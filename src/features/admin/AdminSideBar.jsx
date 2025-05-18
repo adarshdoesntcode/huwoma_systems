@@ -1,23 +1,15 @@
-import {
-  Activity,
-  Car,
-  ChartLine,
-  CircleParking,
-  Droplets,
-  Home,
-  Megaphone,
-  Mic,
-  Wrench,
-} from "lucide-react";
+import { Activity, Car, CircleParking, Droplets, Home } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { isTabActive } from "@/lib/utils";
 import CurrentClock from "../../components/CurrentClock";
-import { IMAGE_DATA } from "@/lib/config";
+import { IMAGE_DATA, ROLES_LIST } from "@/lib/config";
+import { useRole } from "@/hooks/useRole";
 
 function AdminSideBar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const date = new Date();
+  const role = useRole();
 
   return (
     <div
@@ -34,17 +26,19 @@ function AdminSideBar() {
         </div>
         <div className="flex-1">
           <nav className="grid  text-muted items-start px-2 text-sm font-medium lg:px-4">
-            <Link
-              to={`/dashboard`}
-              className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
-                isTabActive(currentPath, "dashboard")
-                  ? "bg-foreground text-white"
-                  : "hover:text-primary"
-              } text-muted-foreground transition-all hover:pl-4`}
-            >
-              <Home className="h-4 w-4" />
-              Dashboard
-            </Link>
+            {role !== ROLES_LIST.STAFF && (
+              <Link
+                to={`/dashboard`}
+                className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
+                  isTabActive(currentPath, "dashboard")
+                    ? "bg-foreground text-white"
+                    : "hover:text-primary"
+                } text-muted-foreground transition-all hover:pl-4`}
+              >
+                <Home className="h-4 w-4" />
+                Dashboard
+              </Link>
+            )}
 
             <Link
               to={`/carwash`}
@@ -60,20 +54,23 @@ function AdminSideBar() {
                 3
               </div> */}
             </Link>
-            <Link
-              to={`/simracing`}
-              className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
-                isTabActive(currentPath, "simracing")
-                  ? "bg-foreground text-white"
-                  : "hover:text-primary "
-              } text-muted-foreground transition-all hover:pl-4`}
-            >
-              <Car className="h-4 w-4" />
-              Sim Racing
-              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
-                3
-              </div> */}
-            </Link>
+            {role !== ROLES_LIST.STAFF && (
+              <Link
+                to={`/simracing`}
+                className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
+                  isTabActive(currentPath, "simracing")
+                    ? "bg-foreground text-white"
+                    : "hover:text-primary "
+                } text-muted-foreground transition-all hover:pl-4`}
+              >
+                <Car className="h-4 w-4" />
+                Sim Racing
+                {/* <div className="ml-auto flex shrink-0 items-center justify-center">
+   3
+ </div> */}
+              </Link>
+            )}
+
             <Link
               to={`/parking`}
               className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
@@ -100,20 +97,22 @@ function AdminSideBar() {
               Broadcast
 
             </Link> */}
-            <Link
-              to={`/activity`}
-              className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
-                isTabActive(currentPath, "activity")
-                  ? "bg-foreground text-white"
-                  : "hover:text-primary "
-              } text-muted-foreground transition-all hover:pl-4`}
-            >
-              <Activity className="h-4 w-4" />
-              System Activity
-              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
-                1156
-              </div> */}
-            </Link>
+            {role !== ROLES_LIST.STAFF && (
+              <Link
+                to={`/activity`}
+                className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
+                  isTabActive(currentPath, "activity")
+                    ? "bg-foreground text-white"
+                    : "hover:text-primary "
+                } text-muted-foreground transition-all hover:pl-4`}
+              >
+                <Activity className="h-4 w-4" />
+                System Activity
+                {/* <div className="ml-auto flex shrink-0 items-center justify-center">
+                            1156
+                          </div> */}
+              </Link>
+            )}
           </nav>
         </div>
 

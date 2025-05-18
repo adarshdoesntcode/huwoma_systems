@@ -36,10 +36,14 @@ import {
   useGetParkingCheckoutDetailsQuery,
   useParkingCheckoutMutation,
 } from "./parkingApiSlice";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 
 function ParkingCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
   const navigate = useNavigate();
+  const role = useRole();
 
   const { id } = useParams();
 
@@ -230,51 +234,54 @@ function ParkingCheckout() {
                     </div>
                   </div>
 
-                  <div className="border p-4 rounded-md shadow-sm my-2">
-                    <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
-                      <Label>
-                        {errors.discountAmt ? (
-                          <span className="text-destructive">
-                            {errors.discountAmt.message}
-                          </span>
-                        ) : (
-                          <span>Discount</span>
-                        )}
-                      </Label>
-                      <div className="flex items-center gap-6 sm:gap-2 w-full  sm:w-[180px] ">
-                        <Label>Rs.</Label>
+                  {role !== ROLES_LIST.STAFF && (
+                    <div className="border p-4 rounded-md shadow-sm my-2">
+                      <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                        <Label>
+                          {errors.discountAmt ? (
+                            <span className="text-destructive">
+                              {errors.discountAmt.message}
+                            </span>
+                          ) : (
+                            <span>Discount</span>
+                          )}
+                        </Label>
+                        <div className="flex items-center gap-6 sm:gap-2 w-full  sm:w-[180px] ">
+                          <Label>Rs.</Label>
 
-                        <Input
-                          onWheel={(e) => e.target.blur()}
-                          id="discountAmt"
-                          type="tel"
-                          autoComplete="off"
-                          inputMode="numeric"
-                          placeholder="0"
-                          {...register("discountAmt", {
-                            validate: (value) => {
-                              const regex = /^\d*$/;
-                              if (!regex.test(value)) {
-                                return "Not a valid amount";
-                              }
-                              if (
-                                value &&
-                                parseFloat(value) > parseFloat(grossAmt)
-                              ) {
-                                return "Discount amount greater than gross amount";
-                              }
-                              return true;
-                            },
-                          })}
-                          className={
-                            errors.discountAmt
-                              ? "border-destructive text-end "
-                              : "text-end "
-                          }
-                        />
+                          <Input
+                            onWheel={(e) => e.target.blur()}
+                            id="discountAmt"
+                            type="tel"
+                            autoComplete="off"
+                            inputMode="numeric"
+                            placeholder="0"
+                            {...register("discountAmt", {
+                              validate: (value) => {
+                                const regex = /^\d*$/;
+                                if (!regex.test(value)) {
+                                  return "Not a valid amount";
+                                }
+                                if (
+                                  value &&
+                                  parseFloat(value) > parseFloat(grossAmt)
+                                ) {
+                                  return "Discount amount greater than gross amount";
+                                }
+                                return true;
+                              },
+                            })}
+                            className={
+                              errors.discountAmt
+                                ? "border-destructive text-end "
+                                : "text-end "
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+
                   <div className="grid gap-2 mb-2 px-2">
                     <Label>Details</Label>
                     <div className="flex items-center justify-between  ">
@@ -304,7 +311,7 @@ function ParkingCheckout() {
                   <div className="border p-4 rounded-md shadow-sm">
                     <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
                       <Label>Payment Mode</Label>
-                      <div className="flex items-center gap-2 w-full sm:w-[180px]">
+                      {/* <div className="flex items-center gap-2 w-full sm:w-[180px]">
                         <Select
                           value={paymentMode._id}
                           onValueChange={(e) => {
@@ -324,6 +331,28 @@ function ParkingCheckout() {
                             ))}
                           </SelectContent>
                         </Select>
+                      </div> */}
+                      <div className="flex flex-wrap gap-2 text-sm text-normal">
+                        {paymentModes?.map((mode) => (
+                          <Button
+                            className="rounded-full"
+                            variant={
+                              mode._id === paymentMode?._id ? "" : "outline"
+                            }
+                            size="sm"
+                            type="button"
+                            onClick={() => {
+                              if (mode._id === paymentMode?._id) {
+                                setPaymentMode("");
+                              } else {
+                                setPaymentMode(mode);
+                              }
+                            }}
+                            key={mode._id}
+                          >
+                            {mode.paymentModeName}
+                          </Button>
+                        ))}
                       </div>
                     </div>
                     <div>
@@ -332,7 +361,10 @@ function ParkingCheckout() {
                           <Label>Qr Code</Label>
                           <div className="flex items-center flex-col gap-4 justify-center ">
                             <div className="p-4 border rounded-md">
-                              <QRCode value={paymentMode.qrCodeData} />
+                              <QRCode
+                                value={paymentMode.qrCodeData}
+                                size={220}
+                              />
                             </div>
                             <p className="text-muted-foreground uppercase font-medium">
                               {paymentMode?.paymentModeName}

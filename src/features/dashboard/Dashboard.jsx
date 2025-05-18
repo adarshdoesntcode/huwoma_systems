@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/chart";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import {
   Table,
@@ -51,6 +51,9 @@ import { DashboardTransactionsDataTable } from "./DashboardTransactionsDataTable
 import { DashboardTransactionsColumn } from "./DashboardTransactionsColumn";
 import { format, isSameDay } from "date-fns";
 import PaymentBreakdown from "./PaymentBreakdown";
+import { useRole } from "@/hooks/useRole";
+import { ROLES_LIST } from "@/lib/config";
+import Unauthorized from "@/components/Unauthorized";
 
 function calculateChange(today, yesterday, format = "percentage") {
   if (yesterday === 0) {
@@ -94,8 +97,9 @@ const chartConfig = {
 };
 
 export function Dashboard() {
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const role = useRole();
 
+  const [lastUpdated, setLastUpdated] = useState(null);
   const [activeChart, setActiveChart] = useState("carwash");
   const navigate = useNavigate();
 
@@ -108,6 +112,7 @@ export function Dashboard() {
     });
 
   let chartData = useMemo(() => [], []);
+
   let carwashTransactions;
   let carwashCompletedTransactions;
   let carwashRevenue;
@@ -244,6 +249,10 @@ export function Dashboard() {
 
   let content;
 
+  if (role === ROLES_LIST.STAFF) {
+    return <Navigate to="/carwash" replace />;
+  }
+
   if (isLoading) {
     content = (
       <div className="flex flex-1 items-center justify-center">
@@ -317,7 +326,8 @@ export function Dashboard() {
               <p className="text-xs text-muted-foreground">
                 {activeRaces.length > 0 && (
                   <p className="text-xs font-medium text-green-600">
-                    {activeRaces.length} races active
+                    {activeRaces.length}{" "}
+                    {activeRaces.length === 1 ? "race" : "races"} active
                   </p>
                 )}
                 {activeRaces.length === 0 && (

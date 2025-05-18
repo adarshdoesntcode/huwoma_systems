@@ -104,7 +104,7 @@ function EditCarwashTransaction({
       if (!transactionDetails) return;
       let payload;
       if (transactionDetails?.transactionStatus === "Completed") {
-        if (!paymentMode) {
+        if (!paymentMode && transactionDetails?.paymentStatus === "Paid") {
           toast({
             variant: "destructive",
             title: "Fill All Details!!",
@@ -117,7 +117,7 @@ function EditCarwashTransaction({
           transactionId: transactionDetails._id,
           vehicleModel: data.vehicleModel,
           vehicleNumber: data.vehicleNumber,
-          paymentMode: paymentMode._id,
+          paymentMode: paymentMode._id || undefined,
         };
       } else {
         if (!selectedVehicle || !selectedService) {

@@ -38,7 +38,10 @@ const ProtectedRoute = ({ allowedRoles }) => {
   return isLoading ? (
     <PersistLoader />
   ) : user?.role?.find(
-      (role) => allowedRoles[0] === role || allowedRoles[1] === role
+      (role) =>
+        allowedRoles[0] === role ||
+        allowedRoles[1] === role ||
+        allowedRoles[2] === role
     ) ? (
     <Outlet />
   ) : token ? (
