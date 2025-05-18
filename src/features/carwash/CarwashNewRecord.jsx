@@ -714,7 +714,7 @@ const ServiceSelect = ({ customer, locationState }) => {
         setSelectedVehicle(vehicle);
       }
     }
-  }, [data]);
+  }, [data, vehicleData, isSuccess, customer.customerTransactions]);
 
   useEffect(() => {
     if (selectedVehicle && serviceSelectRef.current) {
