@@ -143,19 +143,19 @@ function Carwash() {
 
   if (isLoading) {
     content = (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex items-center justify-center flex-1">
         <Loader />
       </div>
     );
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
-          <div className="text-sm font-semibold uppercase text-primary  flex items-center gap-2">
+        <div className="flex items-center justify-between gap-4 tracking-tight  sm:flex-row sm:items-center sm:mb-4">
+          <div className="flex items-center gap-2 text-sm font-semibold uppercase text-primary">
             <Droplets className="w-4 h-4 text-muted-foreground" />
             Carwash
           </div>
-          <div className=" flex justify-end">
+          <div className="flex justify-end ">
             {role !== ROLES_LIST.STAFF && (
               <Button
                 size="sm"
@@ -164,8 +164,8 @@ function Carwash() {
                 onClick={() => navigate("/carwash/old-record")}
               >
                 <span>Old </span>
-                <span className="sm:ml-1 sr-only sm:not-sr-only">Record</span>
-                <PlusCircle className="ml-2 w-4 h-4" />
+                <span className="sr-only sm:ml-1 sm:not-sr-only">Record</span>
+                <PlusCircle className="w-4 h-4 ml-2" />
               </Button>
             )}
 
@@ -178,7 +178,7 @@ function Carwash() {
               >
                 <span className="sr-only sm:not-sr-only">Customers </span>
 
-                <Users className="sm:ml-2 w-4 h-4" />
+                <Users className="w-4 h-4 sm:ml-2" />
               </Button>
             )}
 
@@ -190,13 +190,13 @@ function Carwash() {
               >
                 <span className="sr-only sm:not-sr-only">Transactions </span>
 
-                <ReceiptText className="sm:ml-2 w-4 h-4" />
+                <ReceiptText className="w-4 h-4 sm:ml-2" />
               </Button>
             )}
           </div>
         </div>
         {!isMobile && (
-          <div className="bg-background border rounded-md ">
+          <div className="border rounded-md bg-background ">
             <div className="px-4 pt-3 text-xs text-muted-foreground">
               Hourly Customer Count
             </div>
@@ -262,8 +262,8 @@ function Carwash() {
               setTab(value);
             }}
           >
-            <div className="flex flex-col h-max-content  items-start sm:items-center sm:flex-row gap-4  justify-between">
-              <TabsList className="order-2 md:order-1 flex-wrap   justify-start h-20 md:h-10 ">
+            <div className="flex flex-col items-start justify-between gap-4 h-max-content sm:items-center sm:flex-row">
+              <TabsList className="flex-wrap justify-start order-2 h-20 md:order-1 md:h-10 ">
                 <TabsTrigger value="queue">
                   Queue
                   {inQueueTransactions.length > 0 && (
@@ -305,16 +305,16 @@ function Carwash() {
                   )}
                 </TabsTrigger>
               </TabsList>
-              <div className="w-full sm:w-fit order-1 sm:order-2 flex justify-end ">
+              <div className="flex justify-end order-1 w-full sm:w-fit sm:order-2 ">
                 {role !== ROLES_LIST.STAFF && (
                   <Button
                     size="sm"
                     variant="outline"
-                    className="mr-2 w-full"
+                    className="w-full mr-2"
                     onClick={() => navigate("/carwash/booking")}
                   >
                     <span>Booking</span>
-                    <PlusCircle className="ml-2 w-4 h-4" />
+                    <PlusCircle className="w-4 h-4 ml-2" />
                   </Button>
                 )}
 
@@ -327,14 +327,14 @@ function Carwash() {
                   )}
                 >
                   <span>Record</span>
-                  <PlusCircle className="ml-2  w-4 h-4" />
+                  <PlusCircle className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </div>
             <TabsContent value="queue">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Queue
@@ -343,7 +343,7 @@ function Carwash() {
                         Vehicles in queue for their wash
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -362,7 +362,7 @@ function Carwash() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <CarwashDataTable
                     data={inQueueTransactions}
                     columns={CarwashColumn}
@@ -373,7 +373,7 @@ function Carwash() {
             <TabsContent value="pickup">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Pick Up
@@ -382,7 +382,7 @@ function Carwash() {
                         Vehicles ready for pickup
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -401,7 +401,7 @@ function Carwash() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <CarwashDataTable
                     data={readyForPickupTransactions}
                     columns={CarwashColumn}
@@ -412,7 +412,7 @@ function Carwash() {
             <TabsContent value="pending">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Pending
@@ -421,7 +421,7 @@ function Carwash() {
                         Vehicles with pending payment
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -440,7 +440,7 @@ function Carwash() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <CarwashDataTable
                     data={pendingPaymentTransactions}
                     columns={CarwashColumn}
@@ -451,7 +451,7 @@ function Carwash() {
             <TabsContent value="complete">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Complete
@@ -460,7 +460,7 @@ function Carwash() {
                         Vehicles that have been paid off
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -479,7 +479,7 @@ function Carwash() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <CarwashDataTable
                     data={completedTransactions}
                     columns={CarwashColumn}
@@ -490,7 +490,7 @@ function Carwash() {
             <TabsContent value="booking">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Booking
@@ -499,7 +499,7 @@ function Carwash() {
                         Active Bookings
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -519,7 +519,7 @@ function Carwash() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <CarwashBookingDataTable
                     data={bookedTransactions}
                     columns={CarwashBookingColumn}

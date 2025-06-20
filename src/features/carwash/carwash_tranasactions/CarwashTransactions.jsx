@@ -294,22 +294,22 @@ function CarwashTransactions() {
     const vehicleTypes = data?.data || [];
 
     content = (
-      <div className=" space-y-4 mb-80">
+      <div className="space-y-4 mb-96">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
-          <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
-            <CardTitle className="flex gap-3 text-base sm:text-lg items-center">
-              <Settings2 className="h-5 w-5" />
+          <CardHeader className="p-4 border-b sm:p-6 sm:pb-4">
+            <CardTitle className="flex items-center gap-3 text-base sm:text-lg">
+              <Settings2 className="w-5 h-5" />
               Carwash Transactions Analysis
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pb-0 sm:pt-0">
+          <CardContent className="p-4 pt-0 pb-0 sm:p-6 sm:pb-0 sm:pt-0">
             <form
               id="carwash-transaction-filter"
-              className="grid  grid-cols-12"
+              className="grid grid-cols-12"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <div className="col-span-12 p-4 pl-2 sm:col-span-4 border-b sm:border-b-0  sm:border-r">
+              <div className="col-span-12 p-4 pl-2 border-b sm:col-span-4 sm:border-b-0 sm:border-r">
                 <div className="space-y-2">
                   <Label>
                     Time Presets{" "}
@@ -351,7 +351,7 @@ function CarwashTransactions() {
                           !filter.customDate.date && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="w-4 h-4 mr-2" />
                         {filter.customDate.date ? (
                           format(filter.customDate.date, "PPP")
                         ) : (
@@ -394,7 +394,7 @@ function CarwashTransactions() {
                             "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="w-4 h-4 mr-2" />
                         {filter.customRange?.from ? (
                           filter.customRange?.to ? (
                             <>
@@ -409,7 +409,7 @@ function CarwashTransactions() {
                         )}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="range"
                         toDate={new Date()}
@@ -441,9 +441,9 @@ function CarwashTransactions() {
                   </Popover>
                 </div>
               </div>
-              <div className="p-4 col-span-12 sm:col-span-4 border-b sm:border-b-0  sm:border-r space-y-4">
-                <div className="flex flex-row sm:flex-col  gap-4">
-                  <div className="space-y-2 w-full">
+              <div className="col-span-12 p-4 space-y-4 border-b sm:col-span-4 sm:border-b-0 sm:border-r">
+                <div className="flex flex-row gap-4 sm:flex-col">
+                  <div className="w-full space-y-2">
                     <Label>Vehicle Type</Label>
 
                     <Select
@@ -477,7 +477,7 @@ function CarwashTransactions() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2 w-full">
+                  <div className="w-full space-y-2">
                     <Label>Service Type</Label>
 
                     <Select
@@ -516,9 +516,9 @@ function CarwashTransactions() {
                   </div>
                 </div>
               </div>
-              <div className="p-4 col-span-12 sm:col-span-4  ">
-                <div className="flex flex-row sm:flex-col  gap-4">
-                  <div className="space-y-2 w-full">
+              <div className="col-span-12 p-4 sm:col-span-4 ">
+                <div className="flex flex-row gap-4 sm:flex-col">
+                  <div className="w-full space-y-2">
                     <Label>Transaction Status</Label>
 
                     <Select
@@ -548,7 +548,7 @@ function CarwashTransactions() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2 w-full">
+                  <div className="w-full space-y-2">
                     <Label>Payment Status</Label>
 
                     <Select
@@ -578,7 +578,7 @@ function CarwashTransactions() {
               </div>
             </form>
           </CardContent>
-          <CardFooter className="border-t  px-4 sm:px-6  py-4 ">
+          <CardFooter className="px-4 py-4 border-t sm:px-6 ">
             <div className="flex items-center justify-between w-full">
               <Button
                 variant="outline"
@@ -589,12 +589,12 @@ function CarwashTransactions() {
                   setResponseData("");
                 }}
               >
-                Defaults <ResetIcon className="h-4 w-4 ml-2" />
+                Defaults <ResetIcon className="w-4 h-4 ml-2" />
               </Button>
               <SubmitButton
                 buttonText={
                   <>
-                    Filter <Filter className="h-4 w-4 ml-2" />
+                    Filter <Filter className="w-4 h-4 ml-2" />
                   </>
                 }
                 condition={isSubmitting}
@@ -760,13 +760,13 @@ const FilteredAnalytics = ({ responseData, range }) => {
   return (
     <div className="space-y-6 " ref={analyticsRef}>
       {completetedTransactions.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mb-6">
+        <div className="grid gap-4 mb-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Total Net Revenue
               </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <DollarSign className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -780,11 +780,11 @@ const FilteredAnalytics = ({ responseData, range }) => {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Wash Revenue
               </CardTitle>
-              <Droplets className="h-4 w-4 text-muted-foreground" />
+              <Droplets className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -798,11 +798,11 @@ const FilteredAnalytics = ({ responseData, range }) => {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Parking Revenue
               </CardTitle>
-              <ParkingCircle className="h-4 w-4 text-muted-foreground" />
+              <ParkingCircle className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -812,9 +812,9 @@ const FilteredAnalytics = ({ responseData, range }) => {
             </CardContent>
           </Card>
           <Card x-chunk="dashboard-01-chunk-3">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Discounted</CardTitle>
-              <BadgePercent className="h-4 w-4 text-muted-foreground" />
+              <BadgePercent className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -850,7 +850,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
               : rangeString}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
           <CarwashFilterTranasactionDataTable
             data={carwashTableData}
             columns={CarwashFilterTransactionColumn}

@@ -60,7 +60,7 @@ import { ROLES_LIST } from "@/lib/config";
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
 
-  const [redeem, setRedeem] = useState();
+  const [redeem, setRedeem] = useState(false);
   const [checkAll, setCheckAll] = useState(true);
 
   const [newAddOn, setNewAddOn] = useState({
@@ -278,7 +278,7 @@ function CarwashCheckout() {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="flex-1 h-full flex items-center justify-center ">
+      <div className="flex items-center justify-center flex-1 h-full ">
         <Loader />
       </div>
     );
@@ -299,9 +299,9 @@ function CarwashCheckout() {
     isFreeTransaction =
       washStreak >= washCount && washStreakApplicable ? true : false;
 
-    if (isFreeTransaction === true && redeem === undefined) {
-      setRedeem(true);
-    }
+    // if (isFreeTransaction === true && redeem === undefined) {
+    //   setRedeem(true);
+    // }
 
     serviceCost =
       washStreak >= washCount && washStreakApplicable && redeem
@@ -331,12 +331,12 @@ function CarwashCheckout() {
     netAmt = grossAmt - discountAmt;
 
     content = (
-      <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
+      <div className="grid items-start w-full max-w-xl gap-4 mx-auto ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
 
         <Card className="mb-20">
           <CardHeader className="p-4 sm:p-6">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
                   <AvatarFallback>
@@ -354,14 +354,14 @@ function CarwashCheckout() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             {origin === "queue" && (
               <div className="grid gap-4">
                 <Separator />
 
                 <div className="flex items-center justify-between">
                   <Label className="text-base font-bold">Inspection</Label>
-                  <div className="w-full flex justify-end">
+                  <div className="flex justify-end w-full">
                     <Button
                       type="button"
                       variant="secondary"
@@ -376,11 +376,11 @@ function CarwashCheckout() {
                     >
                       {!checkAll ? (
                         <>
-                          Check All <CheckCircle className="h-4 w-4 ml-2" />
+                          Check All <CheckCircle className="w-4 h-4 ml-2" />
                         </>
                       ) : (
                         <>
-                          Reset <ResetIcon className="h-4 w-4 ml-2" />
+                          Reset <ResetIcon className="w-4 h-4 ml-2" />
                         </>
                       )}
                     </Button>
@@ -390,11 +390,11 @@ function CarwashCheckout() {
                 {data.data.inspectionTemplates.map(
                   (inspection, categoryIndex) => (
                     <div key={inspection.categoryName} className="space-y-2">
-                      <div className="text-sm font-semibold bg-muted py-2 pl-4 pr-2 rounded-md flex justify-between">
+                      <div className="flex justify-between py-2 pl-4 pr-2 text-sm font-semibold rounded-md bg-muted">
                         <span>{inspection.categoryName}</span>
                         <Badge
                           variant="outline"
-                          className="bg-background font-medium "
+                          className="font-medium bg-background "
                         >
                           {inspection.scope}
                         </Badge>
@@ -434,16 +434,16 @@ function CarwashCheckout() {
             {service && (
               <div className="grid gap-2" ref={serviceBoxRef}>
                 <Label>Service</Label>
-                <div className="border p-4 rounded-md shadow-sm">
-                  <div className="flex flex-col border-b pb-2 mb-2">
-                    <div className="font-medium flex items-center justify-between">
+                <div className="p-4 border rounded-md shadow-sm">
+                  <div className="flex flex-col pb-2 mb-2 border-b">
+                    <div className="flex items-center justify-between font-medium">
                       <div className="text-sm">{serviceName}</div>
                       <Badge>{getOrdinal(washStreak + 1)} Wash</Badge>
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {vehicleName}
 
-                      <div className="font-medium text-primary text-xs">
+                      <div className="text-xs font-medium text-primary">
                         {transactionDetails?.vehicleModel}
                         {transactionDetails?.vehicleModel
                           ? " - "
@@ -453,10 +453,10 @@ function CarwashCheckout() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-1 flex-col mt-1">
+                  <div className="flex flex-col gap-1 mt-1">
                     {serviceStart && (
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           Start Time
                         </div>
                         <div className="text-xs ">
@@ -466,7 +466,7 @@ function CarwashCheckout() {
                     )}
                     {serviceEnd && (
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           End Time
                         </div>
                         <div className="text-xs ">
@@ -475,8 +475,8 @@ function CarwashCheckout() {
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Cost
                       </div>
                       <div className="text-sm font-semibold">
@@ -486,7 +486,7 @@ function CarwashCheckout() {
                     {isFreeTransaction && (
                       <>
                         <Separator className="my-2" />
-                        <div className="flex items-center justify-between  ">
+                        <div className="flex items-center justify-between ">
                           <div className="text-sm font-semibold">Redeem</div>
 
                           <Switch
@@ -501,17 +501,17 @@ function CarwashCheckout() {
                 </div>
                 <form
                   id="final-transaction"
-                  className="grid mt-2 gap-2"
+                  className="grid gap-2 mt-2"
                   onSubmit={handleSubmit(onSubmit)}
                 >
                   {parkingEligible && parkingIncluded && (
                     <>
                       <Label>Parking</Label>
 
-                      <div className="border p-4 rounded-md shadow-sm">
-                        <div className="flex gap-1 flex-col">
+                      <div className="p-4 border rounded-md shadow-sm">
+                        <div className="flex flex-col gap-1">
                           <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
+                            <div className="text-xs font-medium text-muted-foreground">
                               Start Time
                             </div>
                             <div className="text-xs ">
@@ -520,7 +520,7 @@ function CarwashCheckout() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
+                            <div className="text-xs font-medium text-muted-foreground">
                               End Time
                             </div>
                             <div className="text-xs ">
@@ -528,7 +528,7 @@ function CarwashCheckout() {
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
-                            <div className="text-muted-foreground text-xs font-medium">
+                            <div className="text-xs font-medium text-muted-foreground">
                               Total Time
                             </div>
                             <div className="text-sm font-semibold ">
@@ -544,7 +544,7 @@ function CarwashCheckout() {
                             </div>
                           </div>
                           <Separator className="my-2" />
-                          <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                             <Label>
                               {errors.parkingCost ? (
                                 <span className="text-destructive">
@@ -588,19 +588,19 @@ function CarwashCheckout() {
                       </div>
                     </>
                   )}
-                  <div className="border p-4 rounded-md shadow-sm my-2">
-                    <div className="flex   gap-4 items-center  justify-between">
+                  <div className="p-4 my-2 border rounded-md shadow-sm">
+                    <div className="flex items-center justify-between gap-4">
                       <Label>Add Ons</Label>
                       <Switch checked={addOns} onCheckedChange={setAddOns} />
                     </div>
                     {addOns && (
-                      <div className="flex flex-col gap-2 border-t pt-3 mt-4">
+                      <div className="flex flex-col gap-2 pt-3 mt-4 border-t">
                         {addOnsList.map((addOn, index) => (
                           <div
                             key={index}
                             className="flex items-center justify-between"
                           >
-                            <div className="text-muted-foreground text-xs font-medium">
+                            <div className="text-xs font-medium text-muted-foreground">
                               {index + 1}. {addOn.name}
                             </div>
                             <div className="flex items-center gap-4">
@@ -610,14 +610,14 @@ function CarwashCheckout() {
                                   : "Rs. " + addOn.price}
                               </div>
                               <X
-                                className="w-4 h-4 hover:scale-110 text-muted-foreground hover:text-destructive transition-all cursor-pointer"
+                                className="w-4 h-4 transition-all cursor-pointer hover:scale-110 text-muted-foreground hover:text-destructive"
                                 onClick={() => handleRemoveAddOn(index)}
                               />
                             </div>
                           </div>
                         ))}
 
-                        <div className="flex items-center gap-4 mt-2  justify-between">
+                        <div className="flex items-center justify-between gap-4 mt-2">
                           <Input
                             id="newAddOn"
                             type="text"
@@ -716,8 +716,8 @@ function CarwashCheckout() {
                   </div>
 
                   {role !== ROLES_LIST.STAFF && (
-                    <div className="border p-4 rounded-md shadow-sm my-2">
-                      <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                    <div className="p-4 my-2 border rounded-md shadow-sm">
+                      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                         <Label>
                           {errors.discountAmt ? (
                             <span className="text-destructive">
@@ -760,24 +760,24 @@ function CarwashCheckout() {
                     </div>
                   )}
 
-                  <div className="grid gap-2 mb-2 px-2">
+                  <div className="grid gap-2 px-2 mb-2">
                     <Label>Details</Label>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Gross Amt
                       </div>
                       <div className="text-xs font-medium">Rs. {grossAmt}</div>
                     </div>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Discount Amt
                       </div>
                       <div className="text-xs font-medium">
                         Rs. {discountAmt}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Net Amt
                       </div>
                       <div className="text-base font-semibold">
@@ -786,8 +786,8 @@ function CarwashCheckout() {
                     </div>
                   </div>
 
-                  <div className="border p-4 rounded-md shadow-sm">
-                    {/* <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
+                  <div className="p-4 border rounded-md shadow-sm">
+                    {/* <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                       <Label>Payment Mode</Label>
                       <div className="flex items-center gap-2 w-full sm:w-[180px]">
                         <Select
@@ -833,16 +833,16 @@ function CarwashCheckout() {
                     </div> */}
                     <div>
                       {paymentMode?.qrCodeData && (
-                        <div className="space-y-4 mt-4" ref={qrCodeRef}>
+                        <div className="mt-4 space-y-4" ref={qrCodeRef}>
                           <Label>Qr Code</Label>
-                          <div className="flex items-center flex-col gap-4 justify-center ">
+                          <div className="flex flex-col items-center justify-center gap-4 ">
                             <div className="p-4 border rounded-md">
                               <QRCode
                                 value={paymentMode.qrCodeData}
                                 size={220}
                               />
                             </div>
-                            <p className="text-muted-foreground uppercase font-medium">
+                            <p className="font-medium uppercase text-muted-foreground">
                               {paymentMode?.paymentModeName}
                             </p>
                           </div>
@@ -854,7 +854,7 @@ function CarwashCheckout() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="p-4 sm:p-6 flex justify-end">
+          <CardFooter className="flex justify-end p-4 sm:p-6">
             <SubmitButton
               condition={isSubmitting}
               loadingText="Receiving"
