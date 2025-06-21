@@ -91,6 +91,7 @@ function CarwashCheckout() {
   const [addOns, setAddOns] = useState(
     transactionDetails?.addOns.length > 0 ? true : false
   );
+
   const origin = location.state?.origin;
 
   const { data, isLoading, isError, error, isFetching, isSuccess } =
@@ -214,7 +215,7 @@ function CarwashCheckout() {
             parkingEligible && parkingIncluded ? parkingEnd : undefined,
           parkingCost: Number(data.parkingCost) || undefined,
 
-          addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
+          addOns: addOns === true ? addOnsList : [],
           grossAmount: grossAmt,
           discountAmount: Number(data.discountAmt) || 0,
           netAmount: netAmt,
@@ -239,7 +240,7 @@ function CarwashCheckout() {
             parkingEligible && parkingIncluded ? parkingEnd : undefined,
           parkingCost: Number(data.parkingCost) || undefined,
 
-          addOns: addOnsList.length > 0 && addOns ? addOnsList : undefined,
+          addOns: addOns === true ? addOnsList : [],
           grossAmount: grossAmt,
           discountAmount: Number(data.discountAmt) || 0,
           netAmount: netAmt,

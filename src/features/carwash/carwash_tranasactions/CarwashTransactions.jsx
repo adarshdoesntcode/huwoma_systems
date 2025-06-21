@@ -701,6 +701,12 @@ const FilteredAnalytics = ({ responseData, range }) => {
 
   const parkingRevenue = sumByKey("parking.cost", completetedTransactions);
   const pendingRevenue = sumByKey("service.cost", pendingTransactions);
+  const addOnsRevenue = completetedTransactions.reduce(
+    (total, transaction) =>
+      total + transaction.addOns.reduce((sum, addOn) => sum + addOn.price, 0),
+    0
+  );
+
   const actualWashRevenue = sumByKey(
     "service.actualRate",
     completetedTransactions
@@ -788,7 +794,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                +{WashRevenue.toLocaleString()}
+                +{(WashRevenue + addOnsRevenue).toLocaleString()}
               </div>
               {freeWash > 0 && (
                 <p className="text-xs text-muted-foreground">

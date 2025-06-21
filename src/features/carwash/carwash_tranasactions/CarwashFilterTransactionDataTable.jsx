@@ -71,6 +71,7 @@ const exportExcel = (rows) => {
       { width: 20 },
       { width: 14 },
       { width: 14 },
+      { width: 14 },
       { width: 18 },
       { width: 18 },
       { width: 15 },
@@ -91,6 +92,7 @@ const exportExcel = (rows) => {
       "Service",
       "Service Cost",
       "Parking Cost",
+      "AddOns Cost",
       "Transaction Status",
       "Payment Status",
       "Payment Mode",
@@ -123,6 +125,10 @@ const exportExcel = (rows) => {
       Service: row.original?.service?.id?.serviceTypeName || "",
       Service_Cost: row.original?.service?.cost || 0,
       Parking_Cost: row.original?.parking?.cost || 0,
+      AddOns_Cost: row.original?.addOns?.reduce(
+        (sum, addOn) => sum + addOn.price,
+        0
+      ),
       Transaction_Status: row.original?.transactionStatus || "",
       Payment_Status: row.original?.paymentStatus || "",
       Payment_Mode: row.original?.paymentMode?.paymentModeName || "",
@@ -146,6 +152,7 @@ const exportExcel = (rows) => {
         row.Service,
         row.Service_Cost,
         row.Parking_Cost,
+        row.AddOns_Cost,
         row.Transaction_Status,
         row.Payment_Status,
         row.Payment_Mode,
@@ -232,7 +239,7 @@ export const CarwashFilterTranasactionDataTable = ({
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4 space-x-2">
+      <div className="flex items-center justify-between mb-4 space-x-2">
         <DataTableToolbar
           table={table}
           transactionOption={transactionOption}
