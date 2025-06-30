@@ -19,6 +19,7 @@ import {
   FolderGit2,
   GraduationCap,
   Home,
+  KeySquare,
   Megaphone,
   Menu,
   Origami,
@@ -37,15 +38,15 @@ function AdminMobileSideBar() {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-          <Menu className="h-5 w-5" />
+          <Menu className="w-5 h-5" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
-        <nav className="grid gap-2 text-muted-foreground text-lg font-medium">
-          {/* <div className="hidden lg:flex items-center gap-2 text-base font-semibold ">
+        <nav className="grid gap-2 text-lg font-medium text-muted-foreground">
+          {/* <div className="items-center hidden gap-2 text-base font-semibold lg:flex ">
             <img src={IMAGE_DATA.huwoma_logo} width={100} />
           </div> */}
-          <div className="flex lg:hidden items-center gap-2  ">
+          <div className="flex items-center gap-2 lg:hidden ">
             <img src={IMAGE_DATA.huwoma_logo} width={100} />
           </div>
           {role !== ROLES_LIST.STAFF && (
@@ -58,7 +59,7 @@ function AdminMobileSideBar() {
                     : ""
                 }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
               >
-                <Home className="h-5 w-5" />
+                <Home className="w-5 h-5" />
                 Dashboard
               </Link>
             </SheetClose>
@@ -75,11 +76,11 @@ function AdminMobileSideBar() {
                 role === ROLES_LIST.STAFF && "mt-4"
               } text-muted-foreground hover:text-foreground`}
             >
-              <Droplets className="h-5 w-5" />
+              <Droplets className="w-5 h-5" />
               Car Wash
               {/* <Badge
                 variant="secondary"
-                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+                className="flex items-center justify-center ml-auto rounded-full shrink-0"
               >
                 3
               </Badge> */}
@@ -95,11 +96,11 @@ function AdminMobileSideBar() {
                     : ""
                 }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
               >
-                <Car className="h-5 w-5" />
+                <Car className="w-5 h-5" />
                 Sim Racing
                 {/* <Badge
                   variant="secondary"
-                  className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+                  className="flex items-center justify-center ml-auto rounded-full shrink-0"
                 >
                   3
                 </Badge> */}
@@ -116,11 +117,11 @@ function AdminMobileSideBar() {
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <CircleParking className="h-5 w-5" />
+              <CircleParking className="w-5 h-5" />
               Parking
               {/* <Badge
                 variant="secondary"
-                className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+                className="flex items-center justify-center ml-auto rounded-full shrink-0"
               >
                 6
               </Badge> */}
@@ -135,11 +136,32 @@ function AdminMobileSideBar() {
                   : ""
               }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
             >
-              <Megaphone className="h-5 w-5" />
+              <Megaphone className="w-5 h-5" />
               Broadcast
 
             </Link>
           </SheetClose> */}
+          {role === ROLES_LIST.SUPERADMIN && (
+            <SheetClose asChild>
+              <Link
+                to={`/garage`}
+                className={`mx-[-0.65rem]  flex items-center ${
+                  isTabActive(currentPath, "garage")
+                    ? "bg-foreground text-white"
+                    : ""
+                }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
+              >
+                <KeySquare className="w-5 h-5" />
+                Car Garage
+                {/* <Badge
+                  variant="secondary"
+                  className="flex items-center justify-center ml-auto rounded-full shrink-0"
+                >
+                  2336
+                </Badge> */}
+              </Link>
+            </SheetClose>
+          )}
           {role !== ROLES_LIST.STAFF && (
             <SheetClose asChild>
               <Link
@@ -150,11 +172,11 @@ function AdminMobileSideBar() {
                     : ""
                 }  gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground`}
               >
-                <Activity className="h-5 w-5" />
+                <Activity className="w-5 h-5" />
                 System Activity
                 {/* <Badge
                   variant="secondary"
-                  className="ml-auto flex  shrink-0 items-center justify-center rounded-full"
+                  className="flex items-center justify-center ml-auto rounded-full shrink-0"
                 >
                   2336
                 </Badge> */}

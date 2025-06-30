@@ -12,12 +12,9 @@ import { Label } from "@/components/ui/label";
 import { ResetIcon } from "@radix-ui/react-icons";
 import {
   BadgePercent,
-  Car,
   DollarSign,
-  Dot,
   Droplets,
   Filter,
-  Footprints,
   ParkingCircle,
   Settings2,
 } from "lucide-react";
@@ -32,9 +29,7 @@ import {
   subYears,
 } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
-
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -48,7 +43,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import TextSeparator from "@/components/ui/TextSeparator";
 import {
   useGetPostFilterTransactionsMutation,
@@ -61,7 +55,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
 import { CarwashFilterTranasactionDataTable } from "./CarwashFilterTransactionDataTable";
 import { CarwashFilterTransactionColumn } from "./CarwashFilterTransactionColumn";
-
 import PaymentsGraph from "./charts/PaymentsGraph";
 import VehicleIncomeGraph from "./charts/VehicleIncomeGraph";
 import { DailyIncomeGraph } from "./charts/DailyIncomeGraph";
@@ -94,16 +87,6 @@ const configInitialState = {
   text: "All",
   value: "All",
 };
-const getFirstDayOfCurrentMonth = () => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1);
-};
-
-// Function to get the last day of the previous month
-const getLastDayOfPreviousMonth = () => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 0);
-};
 
 function CarwashTransactions() {
   const isSuper = useIsSuper();
@@ -112,6 +95,11 @@ function CarwashTransactions() {
   const [selectedService, setSelectedService] = useState(configInitialState);
   const [responseData, setResponseData] = useState("");
   const [range, setRange] = useState("");
+  const [selectedMonthData, setSelectedMonthData] = useState({
+    month: 9,
+    year: 2023,
+  });
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const {
     handleSubmit,

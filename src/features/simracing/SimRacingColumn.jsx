@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import RaceTimeLapsed from "./RaceTimeLapsed";
 import StatusBadge from "@/components/ui/StatusBadge";
 import RaceRigChange from "./RaceRigChange";
+import { Dot } from "lucide-react";
 
 export const SimRacingColumn = (
   isFetching,
@@ -22,7 +23,7 @@ export const SimRacingColumn = (
     ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground hidden lg:table-cell">
+        <TableCell className="hidden text-muted-foreground lg:table-cell">
           {row.original.billNo}
         </TableCell>
       );
@@ -40,17 +41,32 @@ export const SimRacingColumn = (
     ),
     cell: ({ row }) => {
       const customer = row.original.customer;
-      const date = format(new Date(row.original.createdAt), "d MMM, h:mm a");
+      const status = row.original.transactionStatus;
 
+      const start = new Date(row.original.start);
       return (
-        <TableCell className=" border-t px-4 py-1 sm:py-1 sm:px-4">
-          <div className="flex flex-col   items-start">
-            <div className="font-medium text-sm">{customer.customerName}</div>
+        <TableCell className="px-4 py-1 border-t sm:py-1 sm:px-4">
+          <div className="flex flex-col items-start">
+            <div className="text-sm font-medium ">{customer.customerName}</div>
             <div className="text-xs text-muted-foreground">
               {customer.customerContact}
             </div>
           </div>
-          <div className="text-xs block md:hidden">Started: {date}</div>
+          <div className="block font-mono text-xs md:hidden">
+            <RaceTimeLapsed
+              start={start}
+              transactionId={row.original._id}
+              pauseHistory={row.original.pauseHistory}
+              isPaused={
+                row.original.transactionStatus === "Paused" ? true : false
+              }
+              isFetching={isFetching}
+              isMutating={isMutating}
+              setIsMutating={setIsMutating}
+              showLoader={mutatingId === row.original._id ? true : false}
+              setMutatingId={setMutatingId}
+            />
+          </div>
         </TableCell>
       );
     },
@@ -68,10 +84,10 @@ export const SimRacingColumn = (
 
   {
     accessorKey: "rigName",
-    header: () => <TableHead className="hidden  lg:table-cell">Rig</TableHead>,
+    header: () => <TableHead className="hidden lg:table-cell">Rig</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="hidden  lg:table-cell">
+        <TableCell className="hidden lg:table-cell">
           <RaceRigChange
             rigs={rigs}
             currentRig={row.original.rig._id}
@@ -95,7 +111,7 @@ export const SimRacingColumn = (
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden xl:table-cell px-1"
+          className="hidden px-1 xl:table-cell"
         />
       );
     },
@@ -104,7 +120,7 @@ export const SimRacingColumn = (
       let time = format(new Date(row.original.start), "h:mm a");
 
       return (
-        <TableCell className="hidden  xl:table-cell ">
+        <TableCell className="hidden xl:table-cell ">
           <div className="flex flex-col items-start text-center">
             <span className="font-medium ">{time}</span>
             <span className="text-xs text-muted-foreground">{date}</span>
@@ -131,7 +147,7 @@ export const SimRacingColumn = (
   {
     accessorKey: "timeLapsed",
     header: () => (
-      <TableHead className="hidden md:table-cell text-center">
+      <TableHead className="hidden text-center md:table-cell">
         Time Lapsed
       </TableHead>
     ),
@@ -139,7 +155,7 @@ export const SimRacingColumn = (
       const start = new Date(row.original.start);
 
       return (
-        <TableCell className="hidden md:table-cell  font-mono">
+        <TableCell className="hidden font-mono md:table-cell">
           <div className="flex items-center justify-center">
             <RaceTimeLapsed
               start={start}

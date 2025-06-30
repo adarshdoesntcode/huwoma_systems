@@ -9,10 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ParkingCircle, ReceiptText, RefreshCcw } from "lucide-react";
+import {
+  ParkingCircle,
+  PlusCircle,
+  ReceiptText,
+  RefreshCcw,
+} from "lucide-react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
@@ -26,6 +31,8 @@ import { ParkingFinishedDataTable } from "./ParkingFinishedDataTable";
 import { ParkingFinishedColumn } from "./ParkingFinishedColumn";
 import { useRole } from "@/hooks/useRole";
 import { ROLES_LIST } from "@/lib/config";
+import NewParkingTab from "./NewParkingTabCard";
+import ParkingTabs from "./parking_tabs/ParkingTabs";
 
 function Parking() {
   const isSuper = useIsSuper();
@@ -33,6 +40,7 @@ function Parking() {
   const location = useLocation();
   const navigateState = useMemo(() => location.state || {}, [location.state]);
   const [tab, setTab] = useState(navigateState?.tab || "parked");
+
   const [lastUpdated, setLastUpdated] = useState(null);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
@@ -55,10 +63,12 @@ function Parking() {
 
   let vehicles = [];
   let transactions = [];
+  let onTabs = [];
 
   if (data) {
     vehicles = data?.data?.vehicles || [];
     transactions = data?.data?.transactions || [];
+    onTabs = data?.data?.onTabs || [];
   }
 
   let parkedTransactions = [];
@@ -67,10 +77,18 @@ function Parking() {
 
   if (data) {
     parkedTransactions = transactions
-      ?.filter((transaction) => transaction.transactionStatus === "Parked")
+      ?.filter(
+        (transaction) =>
+          transaction.transactionStatus === "Parked" &&
+          transaction.isTabbed === false
+      )
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     finishedTransactions = transactions
-      ?.filter((transaction) => transaction.transactionStatus === "Completed")
+      ?.filter(
+        (transaction) =>
+          transaction.transactionStatus === "Completed" &&
+          transaction.isTabbed === false
+      )
       .sort(
         (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
       );
@@ -84,19 +102,19 @@ function Parking() {
 
   if (isLoading) {
     content = (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex items-center justify-center flex-1">
         <Loader />
       </div>
     );
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
-          <div className="text-sm font-semibold uppercase text-primary  flex items-center gap-2">
+        <div className="flex items-center justify-between gap-4 tracking-tight sm:flex-row sm:items-center sm:mb-4">
+          <div className="flex items-center gap-2 text-sm font-semibold uppercase text-primary">
             <ParkingCircle className="w-4 h-4 text-muted-foreground" />
             Parking
           </div>
-          <div className=" flex justify-end">
+          <div className="flex justify-end ">
             {isSuper && (
               <Button
                 size="sm"
@@ -105,18 +123,19 @@ function Parking() {
               >
                 <span className="sr-only sm:not-sr-only">Transactions </span>
 
-                <ReceiptText className="sm:ml-2 w-4 h-4" />
+                <ReceiptText className="w-4 h-4 sm:ml-2" />
               </Button>
             )}
           </div>
         </div>
-        <div className="grid grid-cols-12 gap-4 sm:gap-6 mb-6">
+        <div className="grid grid-cols-12 gap-4 mb-6 sm:gap-6">
           {vehicles.map((vehicle) => (
-            <VehicleCard
-              key={vehicle._id}
-              className={"col-span-12 lg:col-span-6"}
-              vehicle={vehicle}
-            />
+            <React.Fragment key={vehicle._id}>
+              <VehicleCard
+                className={"col-span-12 lg:col-span-6"}
+                vehicle={vehicle}
+              />
+            </React.Fragment>
           ))}
         </div>
         <div>
@@ -126,29 +145,42 @@ function Parking() {
               setTab(value);
             }}
           >
-            <TabsList>
-              <TabsTrigger value="parked">
-                Parked
-                {parkedTransactions.length > 0 && (
-                  <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
-                    {parkedTransactions.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="finish">
-                Finished
-                {finishedTransactions.length > 0 && (
-                  <Badge className="ml-2  hidden sm:block py-0 text-[10px]">
-                    {finishedTransactions.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col items-start justify-between gap-4 sm:items-center sm:flex-row">
+              <TabsList>
+                <TabsTrigger value="parked">
+                  Parked
+                  {parkedTransactions.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {parkedTransactions.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="finish">
+                  Finished
+                  {finishedTransactions.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {finishedTransactions.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="ontab">
+                  On Tab
+                  {onTabs.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {onTabs.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+              {/* <div className="flex justify-end order-1 w-full sm:w-fit sm:order-2 ">
+                <NewParkingTab />
+              </div> */}
+            </div>
 
             <TabsContent value="parked">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Parked
@@ -157,7 +189,7 @@ function Parking() {
                         Currently parked vehicles
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -177,7 +209,7 @@ function Parking() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <ParkingDataTable
                     data={parkedTransactions}
                     columns={ParkingColumn}
@@ -188,7 +220,7 @@ function Parking() {
             <TabsContent value="finish">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Finished
@@ -197,7 +229,7 @@ function Parking() {
                         Completed parkings that have been paid off
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -217,12 +249,63 @@ function Parking() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <ParkingFinishedDataTable
                     data={finishedTransactions}
                     columns={ParkingFinishedColumn}
                     origin={"parking"}
                   />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="ontab">
+              <Card>
+                <CardHeader className="p-4 sm:p-6 sm:pb-2">
+                  <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
+                    <div>
+                      <CardTitle className="text-xl sm:text-2xl">
+                        Pending Tabs
+                      </CardTitle>
+                      <CardDescription className="text-xs sm:text-sm">
+                        Customers with pending payment on their tab
+                      </CardDescription>
+                    </div>
+
+                    <div className="flex items-end w-full gap-2 sm:w-auto">
+                      <Button
+                        variant="outline"
+                        onClick={handleRefresh}
+                        disabled={isFetching}
+                      >
+                        <RefreshCcw
+                          className={`w-4 h-4   ${
+                            isFetching && "animate-spin"
+                          }`}
+                        />
+                      </Button>
+
+                      <NewParkingTab />
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-2">
+                  <div className="grid gap-4">
+                    {onTabs.length === 0 && (
+                      <div className="flex items-center justify-center py-24">
+                        <p className="text-sm text-muted-foreground">
+                          No pending tabs
+                        </p>
+                      </div>
+                    )}
+                    {onTabs.map((tab) => (
+                      <ParkingTabs
+                        key={tab._id}
+                        tab={tab}
+                        vehicles={vehicles}
+                      />
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

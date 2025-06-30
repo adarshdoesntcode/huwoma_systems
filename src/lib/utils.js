@@ -90,16 +90,16 @@ export const getTimeDifference = (startTime, endTime, pauseHistory = []) => {
   });
 
   const differenceInMilliseconds = Math.abs(end - start - totalPausedTime);
-  const differenceInHours = Math.floor(
-    differenceInMilliseconds / (1000 * 60 * 60)
-  );
-  const differenceInMinutes = Math.floor(
-    (differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-  );
+
+  const totalMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
 
   return {
-    hours: differenceInHours,
-    minutes: differenceInMinutes < 1 ? `1` : differenceInMinutes,
+    days,
+    hours,
+    minutes: minutes < 1 ? 1 : minutes,
   };
 };
 

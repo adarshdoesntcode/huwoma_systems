@@ -64,7 +64,7 @@ const ParkingTransactionDetails = ({
           </SheetHeader>
 
           <div className="flex flex-col flex-1">
-            <div className="flex-1 overflow-y-auto pb-16">
+            <div className="flex-1 pb-16 overflow-y-auto">
               <Details
                 transactionDetails={transactionDetails}
                 raceStart={raceStart}
@@ -72,7 +72,7 @@ const ParkingTransactionDetails = ({
                 raceTime={raceTime}
               />
             </div>
-            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+            <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
               <DetailsFooter
                 transactionDetails={transactionDetails}
                 origin={origin}
@@ -93,7 +93,7 @@ const ParkingTransactionDetails = ({
           </SheetHeader>
 
           <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto pb-12">
+            <div className="flex-1 pb-12 overflow-y-auto">
               <Details
                 transactionDetails={transactionDetails}
                 raceStart={raceStart}
@@ -101,7 +101,7 @@ const ParkingTransactionDetails = ({
                 raceTime={raceTime}
               />
             </div>
-            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+            <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
               <DetailsFooter
                 transactionDetails={transactionDetails}
                 origin={origin}
@@ -119,10 +119,10 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
   if (transactionDetails) {
     return (
       <div className="grid gap-5 overflow-y-auto">
-        <div className="grid  gap-2">
-          <div className="border p-4 rounded-md shadow-sm">
-            <div className="flex gap-1 flex-col">
-              <div className="font-medium flex items-center justify-between">
+        <div className="grid gap-2">
+          <div className="p-4 border rounded-md shadow-sm">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between font-medium">
                 <div className="text-sm">
                   <div className="text-xs text-muted-foreground">
                     {transactionDetails?.vehicle?.vehicleTypeName}
@@ -135,7 +135,7 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
               </div>
               <Separator className="my-2" />
               <div className="flex items-center justify-between">
-                <div className="text-muted-foreground text-xs font-medium">
+                <div className="text-xs font-medium text-muted-foreground">
                   Start Time
                 </div>
                 <div className="text-xs ">
@@ -143,7 +143,7 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="text-muted-foreground text-xs font-medium">
+                <div className="text-xs font-medium text-muted-foreground">
                   End Time
                 </div>
                 <div className="text-xs ">
@@ -152,11 +152,13 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
               </div>
 
               <div className="flex items-center justify-between">
-                <div className="text-muted-foreground text-xs font-medium">
+                <div className="text-xs font-medium text-muted-foreground">
                   Total Time
                 </div>
                 <div className="text-sm font-semibold ">
-                  {`${raceTime?.hours > 0 ? `${raceTime?.hours}h ` : ""} ${
+                  {`
+                  ${raceTime?.days > 0 ? `${raceTime?.days}d ` : ""}
+                  ${raceTime?.hours > 0 ? `${raceTime?.hours}h ` : ""} ${
                     raceTime?.minutes > 0 ? `${raceTime?.minutes}m` : ""
                   }`}
                 </div>
@@ -167,9 +169,9 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
 
         <div className="grid gap-2">
           <Label>Details</Label>
-          <div className="flex gap-1 flex-col mt-1">
+          <div className="flex flex-col gap-1 mt-1">
             <div className="flex items-center justify-between">
-              <div className="text-muted-foreground text-xs font-medium">
+              <div className="text-xs font-medium text-muted-foreground">
                 Bill No
               </div>
               <div className="text-xs ">
@@ -180,7 +182,7 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
             {transactionDetails?.transactionTime && (
               <div className="flex items-center justify-between">
                 <>
-                  <div className="text-muted-foreground text-xs font-medium">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Transaction Date
                   </div>
                   <div className="text-xs font-medium">
@@ -193,42 +195,43 @@ const Details = ({ transactionDetails, raceStart, raceEnd, raceTime }) => {
               </div>
             )}
 
-            <div className="flex items-center justify-between  ">
-              <div className="text-muted-foreground text-xs font-medium">
+            <div className="flex items-center justify-between ">
+              <div className="text-xs font-medium text-muted-foreground">
                 Status
               </div>
               <div className="text-xs font-medium">
-                {transactionDetails?.paymentStatus || "-"}
+                {<StatusBadge status={transactionDetails?.paymentStatus} /> ||
+                  "-"}
               </div>
             </div>
             {transactionDetails?.transactionStatus === "Completed" && (
               <>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Mode
                   </div>
                   <div className="text-xs font-medium">
                     {transactionDetails?.paymentMode?.paymentModeName || "-"}
                   </div>
                 </div>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Gross Amt
                   </div>
                   <div className="text-xs font-medium">
                     Rs. {transactionDetails?.grossAmount || "0"}
                   </div>
                 </div>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Discount Amt
                   </div>
                   <div className="text-xs font-medium">
                     Rs. {transactionDetails?.discountAmount || "0"}
                   </div>
                 </div>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Net Amt
                   </div>
                   <div className="text-xs font-medium">
@@ -284,7 +287,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
   };
 
   return (
-    <div className="flex justify-between gap-4 items-center w-full">
+    <div className="flex items-center justify-between w-full gap-4">
       <AlertDialog open={openRollBack} onOpenChange={setOpenRollBack}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -297,7 +300,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             {isLoading ? (
               <Button variant="destructive" disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Rolling back...
               </Button>
             ) : (
@@ -305,7 +308,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
                 variant="destructive"
                 onClick={handleRollbackFromComplete}
               >
-                Rollback <Undo2 className="ml-2 h-4 w-4" />
+                Rollback <Undo2 className="w-4 h-4 ml-2" />
               </Button>
             )}
           </AlertDialogFooter>
@@ -322,7 +325,7 @@ const DetailsFooter = ({ transactionDetails, handleCloseSheet, origin }) => {
             }}
           >
             Rollback
-            <Undo2 className="h-4 w-4 ml-2" />{" "}
+            <Undo2 className="w-4 h-4 ml-2" />{" "}
           </Button>
         )}
     </div>

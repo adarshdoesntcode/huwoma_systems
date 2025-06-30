@@ -74,7 +74,7 @@ function RaceTimeLapsed({
     }
   };
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex items-center gap-4">
       <RaceTimer
         start={start}
         pauseHistory={pauseHistory}
@@ -103,7 +103,6 @@ function RaceTimeLapsed({
 }
 
 const RaceTimer = ({ start, pauseHistory = [], isPaused = false }) => {
-  // Calculate the initial time lapsed synchronously
   const calculateTimeLapsed = () => {
     const now = new Date();
 
@@ -116,15 +115,20 @@ const RaceTimer = ({ start, pauseHistory = [], isPaused = false }) => {
     });
 
     const diffInMs = now - new Date(start) - totalPausedTime;
-    const totalSeconds = Math.max(0, Math.floor(diffInMs / 1000)); // Prevent negative values
-    const hours = Math.floor(totalSeconds / 3600);
+    const totalSeconds = Math.max(0, Math.floor(diffInMs / 1000));
+
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-      2,
-      "0"
-    )}:${String(seconds).padStart(2, "0")}`;
+    const formattedTime = `${days > 0 ? `${days}:` : ""}${String(
+      hours
+    ).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+      seconds
+    ).padStart(2, "0")}`;
+
+    return formattedTime;
   };
 
   const [timeLapsed, setTimeLapsed] = useState(calculateTimeLapsed);
@@ -136,8 +140,9 @@ const RaceTimer = ({ start, pauseHistory = [], isPaused = false }) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [start, pauseHistory, isPaused]); // Dependencies
+  }, [start, pauseHistory, isPaused]);
 
-  return <div className="font-medium text-base text-center">{timeLapsed}</div>;
+  return <div className="text-base font-medium text-center">{timeLapsed}</div>;
 };
+
 export default RaceTimeLapsed;

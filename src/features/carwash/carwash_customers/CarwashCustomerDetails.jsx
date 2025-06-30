@@ -32,7 +32,15 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { CheckCheck, Edit, Loader2, Merge, Save, Undo2 } from "lucide-react";
+import {
+  CheckCheck,
+  Edit,
+  Loader2,
+  Merge,
+  Phone,
+  Save,
+  Undo2,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
@@ -203,10 +211,10 @@ function CarwashCustomerDetails() {
     );
   } else if (isSuccess) {
     content = (
-      <div className=" space-y-4 mb-64">
+      <div className="mb-64 space-y-4 ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
-          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-2">
+          <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
             {!isEdit ? (
               <div className="flex items-start justify-between">
                 <div>
@@ -214,7 +222,14 @@ function CarwashCustomerDetails() {
                     {customer.customerName}
                   </CardTitle>
                   <CardDescription className="flex flex-col text-xs">
-                    <span>{customer.customerContact}</span>
+                    <a
+                      href={`tel:${customer?.customerContact}`}
+                      className="flex items-center gap-1 text-sm font-medium "
+                    >
+                      {customer?.customerContact}
+                      <Phone className="w-3.4 h-3.5" />
+                    </a>
+
                     <span>
                       Since {format(customer.createdAt, "MMMM d, yyyy")}
                     </span>
@@ -227,7 +242,7 @@ function CarwashCustomerDetails() {
                       size="sm"
                       onClick={() => setIsEdit(true)}
                     >
-                      <Edit className="sm:mr-2 h-4 w-4" />
+                      <Edit className="w-4 h-4 sm:mr-2" />
                       <span className="ml-2 sr-only sm:not-sr-only">Edit</span>
                     </Button>
                   )}
@@ -255,7 +270,7 @@ function CarwashCustomerDetails() {
                     condition={isSubmitting}
                     buttonText={
                       <>
-                        <Save className="sm:mr-2  h-4 w-4" />
+                        <Save className="w-4 h-4 sm:mr-2" />
                         <span className="sr-only sm:not-sr-only">Save</span>
                       </>
                     }
@@ -263,8 +278,8 @@ function CarwashCustomerDetails() {
                     size="sm"
                   />
                 </div>
-                <div className="grid grid-cols-2 sm:gap-6 gap-4">
-                  <div className="col-span-2 sm:col-span-1 space-y-2">
+                <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                  <div className="col-span-2 space-y-2 sm:col-span-1">
                     <Label>
                       {errors.customerName ? (
                         <span className="text-destructive">
@@ -292,7 +307,7 @@ function CarwashCustomerDetails() {
                       }
                     />
                   </div>
-                  <div className="sm:col-span-1 col-span-2 space-y-2">
+                  <div className="col-span-2 space-y-2 sm:col-span-1">
                     <Label>
                       {errors.customerContact ? (
                         <span className="text-destructive">
@@ -322,9 +337,9 @@ function CarwashCustomerDetails() {
               </form>
             )}
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <Separator className="my-2" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
               {vehicleWithServicesAndStats.map((vehicleWithService, index) => {
                 return (
                   <div key={index} className="space-y-2 ">
@@ -335,18 +350,18 @@ function CarwashCustomerDetails() {
                       <Table className="text-[10px]">
                         <TableHeader className="border-b bg-muted">
                           <TableRow>
-                            <TableHead className=" py-0 ">Services</TableHead>
-                            <TableHead className=" py-0  text-center">
+                            <TableHead className="py-0 ">Services</TableHead>
+                            <TableHead className="py-0 text-center ">
                               Current Streak{" "}
                             </TableHead>
-                            <TableHead className=" py-0 text-center ">
+                            <TableHead className="py-0 text-center ">
                               Free After{" "}
                             </TableHead>
-                            <TableHead className=" py-0 text-center ">
+                            <TableHead className="py-0 text-center ">
                               Total Washes{" "}
                             </TableHead>
                             {role !== ROLES_LIST.STAFF && (
-                              <TableHead className=" py-0 text-center ">
+                              <TableHead className="py-0 text-center ">
                                 Reset
                               </TableHead>
                             )}
@@ -362,8 +377,8 @@ function CarwashCustomerDetails() {
                                 <TableCell className="font-medium">
                                   <span>{service.serviceTypeName}</span>
                                 </TableCell>
-                                <TableCell className="text-center text-xs font-medium py-1 ">
-                                  <div className="flex gap-1 flex-col">
+                                <TableCell className="py-1 text-xs font-medium text-center ">
+                                  <div className="flex flex-col gap-1">
                                     <span>{service.streak}</span>
                                     <Progress
                                       className="h-3"
@@ -374,14 +389,14 @@ function CarwashCustomerDetails() {
                                     />
                                   </div>
                                 </TableCell>
-                                <TableCell className="text-center text-xs font-medium">
+                                <TableCell className="text-xs font-medium text-center">
                                   <span>{service.washCount}</span>
                                 </TableCell>
-                                <TableCell className="text-center text-xs font-medium">
+                                <TableCell className="text-xs font-medium text-center">
                                   <span>{service.totalTransactions}</span>
                                 </TableCell>
                                 {role !== ROLES_LIST.STAFF && (
-                                  <TableCell className="text-center text-xs font-bold">
+                                  <TableCell className="text-xs font-bold text-center">
                                     <Button
                                       disabled={service.streak === 0}
                                       variant="outline"
@@ -390,7 +405,7 @@ function CarwashCustomerDetails() {
                                         handleReset(service.serviceId)
                                       }
                                     >
-                                      <Undo2 className="h-4 w-4" />
+                                      <Undo2 className="w-4 h-4" />
                                     </Button>
                                   </TableCell>
                                 )}
@@ -409,11 +424,11 @@ function CarwashCustomerDetails() {
               <Label>Customer Vehicles</Label>
 
               <div>
-                <div className="flex  gap-4 flex-wrap">
+                <div className="flex flex-wrap gap-4">
                   {customerVehicles.map((vehicle, index) => (
                     <div
                       key={index}
-                      className=" cursor-grab border rounded-md shadow-md"
+                      className="border rounded-md shadow-md cursor-grab"
                       draggable={role !== ROLES_LIST.STAFF}
                       onDragOver={(e) => e.preventDefault()}
                       onDragStart={(e) => {
@@ -431,7 +446,7 @@ function CarwashCustomerDetails() {
                         }
                       }}
                     >
-                      <div className="flex p-4 pb-2 gap-2 items-start">
+                      <div className="flex items-start gap-2 p-4 pb-2">
                         {vehicle?.vehicleColor ? (
                           <div
                             className={cn(
@@ -450,24 +465,24 @@ function CarwashCustomerDetails() {
                             N/A
                           </div>
                         )}
-                        <div className="flex flex-col  items-start ">
-                          <div className="font-semibold text-primary text-left text-xs">
+                        <div className="flex flex-col items-start ">
+                          <div className="text-xs font-semibold text-left text-primary">
                             {vehicle?.vehicleModel || "Not Set"}
                           </div>
-                          <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                          <div className="flex justify-between gap-2 text-xs text-muted-foreground">
                             {vehicle?.vehicleNumber || "Not Set"}
                           </div>
                         </div>
                       </div>
-                      <div className="border-t flex justify-evenly">
+                      <div className="flex border-t justify-evenly">
                         <Button
                           variant="ghost"
-                          className="w-full text-muted-foreground text-xs "
+                          className="w-full text-xs text-muted-foreground "
                           size="sm"
                           onClick={() => handleEditVehicle(vehicle)}
                           disabled={role === ROLES_LIST.STAFF}
                         >
-                          Edit <Edit className="h-3 w-3 ml-2" />
+                          Edit <Edit className="w-3 h-3 ml-2" />
                         </Button>
                         <Separator orientation="vertical" />
                       </div>
@@ -580,7 +595,7 @@ const ResetStreak = ({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           {isLoading ? (
             <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Terminating
             </Button>
           ) : (
@@ -663,11 +678,11 @@ const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
                   onClick={() => setSelectedVehicle(vehicle)}
                 >
                   {selectedVehicle.key === vehicle.key && (
-                    <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
+                    <Badge className="absolute top-0 right-0 p-1 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
                       <CheckCheck className="w-4 h-4 " />
                     </Badge>
                   )}
-                  <div className="flex py-2 pb-2 gap-4 items-start">
+                  <div className="flex items-start gap-4 py-2 pb-2">
                     {vehicle?.vehicleColor ? (
                       <div
                         className={cn(
@@ -686,7 +701,7 @@ const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
                         N/A
                       </div>
                     )}
-                    <div className="flex  flex-col gap-1  items-start ">
+                    <div className="flex flex-col items-start gap-1 ">
                       <p className="text-sm font-medium leading-none">
                         {vehicle?.vehicleModel || "Not Set"}
                       </p>
@@ -696,7 +711,7 @@ const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
                     </div>
                   </div>
                   <div></div>
-                  <p className="text-xs flex items-center justify-center border-t gap-2 mt-1 pt-2 text-muted-foreground">
+                  <p className="flex items-center justify-center gap-2 pt-2 mt-1 text-xs border-t text-muted-foreground">
                     Records:{" "}
                     <span className="font-semibold ">
                       {" "}

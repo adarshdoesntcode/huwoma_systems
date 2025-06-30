@@ -1,4 +1,12 @@
-import { Activity, Car, CircleParking, Droplets, Home } from "lucide-react";
+import {
+  Activity,
+  ArrowLeftRight,
+  Car,
+  CircleParking,
+  Droplets,
+  Home,
+  KeySquare,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { isTabActive } from "@/lib/utils";
 import CurrentClock from "../../components/CurrentClock";
@@ -13,19 +21,19 @@ function AdminSideBar() {
 
   return (
     <div
-      className="hidden  border-r  bg-center bg-fixed md:block"
+      className="hidden bg-fixed bg-center border-r md:block"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
     >
-      <div className="sticky top-0 flex h-full max-h-screen flex-col gap-2">
+      <div className="sticky top-0 flex flex-col h-full max-h-screen gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <div className="flex items-center justify-center w-full">
             <img src={IMAGE_DATA.huwoma_logo} loading="lazy" className="h-7" />
           </div>
         </div>
         <div className="flex-1">
-          <nav className="grid  text-muted items-start px-2 text-sm font-medium lg:px-4">
+          <nav className="grid items-start px-2 text-sm font-medium text-muted lg:px-4">
             {role !== ROLES_LIST.STAFF && (
               <Link
                 to={`/dashboard`}
@@ -35,7 +43,7 @@ function AdminSideBar() {
                     : "hover:text-primary"
                 } text-muted-foreground transition-all hover:pl-4`}
               >
-                <Home className="h-4 w-4" />
+                <Home className="w-4 h-4" />
                 Dashboard
               </Link>
             )}
@@ -48,9 +56,9 @@ function AdminSideBar() {
                   : "hover:text-primary "
               } text-muted-foreground transition-all hover:pl-4`}
             >
-              <Droplets className="h-4 w-4" />
+              <Droplets className="w-4 h-4" />
               Car Wash
-              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
+              {/* <div className="flex items-center justify-center ml-auto shrink-0">
                 3
               </div> */}
             </Link>
@@ -63,9 +71,9 @@ function AdminSideBar() {
                     : "hover:text-primary "
                 } text-muted-foreground transition-all hover:pl-4`}
               >
-                <Car className="h-4 w-4" />
+                <Car className="w-4 h-4" />
                 Sim Racing
-                {/* <div className="ml-auto flex shrink-0 items-center justify-center">
+                {/* <div className="flex items-center justify-center ml-auto shrink-0">
    3
  </div> */}
               </Link>
@@ -79,9 +87,9 @@ function AdminSideBar() {
                   : "hover:text-primary "
               } text-muted-foreground transition-all hover:pl-4`}
             >
-              <CircleParking className="h-4 w-4" />
+              <CircleParking className="w-4 h-4" />
               Parking
-              {/* <div className="ml-auto flex shrink-0 items-center justify-center">
+              {/* <div className="flex items-center justify-center ml-auto shrink-0">
                 26
               </div> */}
             </Link>
@@ -93,10 +101,27 @@ function AdminSideBar() {
                   : "hover:text-primary "
               } text-muted-foreground transition-all hover:pl-4`}
             >
-              <Megaphone className="h-4 w-4" />
+              <Megaphone className="w-4 h-4" />
               Broadcast
 
             </Link> */}
+            {role === ROLES_LIST.SUPERADMIN && (
+              <Link
+                to={`/garage`}
+                className={`flex items-center gap-3 rounded-md  px-3 py-2.5 ${
+                  isTabActive(currentPath, "garage")
+                    ? "bg-foreground text-white"
+                    : "hover:text-primary "
+                } text-muted-foreground transition-all hover:pl-4`}
+              >
+                <KeySquare className="w-4 h-4" />
+                Car Garage
+                {/* <div className="flex items-center justify-center ml-auto shrink-0">
+                26
+              </div> */}
+              </Link>
+            )}
+
             {role !== ROLES_LIST.STAFF && (
               <Link
                 to={`/activity`}
@@ -106,9 +131,9 @@ function AdminSideBar() {
                     : "hover:text-primary "
                 } text-muted-foreground transition-all hover:pl-4`}
               >
-                <Activity className="h-4 w-4" />
+                <Activity className="w-4 h-4" />
                 System Activity
-                {/* <div className="ml-auto flex shrink-0 items-center justify-center">
+                {/* <div className="flex items-center justify-center ml-auto shrink-0">
                             1156
                           </div> */}
               </Link>
@@ -116,7 +141,7 @@ function AdminSideBar() {
           </nav>
         </div>
 
-        <div className="mt-auto p-4 ">
+        <div className="p-4 mt-auto ">
           <CurrentClock date={date} />
         </div>
       </div>

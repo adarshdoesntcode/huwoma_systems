@@ -56,6 +56,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ResetIcon } from "@radix-ui/react-icons";
 import { useRole } from "@/hooks/useRole";
 import { ROLES_LIST } from "@/lib/config";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 function CarwashCheckout() {
   const [paymentMode, setPaymentMode] = useState("");
@@ -98,6 +104,7 @@ function CarwashCheckout() {
     useGetCheckoutDetailsQuery({
       customerId: transactionDetails?.customer?._id,
     });
+  console.log("🚀 ~ CarwashCheckout ~ data:", data);
 
   const [transactionThree] = useTransactionThreeMutation();
 
@@ -336,11 +343,18 @@ function CarwashCheckout() {
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
 
         <Card className="mb-20">
-          <CardHeader className="p-4 sm:p-6">
+          <CardHeader
+            className="p-4 transition-all cursor-pointer hover:bg-muted sm:p-6"
+            onClick={() =>
+              navigate(`/carwash/customers/${data.data.customer._id}`)
+            }
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
-                  <AvatarFallback>
+                  <AvatarFallback
+                    className={data.data.hasRedeemed ? "bg-orange-100" : ""}
+                  >
                     <Contact />
                   </AvatarFallback>
                 </Avatar>
@@ -357,80 +371,95 @@ function CarwashCheckout() {
           </CardHeader>
           <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             {origin === "queue" && (
-              <div className="grid gap-4">
+              <>
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <Label className="text-base font-bold">Inspection</Label>
-                  <div className="flex justify-end w-full">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => {
-                        if (checkAll) {
-                          handleReset();
-                        } else {
-                          handleCheckAll();
-                        }
-                      }}
-                    >
-                      {!checkAll ? (
-                        <>
-                          Check All <CheckCircle className="w-4 h-4 ml-2" />
-                        </>
-                      ) : (
-                        <>
-                          Reset <ResetIcon className="w-4 h-4 ml-2" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {data.data.inspectionTemplates.map(
-                  (inspection, categoryIndex) => (
-                    <div key={inspection.categoryName} className="space-y-2">
-                      <div className="flex justify-between py-2 pl-4 pr-2 text-sm font-semibold rounded-md bg-muted">
-                        <span>{inspection.categoryName}</span>
-                        <Badge
-                          variant="outline"
-                          className="font-medium bg-background "
-                        >
-                          {inspection.scope}
-                        </Badge>
-                      </div>
-
-                      <div className="space-y-2">
-                        {inspection.items.map((item, itemIndex) => (
-                          <div
-                            key={`item${itemIndex}`}
-                            className="flex items-center ml-4"
-                          >
-                            <Checkbox
-                              checked={watch(
-                                `inspections.${categoryIndex}.items.${itemIndex}.response`
-                              )}
-                              {...register(
-                                `inspections.${categoryIndex}.items.${itemIndex}.response`
-                              )}
-                              onCheckedChange={(e) => {
-                                setValue(
-                                  `inspections.${categoryIndex}.items.${itemIndex}.response`,
-                                  e
-                                );
+                <Accordion type="single" collapsible className="mb-4">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>Inspection</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="grid gap-4">
+                        <div className="flex items-center justify-end">
+                          {/* <Label className="text-base font-bold">
+                          Inspection
+                        </Label> */}
+                          <div className="flex justify-end w-full">
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => {
+                                if (checkAll) {
+                                  handleReset();
+                                } else {
+                                  handleCheckAll();
+                                }
                               }}
-                            />
-                            <span className="ml-2 text-sm">{item}</span>
+                            >
+                              {!checkAll ? (
+                                <>
+                                  Check All{" "}
+                                  <CheckCircle className="w-4 h-4 ml-2" />
+                                </>
+                              ) : (
+                                <>
+                                  Reset <ResetIcon className="w-4 h-4 ml-2" />
+                                </>
+                              )}
+                            </Button>
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  )
-                )}
+                        </div>
 
-                <Separator className="mb-6" />
-              </div>
+                        {data.data.inspectionTemplates.map(
+                          (inspection, categoryIndex) => (
+                            <div
+                              key={inspection.categoryName}
+                              className="space-y-2"
+                            >
+                              <div className="flex justify-between py-2 pl-4 pr-2 text-sm font-semibold rounded-md bg-muted">
+                                <span>{inspection.categoryName}</span>
+                                <Badge
+                                  variant="outline"
+                                  className="font-medium bg-background "
+                                >
+                                  {inspection.scope}
+                                </Badge>
+                              </div>
+
+                              <div className="space-y-2">
+                                {inspection.items.map((item, itemIndex) => (
+                                  <div
+                                    key={`item${itemIndex}`}
+                                    className="flex items-center ml-4"
+                                  >
+                                    <Checkbox
+                                      checked={watch(
+                                        `inspections.${categoryIndex}.items.${itemIndex}.response`
+                                      )}
+                                      {...register(
+                                        `inspections.${categoryIndex}.items.${itemIndex}.response`
+                                      )}
+                                      onCheckedChange={(e) => {
+                                        setValue(
+                                          `inspections.${categoryIndex}.items.${itemIndex}.response`,
+                                          e
+                                        );
+                                      }}
+                                    />
+                                    <span className="ml-2 text-sm">{item}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )
+                        )}
+
+                        <Separator className="mb-6" />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </>
             )}
             {service && (
               <div className="grid gap-2" ref={serviceBoxRef}>
@@ -487,17 +516,19 @@ function CarwashCheckout() {
                     {isFreeTransaction && (
                       <>
                         <Separator className="my-2" />
-                        <div className="flex items-center justify-between ">
-                          <div className="text-sm font-semibold">Redeem</div>
+                        <div className="flex items-center justify-between overflow-hidden ">
+                          <Label className="text-sm font-medium text-orange-500">
+                            Redeem
+                          </Label>
 
                           <Switch
                             checked={redeem}
                             onCheckedChange={setRedeem}
+                            className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-orange-300"
                           />
                         </div>
                       </>
                     )}
-                    {/* )} */}
                   </div>
                 </div>
                 <form
@@ -533,7 +564,13 @@ function CarwashCheckout() {
                               Total Time
                             </div>
                             <div className="text-sm font-semibold ">
-                              {`${
+                              {`
+                              ${
+                                parkingTime?.days > 0
+                                  ? `${parkingTime?.days}d `
+                                  : ""
+                              }
+                              ${
                                 parkingTime?.hours > 0
                                   ? `${parkingTime?.hours}h `
                                   : ""

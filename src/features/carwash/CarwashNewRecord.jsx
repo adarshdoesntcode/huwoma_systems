@@ -51,6 +51,7 @@ function CarwashNewRecord() {
   const [customerList, setCustomerList] = useState(null);
   const [vehicleCustomerList, setVehicleCustomerList] = useState(null);
   const [newCustomer, setNewCustomer] = useState(false);
+  const navigate = useNavigate();
 
   const [findCustomer] = useFindCustomerMutation();
   const [createCutomer] = useCreateCutomerMutation();
@@ -124,18 +125,14 @@ function CarwashNewRecord() {
         }
         if (!res.error) {
           if (tab === "number") {
-            setCustomer(res.data.data);
+            setCustomer(res.data.data.customer);
           } else if (tab === "vehicle") {
-            if (res.data.data.length === 1) {
-              setCustomer(res.data.data[0]);
-            } else if (res.data.data.length > 1) {
-              setVehicleCustomerList(res.data.data);
+            if (res.data.data.customer.length > 0) {
+              setVehicleCustomerList(res.data.data.customer);
             }
           } else if (tab === "name") {
-            if (res.data.data.length === 1) {
-              setCustomer(res.data.data[0]);
-            } else if (res.data.data.length > 1) {
-              setCustomerList(res.data.data);
+            if (res.data.data.customer.length > 0) {
+              setCustomerList(res.data.data.customer);
             }
           }
         }
@@ -150,24 +147,30 @@ function CarwashNewRecord() {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
+    <div className="grid items-start w-full max-w-xl gap-4 mx-auto ">
       <NavBackButton buttonText={"Back"} navigateTo={-1} />
 
       {customer ? (
         <Card>
-          <CardHeader className="p-4">
-            <div className="flex justify-between items-center">
+          <CardHeader
+            className="p-4 transition-all cursor-pointer hover:bg-muted"
+            onClick={() => {
+              navigate(`/carwash/customers/${customer._id}`);
+            }}
+          >
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Avatar className="w-12 h-12">
+                <Avatar className="w-12 h-12 ">
                   <AvatarFallback>
                     <Contact />
                   </AvatarFallback>
                 </Avatar>
+
                 <div>
                   <CardTitle className="text-md ">
                     {customer.customerName}
                   </CardTitle>
-                  <CardDescription className="text-xs flex flex-col">
+                  <CardDescription className="flex flex-col text-xs">
                     {customer.customerContact}
                   </CardDescription>
                 </div>
@@ -177,7 +180,8 @@ function CarwashNewRecord() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setCustomer(null);
                       setCustomerList(null);
                       setVehicleCustomerList(null);
@@ -191,8 +195,8 @@ function CarwashNewRecord() {
             </div>
           </CardHeader>
           {customer.vehicleModels?.length > 0 && (
-            <CardFooter className="border-t py-3 flex items-center justify-center">
-              <div className="flex items-center flex-wrap  gap-2">
+            <CardFooter className="flex items-center justify-center py-3 border-t">
+              <div className="flex flex-wrap items-center gap-2">
                 {customer.vehicleModels.map((vehicle, index) => (
                   <Fragment key={index}>
                     {vehicle?.vehicleColor && (
@@ -217,11 +221,11 @@ function CarwashNewRecord() {
                         </Tooltip>
                       </TooltipProvider>
                     )}
-                    <div className="flex gap-2 items-start">
-                      <div className="font-semibold text-primary text-left text-xs">
+                    <div className="flex items-start gap-2">
+                      <div className="text-xs font-semibold text-left text-primary">
                         {vehicle?.model}
                       </div>
-                      <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                      <div className="flex justify-between gap-2 text-xs text-muted-foreground">
                         {vehicle.vehicleNumber}
                       </div>
                     </div>
@@ -237,7 +241,7 @@ function CarwashNewRecord() {
             <CardTitle className="text-xl sm:text-2xl">New Wash</CardTitle>
             <CardDescription>Customer for the new wash record</CardDescription>
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+          <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
             <form onSubmit={handleSubmit(onSubmit)} id="customer">
               <Tabs value={tab} onValueChange={setTab}>
                 <TabsList>
@@ -355,14 +359,14 @@ function CarwashNewRecord() {
                         return (
                           <Card
                             key={customer._id}
-                            className="cursor-pointer hover:border-primary transition-all "
+                            className="transition-all cursor-pointer hover:border-primary "
                             onClick={() => {
                               setCustomer(customer);
                               setVehicleCustomerList(null);
                             }}
                           >
-                            <CardHeader className=" py-4 px-4 sm:px-6">
-                              <div className="flex justify-between gap-4  items-center">
+                            <CardHeader className="px-4 py-4 sm:px-6">
+                              <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
                                   {/* <Avatar className="w-12 h-12">
                                     <AvatarFallback>
@@ -373,16 +377,16 @@ function CarwashNewRecord() {
                                     <CardTitle className="text-xs">
                                       {customer.customerName}
                                     </CardTitle>
-                                    <CardDescription className="text-xs flex flex-col">
+                                    <CardDescription className="flex flex-col text-xs">
                                       {customer.customerContact}
                                     </CardDescription>
                                   </div>
                                 </div>
-                                <div className="flex gap-2 items-center flex-wrap">
+                                <div className="flex flex-wrap items-center gap-2">
                                   {customer.vehicleModels.map(
                                     (vehicle, index) => (
                                       <div
-                                        className="flex gap-2 items-center"
+                                        className="flex items-center gap-2"
                                         key={index}
                                       >
                                         {vehicle?.vehicleColor && (
@@ -412,10 +416,10 @@ function CarwashNewRecord() {
                                           </TooltipProvider>
                                         )}
                                         <div className="flex flex-col items-start">
-                                          <div className="font-semibold text-primary text-left text-xs">
+                                          <div className="text-xs font-semibold text-left text-primary">
                                             {vehicle?.model}
                                           </div>
-                                          <div className="text-xs flex  justify-between gap-2 text-muted-foreground">
+                                          <div className="flex justify-between gap-2 text-xs text-muted-foreground">
                                             {vehicle.vehicleNumber}
                                           </div>
                                         </div>
@@ -480,20 +484,20 @@ function CarwashNewRecord() {
                           return (
                             <Card
                               key={customer._id}
-                              className="cursor-pointer hover:border-primary transition-all "
+                              className="transition-all cursor-pointer hover:border-primary "
                               onClick={() => {
                                 setCustomer(customer);
                                 setCustomerList(null);
                               }}
                             >
-                              <CardHeader className=" py-4 px-4 sm:px-6">
-                                <div className="flex justify-between items-center">
+                              <CardHeader className="px-4 py-4 sm:px-6">
+                                <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-4">
                                     <div>
                                       <CardTitle className="text-xs ">
                                         {customer.customerName}
                                       </CardTitle>
-                                      {/* <CardDescription className="text-xs flex flex-col">
+                                      {/* <CardDescription className="flex flex-col text-xs">
                                         {customer.customerContact}
                                       </CardDescription> */}
                                     </div>
@@ -543,8 +547,8 @@ function CarwashNewRecord() {
               </Tabs>
             </form>
           </CardContent>
-          <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-            <div className="flex w-full items-center justify-between gap-4">
+          <CardFooter className="flex justify-end px-4 py-4 border-t sm:px-6">
+            <div className="flex items-center justify-between w-full gap-4">
               {tab === "number" && (
                 <div>
                   {newCustomer && (
@@ -853,7 +857,7 @@ const ServiceSelect = ({ customer, locationState }) => {
             <CardTitle className="text-lg">Vehicle Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex text-center  items-center justify-center text-sm text-muted-foreground py-6 ">
+            <div className="flex items-center justify-center py-6 text-sm text-center text-muted-foreground ">
               No Configuration <br />
               create in the settings page
             </div>
@@ -866,25 +870,25 @@ const ServiceSelect = ({ customer, locationState }) => {
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-lg">Wash Selection</CardTitle>
           </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <div>
               <Label>
                 Vehicles{" "}
-                <span className="font-normal text-xs text-muted-foreground">
+                <span className="text-xs font-normal text-muted-foreground">
                   (Select One)
                 </span>
               </Label>
               <Separator className="mt-2" />
               <div
-                // className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6"
-                className="grid grid-cols-3 gap-2 sm:gap-4 my-6"
+                // className="flex flex-wrap justify-between gap-2 my-6 sm:justify-evenly"
+                className="grid grid-cols-3 gap-2 my-6 sm:gap-4"
                 ref={vehicleSelectRef}
               >
                 {data.data.map((vehicle) => {
                   return (
                     <div
                       key={vehicle._id}
-                      className="flex flex-col  items-center gap-3 text-xs text-muted-foreground cursor-pointer hover:scale-105 transition-transform hover:text-primary"
+                      className="flex flex-col items-center gap-3 text-xs transition-transform cursor-pointer text-muted-foreground hover:scale-105 hover:text-primary"
                       onClick={() => {
                         setSelectedVehicle(vehicle);
                         setSelectedService("");
@@ -893,12 +897,12 @@ const ServiceSelect = ({ customer, locationState }) => {
                       }}
                     >
                       <div
-                        className=" relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2"
-                        // className="w-24 sm:w-36 relative border animate-in  fade-in duration-500 px-4 py-2 rounded-lg shadow-lg gap-2"
+                        className="relative gap-2 px-4 py-2 duration-500 border rounded-lg shadow-lg animate-in fade-in"
+                        // className="relative w-24 gap-2 px-4 py-2 duration-500 border rounded-lg shadow-lg sm:w-36 animate-in fade-in"
                       >
                         {selectedVehicle._id === vehicle._id && (
-                          <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
-                            <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
+                          <Badge className="absolute top-0 right-0 p-1 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
+                            <CheckCheck className="w-3 h-3 sm:w-4 sm:h-4 " />
                           </Badge>
                         )}
                         <img
@@ -918,15 +922,15 @@ const ServiceSelect = ({ customer, locationState }) => {
               <div>
                 <Label>
                   Services{" "}
-                  <span className="font-normal text-xs text-muted-foreground">
+                  <span className="text-xs font-normal text-muted-foreground">
                     (Select One)
                   </span>
                 </Label>
                 <Separator className="mt-2" />
 
                 <div
-                  // className="flex flex-wrap gap-2 justify-between sm:justify-evenly my-6"
-                  className="grid grid-cols-3 gap-5 sm:gap-6  my-6"
+                  // className="flex flex-wrap justify-between gap-2 my-6 sm:justify-evenly"
+                  className="grid grid-cols-3 gap-5 my-6 sm:gap-6"
                   ref={serviceSelectRef}
                 >
                   {selectedVehicle.services.map((service) => {
@@ -947,19 +951,19 @@ const ServiceSelect = ({ customer, locationState }) => {
                     return (
                       <div
                         key={service._id}
-                        className="flex flex-col   items-center gap-3 text-xs text-primary font-medium   cursor-pointer hover:scale-105 transition-transform hover:text-primary"
+                        className="flex flex-col items-center gap-3 text-xs font-medium transition-transform cursor-pointer text-primary hover:scale-105 hover:text-primary"
                         onClick={() => {
                           setSelectedService(service);
                           setServiceCost(isFree ? 0 : service.serviceRate);
                         }}
                       >
                         <div
-                          // className="w-24 sm:w-36 relative border  px-2 py-6 uppercase text-center rounded-lg shadow-lg"
-                          className="relative border  text-sm px-2 w-full h-full py-6 sm:py-8 uppercase text-center rounded-lg shadow-lg"
+                          // className="relative w-24 px-2 py-6 text-center uppercase border rounded-lg shadow-lg sm:w-36"
+                          className="relative w-full h-full px-2 py-6 text-sm text-center uppercase border rounded-lg shadow-lg sm:py-8"
                         >
                           {selectedService._id === service._id && (
-                            <Badge className="rounded-full p-1 shadow-lg absolute right-0 top-0 translate-x-1/4 -translate-y-1/4">
-                              <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4 " />
+                            <Badge className="absolute top-0 right-0 p-1 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
+                              <CheckCheck className="w-3 h-3 sm:w-4 sm:h-4 " />
                             </Badge>
                           )}
                           {isFree && (
@@ -983,18 +987,18 @@ const ServiceSelect = ({ customer, locationState }) => {
             {selectedService && (
               <>
                 <form id="transaction-1" onSubmit={handleSubmit(onSubmit)}>
-                  <div className="flex   gap-4 items-center  justify-between">
+                  <div className="flex items-center justify-between gap-4">
                     <Label>Add Ons</Label>
                     <Switch checked={addOns} onCheckedChange={setAddOns} />
                   </div>
                   {addOns && (
-                    <div className="flex flex-col gap-2 border-t pt-3 mt-4">
+                    <div className="flex flex-col gap-2 pt-3 mt-4 border-t">
                       {addOnsList.map((addOn, index) => (
                         <div
                           key={addOn.id}
                           className="flex items-center justify-between"
                         >
-                          <div className="text-muted-foreground text-xs font-medium">
+                          <div className="text-xs font-medium text-muted-foreground">
                             {index + 1}. {addOn.name}
                           </div>
                           <div className="flex items-center gap-4">
@@ -1004,14 +1008,14 @@ const ServiceSelect = ({ customer, locationState }) => {
                                 : "Rs. " + addOn.price}
                             </div>
                             <X
-                              className="w-4 h-4 hover:scale-110 text-muted-foreground hover:text-destructive transition-all cursor-pointer"
+                              className="w-4 h-4 transition-all cursor-pointer hover:scale-110 text-muted-foreground hover:text-destructive"
                               onClick={() => handleRemoveAddOn(index)}
                             />
                           </div>
                         </div>
                       ))}
 
-                      <div className="flex items-center gap-4 mt-2  justify-between">
+                      <div className="flex items-center justify-between gap-4 mt-2">
                         <Input
                           id="newAddOn"
                           type="text"
@@ -1215,7 +1219,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                             )}
                             onClick={() => {}}
                           >
-                            <Pipette className="w-5 h-5  text-muted-foreground" />
+                            <Pipette className="w-5 h-5 text-muted-foreground" />
                             <span className="text-xs">{"New Colour"}</span>
                           </div>
                         </PopoverTrigger>
@@ -1232,10 +1236,10 @@ const ServiceSelect = ({ customer, locationState }) => {
               </>
             )}
           </CardContent>
-          <CardFooter className="border-t sm:px-6 px-4  py-4 flex justify-end">
+          <CardFooter className="flex justify-end px-4 py-4 border-t sm:px-6">
             {isSubmitting ? (
               <Button disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Submitting
               </Button>
             ) : (

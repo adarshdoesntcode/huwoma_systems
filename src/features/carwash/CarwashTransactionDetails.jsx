@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Copy,
   OctagonX,
+  Phone,
   Printer,
   Undo2Icon,
 } from "lucide-react";
@@ -131,7 +132,7 @@ const CarwashTransactionDetails = ({
           </SheetHeader>
 
           <div className="flex flex-col flex-1">
-            <div className="flex-1 overflow-y-auto pb-16">
+            <div className="flex-1 pb-16 overflow-y-auto">
               <Details
                 transactionDetails={transactionDetails}
                 parkingEligible={parkingEligible}
@@ -140,7 +141,7 @@ const CarwashTransactionDetails = ({
                 parkingTime={parkingTime}
               />
             </div>
-            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+            <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
               <DetailsFooter
                 transactionDetails={transactionDetails}
                 handleTermination={handleTermination}
@@ -163,7 +164,7 @@ const CarwashTransactionDetails = ({
           </SheetHeader>
 
           <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto pb-12">
+            <div className="flex-1 pb-12 overflow-y-auto">
               <Details
                 transactionDetails={transactionDetails}
                 parkingEligible={parkingEligible}
@@ -172,7 +173,7 @@ const CarwashTransactionDetails = ({
                 parkingTime={parkingTime}
               />
             </div>
-            <SheetFooter className="sticky py-4 pb-6 border-t bg-background bottom-0">
+            <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
               <DetailsFooter
                 transactionDetails={transactionDetails}
                 handleTermination={handleTermination}
@@ -201,9 +202,9 @@ const Details = ({
         {transactionDetails?.service?.id && (
           <div className="grid gap-2">
             <Label>Service</Label>
-            <div className="border p-4 rounded-md shadow-sm">
-              <div className="flex flex-col border-b pb-2 mb-2">
-                <div className="font-medium flex items-center justify-between">
+            <div className="p-4 border rounded-md shadow-sm">
+              <div className="flex flex-col pb-2 mb-2 border-b">
+                <div className="flex items-center justify-between font-medium">
                   <div className="text-sm">
                     {transactionDetails?.service?.id?.serviceTypeName}
                   </div>
@@ -218,7 +219,7 @@ const Details = ({
                     Vehicle No: {transactionDetails?.vehicleNumber}
                   </div> */}
                   <div className="flex items-center gap-2">
-                    <div className="font-medium text-primary text-xs">
+                    <div className="text-xs font-medium text-primary">
                       {transactionDetails?.vehicleModel}
                       {transactionDetails?.vehicleModel
                         ? " - "
@@ -240,10 +241,10 @@ const Details = ({
                   </div>
                 </div>
               </div>
-              <div className="flex gap-1 flex-col mt-1">
+              <div className="flex flex-col gap-1 mt-1">
                 {transactionDetails?.service?.start && (
                   <div className="flex items-center justify-between">
-                    <div className="text-muted-foreground text-xs font-medium">
+                    <div className="text-xs font-medium text-muted-foreground">
                       Start Time
                     </div>
                     <div className="text-xs ">
@@ -256,7 +257,7 @@ const Details = ({
                 )}
                 {transactionDetails?.service?.end && (
                   <div className="flex items-center justify-between">
-                    <div className="text-muted-foreground text-xs font-medium">
+                    <div className="text-xs font-medium text-muted-foreground">
                       End Time
                     </div>
                     <div className="text-xs ">
@@ -268,8 +269,8 @@ const Details = ({
                   </div>
                 )}
                 {transactionDetails?.transactionStatus === "Completed" ? (
-                  <div className="flex items-center justify-between  ">
-                    <div className="text-muted-foreground text-xs font-medium">
+                  <div className="flex items-center justify-between ">
+                    <div className="text-xs font-medium text-muted-foreground">
                       Cost
                     </div>
                     <div className="text-xs font-semibold">
@@ -279,8 +280,8 @@ const Details = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between  ">
-                    <div className="text-muted-foreground text-xs font-medium">
+                  <div className="flex items-center justify-between ">
+                    <div className="text-xs font-medium text-muted-foreground">
                       Rate
                     </div>
                     <div className="text-xs font-semibold">
@@ -290,14 +291,14 @@ const Details = ({
                 )}
               </div>
               {transactionDetails?.parking && (
-                <div className="grid mt-2 gap-2">
+                <div className="grid gap-2 mt-2">
                   <Label>Parking</Label>
                   <Separator />
                   <div>
-                    <div className="flex gap-1 flex-col">
+                    <div className="flex flex-col gap-1">
                       {transactionDetails?.parking?.in && (
                         <div className="flex items-center justify-between">
-                          <div className="text-muted-foreground text-xs font-medium">
+                          <div className="text-xs font-medium text-muted-foreground">
                             In
                           </div>
                           <div className="text-xs ">
@@ -310,7 +311,7 @@ const Details = ({
                       )}
                       {transactionDetails?.parking?.out && (
                         <div className="flex items-center justify-between">
-                          <div className="text-muted-foreground text-xs font-medium">
+                          <div className="text-xs font-medium text-muted-foreground">
                             Out
                           </div>
                           <div className="text-xs ">
@@ -324,8 +325,8 @@ const Details = ({
                       {transactionDetails?.parking?.cost && (
                         <>
                           <Separator className="my-1" />
-                          <div className="flex items-center justify-between  ">
-                            <div className="text-muted-foreground text-xs font-medium">
+                          <div className="flex items-center justify-between ">
+                            <div className="text-xs font-medium text-muted-foreground">
                               Cost
                             </div>
                             <div className="text-xs font-medium">
@@ -344,14 +345,14 @@ const Details = ({
         {transactionDetails?.addOns?.length > 0 && (
           <div className="grid gap-2">
             <Label>Add Ons</Label>
-            <div className="border p-4 rounded-md shadow-sm">
-              <div className="flex gap-1 flex-col">
+            <div className="p-4 border rounded-md shadow-sm">
+              <div className="flex flex-col gap-1">
                 {transactionDetails?.addOns?.map((addOn, index) => (
                   <div
                     key={addOn._id}
                     className="flex items-center justify-between"
                   >
-                    <div className="text-muted-foreground text-xs font-medium">
+                    <div className="text-xs font-medium text-muted-foreground">
                       {index + 1}. {addOn.name}
                     </div>
                     <div className="text-xs font-medium">Rs. {addOn.price}</div>
@@ -365,12 +366,12 @@ const Details = ({
         {transactionDetails.transactionStatus === "Ready for Pickup" &&
           parkingEligible &&
           parkingIncluded && (
-            <div className="grid  gap-2">
+            <div className="grid gap-2">
               <Label>Parking</Label>
-              <div className="border p-4 rounded-md shadow-sm">
-                <div className="flex gap-1 flex-col">
+              <div className="p-4 border rounded-md shadow-sm">
+                <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
-                    <div className="text-muted-foreground text-xs font-medium">
+                    <div className="text-xs font-medium text-muted-foreground">
                       Start Time
                     </div>
                     <div className="text-xs ">
@@ -379,11 +380,13 @@ const Details = ({
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="text-muted-foreground text-xs font-medium">
+                    <div className="text-xs font-medium text-muted-foreground">
                       Total Time
                     </div>
                     <div className="text-sm font-semibold ">
-                      {`${
+                      {`
+                      ${parkingTime?.days > 0 ? `${parkingTime?.days}d ` : ""}
+                      ${
                         parkingTime?.hours > 0 ? `${parkingTime?.hours}h ` : ""
                       } ${
                         parkingTime?.minutes > 0
@@ -409,7 +412,7 @@ const Details = ({
                     {transactionDetails?.inspections.map(
                       (inspection, index) => (
                         <div key={index} className="grid gap-1">
-                          <div className=" text-xs  font-semibold">
+                          <div className="text-xs font-semibold ">
                             {inspection?.categoryName}
                           </div>
                           <div className="border rounded-md shadow-sm">
@@ -420,10 +423,10 @@ const Details = ({
                                     key={`item${itemIndex}`}
                                     className="border-b"
                                   >
-                                    <TableCell className="text-xs border-r py-2 px-2 w-11/12">
+                                    <TableCell className="w-11/12 px-2 py-2 text-xs border-r">
                                       {item.itemName}
                                     </TableCell>
-                                    <TableCell className="p-0 text-center py-2 px-2 w-1/12">
+                                    <TableCell className="w-1/12 p-0 px-2 py-2 text-center">
                                       {item.response && (
                                         <Check className="w-4 h-4" />
                                       )}
@@ -444,9 +447,9 @@ const Details = ({
         )}
         <div className="grid gap-2">
           <Label>Details</Label>
-          <div className="flex gap-1 flex-col mt-1">
+          <div className="flex flex-col gap-1 mt-1">
             <div className="flex items-center justify-between">
-              <div className="text-muted-foreground text-xs font-medium">
+              <div className="text-xs font-medium text-muted-foreground">
                 Bill No
               </div>
               <div className="text-xs ">
@@ -457,7 +460,7 @@ const Details = ({
             {transactionDetails?.transactionTime && (
               <div className="flex items-center justify-between">
                 <>
-                  <div className="text-muted-foreground text-xs font-medium">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Transaction Date
                   </div>
                   <div className="text-xs font-medium">
@@ -470,30 +473,40 @@ const Details = ({
               </div>
             )}
 
-            <div className="flex items-center justify-between  ">
-              <div className="text-muted-foreground text-xs font-medium">
+            <div className="flex items-center justify-between ">
+              <div className="text-xs font-medium text-muted-foreground">
                 Customer
               </div>
               <div className="text-xs ">
                 <Link
                   to={`/carwash/customers/${transactionDetails?.customer?._id}`}
-                  className="text-sm flex items-center gap-1 underline underline-offset-4 font-medium "
+                  className="flex items-center gap-1 pt-1 text-sm font-medium underline underline-offset-4 "
                 >
                   {transactionDetails?.customer?.customerName}
                   <ArrowUpRightIcon className="w-4 h-4" />
                 </Link>
               </div>
             </div>
-            <div className="flex items-center justify-between  ">
-              <div className="text-muted-foreground text-xs font-medium">
+            <div className="flex items-center justify-between ">
+              <div className="text-xs font-medium text-muted-foreground">
                 Contact
               </div>
               <div className="text-sm font-medium">
-                {transactionDetails?.customer?.customerContact || "-"}
+                {transactionDetails?.customer?.customerContact ? (
+                  <a
+                    href={`tel:${transactionDetails?.customer?.customerContact}`}
+                    className="flex items-center gap-1 py-1 text-sm font-medium underline underline-offset-4 "
+                  >
+                    {transactionDetails?.customer?.customerContact}
+                    <Phone className="w-4 h-4" />
+                  </a>
+                ) : (
+                  "-"
+                )}
               </div>
             </div>
-            <div className="flex items-center justify-between  ">
-              <div className="text-muted-foreground text-xs font-medium">
+            <div className="flex items-center justify-between ">
+              <div className="text-xs font-medium text-muted-foreground">
                 Status
               </div>
               <div className="text-xs font-medium">
@@ -506,32 +519,32 @@ const Details = ({
             </div>
             {transactionDetails?.transactionStatus === "Completed" && (
               <>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Mode
                   </div>
                   <div className="text-xs font-medium">
                     {transactionDetails?.paymentMode?.paymentModeName || "-"}
                   </div>
                 </div>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Gross Amt
                   </div>
                   <div className="text-xs font-medium">
                     Rs. {transactionDetails?.grossAmount || "0"}
                   </div>
                 </div>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Discount Amt
                   </div>
                   <div className="text-xs font-medium">
                     Rs. {transactionDetails?.discountAmount || "0"}
                   </div>
                 </div>
-                <div className="flex items-center justify-between  ">
-                  <div className="text-muted-foreground text-xs font-medium">
+                <div className="flex items-center justify-between ">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Net Amt
                   </div>
                   <div className="text-xs font-medium">
@@ -618,12 +631,12 @@ const DetailsFooter = ({
           origin !== "transactions" &&
           role !== ROLES_LIST.STAFF && (
             <Button
-              className="border-destructive bg-bg border text-destructive hover:bg-destructive hover:text-white"
+              className="border border-destructive bg-bg text-destructive hover:bg-destructive hover:text-white"
               onClick={() => {
                 handleTermination();
               }}
             >
-              <OctagonX className="h-4 w-4 mr-2" /> Cancel
+              <OctagonX className="w-4 h-4 mr-2" /> Cancel
             </Button>
           )}
 
@@ -638,7 +651,7 @@ const DetailsFooter = ({
                 handleRollbackFromPickup();
               }}
             >
-              <Undo2Icon className="h-4 w-4 mr-2" /> Rollback
+              <Undo2Icon className="w-4 h-4 mr-2" /> Rollback
             </Button>
           )}
         {transactionDetails?.transactionStatus === "Completed" &&
@@ -652,16 +665,16 @@ const DetailsFooter = ({
                 handleRollbackFromComplete();
               }}
             >
-              <Undo2Icon className="h-4 w-4 mr-2" /> Rollback
+              <Undo2Icon className="w-4 h-4 mr-2" /> Rollback
             </Button>
           )}
       </div>
       {transactionDetails?.transactionStatus === "In Queue" &&
         origin !== "transactions" && (
-          <div className="flex flex-col sm:flex-row  w-full gap-2">
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
             <Button
               variant="secondary"
-              className=" hover:border-primary border w-full"
+              className="w-full border hover:border-primary"
               onClick={() => {
                 navigate("/carwash/checkout", {
                   state: { transactionDetails, origin: "queue" },
@@ -669,7 +682,7 @@ const DetailsFooter = ({
               }}
             >
               Checkout
-              <ChevronRight className="h-4 w-4 ml-2" />{" "}
+              <ChevronRight className="w-4 h-4 ml-2" />{" "}
             </Button>
             <Button
               className="w-full"
@@ -678,7 +691,7 @@ const DetailsFooter = ({
               }}
             >
               Inspection
-              <ChevronRight className="h-4 w-4 ml-2" />{" "}
+              <ChevronRight className="w-4 h-4 ml-2" />{" "}
             </Button>
           </div>
         )}
@@ -694,7 +707,7 @@ const DetailsFooter = ({
             }}
           >
             Checkout
-            <ChevronRight className="h-4 w-4 ml-2" />{" "}
+            <ChevronRight className="w-4 h-4 ml-2" />{" "}
           </Button>
         )}
       {transactionDetails?.transactionStatus === "Completed" &&
@@ -708,7 +721,7 @@ const DetailsFooter = ({
             }}
           >
             Checkout
-            <ChevronRight className="h-4 w-4 ml-2" />{" "}
+            <ChevronRight className="w-4 h-4 ml-2" />{" "}
           </Button>
         )}
       {transactionDetails?.transactionStatus === "Completed" &&
@@ -719,7 +732,7 @@ const DetailsFooter = ({
             onClick={handleReceiptPrint}
           >
             Print
-            <Printer className="h-4 w-4 ml-2" />{" "}
+            <Printer className="w-4 h-4 ml-2" />{" "}
           </Button>
         )}
     </div>

@@ -129,6 +129,7 @@ export function Dashboard() {
   let yesterdayParkingRevenue;
   let breakdownData;
   let activeRaces;
+  let activeParkings;
   let tableData;
   let pendingCarwashAmount;
 
@@ -167,6 +168,7 @@ export function Dashboard() {
         transaction.transactionStatus === "Active" ||
         transaction.transactionStatus === "Paused"
     );
+
     simracingRevenue = simracingCompletedTransactions.reduce(
       (acc, curr) => acc + curr.netAmount,
       0
@@ -182,6 +184,10 @@ export function Dashboard() {
     parkingRevenue = parkingCompletedTransactions.reduce(
       (acc, curr) => acc + curr.netAmount,
       0
+    );
+
+    activeParkings = parkingTransactions.filter(
+      (transaction) => transaction.transactionStatus === "Parked"
     );
 
     todayTotalVisitors =
@@ -255,19 +261,19 @@ export function Dashboard() {
 
   if (isLoading) {
     content = (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex items-center justify-center flex-1">
         <Loader />
       </div>
     );
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
-          <div className="text-sm font-semibold uppercase text-primary  flex items-center gap-2">
+        <div className="flex items-center justify-between gap-4 tracking-tight sm:flex-row sm:items-center sm:mb-4">
+          <div className="flex items-center gap-2 text-sm font-semibold uppercase text-primary">
             <Droplets className="w-4 h-4 text-muted-foreground" />
             Dashboard
           </div>
-          <div className=" flex justify-end">
+          <div className="flex justify-end ">
             <Button
               size="sm"
               variant="outline"
@@ -285,11 +291,11 @@ export function Dashboard() {
         </div>
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Carwash Revenue
               </CardTitle>
-              <Droplets className="h-4 w-4 text-muted-foreground" />
+              <Droplets className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -313,11 +319,11 @@ export function Dashboard() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Sim Racing Revenue
               </CardTitle>
-              <Car className="h-4 w-4 text-muted-foreground" />
+              <Car className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -344,30 +350,42 @@ export function Dashboard() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Parking Revenue
               </CardTitle>
-              <ParkingCircle className="h-4 w-4 text-muted-foreground" />
+              <ParkingCircle className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 +{parkingRevenue.toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">
-                {calculateChange(
-                  parkingRevenue,
-                  yesterdayParkingRevenue,
-                  "percentage"
-                )}{" "}
-                than yesterday
+                {activeParkings.length > 0 && (
+                  <p className="text-xs font-medium text-green-600">
+                    {activeParkings.length}{" "}
+                    {activeParkings.length === 1 ? "vehicle" : "vehicles"}{" "}
+                    parked
+                  </p>
+                )}
+
+                {activeParkings.length === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {calculateChange(
+                      parkingRevenue,
+                      yesterdayParkingRevenue,
+                      "percentage"
+                    )}{" "}
+                    than yesterday
+                  </p>
+                )}
               </p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Visitors</CardTitle>
-              <Footprints className="h-4 w-4 text-muted-foreground" />
+              <Footprints className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">+{todayTotalVisitors}</div>
@@ -382,10 +400,10 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </div>
-        <div className="grid  gap-4 grid-cols-12">
+        <div className="grid grid-cols-12 gap-4">
           <Card className="col-span-12">
-            <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row ">
-              <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+            <CardHeader className="flex flex-col items-stretch p-0 space-y-0 border-b sm:flex-row ">
+              <div className="flex flex-col justify-center flex-1 gap-1 px-6 py-5 sm:py-6">
                 <CardTitle className="text-xl font-2xl">
                   Customer Traffic
                 </CardTitle>
@@ -470,9 +488,9 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </div>
-        <div className="grid gap-4 md:gap-8  xl:grid-cols-3">
+        <div className="grid gap-4 md:gap-8 xl:grid-cols-3">
           <Card className="xl:col-span-2">
-            <CardHeader className=" p-4 sm:p-6 sm:pb-2">
+            <CardHeader className="p-4 sm:p-6 sm:pb-2">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg sm:text-xl">
@@ -492,7 +510,7 @@ export function Dashboard() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-4  sm:p-6 pt-2 sm:pt-2">
+            <CardContent className="p-4 pt-2 sm:p-6 sm:pt-2">
               <DashboardTransactionsDataTable
                 data={tableData}
                 columns={DashboardTransactionsColumn}

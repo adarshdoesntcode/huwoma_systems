@@ -1,12 +1,9 @@
 import { Navigate } from "react-router-dom";
-
 import Error from "@/components/error/Error";
-
 import Dashboard from "@/features/dashboard/Dashboard";
 import SimRacing from "@/features/simracing/SimRacing";
 import Carwash from "@/features/carwash/Carwash";
 import Parking from "@/features/parking/Parking";
-
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import SettingsRoutes from "./SettingsRoutes";
 import CarwashNewRecord from "@/features/carwash/CarwashNewRecord";
@@ -18,7 +15,6 @@ import CarwashTransactions from "@/features/carwash/carwash_tranasactions/Carwas
 import CarwashCustomerDetails from "@/features/carwash/carwash_customers/CarwashCustomerDetails";
 import SimRacingNewRace from "@/features/simracing/SimRacingNewRace";
 import SimRacingNewBooking from "@/features/simracing/SimRacingNewBooking";
-import Broadcast from "@/features/broadcast/Broadcast";
 import SimRacingCheckout from "@/features/simracing/SimRacingCheckout";
 import SimRacingCustomers from "@/features/simracing/simracing_customers/SimRacingCustomers";
 import SimRacingCustomerDetails from "@/features/simracing/simracing_customers/SimRacingCustomerDetails";
@@ -27,6 +23,8 @@ import SimRacingTransactions from "@/features/simracing/simracing_transactions/S
 import ParkingTransactions from "@/features/parking/parking_transactions/ParkingTransactions";
 import SystemActivity from "@/features/system_activity/SystemActivity";
 import CarwashOldRecord from "@/features/carwash/CarwashOldRecord";
+import CarGarage from "@/features/garage/CarGarage";
+import ParkingTabSettlement from "@/features/parking/parking_tabs/settlement/ParkingTabSettlement";
 
 const PrivateRoutes = [
   {
@@ -135,15 +133,20 @@ const PrivateRoutes = [
     errorElement: <Error />,
   },
   {
+    path: "parking/settlement/:id",
+    element: <ParkingTabSettlement />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage",
+    element: <CarGarage />,
+    errorElement: <Error />,
+  },
+  {
     path: "activity",
     element: <SystemActivity />,
     errorElement: <Error />,
   },
-  // {
-  //   path: "broadcast",
-  //   element: <Broadcast />,
-  //   errorElement: <Error />,
-  // },
   {
     path: "/settings",
     element: <SettingsLayout />,

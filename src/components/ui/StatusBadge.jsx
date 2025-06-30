@@ -13,12 +13,12 @@ const statusColors = {
   Parked: "bg-green-600/10 text-green-600 border-green-600",
 };
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = ({ status, className }) => {
   const badgeClass = statusColors[status];
 
   return (
     <Badge
-      className={`${badgeClass} uppercase text-[10px] py-0 whitespace-nowrap pointer-events-none`}
+      className={`${badgeClass} uppercase text-[10px] py-0 whitespace-nowrap pointer-events-none ${className}`}
     >
       {status}
     </Badge>

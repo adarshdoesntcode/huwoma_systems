@@ -116,7 +116,7 @@ function SimRacingCheckout() {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="flex-1 h-full flex items-center justify-center ">
+      <div className="flex items-center justify-center flex-1 h-full ">
         <Loader />
       </div>
     );
@@ -137,12 +137,12 @@ function SimRacingCheckout() {
     netAmt = grossAmt - discountAmt;
 
     content = (
-      <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
+      <div className="grid items-start w-full max-w-xl gap-4 mx-auto ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
 
         <Card className="mb-20">
           <CardHeader className="p-4 sm:p-6">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
                   <AvatarFallback>
@@ -160,17 +160,17 @@ function SimRacingCheckout() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             {transactionDetails && (
               <div className="grid gap-2">
                 <form
                   id="simracing-checkout"
-                  className="grid mt-2 gap-2"
+                  className="grid gap-2 mt-2"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <div className="border p-4 rounded-md shadow-sm">
-                    <div className="flex gap-1 flex-col">
-                      <div className="font-medium flex items-center justify-between">
+                  <div className="p-4 border rounded-md shadow-sm">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between font-medium">
                         <div className="text-sm">
                           {transactionDetails?.rig?.rigName}
                         </div>
@@ -181,7 +181,7 @@ function SimRacingCheckout() {
                       </div>
                       <Separator className="my-2" />
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           Start Time
                         </div>
                         <div className="text-xs ">
@@ -190,7 +190,7 @@ function SimRacingCheckout() {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           End Time
                         </div>
                         <div className="text-xs ">
@@ -198,11 +198,12 @@ function SimRacingCheckout() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           Total Time
                         </div>
                         <div className="text-sm font-semibold ">
-                          {`${
+                          {`${raceTime?.days > 0 ? `${raceTime?.days}d ` : ""}
+                          ${
                             raceTime?.hours > 0 ? `${raceTime?.hours}h ` : ""
                           } ${
                             raceTime?.minutes > 0 ? `${raceTime?.minutes}m` : ""
@@ -210,7 +211,7 @@ function SimRacingCheckout() {
                         </div>
                       </div>
                       <Separator className="my-2" />
-                      <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                         <Label>
                           {errors.raceCost ? (
                             <span className="text-destructive">
@@ -251,8 +252,8 @@ function SimRacingCheckout() {
                     </div>
                   </div>
 
-                  <div className="border p-4 rounded-md shadow-sm my-2">
-                    <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                  <div className="p-4 my-2 border rounded-md shadow-sm">
+                    <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                       <Label>
                         {errors.discountAmt ? (
                           <span className="text-destructive">
@@ -296,24 +297,24 @@ function SimRacingCheckout() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid gap-2 mb-2 px-2">
+                  <div className="grid gap-2 px-2 mb-2">
                     <Label>Details</Label>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Gross Amt
                       </div>
                       <div className="text-xs font-medium">Rs. {grossAmt}</div>
                     </div>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Discount Amt
                       </div>
                       <div className="text-xs font-medium">
                         Rs. {discountAmt}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Net Amt
                       </div>
                       <div className="text-base font-semibold">
@@ -322,8 +323,8 @@ function SimRacingCheckout() {
                     </div>
                   </div>
 
-                  <div className="border p-4 rounded-md shadow-sm">
-                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
+                  <div className="p-4 border rounded-md shadow-sm">
+                    <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                       <Label>Payment Mode</Label>
                       <div className="flex flex-wrap gap-2 text-sm text-normal">
                         {paymentModes?.map((mode) => (
@@ -371,16 +372,16 @@ function SimRacingCheckout() {
                     </div>
                     <div>
                       {paymentMode?.qrCodeData && (
-                        <div className="space-y-4 mt-4" ref={qrCodeRef}>
+                        <div className="mt-4 space-y-4" ref={qrCodeRef}>
                           <Label>Qr Code</Label>
-                          <div className="flex items-center flex-col gap-4 justify-center ">
+                          <div className="flex flex-col items-center justify-center gap-4 ">
                             <div className="p-4 border rounded-md">
                               <QRCode
                                 value={paymentMode.qrCodeData}
                                 size={220}
                               />
                             </div>
-                            <p className="text-muted-foreground uppercase font-medium">
+                            <p className="font-medium uppercase text-muted-foreground">
                               {paymentMode?.paymentModeName}
                             </p>
                           </div>
@@ -392,7 +393,7 @@ function SimRacingCheckout() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="p-4 sm:p-6 flex justify-end">
+          <CardFooter className="flex justify-end p-4 sm:p-6">
             <SubmitButton
               condition={isSubmitting}
               loadingText="Receiving"

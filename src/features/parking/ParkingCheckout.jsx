@@ -116,7 +116,7 @@ function ParkingCheckout() {
 
   if (isLoading || isFetching) {
     content = (
-      <div className="flex-1 h-full flex items-center justify-center ">
+      <div className="flex items-center justify-center flex-1 h-full ">
         <Loader />
       </div>
     );
@@ -136,7 +136,7 @@ function ParkingCheckout() {
     netAmt = grossAmt - discountAmt;
 
     content = (
-      <div className="mx-auto grid w-full max-w-xl items-start gap-4 ">
+      <div className="grid items-start w-full max-w-xl gap-4 mx-auto ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
 
         <Card className="mb-20">
@@ -146,12 +146,12 @@ function ParkingCheckout() {
               <div className="grid gap-2">
                 <form
                   id="parking-checkout"
-                  className="grid mt-2 gap-2"
+                  className="grid gap-2 mt-2"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <div className="border p-4 rounded-md shadow-sm">
-                    <div className="flex gap-1 flex-col">
-                      <div className="font-medium flex items-center justify-between">
+                  <div className="p-4 border rounded-md shadow-sm">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between font-medium">
                         <div className="font-semibold">
                           {vehicle.vehicleTypeName} ({" "}
                           {transactionDetails.vehicleNumber} )
@@ -160,7 +160,7 @@ function ParkingCheckout() {
                       </div>
                       <Separator className="my-2" />
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           Start Time
                         </div>
                         <div className="text-xs ">
@@ -169,7 +169,7 @@ function ParkingCheckout() {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           End Time
                         </div>
                         <div className="text-xs ">
@@ -177,11 +177,17 @@ function ParkingCheckout() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-muted-foreground text-xs font-medium">
+                        <div className="text-xs font-medium text-muted-foreground">
                           Total Time
                         </div>
                         <div className="text-sm font-semibold ">
-                          {`${
+                          {`
+                          ${
+                            parkingTime?.days > 0
+                              ? `${parkingTime?.days}d `
+                              : ""
+                          }
+                          ${
                             parkingTime?.hours > 0
                               ? `${parkingTime?.hours}h `
                               : ""
@@ -193,7 +199,7 @@ function ParkingCheckout() {
                         </div>
                       </div>
                       <Separator className="my-2" />
-                      <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                         <Label>
                           {errors.parkingCost ? (
                             <span className="text-destructive">
@@ -235,8 +241,8 @@ function ParkingCheckout() {
                   </div>
 
                   {role !== ROLES_LIST.STAFF && (
-                    <div className="border p-4 rounded-md shadow-sm my-2">
-                      <div className="flex sm:flex-row flex-col items-start gap-4 sm:items-center  justify-between">
+                    <div className="p-4 my-2 border rounded-md shadow-sm">
+                      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                         <Label>
                           {errors.discountAmt ? (
                             <span className="text-destructive">
@@ -282,24 +288,24 @@ function ParkingCheckout() {
                     </div>
                   )}
 
-                  <div className="grid gap-2 mb-2 px-2">
+                  <div className="grid gap-2 px-2 mb-2">
                     <Label>Details</Label>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Gross Amt
                       </div>
                       <div className="text-xs font-medium">Rs. {grossAmt}</div>
                     </div>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Discount Amt
                       </div>
                       <div className="text-xs font-medium">
                         Rs. {discountAmt}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between  ">
-                      <div className="text-muted-foreground text-xs font-medium">
+                    <div className="flex items-center justify-between ">
+                      <div className="text-xs font-medium text-muted-foreground">
                         Net Amt
                       </div>
                       <div className="text-base font-semibold">
@@ -308,8 +314,8 @@ function ParkingCheckout() {
                     </div>
                   </div>
 
-                  <div className="border p-4 rounded-md shadow-sm">
-                    <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center  justify-between">
+                  <div className="p-4 border rounded-md shadow-sm">
+                    <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                       <Label>Payment Mode</Label>
                       {/* <div className="flex items-center gap-2 w-full sm:w-[180px]">
                         <Select
@@ -357,16 +363,16 @@ function ParkingCheckout() {
                     </div>
                     <div>
                       {paymentMode?.qrCodeData && (
-                        <div className="space-y-4 mt-4" ref={qrCodeRef}>
+                        <div className="mt-4 space-y-4" ref={qrCodeRef}>
                           <Label>Qr Code</Label>
-                          <div className="flex items-center flex-col gap-4 justify-center ">
+                          <div className="flex flex-col items-center justify-center gap-4 ">
                             <div className="p-4 border rounded-md">
                               <QRCode
                                 value={paymentMode.qrCodeData}
                                 size={220}
                               />
                             </div>
-                            <p className="text-muted-foreground uppercase font-medium">
+                            <p className="font-medium uppercase text-muted-foreground">
                               {paymentMode?.paymentModeName}
                             </p>
                           </div>
@@ -378,7 +384,7 @@ function ParkingCheckout() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="p-4 sm:p-6 flex justify-end">
+          <CardFooter className="flex justify-end p-4 sm:p-6">
             <SubmitButton
               condition={isSubmitting}
               loadingText="Receiving"
