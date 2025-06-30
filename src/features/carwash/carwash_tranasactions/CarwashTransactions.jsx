@@ -61,6 +61,9 @@ import { DailyIncomeGraph } from "./charts/DailyIncomeGraph";
 import { isMobile } from "react-device-detect";
 import { useIsSuper } from "@/hooks/useSuper";
 import { Navigate } from "react-router-dom";
+import DateSelector from "./selector/DateSelector";
+import RangeSelector from "./selector/RangeSelector";
+import MonthSelector from "./selector/MonthSelector";
 
 const initialState = {
   preset: {
@@ -72,6 +75,10 @@ const initialState = {
     date: "",
   },
   customRange: {
+    from: "",
+    to: "",
+  },
+  customMonth: {
     from: "",
     to: "",
   },
@@ -95,10 +102,6 @@ function CarwashTransactions() {
   const [selectedService, setSelectedService] = useState(configInitialState);
   const [responseData, setResponseData] = useState("");
   const [range, setRange] = useState("");
-  const [selectedMonthData, setSelectedMonthData] = useState({
-    month: 9,
-    year: 2023,
-  });
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const {
@@ -184,6 +187,10 @@ function CarwashTransactions() {
           from: "",
           to: "",
         },
+        customMonth: {
+          from: "",
+          to: "",
+        },
         preset: {
           ...prev.preset,
           ...changedstate,
@@ -221,6 +228,28 @@ function CarwashTransactions() {
     }
   };
 
+  const handleMonthChange = (range) => {
+    setFilter((prev) => ({
+      ...prev,
+      preset: {
+        from: "",
+        text: "",
+        to: new Date().toISOString(),
+      },
+      customRange: {
+        from: "",
+        to: "",
+      },
+      customDate: {
+        date: "",
+      },
+      customMonth: {
+        from: range.from,
+        to: range.to,
+      },
+    }));
+  };
+
   const onSubmit = async () => {
     setResponseData("");
 
@@ -235,6 +264,8 @@ function CarwashTransactions() {
       };
     } else if (filter.customRange.from && filter.customRange.to) {
       dateRange = { ...filter.customRange };
+    } else if (filter.customMonth.from && filter.customMonth.to) {
+      dateRange = { ...filter.customMonth };
     } else {
       return toast({
         variant: "destructive",
@@ -329,104 +360,11 @@ function CarwashTransactions() {
                     </SelectContent>
                   </Select>
                   <TextSeparator text={"Or custom date"} />
-
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full  justify-start text-left font-normal",
-                          !filter.customDate.date && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="w-4 h-4 mr-2" />
-                        {filter.customDate.date ? (
-                          format(filter.customDate.date, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        toDate={new Date()}
-                        selected={filter.customDate.date}
-                        onSelect={(date) => {
-                          setFilter((prev) => ({
-                            ...prev,
-                            preset: {
-                              from: "",
-                              to: new Date().toISOString(),
-                            },
-                            customRange: {
-                              from: "",
-                              to: "",
-                            },
-                            customDate: { date: date },
-                          }));
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DateSelector filter={filter} setFilter={setFilter} />
                   <TextSeparator text={"Or custom Range"} />
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="date"
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !filter.customRange?.from &&
-                            !filter.customRange?.to &&
-                            "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="w-4 h-4 mr-2" />
-                        {filter.customRange?.from ? (
-                          filter.customRange?.to ? (
-                            <>
-                              {format(filter.customRange?.from, "LLL dd, y")} -{" "}
-                              {format(filter.customRange?.to, "LLL dd, y")}
-                            </>
-                          ) : (
-                            format(filter.customRange?.from, "LLL dd, y")
-                          )
-                        ) : (
-                          <span>Pick a range</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="range"
-                        toDate={new Date()}
-                        selected={filter.customRange}
-                        onSelect={(value) => {
-                          setFilter((prev) => ({
-                            ...prev,
-                            preset: {
-                              from: "",
-                              to: new Date(),
-                            },
-                            customDate: {
-                              date: "",
-                            },
-                            customRange: {
-                              ...prev.customRange,
-                              ...{
-                                from: value.from
-                                  ? startOfDay(value.from)
-                                  : undefined,
-                                to: value.to ? endOfDay(value.to) : undefined,
-                              },
-                            },
-                          }));
-                        }}
-                        numberOfMonths={2}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <RangeSelector filter={filter} setFilter={setFilter} />
+                  <TextSeparator text={"Or Custom Month"} />
+                  <MonthSelector filter={filter} onSelect={handleMonthChange} />
                 </div>
               </div>
               <div className="col-span-12 p-4 space-y-4 border-b sm:col-span-4 sm:border-b-0 sm:border-r">

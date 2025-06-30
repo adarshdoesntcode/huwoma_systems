@@ -173,7 +173,8 @@ function ParkingTabSettlement() {
                   onSubmit={handleSubmit(onSubmit)}
                 >
                   <Label className="mb-2">
-                    Pending Transactions {`(${tabbedtransactions.length})`}
+                    Pending Transactions{" "}
+                    {`(${transactionsForSettlement.length} /${tabbedtransactions.length})`}
                   </Label>
                   <div className="overflow-scroll max-h-[400px]">
                     <div className="grid gap-3 p-4">

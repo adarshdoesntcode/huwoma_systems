@@ -58,6 +58,9 @@ import { useGetParkingFilteredTransactionsMutation } from "../parkingApiSlice";
 import { ParkingFilterTranasactionDataTable } from "./ParkingFilteredTransactionsDataTable";
 import { ParkingFinishedColumn } from "../ParkingFinishedColumn";
 import ParkingVehicleIncomeGraph from "./ParkingVehicleIncomeGraph";
+import MonthSelector from "./selector/MonthSelector";
+import DateSelector from "./selector/DateSelector";
+import RangeSelector from "./selector/RangeSelector";
 
 const initialState = {
   preset: {
@@ -69,6 +72,10 @@ const initialState = {
     date: "",
   },
   customRange: {
+    from: "",
+    to: "",
+  },
+  customMonth: {
     from: "",
     to: "",
   },
@@ -162,6 +169,10 @@ function ParkingTransactions() {
         customDate: {
           date: "",
         },
+        customMonth: {
+          from: "",
+          to: "",
+        },
         customRange: {
           from: "",
           to: "",
@@ -172,6 +183,28 @@ function ParkingTransactions() {
         },
       }));
     }
+  };
+
+  const handleMonthChange = (range) => {
+    setFilter((prev) => ({
+      ...prev,
+      preset: {
+        from: "",
+        text: "",
+        to: new Date().toISOString(),
+      },
+      customRange: {
+        from: "",
+        to: "",
+      },
+      customDate: {
+        date: "",
+      },
+      customMonth: {
+        from: range.from,
+        to: range.to,
+      },
+    }));
   };
   const onSubmit = async () => {
     setResponseData("");
@@ -187,6 +220,8 @@ function ParkingTransactions() {
       };
     } else if (filter.customRange.from && filter.customRange.to) {
       dateRange = { ...filter.customRange };
+    } else if (filter.customMonth.from && filter.customMonth.to) {
+      dateRange = { ...filter.customMonth };
     } else {
       return toast({
         variant: "destructive",
@@ -215,22 +250,22 @@ function ParkingTransactions() {
   };
 
   return (
-    <div className=" space-y-4 mb-80">
+    <div className="space-y-4 mb-80">
       <NavBackButton buttonText={"Back"} navigateTo={-1} />
       <Card>
-        <CardHeader className="p-4 sm:p-6 sm:pb-4 border-b">
-          <CardTitle className="flex gap-3 text-base sm:text-lg items-center">
-            <Settings2 className="h-5 w-5" />
+        <CardHeader className="p-4 border-b sm:p-6 sm:pb-4">
+          <CardTitle className="flex items-center gap-3 text-base sm:text-lg">
+            <Settings2 className="w-5 h-5" />
             Parking Transactions Analysis
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4  sm:p-6 pt-0 pb-0 sm:pb-0 sm:pt-0">
+        <CardContent className="p-4 pt-0 pb-0 sm:p-6 sm:pb-0 sm:pt-0">
           <form
             id="parking-transaction-filter"
-            className="grid  grid-cols-12"
+            className="grid grid-cols-12"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="col-span-12 p-4 pl-2 sm:col-span-4 border-b sm:border-b-0  sm:border-r">
+            <div className="col-span-12 p-4 pl-2 space-y-2 border-b sm:col-span-4 sm:border-b-0 sm:border-r">
               <div className="space-y-2">
                 <Label>
                   Time Presets{" "}
@@ -258,120 +293,30 @@ function ParkingTransactions() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label>Custom Month</Label>
+                <MonthSelector filter={filter} onSelect={handleMonthChange} />
+              </div>
             </div>
-            <div className="p-4 col-span-12 sm:col-span-4 border-b sm:border-b-0  sm:border-r space-y-4">
-              <div className="flex flex-row sm:flex-col  gap-4">
-                <div className="space-y-2 w-full">
+            <div className="col-span-12 p-4 space-y-4 border-b sm:col-span-4 sm:border-b-0 sm:border-r">
+              <div className="flex flex-row gap-4 sm:flex-col">
+                <div className="w-full space-y-2">
                   <Label>Custom Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full  justify-start text-left font-normal",
-                          !filter.customDate.date && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {filter.customDate.date ? (
-                          format(filter.customDate.date, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        toDate={new Date()}
-                        selected={filter.customDate.date}
-                        onSelect={(date) => {
-                          setFilter((prev) => ({
-                            ...prev,
-                            preset: {
-                              from: "",
-                              to: new Date().toISOString(),
-                            },
-                            customRange: {
-                              from: "",
-                              to: "",
-                            },
-                            customDate: { date: date },
-                          }));
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <DateSelector setFilter={setFilter} filter={filter} />
                 </div>
               </div>
             </div>
-            <div className="p-4 col-span-12 sm:col-span-4  ">
-              <div className="flex flex-row sm:flex-col  gap-4">
-                <div className="space-y-2 w-full">
+            <div className="col-span-12 p-4 sm:col-span-4 ">
+              <div className="flex flex-row gap-4 sm:flex-col">
+                <div className="w-full space-y-2">
                   <Label>Custom Range</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="date"
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !filter.customRange?.from &&
-                            !filter.customRange?.to &&
-                            "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {filter.customRange?.from ? (
-                          filter.customRange?.to ? (
-                            <>
-                              {format(filter.customRange?.from, "LLL dd, y")} -{" "}
-                              {format(filter.customRange?.to, "LLL dd, y")}
-                            </>
-                          ) : (
-                            format(filter.customRange?.from, "LLL dd, y")
-                          )
-                        ) : (
-                          <span>Pick a range</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="range"
-                        toDate={new Date()}
-                        selected={filter.customRange}
-                        onSelect={(value) => {
-                          setFilter((prev) => ({
-                            ...prev,
-                            preset: {
-                              from: "",
-                              to: new Date(),
-                            },
-                            customDate: {
-                              date: "",
-                            },
-                            customRange: {
-                              ...prev.customRange,
-                              ...{
-                                from: value.from
-                                  ? startOfDay(value.from)
-                                  : undefined,
-                                to: value.to ? endOfDay(value.to) : undefined,
-                              },
-                            },
-                          }));
-                        }}
-                        numberOfMonths={2}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <RangeSelector setFilter={setFilter} filter={filter} />
                 </div>
               </div>
             </div>
           </form>
         </CardContent>
-        <CardFooter className="border-t  px-4 sm:px-6  py-4 ">
+        <CardFooter className="px-4 py-4 border-t sm:px-6 ">
           <div className="flex items-center justify-between w-full">
             <Button
               variant="outline"
@@ -380,12 +325,12 @@ function ParkingTransactions() {
                 setResponseData("");
               }}
             >
-              Defaults <ResetIcon className="h-4 w-4 ml-2" />
+              Defaults <ResetIcon className="w-4 h-4 ml-2" />
             </Button>
             <SubmitButton
               buttonText={
                 <>
-                  Filter <Filter className="h-4 w-4 ml-2" />
+                  Filter <Filter className="w-4 h-4 ml-2" />
                 </>
               }
               condition={isSubmitting}
@@ -480,13 +425,13 @@ const FilteredAnalytics = ({ responseData, range }) => {
   return (
     <div className="space-y-6 " ref={analyticsRef}>
       {completetedTransactions.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mb-6">
+        <div className="grid gap-4 mb-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">
                 Total Net Revenue
               </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <DollarSign className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -496,9 +441,9 @@ const FilteredAnalytics = ({ responseData, range }) => {
           </Card>
 
           <Card x-chunk="dashboard-01-chunk-3">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Discounted</CardTitle>
-              <BadgePercent className="h-4 w-4 text-muted-foreground" />
+              <BadgePercent className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -540,7 +485,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
               : rangeString}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
           {/* <SimRacingFilterTranasactionDataTable
             data={simRacingTableData}
             columns={SimRacingFilteredTransactionsColumn}

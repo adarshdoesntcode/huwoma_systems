@@ -35,7 +35,6 @@ import { Badge } from "@/components/ui/badge";
 
 function AddToParkingTab({ tab, vehicles, setTabState }) {
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [modelOpen, setModalOpen] = useState(false);
 
   const {
     handleSubmit,
@@ -65,7 +64,7 @@ function AddToParkingTab({ tab, vehicles, setTabState }) {
         });
         reset();
         setTabState("parked");
-        setModalOpen(false);
+        setSelectedVehicle("");
       }
     } catch (error) {
       toast({
@@ -76,9 +75,14 @@ function AddToParkingTab({ tab, vehicles, setTabState }) {
     }
   };
 
+  const handleClose = () => {
+    reset();
+    setSelectedVehicle("");
+  };
+
   return (
     <div>
-      <Dialog open={modelOpen} onOpenChange={setModalOpen}>
+      <Dialog onOpenChange={handleClose}>
         <DialogTrigger asChild>
           <Button size="sm" variant="outline" className="w-full">
             Add <PlusCircle className="w-4 h-4 ml-2" />
