@@ -37,7 +37,7 @@ const activityColors = {
   Create: "text-emerald-600 !bg-emerald-50 hover:!bg-emerald-200", // Constructive action, emerald for creation.
   Logout: "text-muted-foreground hover:!bg-slate-200",
   "Start Race": "text-blue-600 !bg-blue-50 hover:!bg-blue-200", // Technical, indigo for innovation.
-
+  Reset: "text-amber-800 !bg-amber-50 hover:!bg-amber-200",
   Update: "text-yellow-600 !bg-yellow-50 hover:!bg-yellow-200", // Informative, yellow for updates or changes.
   Cancelled: "text-red-600 !bg-red-50 hover:!bg-red-200", // Negative, red to signify cancellation.
   Delete: "text-red-600 !bg-red-50 hover:!bg-red-200", // Critical, rose for destructive actions.
@@ -166,7 +166,7 @@ export const SystemActivityDataTable = ({ columns, data }) => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4 space-x-2">
+      <div className="flex items-center justify-between mb-4 space-x-2">
         <SystemActivityDataTableToolbar table={table} />
 
         <div>
@@ -181,9 +181,9 @@ export const SystemActivityDataTable = ({ columns, data }) => {
           </Button>
         </div>
       </div>
-      <div className="bg-white border rounded-md font-mono tracking-tighter">
+      <div className="font-mono tracking-tighter bg-white border rounded-md">
         {isMobile && (
-          <p className="text-center p-4 text-muted-foreground text-xs">
+          <p className="p-4 text-xs text-center text-muted-foreground">
             Information reduced in a mobile screen
           </p>
         )}

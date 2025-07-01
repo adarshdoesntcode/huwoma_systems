@@ -380,16 +380,18 @@ const FilteredAnalytics = ({ responseData, range }) => {
           new Date(transaction.createdAt).toDateString()
         )
       )
-    ).map((date) => {
-      const income = completetedTransactions
-        .filter(
-          (transaction) =>
-            new Date(transaction.createdAt).toDateString() === date
-        )
-        .reduce((sum, transaction) => sum + transaction.netAmount, 0);
+    )
+      .map((date) => {
+        const income = completetedTransactions
+          .filter(
+            (transaction) =>
+              new Date(transaction.createdAt).toDateString() === date
+          )
+          .reduce((sum, transaction) => sum + transaction.netAmount, 0);
 
-      return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
-    });
+        return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
   }
 
   useEffect(() => {

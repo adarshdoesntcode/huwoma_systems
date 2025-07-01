@@ -647,16 +647,18 @@ const FilteredAnalytics = ({ responseData, range }) => {
           new Date(transaction.transactionTime).toDateString()
         )
       )
-    ).map((date) => {
-      const income = completetedTransactions
-        .filter(
-          (transaction) =>
-            new Date(transaction.transactionTime).toDateString() === date
-        )
-        .reduce((sum, transaction) => sum + transaction.netAmount, 0);
+    )
+      .map((date) => {
+        const income = completetedTransactions
+          .filter(
+            (transaction) =>
+              new Date(transaction.transactionTime).toDateString() === date
+          )
+          .reduce((sum, transaction) => sum + transaction.netAmount, 0);
 
-      return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
-    });
+        return { date: format(new Date(date), "MMM d, yyyy"), Income: income };
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
   }
 
   useEffect(() => {
@@ -684,10 +686,6 @@ const FilteredAnalytics = ({ responseData, range }) => {
   }
 
   const carwashTableData = [...responseData];
-
-  // .sort(
-  //   (a, b) => new Date(b.creartedAt) - new Date(a.creartedAt)
-  // );
 
   return (
     <div className="space-y-6 " ref={analyticsRef}>
