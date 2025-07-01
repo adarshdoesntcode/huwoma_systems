@@ -7,24 +7,27 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { IMAGE_DATA } from "@/lib/config";
+import { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
+import SupportDialog from "./ui/SupportDialog";
 
 const Unauthorized = () => {
   const navigate = useNavigate();
+  const [showSupport, setShowSupport] = useState(false);
 
   const goBack = () => navigate(-1);
 
   return (
     <div
-      className="min-h-screen  bg-center bg-fixed"
+      className="min-h-screen bg-fixed bg-center"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
     >
-      <div className="grid grid-cols-12 max-w-7xl mx-auto">
-        <div className="col-span-12  self-center p-4 flex justify-between">
-          <Link to={"/"} className="flex items-center  gap-2">
+      <div className="grid grid-cols-12 mx-auto max-w-7xl">
+        <div className="flex self-center justify-between col-span-12 p-4">
+          <Link to={"/"} className="flex items-center gap-2">
             <img
               src={IMAGE_DATA.huwoma_logo}
               loading="lazy"
@@ -33,7 +36,13 @@ const Unauthorized = () => {
             />
           </Link>
           <div>
-            <Button variant="link">Support</Button>
+            <Button
+              variant="ghost"
+              onClick={() => setShowSupport((prev) => !prev)}
+            >
+              Support
+            </Button>
+            <SupportDialog open={showSupport} setOpen={setShowSupport} />
           </div>
         </div>
         <Card className="mt-[25vh] col-span-12 w-[400px] max-w-xl mx-auto">

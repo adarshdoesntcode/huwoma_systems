@@ -31,9 +31,12 @@ import { toast } from "@/hooks/use-toast";
 import BreadCrumbGenerator from "../BreadCrumbGenerator";
 import { Badge } from "../ui/badge";
 import { useRole } from "@/hooks/useRole";
+import SupportDialog from "../ui/SupportDialog";
 
 function AdminLayout() {
   const [logoutLoader, setLogoutLoader] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -83,12 +86,12 @@ function AdminLayout() {
               </BreadcrumbList>
             </Breadcrumb>
 
-            <div className="relative ml-auto flex-1 md:grow-0">
+            <div className="relative flex-1 ml-auto md:grow-0">
               <div className="flex items-center justify-center sm:hidden">
                 <img
                   loading="lazy"
                   src={IMAGE_DATA.huwoma_logo}
-                  className=" h-6 aspect-auto mx-auto"
+                  className="h-6 mx-auto aspect-auto"
                 />
               </div>
               <div className="hidden sm:block">
@@ -112,7 +115,12 @@ function AdminLayout() {
                     Settings
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem>Support</DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => setShowSupport((prev) => !prev)}
+                >
+                  Support
+                </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handlelogout}>
@@ -121,7 +129,7 @@ function AdminLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <main className="flex flex-1 flex-col  p-4 pt-2 lg:px-6 bg-slate-50">
+          <main className="flex flex-col flex-1 p-4 pt-2 lg:px-6 bg-slate-50">
             <Outlet />
           </main>
         </div>
@@ -139,13 +147,14 @@ function AdminLayout() {
                 : "animate-out duration-200 fade-out-0 zoom-out-95"
             }`}
           >
-            <div className="flex justify-center items-center ">
-              <Loader2 className="h-6 w-6 animate-spin mr-4" />
+            <div className="flex items-center justify-center ">
+              <Loader2 className="w-6 h-6 mr-4 animate-spin" />
               <span className="text-sm whitespace-nowrap">Logging Out</span>
             </div>
           </div>
         </div>
       </div>
+      <SupportDialog open={showSupport} setOpen={setShowSupport} />
     </>
   );
 }
