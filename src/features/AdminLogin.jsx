@@ -23,9 +23,11 @@ import {
   ROLES_LIST,
 } from "@/lib/config";
 import { getGoogleOAuthURL } from "@/lib/utils";
+import SupportDialog from "@/components/ui/SupportDialog";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -78,9 +80,9 @@ function Login() {
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}
     >
-      <div className="flex gap-14 flex-col">
-        <div className="col-span-12 max-w-lg  mx-auto text-center">
-          <div className="flex gap-2 text-center  text-muted-foreground text-sm flex-col items-center justify-center">
+      <div className="flex flex-col gap-14">
+        <div className="max-w-lg col-span-12 mx-auto text-center">
+          <div className="flex flex-col items-center justify-center gap-2 text-sm text-center text-muted-foreground">
             <img
               src={IMAGE_DATA.huwoma_logo}
               loading="lazy"
@@ -92,7 +94,7 @@ function Login() {
 
         <Card className="col-span-12 w-[350px] lg:w-[400px] max-w-xl mx-auto">
           <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-xl">
               Login
             </CardTitle>
             <CardDescription>
@@ -140,7 +142,7 @@ function Login() {
                     </Label>
                     <p
                       onClick={() => setForgotPassword(true)}
-                      className="ml-auto font-normal leading-none cursor-pointer inline-block py-0 text-sm underline"
+                      className="inline-block py-0 ml-auto text-sm font-normal leading-none underline cursor-pointer"
                     >
                       Reset password?
                     </p>
@@ -170,7 +172,7 @@ function Login() {
                 </div>
                 {isSubmitting ? (
                   <Button variant="secondary" disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Logging In
                   </Button>
                 ) : (
@@ -190,7 +192,7 @@ function Login() {
                   <span className="w-full border-t"></span>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="px-2 bg-background text-muted-foreground">
                     Or continue with
                   </span>
                 </div>
@@ -201,17 +203,22 @@ function Login() {
                   Login with Google
                 </Link>
               </Button>
-              <div className="  mx-auto text-center  text-muted-foreground text-xs">
+              <div className="mx-auto text-xs text-center text-muted-foreground">
                 <p>Use a registered Google Account</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="col-span-12 max-w-lg mx-auto text-center  text-muted-foreground text-xs">
-          <Button variant="link" asChild>
-            <Link to={"/support"}>Support</Link>
+        <div className="max-w-lg col-span-12 mx-auto text-xs text-center text-muted-foreground">
+          <Button
+            variant="ghost"
+            onClick={() => setShowSupport((prev) => !prev)}
+          >
+            Support
           </Button>
+
+          <SupportDialog open={showSupport} setOpen={setShowSupport} />
         </div>
       </div>
     </div>
