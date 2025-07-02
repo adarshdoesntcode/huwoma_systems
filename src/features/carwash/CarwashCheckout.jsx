@@ -104,7 +104,6 @@ function CarwashCheckout() {
     useGetCheckoutDetailsQuery({
       customerId: transactionDetails?.customer?._id,
     });
-  console.log("🚀 ~ CarwashCheckout ~ data:", data);
 
   const [transactionThree] = useTransactionThreeMutation();
 
@@ -269,7 +268,8 @@ function CarwashCheckout() {
           duration: 2000,
         });
         navigate("/carwash", {
-          state: { tab: paymentMode._id ? "complete" : "pending" },
+          // state: { tab: paymentMode._id ? "complete" : "pending" },
+          state: { tab: "queue" },
           replace: true,
         });
       }
@@ -777,6 +777,9 @@ function CarwashCheckout() {
                             placeholder="0"
                             {...register("discountAmt", {
                               validate: (value) => {
+                                if (!value) {
+                                  return true;
+                                }
                                 const regex = /^\d*$/;
                                 if (!regex.test(value)) {
                                   return "Not a valid amount";
