@@ -264,6 +264,7 @@ function ParkingCheckout() {
                             placeholder="0"
                             {...register("discountAmt", {
                               validate: (value) => {
+                                if (!value) return true;
                                 const regex = /^\d*$/;
                                 if (!regex.test(value)) {
                                   return "Not a valid amount";
