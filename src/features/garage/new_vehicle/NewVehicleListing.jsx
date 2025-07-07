@@ -1,5 +1,3 @@
-import Loader from "@/components/Loader";
-import { useGetVehicleConfigQuery } from "../garageApiSlice";
 import NavBackButton from "@/components/NavBackButton";
 import {
   Card,
@@ -10,11 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
-import ApiError from "@/components/error/ApiError";
 import { useState } from "react";
 import Steps from "@/components/Steps";
 import FormOne from "./form/FormOne";
 import FormZero from "./form/FormZero";
+import FormTwo from "./form/FormTwo";
+import FormThree from "./form/FormThree";
 
 function NewVehicleListing() {
   const [selectedSeller, setSelectedSeller] = useState("");
@@ -23,9 +22,10 @@ function NewVehicleListing() {
   const [selectedTransmission, setSelectedTransmission] = useState("");
   const [selectedFuelType, setSelectedFuelType] = useState("");
   const [selectedDriveType, setSelectedDriveType] = useState("");
+  const [managedImages, setManagedImages] = useState([]);
+  const [finalImageUrls, setFinalImageUrls] = useState([]);
 
-  const [formStep, setFormStep] = useState(0);
-
+  const [formStep, setFormStep] = useState(3);
   const {
     handleSubmit,
     reset,
@@ -35,6 +35,7 @@ function NewVehicleListing() {
     clearErrors,
     register,
     watch,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -73,11 +74,13 @@ function NewVehicleListing() {
                 setFormStep={setFormStep}
                 reset={reset}
                 setError={setError}
+                setFocus={setFocus}
               />
             )}
 
             {formStep === 1 && (
               <FormOne
+                register={register}
                 selectedMake={selectedMake}
                 setSelectedMake={setSelectedMake}
                 selectedCategory={selectedCategory}
@@ -90,10 +93,24 @@ function NewVehicleListing() {
                 setSelectedDriveType={setSelectedDriveType}
                 setFormStep={setFormStep}
                 errors={errors}
+                reset={reset}
                 setError={setError}
+                trigger={trigger}
                 clearErrors={clearErrors}
+                setFocus={setFocus}
               />
             )}
+            {formStep === 2 && (
+              <FormTwo
+                setFormStep={setFormStep}
+                errors={errors}
+                managedImages={managedImages}
+                setManagedImages={setManagedImages}
+                setFinalImageUrls={setFinalImageUrls}
+                finalImageUrls={finalImageUrls}
+              />
+            )}
+            {formStep === 3 && <FormThree setFormStep={setFormStep} />}
           </form>
         </CardContent>
         <CardFooter className="flex justify-end"></CardFooter>

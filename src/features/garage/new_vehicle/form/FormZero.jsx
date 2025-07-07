@@ -72,9 +72,9 @@ function FormZero({
   setFormStep,
   reset,
   setError,
+  setFocus,
 }) {
   const [oldSellers, setOldSellers] = useState([]);
-
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [focusedInput, setFocusedInput] = useState("");
   const [searchCustomer, { isLoading: isSearching }] =
@@ -169,6 +169,17 @@ function FormZero({
 
   const handleNext = async () => {
     const isValid = await trigger(["name", "contactNumber"]);
+
+    if (!isValid) {
+      const firstErrorField = Object.keys(errors).reduce((field, key) => {
+        return errors[key] ? key : field;
+      }, "");
+
+      if (firstErrorField) {
+        setFocus(firstErrorField);
+      }
+    }
+
     if (isValid && !selectedSeller) {
       setSelectedSeller({
         name,
@@ -181,10 +192,10 @@ function FormZero({
   };
 
   return (
-    <div className="w-xl">
+    <div className="duration-500 slide-in-from-right-5 w-xl animate-in">
       <Card>
         <CardHeader className="pb-4">
-          <div className="w-full mx-auto sm:w-3/4">
+          <div className="w-full mx-auto md:w-1/2 sm:w-3/4">
             <CardTitle className="text-xl sm:text-2xl">Seller Info</CardTitle>
             <CardDescription className="text-xs sm:text-sm">
               Add a new seller or find an existing one.
@@ -192,29 +203,36 @@ function FormZero({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="w-full mx-auto space-y-4 sm:w-3/4">
+          <div className="w-full mx-auto space-y-4 md:w-1/2 sm:w-3/4">
             {selectedSeller ? (
-              <Alert>
-                <AlertTitle className="flex items-center justify-between gap-2 mb-0 text-sm">
-                  <div className="flex items-center gap-4">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    {selectedSeller.name} -
-                    <span className="text-muted-foreground">
-                      {selectedSeller.contactNumber}
-                    </span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit()}
-                  >
-                    Change
-                  </Button>
-                </AlertTitle>
-              </Alert>
+              <div className="duration-300 fade-in animate-in">
+                <Alert>
+                  <AlertTitle className="flex flex-col gap-2 mb-0 text-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="hidden w-4 h-4 text-green-500 sm:block shrink-0" />
+                        <span className="font-medium truncate">
+                          {selectedSeller.name}
+                        </span>
+                        <CheckCircle className="block w-4 h-4 text-green-500 sm:hidden shrink-0" />
+                      </div>
+                      <span className="truncate file:text-sm text-muted-foreground">
+                        {selectedSeller.contactNumber}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit()}
+                      className="w-full shrink-0 sm:w-auto"
+                    >
+                      Change
+                    </Button>
+                  </AlertTitle>
+                </Alert>
+              </div>
             ) : (
-              <>
-                {" "}
+              <div className="space-y-4 duration-300 fade-in animate-in">
                 <div className="grid gap-2">
                   <Label className="mt-2" htmlFor="name">
                     {errors.name ? (
@@ -348,12 +366,12 @@ function FormZero({
                     </PopoverContent>
                   </Popover>
                 </div>{" "}
-              </>
+              </div>
             )}
           </div>
         </CardContent>
         <CardFooter>
-          <div className="flex justify-between w-full mx-auto sm:w-3/4">
+          <div className="flex justify-between w-full mx-auto md:w-1/2 sm:w-3/4">
             <div>
               {!selectedSeller && (
                 <Button
