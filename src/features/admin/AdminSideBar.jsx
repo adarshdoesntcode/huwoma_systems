@@ -21,7 +21,7 @@ function AdminSideBar() {
 
   return (
     <div
-      className="hidden bg-fixed bg-center border-r md:block"
+      className="hidden bg-fixed bg-center bg-cover border-r md:block"
       style={{
         backgroundImage: `url(${IMAGE_DATA.background})`,
       }}

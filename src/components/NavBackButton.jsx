@@ -10,7 +10,7 @@ function NavBackButton({ buttonText, navigateTo, navigateOpt = {} }) {
       <Button
         variant="outline"
         size="sm"
-        className="text-sm pl-2 pr-4"
+        className="pl-2 pr-4 text-sm"
         onClick={() => navigate(navigateTo, { ...navigateOpt })}
       >
         <ChevronLeft className="h-5 w-4.5 mr-1" />

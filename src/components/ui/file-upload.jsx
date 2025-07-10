@@ -1,9 +1,8 @@
 import { cn } from "@/lib/utils";
 import React, { memo, useEffect, useRef, useState } from "react";
-import { IconUpload, IconX } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "./badge";
-import { CheckCheck, Loader2 } from "lucide-react";
+import { CheckCheck, Loader2, UploadCloud, X } from "lucide-react";
 import heic2any from "heic2any";
 
 const MAX_FILES = 10;
@@ -41,7 +40,7 @@ const FilePreviewCard = memo(({ image, previewUrl, onRemove }) => {
             }}
             className="p-1 transition-colors rounded-full shrink-0 hover:bg-gray-200 "
           >
-            <IconX className="w-4 h-4 text-neutral-500" />
+            <X className="w-4 h-4 text-neutral-500" />
           </button>
         </div>
         <div className="flex items-center justify-between mt-2 text-sm text-neutral-600 ">
@@ -195,7 +194,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
     <div className="w-full" {...getRootProps()}>
       <div
         onClick={handleClick}
-        className="relative w-full p-10 transition-transform duration-200 shadow-lg cursor-pointer rounded-xl group/file"
+        className="relative w-full p-10 transition-transform duration-200 bg-white shadow-sm cursor-pointer rounded-xl group/file"
       >
         <input {...getInputProps()} ref={fileInputRef} className="hidden" />
 
@@ -230,7 +229,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
                     setUploadErrors([]);
                   }}
                 >
-                  <IconX className="w-5 h-5" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
               <ul className="mt-2 text-sm list-disc list-inside">
@@ -240,18 +239,15 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
               </ul>
             </div>
           )}
-          {!isConverting && (
-            <div
-              className={cn(
-                "relative border  hover:scale-[1.1] shadow-xl z-40 flex items-center justify-center h-32 mt-10 w-full max-w-[8rem] mx-auto rounded-xl transition-transform duration-200",
-                isDragActive &&
-                  "scale-110 border-2 border-dashed border-primary"
-              )}
-            >
-              <IconUpload className="w-8 h-8 text-neutral-400" />
-            </div>
-          )}
 
+          <div
+            className={cn(
+              "relative border  hover:scale-[1.1] shadow-xl z-40 flex items-center justify-center h-32 mt-10 w-full max-w-[8rem] mx-auto rounded-xl transition-transform duration-200",
+              isDragActive && "scale-110 border-2 border-dashed border-primary"
+            )}
+          >
+            <UploadCloud className="w-8 h-8 text-neutral-400" />
+          </div>
           <div className="relative w-full max-w-xl mx-auto mt-6 space-y-4">
             {images.map((image) => (
               <FilePreviewCard

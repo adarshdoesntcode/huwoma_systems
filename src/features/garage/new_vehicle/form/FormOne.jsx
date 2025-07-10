@@ -178,7 +178,7 @@ function FormOne({
   let content;
   if (isLoading) {
     content = (
-      <div className="flex items-center justify-center flex-1 h-full ">
+      <div className="flex items-center justify-center flex-1 h-full py-10 bg-white ">
         <Loader />
       </div>
     );
@@ -186,6 +186,12 @@ function FormOne({
     content = (
       <div className="duration-500 slide-in-from-right-5 animate-in">
         <div className="grid gap-6 p-4 border shadow-sm rounded-xl sm:p-6 bg-background ">
+          <div>
+            <h3 className="text-lg font-semibold ">Vehicle Details Form</h3>
+            <p className="text-sm text-muted-foreground">
+              Complete the form below about the vehicle you are selling
+            </p>
+          </div>
           <h3 className="pb-2 font-semibold border-b">Information</h3>
           <div className="grid grid-cols-3 gap-4">
             {vehicleInfoConfig.map((config, index) => (
@@ -193,7 +199,9 @@ function FormOne({
             ))}
           </div>
 
-          <h3 className="pb-2 font-semibold border-b">Specification</h3>
+          <h3 className="pb-2 font-semibold border-b">
+            Registration & Specification
+          </h3>
           <div className="grid grid-cols-3 gap-4">
             {specificationConfig.map((config, index) => (
               <FormItems key={index} type={config.type} props={config} />

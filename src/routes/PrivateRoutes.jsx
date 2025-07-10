@@ -140,6 +140,11 @@ const PrivateRoutes = [
   },
   {
     path: "garage",
+    element: <CarGarage />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/new-vehicle",
     element: <NewVehicleListing />,
     errorElement: <Error />,
   },

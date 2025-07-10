@@ -196,7 +196,9 @@ function FormZero({
       <Card>
         <CardHeader className="pb-4">
           <div className="w-full mx-auto md:w-1/2 sm:w-3/4">
-            <CardTitle className="text-xl sm:text-2xl">Seller Info</CardTitle>
+            <CardTitle className="text-base font-semibold sm:text-lg">
+              Seller Info
+            </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
               Add a new seller or find an existing one.
             </CardDescription>
@@ -232,7 +234,7 @@ function FormZero({
                 </Alert>
               </div>
             ) : (
-              <div className="space-y-4 duration-300 fade-in animate-in">
+              <div className="space-y-3 duration-300 fade-in animate-in">
                 <div className="grid gap-2">
                   <Label className="mt-2" htmlFor="name">
                     {errors.name ? (
@@ -252,8 +254,7 @@ function FormZero({
                         <Input
                           id="name"
                           type="text"
-                          placeholder="Seller name"
-                          autoFocus
+                          placeholder="Name"
                           defaultValue={selectedSeller?.name}
                           onFocus={() => setFocusedInput("name")}
                           onBlur={() => setFocusedInput("")}
@@ -327,7 +328,7 @@ function FormZero({
                           type="tel"
                           defaultValue={selectedSeller?.contactNumber}
                           inputMode="numeric"
-                          placeholder="Contact number"
+                          placeholder="Number"
                           onKeyDown={handleKeyDown}
                           autoComplete="off"
                           {...register("contactNumber", {
@@ -371,7 +372,7 @@ function FormZero({
           </div>
         </CardContent>
         <CardFooter>
-          <div className="flex justify-between w-full mx-auto md:w-1/2 sm:w-3/4">
+          <div className="flex justify-between w-full mx-auto mt-4 md:w-1/2 sm:w-3/4">
             <div>
               {!selectedSeller && (
                 <Button

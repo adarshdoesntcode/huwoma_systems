@@ -14,18 +14,33 @@ import FormOne from "./form/FormOne";
 import FormZero from "./form/FormZero";
 import FormTwo from "./form/FormTwo";
 import FormThree from "./form/FormThree";
+import PreviewVehicleListingForm from "./form/PreviewVehicleListingForm";
 
 function NewVehicleListing() {
   const [selectedSeller, setSelectedSeller] = useState("");
   const [selectedMake, setSelectedMake] = useState("");
+  const [selectedInterestMakes, setSelectedInterestMakes] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedInterestCategories, setSelectedInterestCategories] = useState(
+    []
+  );
   const [selectedTransmission, setSelectedTransmission] = useState("");
+  const [selectedInterestTransmissions, setSelectedInterestTransmissions] =
+    useState([]);
   const [selectedFuelType, setSelectedFuelType] = useState("");
+  const [selectedInterestFuelTypes, setSelectedInterestFuelTypes] = useState(
+    []
+  );
   const [selectedDriveType, setSelectedDriveType] = useState("");
+  const [selectedInterestDriveTypes, setSelectedInterestDriveTypes] = useState(
+    []
+  );
+  const [selectedInterestModels, setSelectedInterestModels] = useState([]);
   const [managedImages, setManagedImages] = useState([]);
   const [finalImageUrls, setFinalImageUrls] = useState([]);
+  const [hasBuyerInterest, setHasBuyerInterest] = useState(false);
 
-  const [formStep, setFormStep] = useState(3);
+  const [formStep, setFormStep] = useState(0);
   const {
     handleSubmit,
     reset,
@@ -34,6 +49,7 @@ function NewVehicleListing() {
     setError,
     clearErrors,
     register,
+    getValues,
     watch,
     setFocus,
     formState: { errors, isSubmitting },
@@ -46,21 +62,30 @@ function NewVehicleListing() {
   let content;
 
   content = (
-    <div className="grid items-start w-full max-w-4xl gap-6 mx-auto mb-64">
-      <NavBackButton buttonText={"Back"} navigateTo={-1} />
+    <div className="grid items-start w-full max-w-4xl gap-4 mx-auto mb-64">
+      <div>
+        <NavBackButton buttonText={"Back"} navigateTo={-1} />
+      </div>
       <Card className="p-0 bg-transparent border-none shadow-none">
         <CardHeader className="p-0">
-          <CardTitle className="text-xl sm:text-2xl">New Vehicle</CardTitle>
-          <CardDescription>Add a new vehicle to your garage</CardDescription>
+          <div className="flex items-end justify-between px-1">
+            <div>
+              <CardTitle className="text-lg sm:text-xl">
+                New Vehicle Listing Form
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Add a new vehicle to your garage
+              </CardDescription>
+            </div>
+            <Steps steps={5} current={formStep} />
+          </div>
         </CardHeader>
-        <CardContent className="p-0 pt-6">
+        <CardContent className="p-0 pt-4">
           <form
             id="new-garage-vehicle-form"
             onSubmit={handleSubmit(onSubmit)}
             className="grid gap-6"
           >
-            <Steps steps={4} current={formStep} />
-
             {formStep === 0 && (
               <FormZero
                 register={register}
@@ -110,10 +135,57 @@ function NewVehicleListing() {
                 finalImageUrls={finalImageUrls}
               />
             )}
-            {formStep === 3 && <FormThree setFormStep={setFormStep} />}
+            {formStep === 3 && (
+              <FormThree
+                setFormStep={setFormStep}
+                hasBuyerInterest={hasBuyerInterest}
+                setHasBuyerInterest={setHasBuyerInterest}
+                selectedInterestMakes={selectedInterestMakes}
+                setSelectedInterestMakes={setSelectedInterestMakes}
+                selectedInterestCategories={selectedInterestCategories}
+                setSelectedInterestCategories={setSelectedInterestCategories}
+                selectedInterestTransmissions={selectedInterestTransmissions}
+                setSelectedInterestTransmissions={
+                  setSelectedInterestTransmissions
+                }
+                selectedInterestFuelTypes={selectedInterestFuelTypes}
+                setSelectedInterestFuelTypes={setSelectedInterestFuelTypes}
+                selectedInterestDriveTypes={selectedInterestDriveTypes}
+                setSelectedInterestDriveTypes={setSelectedInterestDriveTypes}
+                selectedInterestModels={selectedInterestModels}
+                setSelectedInterestModels={setSelectedInterestModels}
+                register={register}
+                errors={errors}
+                clearErrors={clearErrors}
+                getValues={getValues}
+                trigger={trigger}
+                reset={reset}
+                setFocus={setFocus}
+              />
+            )}
+            {formStep === 4 && (
+              <PreviewVehicleListingForm
+                setFormStep={setFormStep}
+                getValues={getValues}
+                selectedSeller={selectedSeller}
+                selectedMake={selectedMake}
+                selectedCategory={selectedCategory}
+                selectedTransmission={selectedTransmission}
+                selectedFuelType={selectedFuelType}
+                selectedDriveType={selectedDriveType}
+                finalImageUrls={finalImageUrls}
+                hasBuyerInterest={hasBuyerInterest}
+                selectedInterestMakes={selectedInterestMakes}
+                selectedInterestCategories={selectedInterestCategories}
+                selectedInterestTransmissions={selectedInterestTransmissions}
+                selectedInterestFuelTypes={selectedInterestFuelTypes}
+                selectedInterestDriveTypes={selectedInterestDriveTypes}
+                selectedInterestModels={selectedInterestModels}
+                handleSubmit={onSubmit}
+              />
+            )}
           </form>
         </CardContent>
-        <CardFooter className="flex justify-end"></CardFooter>
       </Card>
     </div>
   );
