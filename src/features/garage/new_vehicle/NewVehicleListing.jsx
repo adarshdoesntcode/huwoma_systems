@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -15,6 +14,10 @@ import FormZero from "./form/FormZero";
 import FormTwo from "./form/FormTwo";
 import FormThree from "./form/FormThree";
 import PreviewVehicleListingForm from "./form/PreviewVehicleListingForm";
+import { cleanObject } from "@/lib/utils";
+import { useNewVehicleListingMutation } from "../garageApiSlice";
+import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 function NewVehicleListing() {
   const [selectedSeller, setSelectedSeller] = useState("");
@@ -41,6 +44,9 @@ function NewVehicleListing() {
   const [hasBuyerInterest, setHasBuyerInterest] = useState(false);
 
   const [formStep, setFormStep] = useState(0);
+
+  const [newVehicleListing] = useNewVehicleListingMutation();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     reset,
@@ -56,7 +62,86 @@ function NewVehicleListing() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
+    const userPayload = cleanObject({
+      new: !selectedSeller._id,
+      info: {
+        name: selectedSeller.name,
+        contactNumber: selectedSeller.contactNumber,
+      },
+    });
+
+    const vehiclePayload = cleanObject({
+      make: selectedMake,
+      category: selectedCategory,
+      transmission: selectedTransmission,
+      fuelType: selectedFuelType,
+      driveType: selectedDriveType,
+      model: data.model,
+      variant: data.variant,
+      year: data.year,
+      numberPlate: data.numberPlate,
+      mileage: data.mileage,
+      askingPrice: data.askingPrice,
+      engineCC: data.engineCC,
+      colour: data.colour,
+      description: data.description,
+      photos: finalImageUrls,
+    });
+
+    const buyerInterestPayload = cleanObject({
+      hasInterest: hasBuyerInterest,
+      info: hasBuyerInterest
+        ? {
+            budget: {
+              min: data.min,
+              max: data.max,
+            },
+            criteria: {
+              categories: selectedInterestCategories,
+              makes: selectedInterestMakes,
+              transmissions: selectedInterestTransmissions,
+              driveTypes: selectedInterestDriveTypes,
+              fuelTypes: selectedInterestFuelTypes,
+              models: selectedInterestModels,
+              mileageMax: data.mileageMax,
+              year: {
+                min: data.from,
+                max: data.to,
+              },
+            },
+          }
+        : null,
+    });
+
+    const finalPayload = {
+      seller: userPayload,
+      vehicle: vehiclePayload,
+      buyerInterest: buyerInterestPayload,
+    };
+
+    try {
+      const res = await newVehicleListing({
+        ...finalPayload,
+      });
+      if (res.error) {
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        toast({
+          title: "Vehicle Listed!",
+          description: "Successfully",
+          duration: 2000,
+        });
+        reset();
+        navigate(`/parking`);
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: error.message,
+      });
+    }
   };
 
   let content;
@@ -181,7 +266,6 @@ function NewVehicleListing() {
                 selectedInterestFuelTypes={selectedInterestFuelTypes}
                 selectedInterestDriveTypes={selectedInterestDriveTypes}
                 selectedInterestModels={selectedInterestModels}
-                handleSubmit={onSubmit}
               />
             )}
           </form>

@@ -16,8 +16,18 @@ export const garageApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+    newVehicleListing: builder.mutation({
+      query: (credentials) => ({
+        url: "/garage/vehicle-listing",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
   }),
 });
 
-export const { useGetVehicleConfigQuery, useSearchCustomerMutation } =
-  garageApiSlice;
+export const {
+  useGetVehicleConfigQuery,
+  useSearchCustomerMutation,
+  useNewVehicleListingMutation,
+} = garageApiSlice;

@@ -1,9 +1,11 @@
-import SmartImage from "@/components/SmartImage";
+import PhotoGallery from "@/components/PhotoGallery";
+import SmartImage from "@/components/PhotoGallery";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { CheckCheck, ChevronLeft } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 
 function PreviewVehicleListingForm({
   setFormStep,
@@ -21,7 +23,7 @@ function PreviewVehicleListingForm({
   selectedInterestFuelTypes,
   selectedInterestModels,
   finalImageUrls,
-  onSubmit,
+  hasBuyerInterest,
 }) {
   const formData = getValues();
 
@@ -113,7 +115,7 @@ function PreviewVehicleListingForm({
               </div>
               <div className="text-xs font-medium">
                 {formData.mileage
-                  ? `${formData.mileage?.toLocaleString("en-IN")} kms`
+                  ? `${Number(formData.mileage)?.toLocaleString("en-IN")} kms`
                   : "-"}
               </div>
             </div>
@@ -203,135 +205,144 @@ function PreviewVehicleListingForm({
         </div>
         <Label className="mt-4">Images</Label>
         <Separator className="my-2" />
-        <div className="grid grid-cols-5 gap-2 sm:grid-cols-7 md:grid-cols-10">
-          {finalImageUrls.map((image, index) => (
-            <PhotoView key={index} src={image.primaryUrl}>
-              <SmartImage
-                primaryUrl={image.primaryUrl}
-                fallbackUrl={image.fallbackUrl}
-              />
-            </PhotoView>
-          ))}
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+          <PhotoGallery photos={finalImageUrls} />
         </div>
-        <h3 className="pb-2 font-semibold border-b ">Exhange Interest</h3>
-        <div className="duration-300 fade-in animate-in">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="col-span-2 sm:col-span-1">
-              <div className="flex items-center justify-between ">
-                <div className="text-xs font-medium text-muted-foreground">
-                  Budget
-                </div>
-                <div className="text-xs font-medium">
-                  {formData.min && formData.max
-                    ? `Rs ${formData.min} - Rs ${formData.max}`
-                    : formData.min
-                    ? `From Rs ${formData.min}`
-                    : formData.max
-                    ? `Up to Rs ${formData.max}`
-                    : "-"}
-                </div>
-              </div>
-              {selectedInterestCategories.length > 0 && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Categories
-                  </div>
-                  <div className="text-xs font-medium text-end">
-                    {selectedInterestCategories.join(", ")}
-                  </div>
-                </div>
-              )}
-
-              {selectedInterestMakes.length > 0 && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Manufacturers
-                  </div>
-                  <div className="text-xs font-medium">
-                    {selectedInterestMakes.join(", ")}
-                  </div>
-                </div>
-              )}
-
-              {selectedInterestModels.length > 0 && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Models
-                  </div>
-                  <div className="text-xs font-medium">
-                    {selectedInterestModels.join(", ")}
-                  </div>
-                </div>
-              )}
-
-              {formData.from ||
-                (formData.to && (
-                  <div className="flex items-start justify-between gap-4">
+        {hasBuyerInterest && (
+          <>
+            <h3 className="pb-2 mt-4 font-semibold border-b ">
+              Exhange Interest
+            </h3>
+            <div className="duration-300 fade-in animate-in">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="col-span-2 sm:col-span-1">
+                  <div className="flex items-center justify-between ">
                     <div className="text-xs font-medium text-muted-foreground">
-                      Year
+                      Budget
                     </div>
                     <div className="text-xs font-medium">
-                      {formData.from && formData.to
-                        ? `${formData.from} - ${formData.to}`
-                        : formData.from
-                        ? `${formData.from} - Present`
-                        : formData.to
-                        ? `Untill ${formData.to}`
+                      {formData.min && formData.max
+                        ? `Rs ${Number(formData.min).toLocaleString(
+                            "en-IN"
+                          )} - Rs ${Number(formData.max).toLocaleString(
+                            "en-IN"
+                          )}`
+                        : formData.min
+                        ? `From Rs ${Number(formData.min).toLocaleString(
+                            "en-IN"
+                          )}`
+                        : formData.max
+                        ? `Up to Rs ${Number(formData.max).toLocaleString(
+                            "en-IN"
+                          )}`
                         : "-"}
                     </div>
                   </div>
-                ))}
+                  {selectedInterestCategories.length > 0 && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Categories
+                      </div>
+                      <div className="text-xs font-medium text-end">
+                        {selectedInterestCategories.join(", ")}
+                      </div>
+                    </div>
+                  )}
 
-              {formData.mileageMax && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Max Driven
-                  </div>
-                  <div className="text-xs font-medium">
-                    {formData.mileageMax
-                      ? `${(formData.mileageMax, toLocaleString())} KM`
-                      : "-"}
-                  </div>
-                </div>
-              )}
+                  {selectedInterestMakes.length > 0 && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Manufacturers
+                      </div>
+                      <div className="text-xs font-medium">
+                        {selectedInterestMakes.join(", ")}
+                      </div>
+                    </div>
+                  )}
 
-              {selectedInterestTransmissions.length > 0 && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Transmissions
-                  </div>
-                  <div className="text-xs font-medium">
-                    {selectedInterestTransmissions.join(", ")}
-                  </div>
-                </div>
-              )}
+                  {selectedInterestModels.length > 0 && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Models
+                      </div>
+                      <div className="text-xs font-medium">
+                        {selectedInterestModels.join(", ")}
+                      </div>
+                    </div>
+                  )}
 
-              {selectedInterestFuelTypes.length > 0 && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Fuel Types
-                  </div>
-                  <div className="text-xs font-medium">
-                    {selectedInterestFuelTypes.join(", ")}
-                  </div>
-                </div>
-              )}
+                  {formData.from ||
+                    (formData.to && (
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="text-xs font-medium text-muted-foreground">
+                          Year
+                        </div>
+                        <div className="text-xs font-medium">
+                          {formData.from && formData.to
+                            ? `${formData.from} - ${formData.to}`
+                            : formData.from
+                            ? `${formData.from} - Present`
+                            : formData.to
+                            ? `Untill ${formData.to}`
+                            : "-"}
+                        </div>
+                      </div>
+                    ))}
 
-              {selectedInterestDriveTypes.length > 0 && (
-                <div className="flex items-start justify-between gap-4">
-                  <div className="text-xs font-medium text-muted-foreground">
-                    Drive Types
-                  </div>
-                  <div className="text-xs font-medium">
-                    {selectedInterestDriveTypes.join(", ")}
-                  </div>
+                  {formData.mileageMax && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Max Driven
+                      </div>
+                      <div className="text-xs font-medium">
+                        {formData.mileageMax
+                          ? `${Number(formData.mileageMax).toLocaleString(
+                              "en-IN"
+                            )} kms`
+                          : "-"}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedInterestTransmissions.length > 0 && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Transmissions
+                      </div>
+                      <div className="text-xs font-medium">
+                        {selectedInterestTransmissions.join(", ")}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedInterestFuelTypes.length > 0 && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Fuel Types
+                      </div>
+                      <div className="text-xs font-medium">
+                        {selectedInterestFuelTypes.join(", ")}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedInterestDriveTypes.length > 0 && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Drive Types
+                      </div>
+                      <div className="text-xs font-medium">
+                        {selectedInterestDriveTypes.join(", ")}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 mt-6">
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -343,7 +354,7 @@ function PreviewVehicleListingForm({
               <ChevronLeft className="w-4 h-4 mr-2" /> Back
             </Button>
           </div>
-          <Button type="button" onClick={onSubmit}>
+          <Button type="submit">
             Submit <CheckCheck className="w-4 h-4 ml-2" />
           </Button>
         </div>

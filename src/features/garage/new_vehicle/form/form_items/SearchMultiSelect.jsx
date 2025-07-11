@@ -255,9 +255,7 @@ export function SearchMultiSelect({
       </Label>
       {content}
       {selectedValues.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {renderSelectedBadges()}
-        </div>
+        <div className="flex flex-wrap gap-1">{renderSelectedBadges()}</div>
       )}
     </div>
   );

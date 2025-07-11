@@ -14,8 +14,6 @@ import PrivateRoutes from "./routes/PrivateRoutes";
 import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClientStartRace";
 import Error from "./components/error/Error";
 import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
-import "react-photo-view/dist/react-photo-view.css";
-import { PhotoProvider } from "react-photo-view";
 
 const router = createBrowserRouter([
   {
@@ -66,9 +64,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <Provider store={store}>
-      <PhotoProvider>
-        <RouterProvider router={router} />
-      </PhotoProvider>
+      <RouterProvider router={router} />
     </Provider>
   );
 }
