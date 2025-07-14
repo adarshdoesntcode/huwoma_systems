@@ -25,6 +25,7 @@ import SystemActivity from "@/features/system_activity/SystemActivity";
 import CarwashOldRecord from "@/features/carwash/CarwashOldRecord";
 import CarGarage from "@/features/garage/CarGarage";
 import ParkingTabSettlement from "@/features/parking/parking_tabs/settlement/ParkingTabSettlement";
+import NewVehicleListing from "@/features/garage/new_vehicle/NewVehicleListing";
 
 const PrivateRoutes = [
   {
@@ -140,6 +141,11 @@ const PrivateRoutes = [
   {
     path: "garage",
     element: <CarGarage />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/new-vehicle",
+    element: <NewVehicleListing />,
     errorElement: <Error />,
   },
   {

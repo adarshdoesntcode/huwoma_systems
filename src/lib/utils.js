@@ -242,3 +242,19 @@ export function getMostDetailedObject(arr) {
       : mostDetailed;
   }, {});
 }
+
+export const cleanObject = (obj) => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([_, v]) => {
+        if (Array.isArray(v)) return v.length > 0;
+        if (typeof v === "object" && v !== null)
+          return Object.keys(cleanObject(v)).length > 0;
+        return v !== undefined && v !== "";
+      })
+      .map(([k, v]) => [
+        k,
+        typeof v === "object" && !Array.isArray(v) ? cleanObject(v) : v,
+      ])
+  );
+};

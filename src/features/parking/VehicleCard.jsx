@@ -72,7 +72,7 @@ function VehicleCard({ vehicle, className }) {
   return (
     <Card className={cn("p-2 sm:p-4 ", className)}>
       <div className="flex ">
-        <div className="w-3/12 aspect-auto flex items-center animate-in  fade-in duration-500 justify-center ">
+        <div className="flex items-center justify-center w-3/12 duration-500 aspect-auto animate-in fade-in ">
           <img
             src={vehicle.vehicleIcon}
             loading="defer"
@@ -82,16 +82,16 @@ function VehicleCard({ vehicle, className }) {
             alt="Vehicle Image"
           />
         </div>
-        <div className="w-9/12   flex flex-col justify-between">
+        <div className="flex flex-col justify-between w-9/12">
           <div>
-            <CardHeader className=" p-2 pb-0 sm:pt-0 sm:pr-0 sm:pb-2 space-y-0">
-              <CardTitle className="flex text-base sm:text-lg  items-start justify-between gap-4 ">
+            <CardHeader className="p-2 pb-0 space-y-0  sm:pt-0 sm:pr-0 sm:pb-2">
+              <CardTitle className="flex items-start justify-between gap-4 text-base sm:text-lg ">
                 <div>
                   {vehicle?.vehicleTypeName}
 
-                  <CardDescription className="font-normal  items-center gap-1 hidden sm:flex ">
-                    <span className="text-xs  "> Rs {vehicle.rate}</span>
-                    <span className="text-xs  text-muted-foreground">/hr</span>
+                  <CardDescription className="items-center hidden gap-1 font-normal sm:flex ">
+                    <span className="text-xs "> Rs {vehicle.rate}</span>
+                    <span className="text-xs text-muted-foreground">/hr</span>
                   </CardDescription>
                 </div>
                 <div>
@@ -99,7 +99,7 @@ function VehicleCard({ vehicle, className }) {
                     <DialogTrigger asChild>
                       <Button size="sm">
                         <span className="sr-only sm:not-sr-only">Add</span>
-                        <PlusCircle className="h-4 w-4 sm:ml-2" />
+                        <PlusCircle className="w-4 h-4 sm:ml-2" />
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
@@ -115,7 +115,7 @@ function VehicleCard({ vehicle, className }) {
                             <DialogTitle>{vehicle.vehicleTypeName}</DialogTitle>
                             <DialogDescription>
                               Rs{" "}
-                              <span className="text-xs sm:text-sm font-semibold">
+                              <span className="text-xs font-semibold sm:text-sm">
                                 {vehicle.rate}
                               </span>
                               <span className="text-xs sm:text-xs text-muted-foreground">
@@ -165,13 +165,13 @@ function VehicleCard({ vehicle, className }) {
               </CardTitle>
             </CardHeader>
           </div>
-          <div className="space-y-2 p-2 sm:p-0 sm:pl-2">
-            <div className="flex justify-between items-center">
+          <div className="p-2 space-y-2 sm:p-0 sm:pl-2">
+            <div className="flex items-center justify-between">
               <div className="text-xs">
                 <span className="text-muted-foreground">Occupied:</span>{" "}
                 {vehicle?.currentlyAccomodated}
               </div>
-              <div className="text-xs hidden sm:block">
+              <div className="hidden text-xs sm:block">
                 <span className="text-muted-foreground">Capacity:</span>{" "}
                 {vehicle?.totalAccomodationCapacity}
               </div>
