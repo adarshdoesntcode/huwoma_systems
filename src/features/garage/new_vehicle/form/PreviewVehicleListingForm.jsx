@@ -3,7 +3,7 @@ import SmartImage from "@/components/PhotoGallery";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { CheckCheck, ChevronLeft } from "lucide-react";
+import { CheckCheck, ChevronLeft, Loader2 } from "lucide-react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 
@@ -24,6 +24,7 @@ function PreviewVehicleListingForm({
   selectedInterestModels,
   finalImageUrls,
   hasBuyerInterest,
+  isSubmitting,
 }) {
   const formData = getValues();
 
@@ -271,23 +272,22 @@ function PreviewVehicleListingForm({
                     </div>
                   )}
 
-                  {formData.from ||
-                    (formData.to && (
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="text-xs font-medium text-muted-foreground">
-                          Year
-                        </div>
-                        <div className="text-xs font-medium">
-                          {formData.from && formData.to
-                            ? `${formData.from} - ${formData.to}`
-                            : formData.from
-                            ? `${formData.from} - Present`
-                            : formData.to
-                            ? `Untill ${formData.to}`
-                            : "-"}
-                        </div>
+                  {(formData.from || formData.to) && (
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs font-medium text-muted-foreground">
+                        Year
                       </div>
-                    ))}
+                      <div className="text-xs font-medium">
+                        {formData.from && formData.to
+                          ? `${formData.from} - ${formData.to}`
+                          : formData.from
+                          ? `${formData.from} - Present`
+                          : formData.to
+                          ? `Untill ${formData.to}`
+                          : "-"}
+                      </div>
+                    </div>
+                  )}
 
                   {formData.mileageMax && (
                     <div className="flex items-start justify-between gap-4">
@@ -354,9 +354,16 @@ function PreviewVehicleListingForm({
               <ChevronLeft className="w-4 h-4 mr-2" /> Back
             </Button>
           </div>
-          <Button type="submit">
-            Submit <CheckCheck className="w-4 h-4 ml-2" />
-          </Button>
+          {isSubmitting ? (
+            <Button disabled>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <span>Submitting...</span>
+            </Button>
+          ) : (
+            <Button form="new-garage-vehicle-form" type="submit">
+              Submit <CheckCheck className="w-4 h-4 ml-2" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

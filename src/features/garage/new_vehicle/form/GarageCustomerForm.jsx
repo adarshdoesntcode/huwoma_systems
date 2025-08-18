@@ -60,7 +60,7 @@ const SellerSuggestions = ({
     </div>
   );
 };
-function FormZero({
+function GarageCustomerForm({
   register,
   watch,
   errors,
@@ -400,4 +400,4 @@ function FormZero({
   );
 }
 
-export default FormZero;
+export default GarageCustomerForm;

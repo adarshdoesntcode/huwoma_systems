@@ -9,15 +9,15 @@ import {
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Steps from "@/components/Steps";
-import FormOne from "./form/FormOne";
-import FormZero from "./form/FormZero";
-import FormTwo from "./form/FormTwo";
-import FormThree from "./form/FormThree";
 import PreviewVehicleListingForm from "./form/PreviewVehicleListingForm";
 import { cleanObject } from "@/lib/utils";
 import { useNewVehicleListingMutation } from "../garageApiSlice";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import GarageCustomerForm from "./form/GarageCustomerForm";
+import VehicleDetailsForm from "./form/VehicleDetailsForm";
+import VehicleImagesForm from "./form/VehicleImagesForm";
+import BuyerInterestForm from "./form/BuyerInterestForm";
 
 function NewVehicleListing() {
   const [selectedSeller, setSelectedSeller] = useState("");
@@ -110,7 +110,7 @@ function NewVehicleListing() {
               },
             },
           }
-        : null,
+        : {},
     });
 
     const finalPayload = {
@@ -133,7 +133,7 @@ function NewVehicleListing() {
           duration: 2000,
         });
         reset();
-        navigate(`/parking`);
+        navigate(`/garage`);
       }
     } catch (error) {
       toast({
@@ -172,7 +172,7 @@ function NewVehicleListing() {
             className="grid gap-6"
           >
             {formStep === 0 && (
-              <FormZero
+              <GarageCustomerForm
                 register={register}
                 watch={watch}
                 errors={errors}
@@ -189,7 +189,7 @@ function NewVehicleListing() {
             )}
 
             {formStep === 1 && (
-              <FormOne
+              <VehicleDetailsForm
                 register={register}
                 selectedMake={selectedMake}
                 setSelectedMake={setSelectedMake}
@@ -211,7 +211,7 @@ function NewVehicleListing() {
               />
             )}
             {formStep === 2 && (
-              <FormTwo
+              <VehicleImagesForm
                 setFormStep={setFormStep}
                 errors={errors}
                 managedImages={managedImages}
@@ -221,7 +221,7 @@ function NewVehicleListing() {
               />
             )}
             {formStep === 3 && (
-              <FormThree
+              <BuyerInterestForm
                 setFormStep={setFormStep}
                 hasBuyerInterest={hasBuyerInterest}
                 setHasBuyerInterest={setHasBuyerInterest}
@@ -266,6 +266,7 @@ function NewVehicleListing() {
                 selectedInterestFuelTypes={selectedInterestFuelTypes}
                 selectedInterestDriveTypes={selectedInterestDriveTypes}
                 selectedInterestModels={selectedInterestModels}
+                isSubmitting={isSubmitting}
               />
             )}
           </form>

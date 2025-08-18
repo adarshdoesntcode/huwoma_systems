@@ -1,16 +1,5 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-
 import { CheckCheck, PlusCircle } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-
-import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -26,10 +15,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import SubmitButton from "@/components/SubmitButton";
-import {
-  useAddToParkingTabMutation,
-  useStartParkingMutation,
-} from "../../parkingApiSlice";
+import { useAddToParkingTabMutation } from "../../parkingApiSlice";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
@@ -104,10 +90,7 @@ function AddToParkingTab({ tab, vehicles, setTabState }) {
                 </span>
               </Label>
               <Separator className="mt-2" />
-              <div
-                // className="flex flex-wrap justify-between gap-2 my-6 sm:justify-evenly"
-                className="grid grid-cols-2 gap-2 p-2 my-6 sm:gap-4"
-              >
+              <div className="grid grid-cols-2 gap-2 p-2 my-6 sm:gap-4">
                 {vehicles.map((vehicle) => {
                   return (
                     <div
@@ -117,10 +100,7 @@ function AddToParkingTab({ tab, vehicles, setTabState }) {
                         setSelectedVehicle(vehicle);
                       }}
                     >
-                      <div
-                        className="relative gap-2 px-4 py-2 duration-500 border rounded-lg shadow-lg animate-in fade-in"
-                        // className="relative w-24 gap-2 px-4 py-2 duration-500 border rounded-lg shadow-lg sm:w-36 animate-in fade-in"
-                      >
+                      <div className="relative gap-2 px-4 py-2 duration-500 border rounded-lg shadow-lg animate-in fade-in">
                         {selectedVehicle._id === vehicle._id && (
                           <Badge className="absolute top-0 right-0 p-1 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
                             <CheckCheck className="w-3 h-3 sm:w-4 sm:h-4 " />

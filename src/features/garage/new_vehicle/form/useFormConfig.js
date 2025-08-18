@@ -184,6 +184,7 @@ export const useFormConfig = (
     errors: errors?.engineCC,
     formItemProps: {
       ...register("engineCC", {
+        required: "Engine CC is required",
         pattern: {
           value: /^[0-9]+$/,
           message: "Invalid cc",
@@ -203,7 +204,7 @@ export const useFormConfig = (
       autoComplete: "off",
       placeholder: "eg., 1498",
     },
-    required: false,
+    required: true,
   },
   {
     section: "specification",

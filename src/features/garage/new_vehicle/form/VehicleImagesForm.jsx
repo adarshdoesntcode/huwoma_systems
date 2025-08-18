@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-function FormTwo({
+function VehicleImagesForm({
   setFormStep,
   managedImages,
   setManagedImages,
@@ -135,4 +135,4 @@ function FormTwo({
   );
 }
 
-export default FormTwo;
+export default VehicleImagesForm;

@@ -1,26 +1,15 @@
 import {
-  Activity,
-  ArrowUpRight,
   Car,
-  ChevronLeft,
-  CreditCard,
-  DollarSign,
   Droplets,
-  File,
   Footprints,
-  GlassWater,
   ParkingCircle,
   RefreshCcw,
-  TrendingUp,
-  Users,
 } from "lucide-react";
-import { Bar, BarChart, Line, LineChart, CartesianGrid, XAxis } from "recharts";
-
+import { Line, LineChart, CartesianGrid, XAxis } from "recharts";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -31,19 +20,7 @@ import {
 } from "@/components/ui/chart";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useGetDashboardDataQuery } from "./dashboardApiSlice";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
@@ -53,7 +30,6 @@ import { format, isSameDay } from "date-fns";
 import PaymentBreakdown from "./PaymentBreakdown";
 import { useRole } from "@/hooks/useRole";
 import { ROLES_LIST } from "@/lib/config";
-import Unauthorized from "@/components/Unauthorized";
 
 function calculateChange(today, yesterday, format = "percentage") {
   if (yesterday === 0) {

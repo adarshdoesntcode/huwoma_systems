@@ -1,6 +1,5 @@
 import {
   Activity,
-  ArrowLeftRight,
   Car,
   CircleParking,
   Droplets,

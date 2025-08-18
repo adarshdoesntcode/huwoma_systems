@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import FormItems from "./form_items";
 import { useFormConfig } from "./useFormConfig";
 
-function FormOne({
+function VehicleDetailsForm({
   register,
   selectedMake,
   setSelectedMake,
@@ -256,4 +256,4 @@ function FormOne({
   return content;
 }
 
-export default FormOne;
+export default VehicleDetailsForm;
