@@ -11,7 +11,7 @@ export default function PhotoGallery({ photos }) {
   );
 }
 
-function FallbackImage({ image, index }) {
+export function FallbackImage({ image, index }) {
   const [src, setSrc] = useState(image.primaryUrl);
   const [errorHandled, setErrorHandled] = useState(false);
 

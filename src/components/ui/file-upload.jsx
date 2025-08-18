@@ -65,6 +65,7 @@ const FilePreviewCard = memo(({ image, previewUrl, onRemove }) => {
 FilePreviewCard.displayName = "FilePreviewCard";
 
 export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
+  console.log("🚀 ~ FileUpload ~ images:", images);
   const [uploadErrors, setUploadErrors] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
   const [previews, setPreviews] = useState({});
@@ -249,18 +250,20 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
             <UploadCloud className="w-8 h-8 text-neutral-400" />
           </div>
           <div className="relative w-full max-w-xl mx-auto mt-6 space-y-4">
-            {images.map((image) => (
-              <FilePreviewCard
-                key={image.id}
-                image={image}
-                previewUrl={
-                  image.type === "existing"
-                    ? image.urls.primaryUrl
-                    : previews[image.id]
-                }
-                onRemove={onRemoveImage}
-              />
-            ))}
+            {images.map((image) => {
+              return (
+                <FilePreviewCard
+                  key={image.id}
+                  image={image}
+                  previewUrl={
+                    image.type === "existing"
+                      ? image.urls.primaryUrl
+                      : previews[image.id]
+                  }
+                  onRemove={onRemoveImage}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
