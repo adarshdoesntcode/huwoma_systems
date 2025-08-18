@@ -61,7 +61,7 @@ function AdminLayout() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location]);
+  }, [location.pathname]);
 
   const crumbs = location.pathname.split("/").filter((crumb) => {
     if (crumb !== "" && crumb != ROLES_LIST.ADMIN) {
@@ -72,6 +72,7 @@ function AdminLayout() {
   return (
     <>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        {/* <div className=""> */}
         <AdminSideBar />
         <div className="flex flex-col">
           <header className="flex sticky top-0 h-14 items-center gap-4 z-50 bg-slate-100/50 backdrop-filter backdrop-blur-lg px-4 lg:h-[60px] lg:px-6">
@@ -129,7 +130,7 @@ function AdminLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <main className="flex flex-col flex-1 p-4 pt-2 lg:px-6 bg-slate-50">
+          <main className="flex flex-col flex-1 max-w-full p-4 pt-2 overflow-y-auto lg:px-6 bg-slate-50">
             <Outlet />
           </main>
         </div>

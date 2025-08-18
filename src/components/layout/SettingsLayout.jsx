@@ -21,19 +21,19 @@ export function SettingsLayout() {
   return (
     <div>
       <main className="flex flex-col gap-4">
-        <div className="text-xl font-semibold tracking-tight flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-4 text-xl font-semibold tracking-tight">
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8"
+            className="w-8 h-8"
             onClick={() => navigate(-1)}
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="w-5 h-5" />
           </Button>
           Settings
         </div>
-        <div className="mx-auto grid w-full max-w-3xl items-start gap-6 ">
-          <nav className="flex gap-5 flex-wrap text-sm text-muted-foreground">
+        <div className="grid items-start w-full max-w-3xl gap-6 mx-auto ">
+          <nav className="flex flex-wrap gap-5 text-sm text-muted-foreground">
             <NavLink
               to={"/settings/general"}
               className={({ isActive }) =>
@@ -74,6 +74,19 @@ export function SettingsLayout() {
             >
               Parking
             </NavLink>
+            {isSuper && (
+              <NavLink
+                to={"/settings/car-grag"}
+                className={({ isActive }) =>
+                  isActive
+                    ? "font-bold text-primary underline underline-offset-4 border-b-2 border-transparent"
+                    : " text-primary border-b-2 border-transparent"
+                }
+              >
+                Garage
+              </NavLink>
+            )}
+
             {isSuper && (
               <NavLink
                 to={"/settings/admins"}
