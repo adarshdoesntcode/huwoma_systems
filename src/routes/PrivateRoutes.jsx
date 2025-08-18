@@ -26,6 +26,11 @@ import CarwashOldRecord from "@/features/carwash/CarwashOldRecord";
 import CarGarage from "@/features/garage/CarGarage";
 import ParkingTabSettlement from "@/features/parking/parking_tabs/settlement/ParkingTabSettlement";
 import NewVehicleListing from "@/features/garage/new_vehicle/NewVehicleListing";
+import VehicleDetails from "@/features/garage/tabs/vehicle-list/VehicleDetails";
+import InterestDetails from "@/features/garage/tabs/buyer-interest/InterestDetails";
+import EditVehicleListing from "@/features/garage/edit_vehicle/EditVehicleListing";
+import NewBuyerInterest from "@/features/garage/new_interest/NewBuyerInterest";
+import EditBuyerInterest from "@/features/garage/edit_interest/EditBuyerInterest";
 
 const PrivateRoutes = [
   {
@@ -144,8 +149,33 @@ const PrivateRoutes = [
     errorElement: <Error />,
   },
   {
+    path: "garage/vehicle/:id",
+    element: <VehicleDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/interest/:id",
+    element: <InterestDetails />,
+    errorElement: <Error />,
+  },
+  {
     path: "garage/new-vehicle",
     element: <NewVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/edit-vehicle/:id",
+    element: <EditVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/new-interest/",
+    element: <NewBuyerInterest />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/edit-interest/:id",
+    element: <EditBuyerInterest />,
     errorElement: <Error />,
   },
   {
