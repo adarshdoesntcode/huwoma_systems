@@ -258,3 +258,18 @@ export const cleanObject = (obj) => {
       ])
   );
 };
+
+export const formatCurrency = (amount) => {
+  if (amount == null || isNaN(amount)) return "Rs 0";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "NPR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+export const formatNumber = (num) => {
+  if (num == null || isNaN(num)) return "0";
+  return new Intl.NumberFormat("en-IN").format(num);
+};
