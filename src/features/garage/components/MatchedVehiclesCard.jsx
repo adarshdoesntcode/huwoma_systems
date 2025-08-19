@@ -18,6 +18,7 @@ import {
   SquareDashedMousePointer,
   Star,
 } from "lucide-react";
+import MatchBadge from "./MatchBadge";
 
 function MatchedVehiclesCard({ vehicle }) {
   return (
@@ -37,9 +38,8 @@ function MatchedVehiclesCard({ vehicle }) {
               }}
             />
             {vehicle.matchScore != null && (
-              <div className="absolute flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-yellow-800 bg-yellow-300 rounded-full top-2 right-2">
-                <Star className="w-3.5 h-3.5" />
-                <span>{vehicle.matchScore.toFixed(1)} Match</span>
+              <div className="absolute top-2 right-2">
+                <MatchBadge score={vehicle.matchScore} />
               </div>
             )}
           </AspectRatio>

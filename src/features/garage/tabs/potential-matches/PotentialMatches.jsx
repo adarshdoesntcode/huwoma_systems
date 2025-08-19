@@ -230,7 +230,7 @@ function PotentialMatches() {
                       {Array.isArray(matchingVehicles) &&
                       matchingVehicles.length > 0 ? (
                         <div
-                          className="relative w-full overflow-x-auto scrollbar-thin scroll-smooth py-4 min-h-[425px]"
+                          className="relative w-full overflow-x-auto scrollbar-thin scroll-smooth  min-h-[425px]"
                           style={{ maxWidth: "100%" }}
                         >
                           <div className="absolute left-0 flex gap-4 pb-4 top-4 flex-nowrap w-max">

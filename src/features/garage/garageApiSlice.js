@@ -106,6 +106,18 @@ export const garageApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["GarageBuyerInterests", "GarageInterestDetails"],
     }),
+    getPotentialBuyers: builder.query({
+      query: (credentials) => ({
+        url: `/garage/potential-buyers/${credentials.vehicleId}`,
+        method: "GET",
+      }),
+    }),
+    getPotentialVehicles: builder.query({
+      query: (credentials) => ({
+        url: `/garage/potential-buyers/${credentials.interestId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -124,4 +136,6 @@ export const {
   useCreateBuyerInterestMutation,
   useDeleteBuyerInterestMutation,
   useEditBuyerInterestMutation,
+  useGetPotentialBuyersQuery,
+  useGetPotentialVehiclesQuery,
 } = garageApiSlice;

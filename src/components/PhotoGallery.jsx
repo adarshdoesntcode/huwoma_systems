@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { AspectRatio } from "./ui/aspect-ratio";
 
 export default function PhotoGallery({ photos }) {
   return (
@@ -24,13 +25,15 @@ export function FallbackImage({ image, index }) {
 
   return (
     <PhotoView src={src}>
-      <img
-        src={src}
-        alt={`Image ${index}`}
-        className="object-cover w-full h-full transition-all rounded-md cursor-pointer hover:scale-105"
-        onError={handleError}
-        loading="lazy"
-      />
+      <AspectRatio ratio={16 / 10}>
+        <img
+          src={src}
+          alt={`Image ${index}`}
+          className="object-cover w-full h-full transition-all rounded-md cursor-pointer hover:scale-105"
+          onError={handleError}
+          loading="lazy"
+        />
+      </AspectRatio>
     </PhotoView>
   );
 }

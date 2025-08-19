@@ -33,7 +33,7 @@ import { VehicleCard } from "./VehicleCard";
 function VehicleListing({ tab }) {
   const [pageSize, setPageSize] = useState("6");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(10); // You can set this dynamically from API later
+  const [totalPages, setTotalPages] = useState(10);
   const [query, setQuery] = useState({
     status: "Available",
   });
