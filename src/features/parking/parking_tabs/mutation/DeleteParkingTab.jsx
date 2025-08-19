@@ -41,7 +41,6 @@ export const DeleteParkingTab = ({ showDelete, setShowDelete, tab }) => {
         });
       }
     } catch (error) {
-      console.log("🚀 ~ handleDelete ~ error:", error);
       toast({
         variant: "destructive",
         title: "Something went wrong!!",
