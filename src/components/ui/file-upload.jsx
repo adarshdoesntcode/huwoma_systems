@@ -65,7 +65,6 @@ const FilePreviewCard = memo(({ image, previewUrl, onRemove }) => {
 FilePreviewCard.displayName = "FilePreviewCard";
 
 export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
-  console.log("🚀 ~ FileUpload ~ images:", images);
   const [uploadErrors, setUploadErrors] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
   const [previews, setPreviews] = useState({});
