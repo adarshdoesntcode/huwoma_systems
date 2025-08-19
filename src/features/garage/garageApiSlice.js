@@ -114,7 +114,7 @@ export const garageApiSlice = apiSlice.injectEndpoints({
     }),
     getPotentialVehicles: builder.query({
       query: (credentials) => ({
-        url: `/garage/potential-buyers/${credentials.interestId}`,
+        url: `/garage/potential-vehicles/${credentials.interestId}`,
         method: "GET",
       }),
     }),

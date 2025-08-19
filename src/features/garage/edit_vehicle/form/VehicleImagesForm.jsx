@@ -13,7 +13,6 @@ function VehicleImagesForm({
   setManagedImages,
   setFinalImageUrls,
 }) {
-  console.log("🚀 ~ VehicleImagesForm ~ managedImages:", managedImages);
   const [isUploading, setIsUploading] = useState(false);
   const token = useSelector((state) => state.auth.token);
 

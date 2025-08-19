@@ -49,7 +49,7 @@ function PotentialBuyers({ vehicleId }) {
           <div className="flex flex-col gap-4">
             <div className="flex items-end justify-between">
               <Label className="text-base font-semibold">
-                Potential Buyers
+                Potential Buyers ({data?.data.length})
               </Label>
               <Button
                 variant="secondary"

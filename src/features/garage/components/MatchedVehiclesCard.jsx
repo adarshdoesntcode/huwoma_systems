@@ -13,18 +13,21 @@ import {
   Fuel,
   Gauge,
   GitMerge,
-  Pointer,
   Settings,
   SquareDashedMousePointer,
-  Star,
 } from "lucide-react";
 import MatchBadge from "./MatchBadge";
+import { useNavigate } from "react-router-dom";
 
 function MatchedVehiclesCard({ vehicle }) {
+  const navigate = useNavigate();
   return (
     <Card
       key={vehicle._id}
-      className="w-[300px] flex-shrink-0 shadow-md hover:shadow-xl transition-shadow duration-300"
+      onClick={() => {
+        navigate(`/garage/vehicle/${vehicle._id}`);
+      }}
+      className="w-[300px] flex-shrink-0 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
     >
       <div className="flex flex-col h-full">
         <CardHeader className="p-0">
@@ -81,10 +84,18 @@ function MatchedVehiclesCard({ vehicle }) {
           <p className="text-xs text-gray-500">
             Seller:{" "}
             <span className="font-medium text-gray-700">
-              {vehicle.seller?.name || "Unknown Seller"}
+              {vehicle?.seller?.name ||
+                vehicle?.buyer?.name ||
+                "Unknown Seller"}
             </span>
           </p>
-          <Button size="sm" className="text-xs">
+          <Button
+            size="sm"
+            className="text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             Select <SquareDashedMousePointer className="w-3 h-3 ml-2" />
           </Button>
         </CardFooter>
