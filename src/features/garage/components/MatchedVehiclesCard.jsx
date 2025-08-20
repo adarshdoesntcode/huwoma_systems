@@ -18,8 +18,9 @@ import {
 } from "lucide-react";
 import MatchBadge from "./MatchBadge";
 import { useNavigate } from "react-router-dom";
+import StatusBadge from "@/components/ui/StatusBadge";
 
-function MatchedVehiclesCard({ vehicle }) {
+function MatchedVehiclesCard({ vehicle, showFooter = true }) {
   const navigate = useNavigate();
   return (
     <Card
@@ -80,25 +81,31 @@ function MatchedVehiclesCard({ vehicle }) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex items-center justify-between p-4 mt-auto rounded-b-lg bg-gray-50">
-          <p className="text-xs text-gray-500">
-            Seller:{" "}
-            <span className="font-medium text-gray-700">
-              {vehicle?.seller?.name ||
-                vehicle?.buyer?.name ||
-                "Unknown Seller"}
-            </span>
-          </p>
-          <Button
-            size="sm"
-            className="text-xs"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            Select <SquareDashedMousePointer className="w-3 h-3 ml-2" />
-          </Button>
-        </CardFooter>
+        {showFooter ? (
+          <CardFooter className="flex items-center justify-between p-4 mt-auto rounded-b-lg bg-gray-50">
+            <p className="text-xs text-gray-500">
+              Seller:{" "}
+              <span className="font-medium text-gray-700">
+                {vehicle?.seller?.name ||
+                  vehicle?.buyer?.name ||
+                  "Unknown Seller"}
+              </span>
+            </p>
+            <Button
+              size="sm"
+              className="text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Select <SquareDashedMousePointer className="w-3 h-3 ml-2" />
+            </Button>
+          </CardFooter>
+        ) : (
+          <CardFooter className="flex items-center justify-between p-4 mt-auto rounded-b-lg bg-gray-50">
+            <StatusBadge status={vehicle.status} />
+          </CardFooter>
+        )}
       </div>
     </Card>
   );
