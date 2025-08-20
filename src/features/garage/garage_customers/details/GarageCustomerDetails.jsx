@@ -23,6 +23,9 @@ import SubmitButton from "@/components/SubmitButton";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { InterestCard } from "../../components/InterestCard";
+import MatchedVehiclesCard from "../../components/MatchedVehiclesCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function GarageCustomerDetails() {
   const { id } = useParams();
@@ -41,10 +44,22 @@ function GarageCustomerDetails() {
 
   let customer = {};
   let history = {};
+  let purchasedVehicles;
+  let buyerInterests;
+  let vehicleListings;
 
   if (data) {
     customer = data?.data || {};
     history = data?.data?.history || {};
+    purchasedVehicles = [...(history?.purchasedVehicles || [])].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    buyerInterests = [...(history?.buyerInterests || [])].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    vehicleListings = [...(history?.listedVehicles || [])].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
   }
 
   const onSubmit = async (data) => {
@@ -86,6 +101,7 @@ function GarageCustomerDetails() {
   } else if (isSuccess) {
     const customer = data?.data || {};
     const history = data?.data?.history || {};
+
     content = (
       <div className="mb-64 space-y-4 ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
@@ -211,14 +227,93 @@ function GarageCustomerDetails() {
           </CardHeader>
           <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <Separator className="my-2" />
-            <div>
-              <Label>Vehicles</Label>
-              <div></div>
-            </div>
-            <Separator className="my-2" />
-            <div>
-              <Label>Interests</Label>
-            </div>
+
+            <Tabs defaultValue="vehicles">
+              <TabsList>
+                <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
+                <TabsTrigger value="interest">Interests</TabsTrigger>
+                <TabsTrigger value="purchased">Purchased</TabsTrigger>
+              </TabsList>
+              <TabsContent value="vehicles">
+                <div>
+                  {vehicleListings.length > 0 ? (
+                    <div
+                      className="relative w-full overflow-x-auto scrollbar-thin scroll-smooth  min-h-[425px]"
+                      style={{ maxWidth: "100%" }}
+                    >
+                      <div className="absolute left-0 flex gap-4 pb-4 top-4 flex-nowrap w-max">
+                        {vehicleListings.map((vehicle) => (
+                          <div
+                            key={vehicle._id}
+                            className="min-w-[300px] flex-shrink-0 snap-start"
+                          >
+                            <MatchedVehiclesCard
+                              vehicle={vehicle}
+                              showFooter={false}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[6rem] items-center justify-center">
+                      <div className="text-xs text-muted-foreground">
+                        No vehicles listed
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+              <TabsContent value="interest">
+                <div>
+                  {buyerInterests.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {buyerInterests.map((interest) => (
+                        <InterestCard
+                          key={interest._id}
+                          interest={interest}
+                          showBuyer={false}
+                          showMutation={false}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[6rem] items-center justify-center">
+                      <div className="text-xs text-muted-foreground">
+                        No interests listed
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+              <TabsContent value="purchased">
+                <div>
+                  {purchasedVehicles.length > 0 ? (
+                    <div
+                      className="relative w-full overflow-x-auto scrollbar-thin scroll-smooth  min-h-[425px]"
+                      style={{ maxWidth: "100%" }}
+                    >
+                      <div className="absolute left-0 flex gap-4 pb-4 top-4 flex-nowrap w-max">
+                        {purchasedVehicles.map((vehicle) => (
+                          <div
+                            key={vehicle._id}
+                            className="min-w-[300px] flex-shrink-0 snap-start"
+                          >
+                            <MatchedVehiclesCard vehicle={vehicle} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[6rem] items-center justify-center">
+                      <div className="text-xs text-muted-foreground">
+                        No vehicles purchased
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
