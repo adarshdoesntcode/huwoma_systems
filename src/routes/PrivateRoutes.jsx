@@ -34,6 +34,7 @@ import EditBuyerInterest from "@/features/garage/edit_interest/EditBuyerInterest
 import GarageCustomers from "@/features/garage/garage_customers/GarageCustomers";
 import GarageTransactions from "@/features/garage/garage_transactions/GarageTransactions";
 import GarageCustomerDetails from "@/features/garage/garage_customers/details/GarageCustomerDetails";
+import SellVehicle from "@/features/garage/sell_vehicle/SellVehicle";
 
 const PrivateRoutes = [
   {
@@ -169,6 +170,11 @@ const PrivateRoutes = [
   {
     path: "garage/edit-vehicle/:id",
     element: <EditVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/sell-vehicle",
+    element: <SellVehicle />,
     errorElement: <Error />,
   },
   {
