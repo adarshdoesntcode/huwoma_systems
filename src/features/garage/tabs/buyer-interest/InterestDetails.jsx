@@ -14,8 +14,9 @@ import {
   Edit,
   Trash,
   ArrowUpRight,
+  CheckCheck,
 } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, getDaysDifference } from "@/lib/utils";
 import NavBackButton from "@/components/NavBackButton";
 import StatusBadge from "@/components/ui/StatusBadge";
 import DeleteBuyerInterest from "./mutation/DeleteBuyerInterest";
@@ -88,6 +89,14 @@ function InterestDetails() {
                   <Edit className="w-4 h-4 mr-2" />
                   Edit
                 </Button>
+                <Button
+                  onClick={() =>
+                    navigate(`/garage/edit-interest/${interest._id}`)
+                  }
+                >
+                  <CheckCheck className="w-4 h-4 mr-2" />
+                  Mark as Fulfilled
+                </Button>
               </div>
             )}
           </div>
@@ -121,7 +130,10 @@ function InterestDetails() {
                   <StatusBadge status={interest.status} className={"w-fit"} />
                   <div className="flex items-center justify-start mt-2 space-x-2 text-xs sm:justify-end">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    <span>Created: {formatDate(interest.createdAt)}</span>
+                    <span>
+                      Created: {formatDate(interest.createdAt)} (
+                      {`${getDaysDifference(interest.createdAt, new Date())}d`})
+                    </span>
                   </div>
                 </div>
               </div>

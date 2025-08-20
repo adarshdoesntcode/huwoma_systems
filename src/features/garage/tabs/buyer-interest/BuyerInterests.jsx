@@ -1,55 +1,18 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-  CardContent,
 } from "@/components/ui/card";
-
-import { Separator } from "@/components/ui/separator";
-import {
-  RefreshCcw,
-  MessageSquareHeart,
-  Settings2,
-  Phone,
-  User,
-  Calendar,
-  DollarSign,
-  Eye,
-  Menu,
-  Edit,
-  Trash,
-} from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { RefreshCcw, MessageSquareHeart, Settings2 } from "lucide-react";
 import { useGetBuyerInterestsQuery } from "../../garageApiSlice";
 import Loader from "@/components/Loader";
-import StatusBadge from "@/components/ui/StatusBadge";
-import DynamicMenu from "../../components/DynamicMenu";
-import { useNavigate } from "react-router-dom";
 import ApiError from "@/components/error/ApiError";
-import DeleteBuyerInterest from "./mutation/DeleteBuyerInterest";
 import { skipToken } from "@reduxjs/toolkit/query";
-import { formatDate } from "@/lib/utils";
-
-// Mock data for demonstration
+import { InterestCard } from "../../components/InterestCard";
+import GaragePagination from "../../components/GaragePagination";
 
 function BuyerInterests({ tab }) {
   const [pageSize, setPageSize] = useState("6");
@@ -58,10 +21,7 @@ function BuyerInterests({ tab }) {
   const [query, setQuery] = useState({
     status: "Active",
   });
-
   const [showFilter, setShowFilter] = useState(false);
-  const navigate = useNavigate();
-
   const queryArgs =
     tab === "interest"
       ? {
@@ -87,42 +47,6 @@ function BuyerInterests({ tab }) {
       setTotalPages(totalPages);
     }
   }, [data, isSuccess]);
-
-  const renderPageNumbers = () => {
-    const pages = [];
-
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - 1 && i <= currentPage + 1)
-      ) {
-        pages.push(
-          <PaginationItem key={i} className="hidden md:block">
-            <PaginationLink
-              onClick={() => handlePageClick(i)}
-              isActive={i === currentPage}
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      } else if (i === currentPage - 2 || i === currentPage + 2) {
-        pages.push(
-          <PaginationItem key={`ellipsis-${i}`} className="hidden md:block">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-      }
-    }
-
-    return pages;
-  };
-
-  const handlePageClick = (page) => {
-    if (page !== currentPage && page >= 1 && page <= totalPages)
-      setCurrentPage(page);
-  };
 
   let content;
 
@@ -201,153 +125,16 @@ function BuyerInterests({ tab }) {
         {content}
       </div>
 
-      {/* Fixed Pagination Footer */}
-      <CardFooter className="sticky bottom-0 z-10 px-4 py-2 bg-white border-t rounded-b-lg sm:p-6 sm:py-4">
-        <div className="flex items-center justify-between w-full gap-2">
-          <Select value={pageSize} onValueChange={setPageSize}>
-            <SelectTrigger className="w-[70px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="w-[70px]">
-              <SelectItem value="6">6</SelectItem>
-              <SelectItem value="9">9</SelectItem>
-              <SelectItem value="18">18</SelectItem>
-              <SelectItem value="27">27</SelectItem>
-              <SelectItem value="36">36</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageClick(currentPage - 1)}
-                  disabled={currentPage === 1}
-                />
-              </PaginationItem>
-              {/* Desktop Pagination Numbers */}
-              {renderPageNumbers()}
-              {/* Mobile-only current page */}
-              <PaginationItem className="block px-3 py-1 text-sm md:hidden">
-                Page {currentPage} of {totalPages}
-              </PaginationItem>
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageClick(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      </CardFooter>
+      {/* Pagination Footer */}
+      <GaragePagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalPages={totalPages}
+      />
     </Card>
   );
 }
 
-const InterestCard = ({ interest }) => {
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const navigate = useNavigate();
-
-  const handleDelete = () => {
-    setShowDelete(true);
-    setDeleteId(interest._id);
-  };
-
-  const interestConfigs = [
-    {
-      label: "Edit",
-      icon: <Edit className="w-3 h-3 mr-1" />,
-      action: () => {
-        navigate(`/garage/edit-interest/${interest._id}`);
-      },
-    },
-    {
-      label: "Delete",
-      icon: <Trash className="w-3 h-3 mr-1" />,
-      action: () => {
-        handleDelete();
-      },
-    },
-  ];
-  const { buyer, budget, status, createdAt } = interest;
-
-  return (
-    <Card
-      key={interest._id}
-      className="h-full uration-300 animate-in fade-in-10 slide-in-from-bottom-1"
-    >
-      <CardHeader className="p-4 ">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <User className="w-4 h-4" />
-              {buyer.name}
-            </CardTitle>
-            <CardDescription className="flex items-center gap-2">
-              <Phone className="w-3 h-3" />
-              {buyer.contactNumber}
-            </CardDescription>
-          </div>
-          {/* <Badge className={getStatusColor(status)}>{status}</Badge> */}
-          <StatusBadge status={status} />
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-4 pt-0 space-y-4">
-        {/* Budget Section */}
-        <Separator />
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-1">
-            <DollarSign className="w-4 h-4 text-green-600" />
-            <span className="text-sm font-medium text-gray-700">Budget:</span>
-          </div>
-          <div className="text-sm text-gray-600">
-            {budget.min && budget.max
-              ? `Rs ${Number(budget.min).toLocaleString("en-IN")} - Rs ${Number(
-                  budget.max
-                ).toLocaleString("en-IN")}`
-              : budget.min
-              ? `From Rs ${Number(budget.min).toLocaleString("en-IN")}`
-              : budget.max
-              ? `Up to Rs ${Number(budget.max).toLocaleString("en-IN")}`
-              : "-"}
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <Button
-            className="flex-1"
-            size="sm"
-            onClick={() => {
-              navigate(`/garage/interest/${interest._id}`);
-            }}
-          >
-            <Eye className="w-3 h-3 mr-2" />
-            <span className="text-xs">View Details</span>
-          </Button>
-          <DynamicMenu configs={interestConfigs}>
-            <Button variant="outline" size="sm">
-              <Menu className="w-4 h-4" />
-            </Button>
-          </DynamicMenu>
-        </div>
-
-        <div className="flex items-center gap-1 text-[10px] text-gray-500">
-          <Calendar className="w-3 h-3" />
-          Listed on {formatDate(createdAt)}
-        </div>
-        <DeleteBuyerInterest
-          showDelete={showDelete}
-          setShowDelete={setShowDelete}
-          deleteId={deleteId}
-          setDeleteId={setDeleteId}
-        />
-      </CardContent>
-    </Card>
-  );
-};
 export default BuyerInterests;
