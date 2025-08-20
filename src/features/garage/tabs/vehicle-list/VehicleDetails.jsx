@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
+  ArrowUpRight,
   Edit,
   MessageSquare,
   Phone,
@@ -29,6 +30,7 @@ import {
 } from "lucide-react";
 import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
 import PotentialBuyers from "../../components/PotentialBuyers";
+import { formatDate, getDaysDifference } from "@/lib/utils";
 
 function VehicleDetails() {
   const { id } = useParams();
@@ -159,8 +161,15 @@ function VehicleDetails() {
                     </div>
                   )}
                 </div>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-xs text-muted-foreground">
+                    Listed on {formatDate(vehicle.createdAt)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {getDaysDifference(vehicle.createdAt, new Date())}d ago
+                  </div>
+                </div>
 
-                <Separator className="mb-4" />
                 <div className="space-y-2">
                   <Label className="text-xs font-normal ">Seller Details</Label>
                   <div className="py-4 text-sm text-gray-700 border-y ">
@@ -168,8 +177,16 @@ function VehicleDetails() {
                       <div className="flex items-center gap-4">
                         <User className="w-5 h-5 ml-2" />
                         <div className="flex flex-col gap-1">
-                          <p className="flex items-center gap-2 text-base font-semibold leading-none ">
+                          <p
+                            className="flex items-center text-base font-semibold leading-none cursor-pointer group "
+                            onClick={() =>
+                              navigate(
+                                `/garage/customers/${vehicle.seller._id}`
+                              )
+                            }
+                          >
                             {vehicle.seller.name}
+                            <ArrowUpRight className="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                           </p>
 
                           <p className="flex items-center text-xs">
@@ -195,35 +212,42 @@ function VehicleDetails() {
                     </div>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between gap-2 pt-2">
-                  <div className="space-x-2">
-                    {vehicle.status === "Available" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleDelete}
-                      >
-                        <span className="sr-only sm:not-sr-only">Delete</span>
-                        <Trash className="w-4 h-4 sm:ml-2" />
-                      </Button>
-                    )}
-                    {vehicle.status === "Available" && (
-                      <Button variant="outline" size="sm" onClick={handleEdit}>
-                        <span className="sr-only sm:not-sr-only">Edit</span>
-                        <Edit className="w-4 h-4 sm:ml-2" />
-                      </Button>
-                    )}
+                {vehicle.status === "Available" && (
+                  <div className="flex items-center justify-between gap-2 pt-2">
+                    <div className="space-x-2">
+                      {vehicle.status === "Available" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleDelete}
+                        >
+                          <span className="sr-only sm:not-sr-only">Delete</span>
+                          <Trash className="w-4 h-4 sm:ml-2" />
+                        </Button>
+                      )}
+                      {vehicle.status === "Available" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleEdit}
+                        >
+                          <span className="sr-only sm:not-sr-only">Edit</span>
+                          <Edit className="w-4 h-4 sm:ml-2" />
+                        </Button>
+                      )}
+                    </div>
+                    <Button>
+                      <span>Sell Now</span>
+                      <ShoppingBag className="w-4 h-4 ml-2" />
+                    </Button>
                   </div>
-                  <Button>
-                    <span>Sell Now</span>
-                    <ShoppingBag className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
+                )}
               </div>
             </div>
           </div>
-          <PotentialBuyers vehicleId={vehicle._id} />
+          {vehicle.status === "Available" && (
+            <PotentialBuyers vehicleId={vehicle._id} />
+          )}
         </div>
         <DeleteVehicleListing
           deleteId={deleteId}

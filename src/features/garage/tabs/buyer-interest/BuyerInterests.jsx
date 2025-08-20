@@ -47,6 +47,7 @@ import { useNavigate } from "react-router-dom";
 import ApiError from "@/components/error/ApiError";
 import DeleteBuyerInterest from "./mutation/DeleteBuyerInterest";
 import { skipToken } from "@reduxjs/toolkit/query";
+import { formatDate } from "@/lib/utils";
 
 // Mock data for demonstration
 
@@ -272,14 +273,6 @@ const InterestCard = ({ interest }) => {
     },
   ];
   const { buyer, budget, status, createdAt } = interest;
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   return (
     <Card

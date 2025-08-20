@@ -118,6 +118,27 @@ export const garageApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getGarageCustomers: builder.query({
+      query: () => ({
+        url: "/garage/customers",
+        method: "GET",
+      }),
+    }),
+    getGarageCustomerDetails: builder.query({
+      query: (credentials) => ({
+        url: `/garage/customer/${credentials}`,
+        method: "GET",
+      }),
+      providesTags: ["GarageCustomerDetails"],
+    }),
+    editGarageCustomer: builder.mutation({
+      query: (credentials) => ({
+        url: `/garage/customer/${credentials.id}`,
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["GarageCustomerDetails"],
+    }),
   }),
 });
 
@@ -138,4 +159,7 @@ export const {
   useEditBuyerInterestMutation,
   useGetPotentialBuyersQuery,
   useGetPotentialVehiclesQuery,
+  useGetGarageCustomersQuery,
+  useGetGarageCustomerDetailsQuery,
+  useEditGarageCustomerMutation,
 } = garageApiSlice;

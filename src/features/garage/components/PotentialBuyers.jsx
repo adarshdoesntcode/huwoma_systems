@@ -99,7 +99,7 @@ function PotentialBuyers({ vehicleId }) {
                           label: "View Buyer",
                           icon: <User className="w-3 h-3 mr-1" />,
                           action: () => {
-                            navigate(`/garage/customer/${interest.buyer._id}`);
+                            navigate(`/garage/customers/${interest.buyer._id}`);
                           },
                         },
                         {

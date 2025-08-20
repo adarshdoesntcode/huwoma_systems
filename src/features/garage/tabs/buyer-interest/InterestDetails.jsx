@@ -13,13 +13,15 @@ import {
   Calendar,
   Edit,
   Trash,
+  ArrowUpRight,
 } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import NavBackButton from "@/components/NavBackButton";
 import StatusBadge from "@/components/ui/StatusBadge";
 import DeleteBuyerInterest from "./mutation/DeleteBuyerInterest";
 import { useState } from "react";
 import PotentialVehicles from "../../components/PotentialVehicles";
+import { Separator } from "@/components/ui/separator";
 
 function InterestDetails() {
   const [showDelete, setShowDelete] = useState(false);
@@ -29,14 +31,6 @@ function InterestDetails() {
     useGetInterestDetailsQuery(id);
 
   const navigate = useNavigate();
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   if (isLoading || isFetching) {
     return (
@@ -60,7 +54,7 @@ function InterestDetails() {
     const budget = interest.budget || {};
 
     return (
-      <div className="min-h-screen sm:p-6 bg-gray-50/50">
+      <div className="min-h-screen pt-0 sm:p-6 sm:pt-0 ">
         <div className="max-w-6xl mx-auto space-y-4">
           <NavBackButton buttonText={"Back"} navigateTo={-1} />
           {/* Header Section */}
@@ -73,27 +67,29 @@ function InterestDetails() {
                 View comprehensive buyer requirements and preferences
               </p>
             </div>
-            <div className="flex items-center justify-end w-full mt-4 space-x-2 sm:w-fit sm:mt-0">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowDelete(true);
-                  setDeleteId(interest._id);
-                }}
-              >
-                <Trash className="w-4 h-4 mr-2" />
-                Delete
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  navigate(`/garage/edit-interest/${interest._id}`)
-                }
-              >
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-            </div>
+            {interest.status === "Active" && (
+              <div className="flex items-center justify-end w-full mt-4 space-x-2 sm:w-fit sm:mt-0">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDelete(true);
+                    setDeleteId(interest._id);
+                  }}
+                >
+                  <Trash className="w-4 h-4 mr-2" />
+                  Delete
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    navigate(`/garage/edit-interest/${interest._id}`)
+                  }
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Buyer Details Card */}
@@ -105,8 +101,12 @@ function InterestDetails() {
                     <User className="text-gray-500 w-7 h-7" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {buyer.name}
+                    <p
+                      className="flex items-center text-lg font-semibold text-gray-900 cursor-pointer group "
+                      onClick={() => navigate(`/garage/customers/${buyer._id}`)}
+                    >
+                      {buyer.name}{" "}
+                      <ArrowUpRight className="w-5 h-5 ml-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </p>
 
                     <p className="text-xs text-gray-600">
@@ -136,7 +136,7 @@ function InterestDetails() {
                 Budget Range
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
               <div className="p-4 border rounded-lg bg-muted">
                 <p className="mb-1 text-xs text-gray-500">Minimum Budget</p>
                 <p className="text-xl font-semibold text-gray-800">
@@ -154,19 +154,20 @@ function InterestDetails() {
 
           {/* Vehicle Criteria Card */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center text-lg font-semibold">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-sm font-medium">
                 <Car className="w-5 h-5 mr-2 text-gray-600" />
                 Vehicle Criteria
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-6">
+              <Separator className="mb-4" />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
                 <div>
                   <p className="text-xs font-medium text-gray-500">
                     Year Range
                   </p>
-                  <p className="mt-1 font-mono text-sm font-semibold text-gray-800">
+                  <p className="p-2 mt-2 font-mono text-sm text-gray-800 border rounded-md bg-muted">
                     {criteria?.year?.from && criteria?.year?.to
                       ? `${criteria?.year?.from} - ${criteria?.year?.to}`
                       : criteria?.year?.from
@@ -176,23 +177,12 @@ function InterestDetails() {
                       : "-"}
                   </p>
                 </div>
-                <div>
-                  <p className="text-xs font-medium text-gray-500">
-                    Maximum Mileage
-                  </p>
-                  <p className="mt-1 font-mono text-sm font-semibold text-gray-800 ">
-                    {criteria?.mileageMax
-                      ? `${new Intl.NumberFormat("en-IN").format(
-                          criteria.mileageMax
-                        )} km`
-                      : "-"}
-                  </p>
-                </div>
+
                 <div>
                   <p className="text-xs font-medium text-gray-500">
                     Categories
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-1">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.categories.length > 0
                       ? criteria.categories.map((item) => (
                           <Badge key={item} variant="secondary">
@@ -203,8 +193,8 @@ function InterestDetails() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-gray-500">Makes</p>
-                  <div className="flex flex-wrap gap-2 mt-1">
+                  <p className="text-xs font-medium text-gray-500 ">Makes</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.makes.length > 0
                       ? criteria.makes.map((item) => (
                           <Badge key={item} variant="secondary">
@@ -215,8 +205,20 @@ function InterestDetails() {
                   </div>
                 </div>
                 <div>
+                  <p className="text-xs font-medium text-gray-500">
+                    Maximum Mileage
+                  </p>
+                  <p className="p-2 mt-2 text-sm text-gray-800 border rounded-md bg-muted ">
+                    {criteria?.mileageMax
+                      ? `${new Intl.NumberFormat("en-IN").format(
+                          criteria.mileageMax
+                        )} km`
+                      : "-"}
+                  </p>
+                </div>
+                <div>
                   <p className="text-xs font-medium text-gray-500">Models</p>
-                  <div className="flex flex-wrap gap-2 mt-1">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.models.length > 0
                       ? criteria.models.map((item) => (
                           <Badge key={item} variant="secondary">
@@ -226,11 +228,12 @@ function InterestDetails() {
                       : "-"}
                   </div>
                 </div>
+
                 <div>
                   <p className="text-xs font-medium text-gray-500">
                     Transmissions
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-1">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.transmissions.length > 0
                       ? criteria.transmissions.map((item) => (
                           <Badge key={item} variant="secondary">
@@ -244,7 +247,7 @@ function InterestDetails() {
                   <p className="text-xs font-medium text-gray-500">
                     Fuel Types
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-1">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.fuelTypes.length > 0
                       ? criteria.fuelTypes.map((item) => (
                           <Badge key={item} variant="secondary">
@@ -258,7 +261,7 @@ function InterestDetails() {
                   <p className="text-xs font-medium text-gray-500">
                     Drive Types
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-1">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.driveTypes.length > 0
                       ? criteria.driveTypes.map((item) => (
                           <Badge key={item} variant="secondary">
@@ -289,7 +292,9 @@ function InterestDetails() {
             </Card>
           )}
 
-          <PotentialVehicles interestId={interest._id} />
+          {interest.status === "Active" && (
+            <PotentialVehicles interestId={interest._id} />
+          )}
         </div>
         <DeleteBuyerInterest
           showDelete={showDelete}

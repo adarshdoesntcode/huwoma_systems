@@ -28,7 +28,7 @@ function CarGarage() {
           <Button
             size="sm"
             variant="outline"
-            // onClick={() => navigate("/carwash/customers")}
+            onClick={() => navigate("/garage/customers")}
           >
             <span className="sr-only sm:not-sr-only">Customers</span>
 
@@ -37,7 +37,7 @@ function CarGarage() {
           <Button
             size="sm"
             variant="outline"
-            // onClick={() => navigate("/carwash/transactions")}
+            onClick={() => navigate("/garage/transactions")}
           >
             <span className="sr-only sm:not-sr-only">Transactions</span>
             <ReceiptText className="w-4 h-4 sm:ml-2" />
