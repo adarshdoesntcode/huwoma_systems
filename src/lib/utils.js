@@ -273,3 +273,11 @@ export const formatNumber = (num) => {
   if (num == null || isNaN(num)) return "0";
   return new Intl.NumberFormat("en-IN").format(num);
 };
+
+export const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};

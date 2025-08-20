@@ -31,6 +31,9 @@ import InterestDetails from "@/features/garage/tabs/buyer-interest/InterestDetai
 import EditVehicleListing from "@/features/garage/edit_vehicle/EditVehicleListing";
 import NewBuyerInterest from "@/features/garage/new_interest/NewBuyerInterest";
 import EditBuyerInterest from "@/features/garage/edit_interest/EditBuyerInterest";
+import GarageCustomers from "@/features/garage/garage_customers/GarageCustomers";
+import GarageTransactions from "@/features/garage/garage_transactions/GarageTransactions";
+import GarageCustomerDetails from "@/features/garage/garage_customers/details/GarageCustomerDetails";
 
 const PrivateRoutes = [
   {
@@ -176,6 +179,21 @@ const PrivateRoutes = [
   {
     path: "garage/edit-interest/:id",
     element: <EditBuyerInterest />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/customers",
+    element: <GarageCustomers />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/customers/:id",
+    element: <GarageCustomerDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/transactions",
+    element: <GarageTransactions />,
     errorElement: <Error />,
   },
   {
