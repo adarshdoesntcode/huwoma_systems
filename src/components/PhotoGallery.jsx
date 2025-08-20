@@ -25,7 +25,7 @@ export function FallbackImage({ image, index }) {
 
   return (
     <PhotoView src={src}>
-      <AspectRatio ratio={16 / 10}>
+      <AspectRatio ratio={16 / 11}>
         <img
           src={src}
           alt={`Image ${index}`}
