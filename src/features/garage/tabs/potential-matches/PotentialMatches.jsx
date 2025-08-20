@@ -19,7 +19,7 @@ import { formatCurrency } from "@/lib/utils";
 
 function PotentialMatches() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, isLoading, isError, isSuccess, error, refetch } =
+  const { data, isLoading, isError, isSuccess, error, refetch, isFetching } =
     useGetPotentialMatchesQuery();
 
   const filteredData = useMemo(() => {
@@ -309,12 +309,14 @@ function PotentialMatches() {
             <Button
               variant="outline"
               size="icon"
-              onClick={refetch}
-              disabled={isLoading}
+              onClick={() => refetch()}
+              disabled={isLoading || isFetching}
               aria-label="Refresh potential matches"
             >
               <RefreshCcw
-                className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+                className={`w-4 h-4 ${
+                  isLoading || isFetching ? "animate-spin" : ""
+                }`}
               />
             </Button>
           </div>

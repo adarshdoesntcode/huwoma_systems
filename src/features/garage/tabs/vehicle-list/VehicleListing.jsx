@@ -3,32 +3,16 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { RefreshCcw, Car, Settings2 } from "lucide-react";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetVehicleListingsQuery } from "../../garageApiSlice";
 import { VehicleCard } from "./VehicleCard";
+import GaragePagination from "../../components/GaragePagination";
 
 function VehicleListing({ tab }) {
   const [pageSize, setPageSize] = useState("6");
@@ -54,12 +38,6 @@ function VehicleListing({ tab }) {
     refetch();
   };
 
-  const handlePageClick = (page) => {
-    if (page !== currentPage && page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
   useEffect(() => {
     handleRefresh();
   }, [currentPage, pageSize]);
@@ -71,35 +49,6 @@ function VehicleListing({ tab }) {
       setTotalPages(totalPages);
     }
   }, [data, isSuccess]);
-
-  const renderPageNumbers = () => {
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - 1 && i <= currentPage + 1)
-      ) {
-        pages.push(
-          <PaginationItem key={i} className="hidden md:block">
-            <PaginationLink
-              onClick={() => handlePageClick(i)}
-              isActive={i === currentPage}
-            >
-              {i}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      } else if (i === currentPage - 2 || i === currentPage + 2) {
-        pages.push(
-          <PaginationItem key={`ellipsis-${i}`} className="hidden md:block">
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-      }
-    }
-    return pages;
-  };
 
   let content;
   if (isLoading) {
@@ -174,43 +123,13 @@ function VehicleListing({ tab }) {
       </div>
 
       {/* Pagination Footer */}
-      <CardFooter className="sticky bottom-0 z-10 px-4 py-2 bg-white border-t rounded-b-lg sm:p-6 sm:py-4">
-        <div className="flex items-center justify-between w-full gap-2">
-          <Select value={pageSize} onValueChange={setPageSize}>
-            <SelectTrigger className="w-[70px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="w-[70px]">
-              <SelectItem value="6">6</SelectItem>
-              <SelectItem value="9">9</SelectItem>
-              <SelectItem value="18">18</SelectItem>
-              <SelectItem value="27">27</SelectItem>
-              <SelectItem value="36">36</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageClick(currentPage - 1)}
-                  disabled={currentPage === 1}
-                />
-              </PaginationItem>
-              {renderPageNumbers()}
-              <PaginationItem className="block px-3 py-1 text-sm md:hidden">
-                Page {currentPage} of {totalPages}
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageClick(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      </CardFooter>
+      <GaragePagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalPages={totalPages}
+      />
     </Card>
   );
 }
