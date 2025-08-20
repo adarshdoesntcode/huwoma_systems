@@ -8,12 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import Steps from "@/components/Steps";
 import { cleanObject } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-
 import { useCreateBuyerInterestMutation } from "../garageApiSlice";
 import GarageCustomerForm from "./form/GarageCustomerForm";
 import BuyerInterestForm from "./form/BuyerInterestForm";

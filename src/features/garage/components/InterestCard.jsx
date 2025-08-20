@@ -21,7 +21,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DynamicMenu from "./DynamicMenu";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getDaysDifference } from "@/lib/utils";
 import DeleteBuyerInterest from "../tabs/buyer-interest/mutation/DeleteBuyerInterest";
 
 export const InterestCard = ({
@@ -127,9 +127,14 @@ export const InterestCard = ({
           )}
         </div>
 
-        <div className="flex items-center gap-1 text-[10px] text-gray-500">
-          <Calendar className="w-3 h-3" />
-          Listed on {formatDate(createdAt)}
+        <div className="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
+          <div className="flex items-center gap-1 text-[10px] text-gray-500">
+            <Calendar className="w-3 h-3" />
+            Listed on {formatDate(createdAt)}
+          </div>
+          <div className="text-[10px] text-gray-500">
+            {getDaysDifference(createdAt, new Date())}d ago
+          </div>
         </div>
         <DeleteBuyerInterest
           showDelete={showDelete}

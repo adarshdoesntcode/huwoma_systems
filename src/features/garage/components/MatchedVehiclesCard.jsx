@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { formatCurrency, formatNumber } from "@/lib/utils";
 import {
+  Car,
   Fuel,
   Gauge,
   GitMerge,
@@ -20,8 +21,18 @@ import MatchBadge from "./MatchBadge";
 import { useNavigate } from "react-router-dom";
 import StatusBadge from "@/components/ui/StatusBadge";
 
-function MatchedVehiclesCard({ vehicle, showFooter = true }) {
+function MatchedVehiclesCard({ vehicle, buyer, interest, showFooter = true }) {
   const navigate = useNavigate();
+
+  const handleSelect = () => {
+    navigate("/garage/sell-vehicle", {
+      state: {
+        selectedVehicle: vehicle,
+        selectedBuyer: buyer,
+        selectedInterest: interest,
+      },
+    });
+  };
   return (
     <Card
       key={vehicle._id}
@@ -58,7 +69,7 @@ function MatchedVehiclesCard({ vehicle, showFooter = true }) {
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="flex-grow p-4 pt-0 space-y-3 text-sm">
+        <CardContent className="flex-grow p-4 pt-0 space-y-3 text-xs ">
           <p className="text-sm font-semibold text-green-600">
             {formatCurrency(vehicle.askingPrice)}
           </p>
@@ -76,7 +87,7 @@ function MatchedVehiclesCard({ vehicle, showFooter = true }) {
               <span>{vehicle.transmission || "N/A"}</span>
             </div>
             <div className="flex items-center gap-2 truncate">
-              <GitMerge className="w-4 h-4 text-gray-400" />
+              <Car className="w-4 h-4 text-gray-400" />
               <span>{vehicle.driveType || "N/A"}</span>
             </div>
           </div>
@@ -96,6 +107,7 @@ function MatchedVehiclesCard({ vehicle, showFooter = true }) {
               className="text-xs"
               onClick={(e) => {
                 e.stopPropagation();
+                handleSelect();
               }}
             >
               Select <SquareDashedMousePointer className="w-3 h-3 ml-2" />

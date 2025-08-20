@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 import MatchedVehiclesCard from "../../components/MatchedVehiclesCard";
 import { formatCurrency } from "@/lib/utils";
+import Interests from "../../components/Interests";
 
 function PotentialMatches() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -138,74 +139,10 @@ function PotentialMatches() {
                     {interest.criteria && (
                       <div className="p-4 bg-white border border-dashed rounded-lg">
                         <p className="mb-3 text-sm font-medium text-gray-600">
-                          Buyer&apos;s Criteria:
+                          Buyer&apos;s Interets:
                         </p>
-                        <div className="flex flex-wrap gap-2">
-                          {interest.criteria.makes?.map((make, index) => (
-                            <Badge
-                              key={`make-${make}-${index}`}
-                              variant="secondary"
-                            >
-                              {make}
-                            </Badge>
-                          ))}
-                          {interest.criteria.models?.map((model, index) => (
-                            <Badge
-                              key={`model-${model}-${index}`}
-                              variant="secondary"
-                            >
-                              {model}
-                            </Badge>
-                          ))}
-                          {interest.criteria.categories?.map((cat, index) => (
-                            <Badge
-                              key={`cat-${cat}-${index}`}
-                              variant="outline"
-                            >
-                              {cat}
-                            </Badge>
-                          ))}
-                          {interest.criteria.fuelTypes?.map((ft, index) => (
-                            <Badge
-                              key={`fuel-${ft}-${index}`}
-                              variant="outline"
-                              className="border-amber-400 text-amber-700"
-                            >
-                              {ft}
-                            </Badge>
-                          ))}
-                          {interest.criteria.transmissions?.map((t, index) => (
-                            <Badge
-                              key={`trans-${t}-${index}`}
-                              variant="outline"
-                              className="border-sky-400 text-sky-700"
-                            >
-                              {t}
-                            </Badge>
-                          ))}
-                          {/* Added Badges for year and mileageMax */}
-                          {interest.criteria.year?.from &&
-                            interest.criteria.year?.to && (
-                              <Badge
-                                key={`year-${interest.criteria.year.from}-${interest.criteria.year.to}`}
-                                variant="outline"
-                                className="text-gray-700 border-gray-400"
-                              >
-                                Year: {interest.criteria.year.from} -{" "}
-                                {interest.criteria.year.to}
-                              </Badge>
-                            )}
-                          {interest.criteria.mileageMax && (
-                            <Badge
-                              key={`mileage-${interest.criteria.mileageMax}`}
-                              variant="outline"
-                              className="text-gray-700 border-gray-400"
-                            >
-                              Max Mileage:{" "}
-                              {interest.criteria.mileageMax.toLocaleString()}
-                            </Badge>
-                          )}
-                        </div>
+
+                        <Interests interest={interest} />
                       </div>
                     )}
 
@@ -239,7 +176,11 @@ function PotentialMatches() {
                                 key={vehicle._id}
                                 className="min-w-[300px] flex-shrink-0 snap-start"
                               >
-                                <MatchedVehiclesCard vehicle={vehicle} />
+                                <MatchedVehiclesCard
+                                  vehicle={vehicle}
+                                  buyer={interest.buyer}
+                                  interest={interest}
+                                />
                               </div>
                             ))}
                           </div>

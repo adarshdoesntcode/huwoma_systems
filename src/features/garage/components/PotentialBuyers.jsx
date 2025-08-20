@@ -24,20 +24,31 @@ import DynamicMenu from "./DynamicMenu";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import MatchBadge from "./MatchBadge";
+import Interests from "./Interests";
 
-function PotentialBuyers({ vehicleId }) {
+function PotentialBuyers({ vehicle }) {
   const [showBuyers, setShowBuyers] = useState(false);
   const navigate = useNavigate();
   const { data, isLoading, isError, isSuccess, error, refetch } =
     useGetPotentialBuyersQuery(
-      { vehicleId },
+      { vehicleId: vehicle._id },
       {
         skip: !showBuyers,
       }
     );
 
+  const handleSelectBuyer = (buyer, interest) => {
+    navigate("/garage/sell-vehicle", {
+      state: {
+        selectedVehicle: vehicle,
+        selectedBuyer: buyer,
+        selectedInterest: interest,
+      },
+    });
+  };
+
   return (
-    <Card className="w-full border-none">
+    <Card className="w-full border-none shadow-none">
       <CardContent className="p-0 py-2 ">
         {isLoading && (
           <div className="flex min-h-[20rem] items-center justify-center">
@@ -82,16 +93,20 @@ function PotentialBuyers({ vehicleId }) {
                       <MatchBadge score={interest.matchScore} />
                     </div>
                   </CardHeader>
-                  <CardContent className="p-4 pb-2 text-xs border-t text-muted-foreground">
-                    <div className="mb-2 font-mono text-ellipsis">
-                      Interest ID: {interest._id}
-                    </div>
+                  <CardContent className="p-4 text-xs border-t text-muted-foreground">
+                    <Interests interest={interest} />
                   </CardContent>
 
                   <div className="flex gap-2 p-4 pt-0">
-                    <Button className="flex-1" size="sm">
+                    <Button
+                      className="flex-1 text-xs"
+                      size="sm"
+                      onClick={() => {
+                        handleSelectBuyer(interest.buyer, interest);
+                      }}
+                    >
                       Select Buyer
-                      <SquareDashedMousePointer className="w-4 h-4 ml-2" />
+                      <SquareDashedMousePointer className="w-3 h-3 ml-2" />
                     </Button>
                     <DynamicMenu
                       configs={[

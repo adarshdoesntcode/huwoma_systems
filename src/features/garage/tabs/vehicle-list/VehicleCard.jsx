@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import DynamicMenu from "../../components/DynamicMenu";
 import { useState } from "react";
 import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
-import { getDaysDifference } from "@/lib/utils";
+import { formatDate, getDaysDifference } from "@/lib/utils";
 
 export const VehicleCard = ({ vehicle }) => {
   const [showDelete, setShowDelete] = useState(false);
@@ -155,16 +155,11 @@ export const VehicleCard = ({ vehicle }) => {
           </DynamicMenu>
         </div>
 
-        {/* Created Date */}
         <div className="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
-          <p className="text-[10px] text-gray-500">
-            Listed on{" "}
-            {new Date(vehicle.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </p>
+          <div className="flex items-center gap-1 text-[10px] text-gray-500">
+            <Calendar className="w-3 h-3" />
+            Listed on {formatDate(vehicle.createdAt)}
+          </div>
           <div className="text-[10px] text-gray-500">
             {getDaysDifference(vehicle.createdAt, new Date())}d ago
           </div>

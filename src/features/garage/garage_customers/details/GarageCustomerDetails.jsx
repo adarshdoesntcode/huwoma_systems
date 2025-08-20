@@ -26,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import { InterestCard } from "../../components/InterestCard";
 import MatchedVehiclesCard from "../../components/MatchedVehiclesCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 function GarageCustomerDetails() {
   const { id } = useParams();
@@ -230,9 +231,30 @@ function GarageCustomerDetails() {
 
             <Tabs defaultValue="vehicles">
               <TabsList>
-                <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
-                <TabsTrigger value="interest">Interests</TabsTrigger>
-                <TabsTrigger value="purchased">Purchased</TabsTrigger>
+                <TabsTrigger value="vehicles">
+                  Vehicles
+                  {vehicleListings.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {vehicleListings.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="interest">
+                  Interests
+                  {buyerInterests.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {buyerInterests.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="purchased">
+                  Purchased
+                  {purchasedVehicles.length > 0 && (
+                    <Badge className="ml-2   py-0 text-[10px]">
+                      {purchasedVehicles.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="vehicles">
                 <div>

@@ -11,18 +11,18 @@ import { useState } from "react";
 import { useGetPotentialVehiclesQuery } from "../garageApiSlice";
 import MatchedVehiclesCard from "./MatchedVehiclesCard";
 
-function PotentialVehicles({ interestId }) {
+function PotentialVehicles({ interest }) {
   const [showVehicles, setShowVehicles] = useState(false);
   const { data, isLoading, isError, isSuccess, error, refetch } =
     useGetPotentialVehiclesQuery(
-      { interestId },
+      { interestId: interest._id },
       {
         skip: !showVehicles,
       }
     );
 
   return (
-    <Card className="w-full bg-transparent border-none">
+    <Card className="w-full bg-transparent border-none shadow-none">
       <CardContent className="p-0 py-2 ">
         {isLoading && (
           <div className="flex min-h-[20rem] items-center justify-center">
@@ -55,7 +55,11 @@ function PotentialVehicles({ interestId }) {
                     key={vehicle._id}
                     className="min-w-[300px] flex-shrink-0 snap-start"
                   >
-                    <MatchedVehiclesCard vehicle={vehicle} />
+                    <MatchedVehiclesCard
+                      vehicle={vehicle}
+                      interest={interest}
+                      buyer={interest.buyer}
+                    />
                   </div>
                 ))}
               </div>

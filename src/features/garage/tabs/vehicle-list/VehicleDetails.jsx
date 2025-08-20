@@ -20,9 +20,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   ArrowUpRight,
+  Calendar,
   Edit,
   MessageSquare,
-  Phone,
   PhoneCall,
   ShoppingBag,
   Trash,
@@ -31,6 +31,7 @@ import {
 import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
 import PotentialBuyers from "../../components/PotentialBuyers";
 import { formatDate, getDaysDifference } from "@/lib/utils";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 function VehicleDetails() {
   const { id } = useParams();
@@ -48,6 +49,15 @@ function VehicleDetails() {
     setShowDelete(true);
     setDeleteId(id);
   };
+
+  const handleSellNow = () => {
+    navigate("/garage/sell-vehicle", {
+      state: {
+        selectedVehicle: data.data,
+      },
+    });
+  };
+
   let content;
 
   if (isLoading || isFetching) {
@@ -62,7 +72,7 @@ function VehicleDetails() {
     content = (
       <div className="flex flex-col h-full gap-4 duration-300 fade-in animate-in slide-in-from-bottom-2">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
-        <div className="flex-1 p-6 bg-white border rounded-lg shadow-sm">
+        <div className="flex-1 p-4 bg-white border rounded-lg shadow-sm sm:p-6">
           <div className="grid grid-cols-12 gap-6 mb-4">
             <div className="col-span-12 pb-16 lg:col-span-6">
               <Carousel>
@@ -95,7 +105,7 @@ function VehicleDetails() {
                       Rs. {vehicle.askingPrice.toLocaleString("en-IN")}
                     </p>
                   </div>
-                  <Badge className={"bg-green-500"}> {vehicle.status} </Badge>
+                  <StatusBadge status={vehicle.status} />
                 </div>
 
                 <Separator />
@@ -161,14 +171,15 @@ function VehicleDetails() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="text-xs text-muted-foreground">
-                    Listed on {formatDate(vehicle.createdAt)}
+                {vehicle.description && (
+                  <div>
+                    <Separator className="mt-2" />
+                    <Label className="mb-2">Description</Label>
+                    <div className="text-xs italic text-gray-600">
+                      {`"${vehicle.description}"`}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {getDaysDifference(vehicle.createdAt, new Date())}d ago
-                  </div>
-                </div>
+                )}
 
                 <div className="space-y-2">
                   <Label className="text-xs font-normal ">Seller Details</Label>
@@ -190,7 +201,6 @@ function VehicleDetails() {
                           </p>
 
                           <p className="flex items-center text-xs">
-                            <div></div>
                             {vehicle.seller.contactNumber}
                           </p>
                         </div>
@@ -210,6 +220,16 @@ function VehicleDetails() {
                         </a>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                    <Calendar className="w-3 h-3 text-gray-500" />
+                    Listed on {formatDate(vehicle.createdAt)}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {getDaysDifference(vehicle.createdAt, new Date())}d ago
                   </div>
                 </div>
                 {vehicle.status === "Available" && (
@@ -236,7 +256,7 @@ function VehicleDetails() {
                         </Button>
                       )}
                     </div>
-                    <Button>
+                    <Button onClick={handleSellNow}>
                       <span>Sell Now</span>
                       <ShoppingBag className="w-4 h-4 ml-2" />
                     </Button>
@@ -246,7 +266,7 @@ function VehicleDetails() {
             </div>
           </div>
           {vehicle.status === "Available" && (
-            <PotentialBuyers vehicleId={vehicle._id} />
+            <PotentialBuyers vehicle={vehicle} />
           )}
         </div>
         <DeleteVehicleListing

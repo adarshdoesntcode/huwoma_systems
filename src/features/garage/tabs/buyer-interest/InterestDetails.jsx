@@ -77,8 +77,8 @@ function InterestDetails() {
                     setDeleteId(interest._id);
                   }}
                 >
-                  <Trash className="w-4 h-4 mr-2" />
-                  Delete
+                  <Trash className="w-4 h-4 sm:mr-2" />
+                  <span className="sr-only sm:not-sr-only">Delete</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -86,8 +86,8 @@ function InterestDetails() {
                     navigate(`/garage/edit-interest/${interest._id}`)
                   }
                 >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
+                  <Edit className="w-4 h-4 sm:mr-2" />
+                  <span className="sr-only sm:not-sr-only">Edit</span>
                 </Button>
                 <Button
                   onClick={() =>
@@ -128,11 +128,15 @@ function InterestDetails() {
                 </div>
                 <div className="flex flex-row items-end justify-between w-full gap-2 mt-3 sm:w-fit sm:mt-0 sm:flex-col">
                   <StatusBadge status={interest.status} className={"w-fit"} />
-                  <div className="flex items-center justify-start mt-2 space-x-2 text-xs sm:justify-end">
-                    <Calendar className="w-4 h-4 text-gray-500" />
+                  <div className="flex items-center justify-start gap-1 mt-2 text-xs text-muted-foreground sm:justify-end">
+                    <Calendar className="w-3.5 h-3.5 text-gray-500" />
                     <span>
-                      Created: {formatDate(interest.createdAt)} (
-                      {`${getDaysDifference(interest.createdAt, new Date())}d`})
+                      Created on {formatDate(interest.createdAt)} (
+                      {`${getDaysDifference(
+                        interest.createdAt,
+                        new Date()
+                      )}d ago`}
+                      )
                     </span>
                   </div>
                 </div>
@@ -197,7 +201,10 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.categories.length > 0
                       ? criteria.categories.map((item) => (
-                          <Badge key={item} variant="secondary">
+                          <Badge
+                            key={item}
+                            className="pointer-events-none bg-green-50 text-green-700 border border-green-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          >
                             {item}
                           </Badge>
                         ))
@@ -209,7 +216,10 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.makes.length > 0
                       ? criteria.makes.map((item) => (
-                          <Badge key={item} variant="secondary">
+                          <Badge
+                            key={item}
+                            className="pointer-events-none bg-teal-50 text-teal-700 border border-teal-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          >
                             {item}
                           </Badge>
                         ))
@@ -233,7 +243,10 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.models.length > 0
                       ? criteria.models.map((item) => (
-                          <Badge key={item} variant="secondary">
+                          <Badge
+                            key={item}
+                            className="pointer-events-none bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          >
                             {item}
                           </Badge>
                         ))
@@ -248,7 +261,10 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.transmissions.length > 0
                       ? criteria.transmissions.map((item) => (
-                          <Badge key={item} variant="secondary">
+                          <Badge
+                            key={item}
+                            className="pointer-events-none bg-sky-50 text-sky-700 border border-sky-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          >
                             {item}
                           </Badge>
                         ))
@@ -262,7 +278,10 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.fuelTypes.length > 0
                       ? criteria.fuelTypes.map((item) => (
-                          <Badge key={item} variant="secondary">
+                          <Badge
+                            key={item}
+                            className="pointer-events-none bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          >
                             {item}
                           </Badge>
                         ))
@@ -276,7 +295,10 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.driveTypes.length > 0
                       ? criteria.driveTypes.map((item) => (
-                          <Badge key={item} variant="secondary">
+                          <Badge
+                            key={item}
+                            className="pointer-events-none bg-violet-50 text-violet-700 border border-violet-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          >
                             {item}
                           </Badge>
                         ))
@@ -305,7 +327,7 @@ function InterestDetails() {
           )}
 
           {interest.status === "Active" && (
-            <PotentialVehicles interestId={interest._id} />
+            <PotentialVehicles interest={interest} />
           )}
         </div>
         <DeleteBuyerInterest
