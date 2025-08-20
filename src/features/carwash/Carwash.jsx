@@ -90,11 +90,6 @@ function Carwash() {
   let hourlyCounts;
 
   if (data) {
-    // const filteredTransactions = data?.data?.transactions?.filter(
-    //   (transaction) =>
-    //     transaction.transactionStatus !== "Cancelled" &&
-    //     transaction.paymentStatus !== "Cancelled"
-    // );
     hourlyCounts = Object.entries(data?.data?.hours).map(
       ([hour, customers]) => ({
         hour: hour,
@@ -150,7 +145,7 @@ function Carwash() {
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="flex items-center justify-between gap-4 tracking-tight  sm:flex-row sm:items-center sm:mb-4">
+        <div className="flex items-center justify-between gap-4 tracking-tight sm:flex-row sm:items-center sm:mb-4">
           <div className="flex items-center gap-2 text-sm font-semibold uppercase text-primary">
             <Droplets className="w-4 h-4 text-muted-foreground" />
             Carwash
