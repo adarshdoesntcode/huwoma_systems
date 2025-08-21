@@ -76,7 +76,7 @@ function GarageStatsCards() {
             <CardTitle className="text-sm font-medium">
               Potential Commission
             </CardTitle>
-            <span className="font-mono text-xs text-muted-foreground">15%</span>
+            <span className="font-mono text-xs text-muted-foreground">5%</span>
           </CardHeader>
           <CardContent>
             <div className="text-xl font-semibold text-blue-500">

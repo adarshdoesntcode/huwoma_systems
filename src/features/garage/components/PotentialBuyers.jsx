@@ -94,7 +94,7 @@ function PotentialBuyers({ vehicle }) {
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 text-xs border-t text-muted-foreground">
-                    <Interests interest={interest} />
+                    <Interests interest={interest} showBudget={true} />
                   </CardContent>
 
                   <div className="flex gap-2 p-4 pt-0">
