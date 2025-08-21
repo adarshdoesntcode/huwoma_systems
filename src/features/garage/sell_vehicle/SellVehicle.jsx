@@ -11,6 +11,10 @@ import {
 import Steps from "@/components/Steps";
 import { useForm } from "react-hook-form";
 import GarageCustomerForm from "./form/GarageCustomerForm";
+import SelectInterestForm from "./form/SelectInterestForm";
+import VehicleCheckoutPreviewForm from "./form/VehicleCheckoutPreviewForm";
+import { toast } from "@/hooks/use-toast";
+import { useCheckoutVehicleMutation } from "../garageApiSlice";
 
 function SellVehicle() {
   const { state } = useLocation();
@@ -19,7 +23,10 @@ function SellVehicle() {
   const [selectedInterest, setSelectedInterest] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
 
+  const [checkoutVehicle] = useCheckoutVehicleMutation();
+
   const navigate = useNavigate();
+
   const {
     handleSubmit,
     reset,
@@ -28,7 +35,6 @@ function SellVehicle() {
     setError,
     clearErrors,
     register,
-    getValues,
     watch,
     setFocus,
     formState: { errors, isSubmitting },
@@ -42,8 +48,54 @@ function SellVehicle() {
     }
   }, [state]);
 
+  useEffect(() => {
+    if (selectedBuyer && selectedVehicle) {
+      if (
+        selectedBuyer?.contactNumber === selectedVehicle?.seller?.contactNumber
+      ) {
+        toast({
+          title: "Invalid Selection",
+          description: "Seller and Buyer cannot be same",
+          variant: "destructive",
+        });
+        setValue("contactNumber", "");
+        setValue("name", "");
+        setSelectedBuyer(null);
+      }
+    }
+  }, [selectedBuyer, selectedVehicle, setValue]);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    const vehicleCheckoutPayload = {
+      buyer: {
+        name: selectedBuyer.name,
+        contactNumber: selectedBuyer.contactNumber,
+      },
+      vehicleId: selectedVehicle._id,
+      interestId: selectedInterest._id || null,
+      sellingPrice: data.finalSellingPrice,
+      commissionAmount: data.commissionAmount || 0,
+    };
+    try {
+      const res = await checkoutVehicle(vehicleCheckoutPayload);
+      if (res.error) {
+        throw new Error(res.error.data.message);
+      }
+      if (!res.error) {
+        toast({
+          title: "Vehicle Sold!",
+          description: "Your vehicle has been sold successfully",
+          variant: "success",
+        });
+        navigate(`/garage/vehicle/${selectedVehicle._id}`, { replace: true });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   if (!selectedVehicle) return null;
@@ -89,6 +141,26 @@ function SellVehicle() {
                 reset={reset}
                 setError={setError}
                 setFocus={setFocus}
+              />
+            )}
+            {formStep === 1 && selectedBuyer && (
+              <SelectInterestForm
+                selectedInterest={selectedInterest}
+                selectedBuyer={selectedBuyer}
+                setSelectedInterest={setSelectedInterest}
+                setFormStep={setFormStep}
+              />
+            )}
+            {formStep === 2 && selectedVehicle && (
+              <VehicleCheckoutPreviewForm
+                selectedInterest={selectedInterest}
+                selectedBuyer={selectedBuyer}
+                selectedVehicle={selectedVehicle}
+                register={register}
+                errors={errors}
+                setValue={setValue}
+                watch={watch}
+                isSubmitting={isSubmitting}
               />
             )}
           </form>
