@@ -24,6 +24,7 @@ import {
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -38,6 +39,8 @@ import SubmitButton from "@/components/SubmitButton";
 import { Car, Filter, HandCoins, Settings2, ArrowDownUp } from "lucide-react";
 import { isMobile } from "react-device-detect";
 import { DailyIncomeGraph } from "@/features/carwash/carwash_tranasactions/charts/DailyIncomeGraph";
+import { GarageTranasactionsDataTable } from "./GarageTransactionsDataTable";
+import { GarageTransactionsColumn } from "./GarageTransactionsColumn";
 const initialState = {
   preset: {
     text: "All Time",
@@ -433,6 +436,23 @@ const FilteredAnalytics = ({ responseData, range }) => {
       {dailyIncome.length > 0 && !isMobile && (
         <DailyIncomeGraph dailyIncome={dailyIncome} range={rangeString} />
       )}
+      <Card>
+        <CardHeader className="p-4 sm:p-6 ">
+          <CardTitle className="text-lg sm:text-xl">Transactions</CardTitle>
+          <CardDescription className="text-xs">
+            {rangeString?.split("-")[0].trim() ===
+            rangeString?.split("-")[1].trim()
+              ? rangeString?.split("-")[0]
+              : rangeString}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+          <GarageTranasactionsDataTable
+            data={garageTableData}
+            columns={GarageTransactionsColumn}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };

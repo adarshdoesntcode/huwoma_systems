@@ -440,7 +440,7 @@ const FilteredAnalytics = ({ responseData, range }) => {
             </CardContent>
           </Card>
 
-          <Card x-chunk="dashboard-01-chunk-3">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Discounted</CardTitle>
               <BadgePercent className="w-4 h-4 text-muted-foreground" />

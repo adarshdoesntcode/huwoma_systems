@@ -48,19 +48,30 @@ function SelectInterestForm({
               <Loader />
             </div>
           )}
-          {isSuccess && data && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {data.data.map((interest) => (
-                <div key={interest._id}>
-                  <SelectInterestCard
-                    interest={interest}
-                    selectedInterest={selectedInterest}
-                    setSelectedInterest={setSelectedInterest}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          {isSuccess &&
+            data &&
+            (data.data.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {data.data.map((interest) => (
+                  <div key={interest._id}>
+                    <SelectInterestCard
+                      interest={interest}
+                      selectedInterest={selectedInterest}
+                      setSelectedInterest={setSelectedInterest}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center flex-1 gap-2 py-20">
+                <h1 className="text-sm font-semibold text-muted-foreground">
+                  No interests found for this buyer
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  You can continue
+                </p>
+              </div>
+            ))}
           {isError && (
             <div className="flex items-center justify-center flex-1">
               <ApiError error={error} refetch={refetch} />
