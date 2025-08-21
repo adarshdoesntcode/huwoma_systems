@@ -11,18 +11,26 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-import { RefreshCcw, User, Wallet, Search, X } from "lucide-react";
+import {
+  RefreshCcw,
+  User,
+  Wallet,
+  Search,
+  X,
+  ArrowUpRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 import MatchedVehiclesCard from "../../components/MatchedVehiclesCard";
 import { formatCurrency } from "@/lib/utils";
 import Interests from "../../components/Interests";
+import { useNavigate } from "react-router-dom";
 
 function PotentialMatches() {
   const [searchQuery, setSearchQuery] = useState("");
   const { data, isLoading, isError, isSuccess, error, refetch, isFetching } =
     useGetPotentialMatchesQuery();
-
+  const navigate = useNavigate();
   const filteredData = useMemo(() => {
     if (!data?.data || !Array.isArray(data.data) || !searchQuery.trim()) {
       return data?.data || [];
@@ -115,9 +123,17 @@ function PotentialMatches() {
                           <User className="w-5 h-5 text-blue-700" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {interest.buyer?.name || "Unknown Buyer"}
-                          </h3>
+                          <p
+                            className="flex items-center text-lg font-semibold text-gray-900 cursor-pointer group "
+                            onClick={() =>
+                              navigate(
+                                `/garage/customers/${interest.buyer._id}`
+                              )
+                            }
+                          >
+                            {interest.buyer.name}{" "}
+                            <ArrowUpRight className="w-5 h-5 ml-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                          </p>
                           {interest.buyer?.contactNumber && (
                             <p className="text-sm text-gray-500">
                               {interest.buyer.contactNumber}

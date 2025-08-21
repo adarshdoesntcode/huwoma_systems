@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
 import PotentialBuyers from "../../components/PotentialBuyers";
-import { formatDate, getDaysDifference } from "@/lib/utils";
+import { formatCurrency, formatDate, getDaysDifference } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
 
 function VehicleDetails() {
@@ -222,16 +222,73 @@ function VehicleDetails() {
                     </div>
                   </div>
                 </div>
+                {vehicle.transaction && vehicle.status === "Sold" && (
+                  <div className="space-y-2">
+                    <Label className="text-xs font-normal ">
+                      Buyer Details
+                    </Label>
+                    <div className="py-4 text-sm text-gray-700 border-y ">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <User className="w-5 h-5 ml-2" />
+                          <div className="flex flex-col gap-1">
+                            <p
+                              className="flex items-center text-base font-semibold leading-none cursor-pointer group "
+                              onClick={() =>
+                                navigate(
+                                  `/garage/customers/${vehicle.transaction.buyer._id}`
+                                )
+                              }
+                            >
+                              {vehicle.transaction.buyer.name}
+                              <ArrowUpRight className="w-4 h-4 ml-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            </p>
 
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                    <Calendar className="w-3 h-3 text-gray-500" />
-                    Listed on {formatDate(vehicle.createdAt)}
+                            <p className="flex items-center text-xs">
+                              {vehicle.transaction.buyer.contactNumber}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs">Paid</span>
+                          <Badge className="text-sm text-green-600 border-green-100 bg-green-50">
+                            {formatCurrency(vehicle.transaction.sellingPrice)}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-[10px] text-muted-foreground">
-                    {getDaysDifference(vehicle.createdAt, new Date())}d ago
+                )}
+
+                {vehicle.status === "Available" ? (
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Calendar className="w-3 h-3 text-gray-500" />
+                      Listed on {formatDate(vehicle.createdAt)}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {getDaysDifference(vehicle.createdAt, new Date())}d ago
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  vehicle.status === "Sold" && (
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <Calendar className="w-3 h-3 text-gray-500" />
+                        Sold on{" "}
+                        {formatDate(vehicle.transaction.transactionTime)}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {getDaysDifference(
+                          vehicle.transaction.transactionTime,
+                          new Date()
+                        )}
+                        d ago
+                      </div>
+                    </div>
+                  )
+                )}
+
                 {vehicle.status === "Available" && (
                   <div className="flex items-center justify-between gap-2 pt-2">
                     <div className="space-x-2">
