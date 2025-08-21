@@ -139,6 +139,32 @@ export const garageApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["GarageCustomerDetails"],
     }),
+    getBuyersIntrests: builder.query({
+      query: (credentials) => ({
+        url: "/garage/buyers-interests",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
+    checkoutVehicle: builder.mutation({
+      query: (credentials) => ({
+        url: "/garage/checkout-vehicle",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: [
+        "GarageVehicleGarageStats",
+        "GarageVehicleListings",
+        "GarageVehicleDetails",
+      ],
+    }),
+    getGarageFilteredTransactions: builder.mutation({
+      query: (credentials) => ({
+        url: "/garage/filteredtransactions",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
   }),
 });
 
@@ -162,4 +188,7 @@ export const {
   useGetGarageCustomersQuery,
   useGetGarageCustomerDetailsQuery,
   useEditGarageCustomerMutation,
+  useGetBuyersIntrestsQuery,
+  useCheckoutVehicleMutation,
+  useGetGarageFilteredTransactionsMutation,
 } = garageApiSlice;
