@@ -321,7 +321,10 @@ function GarageCustomerDetails() {
                             key={vehicle._id}
                             className="min-w-[300px] flex-shrink-0 snap-start"
                           >
-                            <MatchedVehiclesCard vehicle={vehicle} />
+                            <MatchedVehiclesCard
+                              vehicle={vehicle}
+                              showFooter={false}
+                            />
                           </div>
                         ))}
                       </div>
