@@ -70,6 +70,7 @@ function GarageTransactions() {
   const [filter, setFilter] = useState(initialState);
   const [responseData, setResponseData] = useState("");
   const [range, setRange] = useState("");
+  console.log("🚀 ~ GarageTransactions ~ range:", range);
 
   const [getGarageFilteredTransactions] =
     useGetGarageFilteredTransactionsMutation();
@@ -394,7 +395,11 @@ const FilteredAnalytics = ({ responseData, range }) => {
   if (responseData.length > 0) {
     rangeString = `${
       !range.from
-        ? format(completetedTransactions[0].transactionTime, "dd MMM, yyyy")
+        ? format(
+            completetedTransactions[completetedTransactions.length - 1]
+              .transactionTime,
+            "dd MMM, yyyy"
+          )
         : format(range.from, "dd MMM, yyyy")
     } - ${format(range.to, "dd MMM, yyy")}`;
   }
@@ -447,10 +452,26 @@ const FilteredAnalytics = ({ responseData, range }) => {
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-          <GarageTranasactionsDataTable
-            data={garageTableData}
-            columns={GarageTransactionsColumn}
-          />
+          {isMobile ? (
+            <div
+              className="relative w-full h-full overflow-x-auto scrollbar-thin scroll-smooth min-h-[1425px]"
+              style={{ maxWidth: "100%" }}
+            >
+              <div className="absolute top-0 left-0 flex-nowrap w-max">
+                <div className="min-w-[480px]  snap-start">
+                  <GarageTranasactionsDataTable
+                    data={garageTableData}
+                    columns={GarageTransactionsColumn}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <GarageTranasactionsDataTable
+              data={garageTableData}
+              columns={GarageTransactionsColumn}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

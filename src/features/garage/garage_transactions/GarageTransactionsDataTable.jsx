@@ -257,7 +257,7 @@ export const GarageTranasactionsDataTable = ({
         </Table>
       </div>
       <div className="py-4 text-muted-foreground">
-        <DataTablePagination table={table} />
+        <DataTablePagination table={table} sizes={[10, 15, 20]} />
       </div>
     </>
   );
