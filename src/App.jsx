@@ -15,6 +15,8 @@ import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClie
 import Error from "./components/error/Error";
 import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
 import { OfflineAlert } from "./components/OfflineAlert";
+import VehicleDetails from "./features/garage/tabs/vehicle-list/VehicleDetails";
+import PublicVehicleDetails from "./features/garage/tabs/vehicle-list/PublicVehicleDetails";
 
 const router = createBrowserRouter([
   {
@@ -51,7 +53,11 @@ const router = createBrowserRouter([
     element: <SimRacingClientMyRace />,
     errorElement: <Error />,
   },
-
+  {
+    path: "/garagebyhuwoma/vehicle/:id",
+    element: <PublicVehicleDetails />,
+    errorElement: <Error />,
+  },
   {
     path: "/unauthorized",
     element: <Unauthorized />,
