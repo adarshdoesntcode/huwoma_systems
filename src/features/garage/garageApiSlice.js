@@ -165,6 +165,14 @@ export const garageApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+    fulfillInterest: builder.mutation({
+      query: (credentials) => ({
+        url: `/garage/fulfill-interest/${credentials.id}`,
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["GarageBuyerInterests", "GarageInterestDetails"],
+    }),
   }),
 });
 
@@ -191,4 +199,5 @@ export const {
   useGetBuyersIntrestsQuery,
   useCheckoutVehicleMutation,
   useGetGarageFilteredTransactionsMutation,
+  useFulfillInterestMutation,
 } = garageApiSlice;
