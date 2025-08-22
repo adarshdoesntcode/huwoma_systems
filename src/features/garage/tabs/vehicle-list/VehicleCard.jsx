@@ -17,10 +17,13 @@ import DynamicMenu from "../../components/DynamicMenu";
 import { useState } from "react";
 import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
 import { formatDate, getDaysDifference } from "@/lib/utils";
+import ShareVehicle from "./mutation/ShareVehicle";
 
 export const VehicleCard = ({ vehicle }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [showShare, setShowShare] = useState(false);
+  const [shareId, setShareId] = useState(null);
   const navigate = useNavigate();
 
   const formatPrice = (price) => {
@@ -35,11 +38,18 @@ export const VehicleCard = ({ vehicle }) => {
     navigate(`/garage/vehicle/${vehicle._id}`);
   };
 
+  const handleShare = () => {
+    setShowShare(true);
+    setShareId(vehicle._id);
+  };
+
   const vehicleConfigs = [
     {
       label: "Share",
       icon: <Share2 className="w-3 h-3 mr-1" />,
-      action: () => {},
+      action: () => {
+        handleShare();
+      },
     },
     {
       label: "Edit",
@@ -169,6 +179,12 @@ export const VehicleCard = ({ vehicle }) => {
           setShowDelete={setShowDelete}
           deleteId={deleteId}
           setDeleteId={setDeleteId}
+        />
+        <ShareVehicle
+          shareId={shareId}
+          setShowShare={setShowShare}
+          setShareId={setShareId}
+          showShare={showShare}
         />
       </CardContent>
     </Card>

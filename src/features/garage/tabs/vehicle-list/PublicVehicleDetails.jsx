@@ -1,6 +1,5 @@
-import { useState } from "react";
 import Loader from "@/components/Loader";
-import { useGetVehicleDetailsQuery } from "../../garageApiSlice";
+import { useGetPublicVehicleDetailsQuery } from "../../garageApiSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBackButton from "@/components/NavBackButton";
 import ApiError from "@/components/error/ApiError";
@@ -17,56 +16,24 @@ import { FallbackImage } from "@/components/PhotoGallery";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+
 import {
   ArrowUpRight,
   Calendar,
-  Edit,
   MessageSquare,
   PhoneCall,
-  Share,
-  Share2,
-  ShoppingBag,
-  Trash,
   User,
 } from "lucide-react";
-import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
-import PotentialBuyers from "../../components/PotentialBuyers";
 import { formatCurrency, formatDate, getDaysDifference } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
-import ShareVehicle from "./mutation/ShareVehicle";
+import { IMAGE_DATA } from "@/lib/config";
 
-function VehicleDetails() {
+function PublicVehicleDetails() {
   const { id } = useParams();
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const [showShare, setShowShare] = useState(false);
-  const [shareId, setShareId] = useState(null);
+
   const navigate = useNavigate();
   const { data, isLoading, isFetching, isSuccess, isError, refetch, error } =
-    useGetVehicleDetailsQuery(id);
-
-  const handleEdit = () => {
-    navigate(`/garage/edit-vehicle/${id}`);
-  };
-
-  const handleDelete = () => {
-    setShowDelete(true);
-    setDeleteId(id);
-  };
-
-  const handleShare = () => {
-    setShowShare(true);
-    setShareId(id);
-  };
-
-  const handleSellNow = () => {
-    navigate("/garage/sell-vehicle", {
-      state: {
-        selectedVehicle: data.data,
-      },
-    });
-  };
+    useGetPublicVehicleDetailsQuery(id);
 
   let content;
 
@@ -80,10 +47,20 @@ function VehicleDetails() {
     const vehicle = data.data;
 
     content = (
-      <div className="flex flex-col h-full gap-4 duration-300 fade-in animate-in slide-in-from-bottom-2">
-        <NavBackButton buttonText={"Back"} navigateTo={-1} />
-        <div className="flex-1 p-4 bg-white border rounded-lg shadow-sm sm:p-6">
-          <div className="grid grid-cols-12 gap-6 mb-4">
+      <div className="flex flex-col h-full max-w-6xl mx-auto duration-300 fade-in animate-in slide-in-from-bottom-4">
+        <header className="flex sticky top-0 h-14 items-center gap-4 z-50 bg-slate-100/50 backdrop-filter backdrop-blur-lg px-4 lg:h-[60px] lg:px-6">
+          <div className="relative flex-1 ml-auto ">
+            <div className="flex items-center justify-center ">
+              <img
+                loading="lazy"
+                src={IMAGE_DATA.huwoma_logo}
+                className="h-6 mx-auto aspect-auto"
+              />
+            </div>
+          </div>
+        </header>
+        <div className="flex-1 p-4 bg-white rounded-lg sm:p-6">
+          <div className="grid grid-cols-12 gap-4 sm:gap-6">
             <div className="col-span-12 pb-16 lg:col-span-6">
               <Carousel>
                 <CarouselContent className="rounded-lg shadow-xl">
@@ -191,7 +168,7 @@ function VehicleDetails() {
                   </div>
                 )}
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label className="text-xs font-normal ">Seller Details</Label>
                   <div className="py-4 text-sm text-gray-700 border-y ">
                     <div className="flex items-center justify-between">
@@ -231,8 +208,8 @@ function VehicleDetails() {
                       </div>
                     </div>
                   </div>
-                </div>
-                {vehicle.transaction && vehicle.status === "Sold" && (
+                </div> */}
+                {/* {vehicle.transaction && vehicle.status === "Sold" && (
                   <div className="space-y-2">
                     <Label className="text-xs font-normal ">
                       Buyer Details
@@ -268,7 +245,8 @@ function VehicleDetails() {
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
+                <Separator className="mt-2" />
 
                 {vehicle.status === "Available" ? (
                   <div className="flex items-center justify-between gap-2">
@@ -298,72 +276,33 @@ function VehicleDetails() {
                     </div>
                   )
                 )}
-
-                {vehicle.status === "Available" && (
-                  <div className="flex items-center justify-between gap-2 pt-2">
-                    <div className="space-x-2">
-                      {vehicle.status === "Available" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleDelete}
-                        >
-                          <span className="sr-only sm:not-sr-only">Delete</span>
-                          <Trash className="w-4 h-4 sm:ml-2" />
-                        </Button>
-                      )}
-                      {vehicle.status === "Available" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleEdit}
-                        >
-                          <span className="sr-only sm:not-sr-only">Edit</span>
-                          <Edit className="w-4 h-4 sm:ml-2" />
-                        </Button>
-                      )}
-                      {vehicle.status === "Available" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleShare}
-                        >
-                          <span className="sr-only sm:not-sr-only">Share</span>
-                          <Share2 className="w-4 h-4 sm:ml-2" />
-                        </Button>
-                      )}
-                    </div>
-                    <Button onClick={handleSellNow}>
-                      <span>Sell Now</span>
-                      <ShoppingBag className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
-          {vehicle.status === "Available" && (
-            <PotentialBuyers vehicle={vehicle} />
-          )}
         </div>
-        <DeleteVehicleListing
-          deleteId={deleteId}
-          setDeleteId={setDeleteId}
-          showDelete={showDelete}
-          setShowDelete={setShowDelete}
-        />
-        <ShareVehicle
-          shareId={shareId}
-          setShowShare={setShowShare}
-          setShareId={setShareId}
-          showShare={showShare}
-        />
       </div>
     );
   } else if (isError) {
-    content = <ApiError error={error} refetch={refetch} />;
+    content = (
+      <div className="flex flex-col h-full max-w-6xl mx-auto duration-300 fade-in animate-in slide-in-from-bottom-4">
+        <header className="flex sticky top-0 h-14 items-center gap-4 z-50 bg-slate-100/50 backdrop-filter backdrop-blur-lg px-4 lg:h-[60px] lg:px-6">
+          <div className="relative flex-1 ml-auto ">
+            <div className="flex items-center justify-center ">
+              <img
+                loading="lazy"
+                src={IMAGE_DATA.huwoma_logo}
+                className="h-6 mx-auto aspect-auto"
+              />
+            </div>
+          </div>
+        </header>
+        <div className="flex items-center justify-center py-20">
+          <ApiError error={error} refetch={refetch} />;
+        </div>
+      </div>
+    );
   }
   return content;
 }
 
-export default VehicleDetails;
+export default PublicVehicleDetails;
