@@ -173,6 +173,12 @@ export const garageApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["GarageBuyerInterests", "GarageInterestDetails"],
     }),
+    getPublicVehicleDetails: builder.query({
+      query: (credentials) => ({
+        url: `/garage/vehicle-details/${credentials}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -200,4 +206,5 @@ export const {
   useCheckoutVehicleMutation,
   useGetGarageFilteredTransactionsMutation,
   useFulfillInterestMutation,
+  useGetPublicVehicleDetailsQuery,
 } = garageApiSlice;
