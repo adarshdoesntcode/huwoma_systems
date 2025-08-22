@@ -23,9 +23,12 @@ import DeleteBuyerInterest from "./mutation/DeleteBuyerInterest";
 import { useState } from "react";
 import PotentialVehicles from "../../components/PotentialVehicles";
 import { Separator } from "@/components/ui/separator";
+import MarkAsFulfilled from "./mutation/MarkAsFulfilled";
 
 function InterestDetails() {
   const [showDelete, setShowDelete] = useState(false);
+  const [showFulfill, setShowFulfill] = useState(false);
+  const [fullfillId, setFullfillId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const { id } = useParams();
   const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
@@ -90,9 +93,10 @@ function InterestDetails() {
                   <span className="sr-only sm:not-sr-only">Edit</span>
                 </Button>
                 <Button
-                  onClick={() =>
-                    navigate(`/garage/edit-interest/${interest._id}`)
-                  }
+                  onClick={() => {
+                    setShowFulfill(true);
+                    setFullfillId(interest._id);
+                  }}
                 >
                   <CheckCheck className="w-4 h-4 mr-2" />
                   Mark as Fulfilled
@@ -335,6 +339,12 @@ function InterestDetails() {
           setShowDelete={setShowDelete}
           deleteId={deleteId}
           setDeleteId={setDeleteId}
+        />
+        <MarkAsFulfilled
+          showDialog={showFulfill}
+          setShowDialog={setShowFulfill}
+          interestId={fullfillId}
+          setInterestId={setFullfillId}
         />
       </div>
     );
