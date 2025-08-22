@@ -216,7 +216,9 @@ function InterestDetails() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-gray-500 ">Makes</p>
+                  <p className="text-xs font-medium text-gray-500 ">
+                    Manufacturers
+                  </p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.makes.length > 0
                       ? criteria.makes.map((item) => (
