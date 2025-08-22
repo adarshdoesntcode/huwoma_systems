@@ -75,7 +75,7 @@ function PotentialBuyers({ vehicle }) {
               {data?.data.map((interest) => (
                 <Card
                   key={interest._id}
-                  className="relative flex flex-col justify-between transition-shadow duration-300 hover:shadow-lg"
+                  className="relative flex flex-col justify-between transition-shadow duration-300 animate-in fade-in-10 slide-in-from-bottom-1 hover:shadow-lg"
                 >
                   <CardHeader className="p-4 pb-2">
                     <div className="flex items-start justify-between gap-2">

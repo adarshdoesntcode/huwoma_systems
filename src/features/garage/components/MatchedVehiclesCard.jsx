@@ -39,7 +39,7 @@ function MatchedVehiclesCard({ vehicle, buyer, interest, showFooter = true }) {
       onClick={() => {
         navigate(`/garage/vehicle/${vehicle._id}`);
       }}
-      className="w-[300px] flex-shrink-0 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+      className="w-[300px] flex-shrink-0 shadow-md hover:shadow-xl  animate-in fade-in-10 slide-in-from-right-2 transition-shadow duration-300 cursor-pointer"
     >
       <div className="flex flex-col h-full">
         <CardHeader className="p-0">
