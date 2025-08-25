@@ -232,7 +232,7 @@ function GarageTransactions() {
   return (
     <div className="space-y-4 mb-80">
       <NavBackButton buttonText={"Back"} navigateTo={-1} />
-      <Card>
+      <Card className="duration-300 animate-in fade-in-10 slide-in-from-bottom-1">
         <CardHeader className="p-4 border-b sm:p-6 sm:pb-4">
           <CardTitle className="flex items-center gap-3 text-base sm:text-lg">
             <Settings2 className="w-5 h-5" />

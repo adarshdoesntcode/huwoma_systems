@@ -13,6 +13,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { useGetVehicleListingsQuery } from "../../garageApiSlice";
 import { VehicleCard } from "./VehicleCard";
 import GaragePagination from "../../components/GaragePagination";
+import VehicleFilter from "./filter/VehicleFilter";
 
 function VehicleListing({ tab }) {
   const [pageSize, setPageSize] = useState("6");
@@ -21,7 +22,6 @@ function VehicleListing({ tab }) {
   const [query, setQuery] = useState({
     status: "Available",
   });
-  const [showFilter, setShowFilter] = useState(false);
 
   const queryArgs =
     tab === "listing"
@@ -40,7 +40,7 @@ function VehicleListing({ tab }) {
 
   useEffect(() => {
     handleRefresh();
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, query]);
 
   useEffect(() => {
     if (isSuccess && data?.data) {
@@ -106,14 +106,7 @@ function VehicleListing({ tab }) {
                 }`}
               />
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilter((prev) => !prev)}
-              aria-label="Toggle filters"
-            >
-              <span className="sr-only sm:not-sr-only">Filter</span>
-              <Settings2 className="w-4 h-4 sm:ml-2" />
-            </Button>
+            <VehicleFilter query={query} setQuery={setQuery} />
           </div>
         </div>
       </CardHeader>

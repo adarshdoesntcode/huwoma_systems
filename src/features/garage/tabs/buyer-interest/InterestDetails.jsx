@@ -59,7 +59,7 @@ function InterestDetails() {
 
     return (
       <div className="min-h-screen pt-0 sm:p-6 sm:pt-0 ">
-        <div className="max-w-6xl mx-auto space-y-4">
+        <div className="max-w-6xl mx-auto space-y-4 duration-300 animate-in fade-in-10 slide-in-from-bottom-2">
           <NavBackButton buttonText={"Back"} navigateTo={-1} />
           {/* Header Section */}
           <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">

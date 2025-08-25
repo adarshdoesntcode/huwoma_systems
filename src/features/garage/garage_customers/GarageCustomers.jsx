@@ -29,7 +29,7 @@ function GarageCustomers() {
     content = (
       <div className="mb-64 space-y-4 ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
-        <Card>
+        <Card className="duration-300 animate-in fade-in-10 slide-in-from-bottom-1">
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-xl sm:text-2xl">
               Garage Customers

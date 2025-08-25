@@ -13,6 +13,7 @@ import ApiError from "@/components/error/ApiError";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { InterestCard } from "../../components/InterestCard";
 import GaragePagination from "../../components/GaragePagination";
+import DynamicFilterWrapper from "../../components/DynamicFilterWrapper";
 
 function BuyerInterests({ tab }) {
   const [pageSize, setPageSize] = useState("6");
@@ -21,7 +22,7 @@ function BuyerInterests({ tab }) {
   const [query, setQuery] = useState({
     status: "Active",
   });
-  const [showFilter, setShowFilter] = useState(false);
+
   const queryArgs =
     tab === "interest"
       ? {
@@ -109,14 +110,15 @@ function BuyerInterests({ tab }) {
                 className={`w-4 h-4 ${isFetching && "animate-spin"}`}
               />
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilter((prev) => !prev)}
-              aria-label="Toggle filters"
-            >
-              <span className="sr-only sm:not-sr-only">Filter</span>
-              <Settings2 className="w-4 h-4 sm:ml-2" />
-            </Button>
+            <DynamicFilterWrapper
+              trigger={
+                <Button variant="outline" aria-label="Toggle filters">
+                  <span className="sr-only sm:not-sr-only">Filter</span>
+                  <Settings2 className="w-4 h-4 sm:ml-2" />
+                </Button>
+              }
+              content={<></>}
+            />
           </div>
         </div>
       </CardHeader>
