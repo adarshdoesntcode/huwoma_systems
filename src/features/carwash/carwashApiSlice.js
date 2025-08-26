@@ -192,6 +192,36 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
+    findCustomerByPhone: builder.mutation({
+      query: ({ customerContact }) => ({
+        url: `/carwash/customerbyphone/${customerContact}`,
+        method: "GET",
+      }),
+    }),
+    mergeSourcerAndTargetCustomer: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/customer/merge",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: [
+        "CarwashTransactions",
+        "CarwashCustomers",
+        "CarwashCustomer",
+      ],
+    }),
+    transferCarwashTransaction: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/transfer",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: [
+        "CarwashTransactions",
+        "CarwashCustomers",
+        "CarwashCustomer",
+      ],
+    }),
   }),
 });
 
@@ -220,4 +250,7 @@ export const {
   useResetStreakMutation,
   useEditCustomerVehicleMutation,
   useCreateOldRecordMutation,
+  useFindCustomerByPhoneMutation,
+  useMergeSourcerAndTargetCustomerMutation,
+  useTransferCarwashTransactionMutation,
 } = carwashApiSlice;
