@@ -1,5 +1,5 @@
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
-import { Badge } from "@/components/ui/badge";
+
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import {
@@ -11,6 +11,9 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
+import React from "react";
+import ActionCell from "./merge/ActionCell";
+
 export const CarwashCustomerDetailsColumn = [
   {
     accessorKey: "billNo",
@@ -19,7 +22,7 @@ export const CarwashCustomerDetailsColumn = [
     ),
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground text-xs  px-4 py-2 hidden sm:table-cell">
+        <TableCell className="hidden px-4 py-2 text-xs text-muted-foreground sm:table-cell">
           {row.original.billNo}
         </TableCell>
       );
@@ -41,7 +44,7 @@ export const CarwashCustomerDetailsColumn = [
   //     return (
   //       <TableCell className="px-4 py-2">
   //         <div className="flex flex-col items-start">
-  //           <div className="font-medium text-xs">{customer.customerName}</div>
+  //           <div className="text-xs font-medium">{customer.customerName}</div>
   //           <div className="text-xs text-muted-foreground">
   //             {customer.customerContact}
   //           </div>
@@ -66,7 +69,7 @@ export const CarwashCustomerDetailsColumn = [
     header: () => <TableHead className="">Vehicle</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="px-4 py-2 sm:py-2 sm:px-4 text-center">
+        <TableCell className="px-4 py-2 text-center sm:py-2 sm:px-4">
           <div className="flex items-center gap-2">
             {row?.original?.vehicleColor && (
               <TooltipProvider delayDuration={0}>
@@ -90,10 +93,10 @@ export const CarwashCustomerDetailsColumn = [
               </TooltipProvider>
             )}
             <div className="flex flex-col items-start">
-              <div className="font-semibold text-primary text-xs text-start">
+              <div className="text-xs font-semibold text-primary text-start">
                 {row.original?.vehicleModel}
               </div>
-              <div className="text-xs flex justify-between gap-2 text-muted-foreground">
+              <div className="flex justify-between gap-2 text-xs text-muted-foreground">
                 {row.original.vehicleNumber}
               </div>
             </div>
@@ -118,10 +121,10 @@ export const CarwashCustomerDetailsColumn = [
       return (
         <TableCell className="px-4 py-1 sm:py-2 sm:px-4">
           <div className="flex flex-col items-start">
-            <div className="font-semibold text-primary text-xs">
+            <div className="text-xs font-semibold text-primary">
               {service?.serviceTypeName}
             </div>
-            <div className="text-xs flex justify-between gap-2 text-muted-foreground">
+            <div className="flex justify-between gap-2 text-xs text-muted-foreground">
               {service?.serviceVehicle.vehicleTypeName}
             </div>
           </div>
@@ -141,14 +144,14 @@ export const CarwashCustomerDetailsColumn = [
       <DataTableColumnHeader
         column={column}
         title={"Status"}
-        className="hidden lg:table-cell px-1"
+        className="hidden px-1 lg:table-cell"
       />
     ),
     cell: ({ row }) => {
       const status = row.original.transactionStatus;
 
       return (
-        <TableCell className="hidden lg:table-cell px-4 py-2">
+        <TableCell className="hidden px-4 py-2 lg:table-cell">
           <StatusBadge status={status} />
         </TableCell>
       );
@@ -164,14 +167,14 @@ export const CarwashCustomerDetailsColumn = [
       <DataTableColumnHeader
         column={column}
         title={"Payment"}
-        className="hidden lg:table-cell px-1"
+        className="hidden px-1 lg:table-cell"
       />
     ),
     cell: ({ row }) => {
       const payment = row.original.paymentStatus;
 
       return (
-        <TableCell className="hidden  lg:table-cell px-4 py-2">
+        <TableCell className="hidden px-4 py-2 lg:table-cell">
           <StatusBadge status={payment} />
         </TableCell>
       );
@@ -189,7 +192,7 @@ export const CarwashCustomerDetailsColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden lg:table-cell px-1"
+          className="hidden px-1 lg:table-cell"
         />
       );
     },
@@ -197,7 +200,7 @@ export const CarwashCustomerDetailsColumn = [
       let date = format(new Date(row.original.createdAt), "d MMM, yy h:mm a");
 
       return (
-        <TableCell className="hidden  lg:table-cell px-4 py-2">
+        <TableCell className="hidden px-4 py-2 lg:table-cell">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
@@ -214,7 +217,7 @@ export const CarwashCustomerDetailsColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden lg:table-cell px-1"
+          className="hidden px-1 lg:table-cell"
         />
       );
     },
@@ -224,12 +227,17 @@ export const CarwashCustomerDetailsColumn = [
         : "";
 
       return (
-        <TableCell className="hidden  lg:table-cell px-4 py-2">
+        <TableCell className="hidden px-4 py-2 lg:table-cell">
           <div className="flex flex-col items-start">
             <div className="text-xs text-muted-foreground">{date}</div>
           </div>
         </TableCell>
       );
     },
+  },
+  {
+    accessorKey: "action",
+    header: () => <TableHead className="text-center">Action</TableHead>,
+    cell: ({ row }) => <ActionCell row={row} />,
   },
 ];
