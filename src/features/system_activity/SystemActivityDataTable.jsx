@@ -87,7 +87,11 @@ const exportExcel = (rows) => {
       Time: row.original?.activityDate
         ? format(row.original.activityDate, "MMM dd, yy hh:mm:ss ")
         : "",
-      Actor: row.original?.activityBy?.fullname || "",
+      Actor: row.original?.activityBy?.fullname
+        ? row.original?.activityBy?.fullname
+        : row?.original?.systemModule === "SimRacing Transaction"
+        ? "Unknown"
+        : "POS App",
       Activity: row.original?.activityType || "",
       Module: row?.original?.systemModule || "",
       Message: row.original?.description || "",
