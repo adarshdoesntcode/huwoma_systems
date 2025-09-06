@@ -13,7 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Scan } from "lucide-react";
 
 import AdminSideBar from "../../features/admin/AdminSideBar";
 import AdminMobileSideBar from "../../features/admin/AdminMobileSideBar";
@@ -32,6 +32,8 @@ import BreadCrumbGenerator from "../BreadCrumbGenerator";
 import { Badge } from "../ui/badge";
 import { useRole } from "@/hooks/useRole";
 import SupportDialog from "../ui/SupportDialog";
+import ScanReceiptQr from "../ScanReceiptQr";
+import { isMobile } from "react-device-detect";
 
 function AdminLayout() {
   const [logoutLoader, setLogoutLoader] = useState(false);
@@ -71,7 +73,7 @@ function AdminLayout() {
 
   return (
     <>
-      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <div className="grid relative min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <AdminSideBar />
         <div className="flex flex-col">
           <header className="flex sticky top-0 h-14 items-center gap-4 z-50 bg-slate-100/50 backdrop-filter backdrop-blur-lg px-4 lg:h-[60px] lg:px-6">
@@ -129,7 +131,7 @@ function AdminLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <main className="flex flex-col flex-1 p-4 pt-2 lg:px-6 bg-slate-50">
+          <main className="flex flex-col flex-1 p-4 pt-2 pb-24 lg:px-6 bg-slate-50">
             <Outlet />
           </main>
         </div>
@@ -153,6 +155,7 @@ function AdminLayout() {
             </div>
           </div>
         </div>
+        {isMobile && <ScanReceiptQr />}
       </div>
       <SupportDialog open={showSupport} setOpen={setShowSupport} />
     </>

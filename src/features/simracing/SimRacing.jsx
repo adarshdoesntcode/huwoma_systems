@@ -41,7 +41,7 @@ function SimRacing() {
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetSimRacingTransactionsQuery(undefined, {
-      pollingInterval: 30000,
+      pollingInterval: 600000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
@@ -109,19 +109,19 @@ function SimRacing() {
 
   if (isLoading) {
     content = (
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex items-center justify-center flex-1">
         <Loader />
       </div>
     );
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="  sm:flex-row  flex items-center sm:items-center tracking-tight  justify-between gap-4 sm:mb-4">
-          <div className="text-sm font-semibold uppercase text-primary  flex items-center gap-2">
+        <div className="flex items-center justify-between gap-4 tracking-tight  sm:flex-row sm:items-center sm:mb-4">
+          <div className="flex items-center gap-2 text-sm font-semibold uppercase text-primary">
             <Car className="w-4 h-4 text-muted-foreground" />
             Sim Racing
           </div>
-          <div className=" flex justify-end">
+          <div className="flex justify-end ">
             <Button
               size="sm"
               variant="outline"
@@ -130,7 +130,7 @@ function SimRacing() {
             >
               <span className="sr-only sm:not-sr-only">Customers </span>
 
-              <Users className="sm:ml-2 w-4 h-4" />
+              <Users className="w-4 h-4 sm:ml-2" />
             </Button>
             {isSuper && (
               <Button
@@ -140,12 +140,12 @@ function SimRacing() {
               >
                 <span className="sr-only sm:not-sr-only">Transactions </span>
 
-                <ReceiptText className="sm:ml-2 w-4 h-4" />
+                <ReceiptText className="w-4 h-4 sm:ml-2" />
               </Button>
             )}
           </div>
         </div>
-        <div className="grid grid-cols-12 gap-4 sm:gap-6 mb-6">
+        <div className="grid grid-cols-12 gap-4 mb-6 sm:gap-6">
           {rigs.map((rig) => (
             <RigCard
               key={rig._id}
@@ -161,7 +161,7 @@ function SimRacing() {
               setTab(value);
             }}
           >
-            <div className="flex flex-col  items-start sm:items-center sm:flex-row gap-4 justify-between">
+            <div className="flex flex-col items-start justify-between gap-4 sm:items-center sm:flex-row">
               <TabsList className="order-2 md:order-1">
                 <TabsTrigger value="active">
                   Active
@@ -188,16 +188,16 @@ function SimRacing() {
                   )}
                 </TabsTrigger>
               </TabsList>
-              <div className="w-full sm:w-fit order-1 sm:order-2 flex justify-end ">
+              <div className="flex justify-end order-1 w-full sm:w-fit sm:order-2 ">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="mr-2 w-full"
+                  className="w-full mr-2"
                   onClick={() => navigate("/simracing/booking")}
                 >
                   <span>Booking</span>
 
-                  <PlusCircle className="ml-2 w-4 h-4" />
+                  <PlusCircle className="w-4 h-4 ml-2" />
                 </Button>
                 <Button
                   size="sm"
@@ -205,14 +205,14 @@ function SimRacing() {
                   className="w-full"
                 >
                   <span>Race</span>
-                  <PlusCircle className="ml-2  w-4 h-4" />
+                  <PlusCircle className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </div>
             <TabsContent value="active">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Active
@@ -221,7 +221,7 @@ function SimRacing() {
                         Ongoing sessions on the rigs
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -241,7 +241,7 @@ function SimRacing() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <SimRacingDataTable
                     data={activeTransactions}
                     columns={SimRacingColumn(
@@ -261,7 +261,7 @@ function SimRacing() {
             <TabsContent value="finish">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Finished
@@ -270,7 +270,7 @@ function SimRacing() {
                         Completed races that have been paid off
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -290,7 +290,7 @@ function SimRacing() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <SimRacingFinishedDataTable
                     data={finishedTransactions}
                     columns={SimRacingFinishedColumn}
@@ -302,7 +302,7 @@ function SimRacing() {
             <TabsContent value="booking">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl sm:text-2xl">
                         Booking
@@ -311,7 +311,7 @@ function SimRacing() {
                         Active Bookings
                       </CardDescription>
                     </div>
-                    <div className="flex items-end gap-2 flex-col">
+                    <div className="flex flex-col items-end gap-2">
                       <Button
                         variant="outline"
                         onClick={handleRefresh}
@@ -331,7 +331,7 @@ function SimRacing() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
                   <SimRacingBookingDataTable
                     data={bookedTransactions}
                     columns={SimRacingBookingColumn}

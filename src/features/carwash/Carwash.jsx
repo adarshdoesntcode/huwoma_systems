@@ -57,7 +57,7 @@ function Carwash() {
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
-      pollingInterval: 60000,
+      pollingInterval: 600000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
@@ -150,7 +150,7 @@ function Carwash() {
   } else if (isSuccess) {
     content = (
       <div className="space-y-4">
-        <div className="flex items-center justify-between gap-4 tracking-tight  sm:flex-row sm:items-center sm:mb-4">
+        <div className="flex items-center justify-between gap-4 tracking-tight sm:flex-row sm:items-center sm:mb-4">
           <div className="flex items-center gap-2 text-sm font-semibold uppercase text-primary">
             <Droplets className="w-4 h-4 text-muted-foreground" />
             Carwash
