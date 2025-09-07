@@ -19,6 +19,9 @@ export default defineConfig({
         orientation: "portrait",
         start_url: "/",
       },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
+      },
     }),
   ],
   resolve: {
