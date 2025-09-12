@@ -89,7 +89,7 @@ function CarwashNewBooking() {
           }
         }
         if (!res.error) {
-          setCoustomer(res.data.data);
+          setCoustomer(res.data.data.customer);
         }
       } catch (error) {
         toast({
@@ -102,12 +102,12 @@ function CarwashNewBooking() {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-xl mb-80 items-start gap-4 ">
+    <div className="grid items-start w-full max-w-xl gap-4 mx-auto mb-80 ">
       <NavBackButton buttonText={"Back"} navigateTo={-1} />
       {customer ? (
         <Card>
           <CardHeader className="p-4 sm:p-6">
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="w-12 h-12">
                   <AvatarFallback>
@@ -144,7 +144,7 @@ function CarwashNewBooking() {
             </CardTitle>
             <CardDescription>Customer for new booking</CardDescription>
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-2 sm:pt-0">
+          <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="grid gap-4"
@@ -206,8 +206,8 @@ function CarwashNewBooking() {
               )}
             </form>
           </CardContent>
-          <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
-            <div className="flex w-full items-center justify-between gap-4">
+          <CardFooter className="flex justify-end px-4 py-4 border-t sm:px-6">
+            <div className="flex items-center justify-between w-full gap-4">
               <div>
                 {newCustomer && (
                   <Button
@@ -289,13 +289,13 @@ const BookingTime = ({ customer }) => {
           Booking will terminate 15 mins after the deadline
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
-        <div className="flex flex-col sm:flex-row gap-2 mt-2 items-start justify-between sm:items-center">
+      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+        <div className="flex flex-col items-start justify-between gap-2 mt-2 sm:flex-row sm:items-center">
           <Label>Select Date</Label>
           <DateTimePicker date={date} setDate={setDate} />
         </div>
       </CardContent>
-      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+      <CardFooter className="flex justify-end px-4 py-4 border-t sm:px-6">
         <SubmitButton
           condition={isLoading}
           loadingText="Booking"
@@ -335,7 +335,7 @@ function DateTimePicker({ date, setDate }) {
             !date && "text-muted-foreground"
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
+          <CalendarIcon className="w-4 h-4 mr-2" />
           {date ? format(date, "PP   hh:mm a") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>

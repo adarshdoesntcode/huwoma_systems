@@ -76,6 +76,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useRole } from "@/hooks/useRole";
 import { ROLES_LIST } from "@/lib/config";
+import MergeCarwashCustomer from "./merge/MergeCarwashCustomer";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
@@ -234,7 +235,10 @@ function CarwashCustomerDetails() {
                     </span>
                   </CardDescription>
                 </div>
-                <div>
+                <div className="flex gap-2">
+                  {role === ROLES_LIST.SUPERADMIN && (
+                    <MergeCarwashCustomer targetCustomer={customer} />
+                  )}
                   {role !== ROLES_LIST.STAFF && (
                     <Button
                       variant="outline"

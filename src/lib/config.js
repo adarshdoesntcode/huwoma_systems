@@ -1,5 +1,8 @@
+// export const API_BASE_URL =
+//   import.meta.env.VITE_API_BASE_URL || "http://localhost:3500/api";
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3500/api";
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://b1300xw8-3500.inc1.devtunnels.ms/api";
 
 export const GOOGLE_CLIENT_ID =
   import.meta.env.GOOGLE_CLIENT_ID ||

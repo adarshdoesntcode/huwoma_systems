@@ -89,30 +89,30 @@ function AdminsSettings() {
   if (isLoading || isFetching) {
     content = (
       <div className="pb-2">
-        <div className="border-t py-3  flex gap-4">
-          <Skeleton className="h-10 w-1/6" />
-          <Skeleton className="h-10 w-2/6" />
-          <Skeleton className="h-10 w-1/6" />
-          <Skeleton className="h-10 w-2/6" />
+        <div className="flex gap-4 py-3 border-t">
+          <Skeleton className="w-1/6 h-10" />
+          <Skeleton className="w-2/6 h-10" />
+          <Skeleton className="w-1/6 h-10" />
+          <Skeleton className="w-2/6 h-10" />
         </div>
-        <div className="border-t py-3  flex gap-4">
-          <Skeleton className="h-10 w-1/6" />
-          <Skeleton className="h-10 w-2/6" />
-          <Skeleton className="h-10 w-1/6" />
-          <Skeleton className="h-10 w-2/6" />
+        <div className="flex gap-4 py-3 border-t">
+          <Skeleton className="w-1/6 h-10" />
+          <Skeleton className="w-2/6 h-10" />
+          <Skeleton className="w-1/6 h-10" />
+          <Skeleton className="w-2/6 h-10" />
         </div>
-        <div className="border-t py-3  flex gap-4">
-          <Skeleton className="h-10 w-1/6" />
-          <Skeleton className="h-10 w-2/6" />
-          <Skeleton className="h-10 w-1/6" />
-          <Skeleton className="h-10 w-2/6" />
+        <div className="flex gap-4 py-3 border-t">
+          <Skeleton className="w-1/6 h-10" />
+          <Skeleton className="w-2/6 h-10" />
+          <Skeleton className="w-1/6 h-10" />
+          <Skeleton className="w-2/6 h-10" />
         </div>
       </div>
     );
   } else if (isSuccess) {
     if (!data) {
       content = (
-        <div className="h-20 text-xs flex items-center justify-center text-muted-foreground">
+        <div className="flex items-center justify-center h-20 text-xs text-muted-foreground">
           No Admins
         </div>
       );
@@ -124,10 +124,10 @@ function AdminsSettings() {
               <TableRow>
                 <TableHead className="hidden sm:table-cell">SN</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead className="pl-1  hidden sm:table-cell">
+                <TableHead className="hidden pl-1 sm:table-cell">
                   Contact
                 </TableHead>
-                <TableHead className="text-center hidden sm:table-cell">
+                <TableHead className="hidden text-center sm:table-cell">
                   Role
                 </TableHead>
                 <TableHead className="text-right">Action</TableHead>
@@ -144,13 +144,13 @@ function AdminsSettings() {
                       setDetailsOpen(true);
                     }}
                   >
-                    <TableCell className="p-1 pl-4 hidden sm:table-cell">
+                    <TableCell className="hidden p-1 pl-4 sm:table-cell">
                       {index + 1}
                     </TableCell>
-                    <TableCell className="font-medium p-4 ">
+                    <TableCell className="p-4 font-medium ">
                       {admin.fullname}
                     </TableCell>
-                    <TableCell className="sm:p-1 p-4  hidden sm:table-cell">
+                    <TableCell className="hidden p-4 sm:p-1 sm:table-cell">
                       <div>
                         <p className="text-xs">{admin.phoneNumber}</p>
                         <p className="text-xs text-muted-foreground">
@@ -159,7 +159,7 @@ function AdminsSettings() {
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-center p-1 hidden sm:table-cell">
+                    <TableCell className="hidden p-1 text-center sm:table-cell">
                       <Badge
                         variant={
                           roleByCode(
@@ -174,8 +174,8 @@ function AdminsSettings() {
                       </Badge>
                     </TableCell>
 
-                    <TableCell className="text-right p-1">
-                      <div className="flex gap-2 items-center justify-end">
+                    <TableCell className="p-1 text-right">
+                      <div className="flex items-center justify-end gap-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -222,7 +222,7 @@ function AdminsSettings() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">{content}</CardContent>
+      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">{content}</CardContent>
       {deleteOpen && (
         <ConfirmDelete
           setDeleteOpen={setDeleteOpen}
@@ -250,7 +250,7 @@ function AdminsSettings() {
         />
       )}
 
-      <CardFooter className="border-t px-4 sm:px-6  py-4 flex justify-end">
+      <CardFooter className="flex justify-end px-4 py-4 border-t sm:px-6">
         <Button onClick={() => setCreateOpen(true)}>Add Admin</Button>
       </CardFooter>
     </Card>
@@ -377,7 +377,7 @@ function CreateAdmin({ createOpen, setCreateOpen }) {
         <div className="max-h-[50vh] overflow-y-auto ">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-2 px-2 pb-2"
+            className="px-2 pb-2 space-y-2"
             id="admin-form"
           >
             <div className="space-y-1">
@@ -461,8 +461,8 @@ function CreateAdmin({ createOpen, setCreateOpen }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Role</SelectLabel>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
                     <SelectItem value="SUPERADMIN">Super Admin</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
                     <SelectItem value="STAFF">Staff</SelectItem>
                   </SelectGroup>
                 </SelectContent>
@@ -556,7 +556,7 @@ function CreateAdmin({ createOpen, setCreateOpen }) {
         <DialogFooter>
           {isSubmitting ? (
             <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Creating
             </Button>
           ) : (
@@ -620,7 +620,7 @@ function ConfirmDelete({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           {isLoading ? (
             <Button variant="destructive" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Deleting
             </Button>
           ) : (
@@ -768,8 +768,9 @@ function EditAdmin({ selectedAdmin, editOpen, setEditOpen }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Role</SelectLabel>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
                     <SelectItem value="SUPERADMIN">Super Admin</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="STAFF">Staff</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -778,7 +779,7 @@ function EditAdmin({ selectedAdmin, editOpen, setEditOpen }) {
             <DialogFooter>
               {isSubmitting ? (
                 <Button disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Saving
                 </Button>
               ) : (

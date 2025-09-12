@@ -57,7 +57,7 @@ function Carwash() {
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
-      pollingInterval: 60000,
+      pollingInterval: 600000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,

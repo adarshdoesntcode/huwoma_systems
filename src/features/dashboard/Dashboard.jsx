@@ -30,6 +30,8 @@ import { format, isSameDay } from "date-fns";
 import PaymentBreakdown from "./PaymentBreakdown";
 import { useRole } from "@/hooks/useRole";
 import { ROLES_LIST } from "@/lib/config";
+import Unauthorized from "@/components/Unauthorized";
+import { isMobile } from "react-device-detect";
 
 function calculateChange(today, yesterday, format = "percentage") {
   if (yesterday === 0) {
@@ -81,7 +83,7 @@ export function Dashboard() {
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetDashboardDataQuery(undefined, {
-      pollingInterval: 60000,
+      pollingInterval: 600000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
@@ -376,94 +378,97 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </div>
-        <div className="grid grid-cols-12 gap-4">
-          <Card className="col-span-12">
-            <CardHeader className="flex flex-col items-stretch p-0 space-y-0 border-b sm:flex-row ">
-              <div className="flex flex-col justify-center flex-1 gap-1 px-6 py-5 sm:py-6">
-                <CardTitle className="text-xl font-2xl">
-                  Customer Traffic
-                </CardTitle>
-                <CardDescription className="text-xs sm:text-xs">
-                  Showing total customers count over the time
-                </CardDescription>
-              </div>
-              <div className="flex">
-                {["carwash", "simracing", "parking"].map((key) => {
-                  const chart = key;
-                  return (
-                    <button
-                      key={chart}
-                      data-active={activeChart === chart}
-                      className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left odd:border-x   data-[active=true]:bg-muted/50  sm:border-t-0 sm:px-8 sm:py-6"
-                      onClick={() => setActiveChart(chart)}
-                    >
-                      <span className="text-xs text-muted-foreground text-nowrap">
-                        {chartConfig[chart].label}
-                      </span>
-                      <span className="text-lg font-bold leading-none sm:text-3xl ">
-                        {total[key].toLocaleString()}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-6">
-              <ChartContainer
-                config={chartConfig}
-                className="aspect-auto h-[250px] w-full"
-              >
-                <LineChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 12,
-                    right: 12,
-                  }}
+        {!isMobile && (
+          <div className="grid grid-cols-12 gap-4">
+            <Card className="col-span-12">
+              <CardHeader className="flex flex-col items-stretch p-0 space-y-0 border-b sm:flex-row ">
+                <div className="flex flex-col justify-center flex-1 gap-1 px-6 py-5 sm:py-6">
+                  <CardTitle className="text-xl font-2xl">
+                    Customer Traffic
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-xs">
+                    Showing total customers count over the time
+                  </CardDescription>
+                </div>
+                <div className="flex">
+                  {["carwash", "simracing", "parking"].map((key) => {
+                    const chart = key;
+                    return (
+                      <button
+                        key={chart}
+                        data-active={activeChart === chart}
+                        className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left odd:border-x   data-[active=true]:bg-muted/50  sm:border-t-0 sm:px-8 sm:py-6"
+                        onClick={() => setActiveChart(chart)}
+                      >
+                        <span className="text-xs text-muted-foreground text-nowrap">
+                          {chartConfig[chart].label}
+                        </span>
+                        <span className="text-lg font-bold leading-none sm:text-3xl ">
+                          {total[key].toLocaleString()}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6">
+                <ChartContainer
+                  config={chartConfig}
+                  className="aspect-auto h-[250px] w-full"
                 >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    minTickGap={32}
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      });
+                  <LineChart
+                    accessibilityLayer
+                    data={chartData}
+                    margin={{
+                      left: 12,
+                      right: 12,
                     }}
-                  />
+                  >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      minTickGap={32}
+                      tickFormatter={(value) => {
+                        const date = new Date(value);
+                        return date.toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        });
+                      }}
+                    />
 
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        className="w-[150px]"
-                        nameKey="views"
-                        labelFormatter={(value) => {
-                          return new Date(value).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          });
-                        }}
-                      />
-                    }
-                  />
-                  <Line
-                    dataKey={activeChart}
-                    type="natural"
-                    stroke={`var(--color-${activeChart})`}
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          className="w-[150px]"
+                          nameKey="views"
+                          labelFormatter={(value) => {
+                            return new Date(value).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            });
+                          }}
+                        />
+                      }
+                    />
+                    <Line
+                      dataKey={activeChart}
+                      type="natural"
+                      stroke={`var(--color-${activeChart})`}
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         <div className="grid gap-4 md:gap-8 xl:grid-cols-3">
           <Card className="xl:col-span-2">
             <CardHeader className="p-4 sm:p-6 sm:pb-2">

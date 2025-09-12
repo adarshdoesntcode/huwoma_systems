@@ -45,7 +45,7 @@ function Parking() {
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetParkingTransactionsQuery(undefined, {
-      pollingInterval: 60000,
+      pollingInterval: 600000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,

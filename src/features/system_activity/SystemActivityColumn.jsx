@@ -28,7 +28,7 @@ export const SystemActivityColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden md:table-cell px-1"
+          className="hidden px-1 md:table-cell"
         />
       );
     },
@@ -52,10 +52,17 @@ export const SystemActivityColumn = [
     ),
     cell: ({ row }) => {
       const admin = row.original?.activityBy?.fullname;
+      const module = row?.original?.systemModule;
 
       return (
         <TableCell className="p-0 hidden md:table-cell px-4 py-1.5 text-nowrap">
-          <div className=" text-xs">{admin || "Unknown"}</div>
+          <div className="text-xs ">
+            {admin
+              ? admin
+              : module === "SimRacing Transaction"
+              ? "Unknown"
+              : "POS App"}
+          </div>
         </TableCell>
       );
     },
@@ -77,7 +84,7 @@ export const SystemActivityColumn = [
       <DataTableColumnHeader
         column={column}
         title={"Activity"}
-        className="hidden lg:table-cell px-1"
+        className="hidden px-1 lg:table-cell"
       />
     ),
     cell: ({ row }) => {
@@ -145,7 +152,7 @@ export const SystemActivityColumn = [
       <DataTableColumnHeader
         column={column}
         title={"Agent"}
-        className="hidden 2xl:table-cell px-1"
+        className="hidden px-1 2xl:table-cell"
       />
     ),
     cell: ({ row }) => {
@@ -172,13 +179,13 @@ export const SystemActivityColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden xl:table-cell px-1"
+          className="hidden px-1 xl:table-cell"
         />
       );
     },
     cell: ({ row }) => {
       return (
-        <TableCell className="text-xs hidden xl:table-cell p-0 px-4">
+        <TableCell className="hidden p-0 px-4 text-xs xl:table-cell">
           {row.original?.activityIpAddress}
         </TableCell>
       );

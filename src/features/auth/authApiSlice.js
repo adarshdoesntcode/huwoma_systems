@@ -34,8 +34,18 @@ export const authApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getCheckoutEndpoint: builder.query({
+      query: (credentials) => ({
+        url: `/qr/checkoutendpoint/${credentials}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useSignupMutation, useDefenseLoginMutation } =
-  authApiSlice;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useDefenseLoginMutation,
+  useGetCheckoutEndpointQuery,
+} = authApiSlice;
