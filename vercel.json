@@ -1,14 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/:match*",
-      "destination": "https://huwoma-backend.vercel.app/api/:match*"
-    }
-  ],
-  "routes": [
+      "source": "/api/(.*)",
+      "destination": "https://huwoma-backend.vercel.app/api/$1"
+    },
     {
-      "src": "^/(?!api).*",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
