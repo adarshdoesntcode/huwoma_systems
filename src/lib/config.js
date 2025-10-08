@@ -11,7 +11,7 @@ export const GOOGLE_CLIENT_ID =
   import.meta.env.GOOGLE_CLIENT_ID ||
   "271125217320-opum5ph4vtvl8uok3dfau65k8v4udfb7.apps.googleusercontent.com";
 
-export const GOOGLE_OAUTH_REDIRECT_URL = `${API_BASE_URL}/oauth/google`;
+export const GOOGLE_OAUTH_REDIRECT_URL = `${BACKEND_BASE_URL}/oauth/google`;
 
 export const ROLES_LIST = {
   ADMIN: 4200,
