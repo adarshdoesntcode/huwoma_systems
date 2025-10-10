@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/oauth/google",
+      "destination": "https://huwoma-backend.vercel.app/api/oauth/google"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://huwoma-backend.vercel.app/api/:path*"
     },
