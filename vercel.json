@@ -1,8 +1,8 @@
 {
   "redirects": [
     {
-      "source": "/api/oauth/google",
-      "destination": "https://huwoma-backend.vercel.app/api/oauth/google",
+      "source": "/api/oauth/google/:path*",
+      "destination": "https://huwoma-backend.vercel.app/api/oauth/google/:path*",
       "permanent": false
     }
   ],
