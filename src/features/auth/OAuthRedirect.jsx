@@ -1,13 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import PersistLoader from "@/components/PersistLoader";
 import { API_BASE_URL } from "@/lib/config";
+import GoogleLoader from "@/components/GoogleLoader";
 
 function OAuthRedirect() {
   const location = useLocation();
   const navigate = useNavigate();
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const handleOAuth = async () => {
       try {
         const response = await fetch(
@@ -19,19 +23,20 @@ function OAuthRedirect() {
         );
 
         if (response.ok) {
-          navigate("/");
+          navigate("/", { replace: true });
         } else {
-          navigate("/login");
+          navigate("/login", { replace: true });
         }
       } catch (err) {
-        navigate("/login");
+        console.error("OAuth redirect failed:", err);
+        navigate("/login", { replace: true });
       }
     };
 
     handleOAuth();
   }, [location.search, navigate]);
 
-  return <PersistLoader />;
+  return <GoogleLoader />;
 }
 
 export default OAuthRedirect;
