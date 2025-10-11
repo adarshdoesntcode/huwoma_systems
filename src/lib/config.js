@@ -1,17 +1,14 @@
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3500/api";
-// export const API_BASE_URL =
-//   import.meta.env.VITE_API_BASE_URL ||
-//   "https://b1300xw8-3500.inc1.devtunnels.ms/api";
 
-export const BACKEND_BASE_URL =
-  import.meta.env.VITE_BACKEND_BASE_URL || "http://localhost:3500/api";
+export const CLIENT_BASE_URL =
+  import.meta.env.VITE_CLIENT_BASE_URL || "http://localhost:5173";
 
 export const GOOGLE_CLIENT_ID =
   import.meta.env.GOOGLE_CLIENT_ID ||
   "271125217320-opum5ph4vtvl8uok3dfau65k8v4udfb7.apps.googleusercontent.com";
 
-export const GOOGLE_OAUTH_REDIRECT_URL = `${API_BASE_URL}/oauth/google`;
+export const GOOGLE_OAUTH_REDIRECT_URL = `${CLIENT_BASE_URL}/oauth/google`;
 
 export const ROLES_LIST = {
   ADMIN: 4200,

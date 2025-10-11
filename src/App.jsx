@@ -23,7 +23,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/api/oauth/google",
+    path: "/oauth/google",
     element: <OAuthRedirect />,
   },
   {
