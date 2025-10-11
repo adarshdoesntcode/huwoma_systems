@@ -14,6 +14,7 @@ import PrivateRoutes from "./routes/PrivateRoutes";
 import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClientStartRace";
 import Error from "./components/error/Error";
 import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
+import OAuthRedirect from "./features/auth/OAuthRedirect";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
     element: <Login />,
   },
 
+  {
+    path: "/api/oauth/google",
+    element: <OAuthRedirect />,
+  },
   {
     element: (
       <ProtectedRoute
