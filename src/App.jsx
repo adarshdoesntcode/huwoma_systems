@@ -17,6 +17,7 @@ import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientM
 import { OfflineAlert } from "./components/OfflineAlert";
 import VehicleDetails from "./features/garage/tabs/vehicle-list/VehicleDetails";
 import PublicVehicleDetails from "./features/garage/tabs/vehicle-list/PublicVehicleDetails";
+import OAuthRedirect from "./features/auth/OAuthRedirect";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     element: <Login />,
   },
 
+  {
+    path: "/oauth/google",
+    element: <OAuthRedirect />,
+  },
   {
     element: (
       <ProtectedRoute
