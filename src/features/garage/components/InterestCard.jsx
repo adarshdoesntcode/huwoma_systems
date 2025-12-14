@@ -77,7 +77,7 @@ export const InterestCard = ({
             </div>
           ) : (
             <div className="pt-1 text-xs text-muted-foreground">
-              Interest ID: {interest._id}
+              Preference ID: {interest._id}
             </div>
           )}
 

@@ -64,24 +64,24 @@ function NewBuyerInterest() {
       hasInterest: hasBuyerInterest,
       info: hasBuyerInterest
         ? {
-            budget: {
-              min: data.min,
-              max: data.max,
+          budget: {
+            min: data.min,
+            max: data.max,
+          },
+          criteria: {
+            categories: selectedInterestCategories,
+            makes: selectedInterestMakes,
+            transmissions: selectedInterestTransmissions,
+            driveTypes: selectedInterestDriveTypes,
+            fuelTypes: selectedInterestFuelTypes,
+            models: selectedInterestModels,
+            mileageMax: data.mileageMax,
+            year: {
+              min: data.from,
+              max: data.to,
             },
-            criteria: {
-              categories: selectedInterestCategories,
-              makes: selectedInterestMakes,
-              transmissions: selectedInterestTransmissions,
-              driveTypes: selectedInterestDriveTypes,
-              fuelTypes: selectedInterestFuelTypes,
-              models: selectedInterestModels,
-              mileageMax: data.mileageMax,
-              year: {
-                min: data.from,
-                max: data.to,
-              },
-            },
-          }
+          },
+        }
         : {},
     });
 
@@ -130,10 +130,10 @@ function NewBuyerInterest() {
           <div className="flex items-end justify-between px-1">
             <div>
               <CardTitle className="text-lg sm:text-xl">
-                New Buyer Interest Form
+                New Buyer Preference Form
               </CardTitle>
               <CardDescription className="text-xs sm:text-sm">
-                Add a new buyer interest to your garage
+                Add a new buyer preference to your garage
               </CardDescription>
             </div>
             <Steps steps={2} current={formStep} />

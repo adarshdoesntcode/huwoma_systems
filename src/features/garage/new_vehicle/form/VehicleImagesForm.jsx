@@ -50,7 +50,7 @@ function VehicleImagesForm({
     if (filesToUpload.length === 0) {
       const finalUrls = managedImages.map((img) => img.urls);
       setFinalImageUrls(finalUrls);
-      setFormStep(3);
+      setFormStep(4);
       return;
     }
 
@@ -93,7 +93,7 @@ function VehicleImagesForm({
 
       const finalUrls = fullyUpdatedImages.map((img) => img.urls);
       setFinalImageUrls(finalUrls);
-      setFormStep(3);
+      setFormStep(4);
     } catch (error) {
       toast({
         title: "Error",

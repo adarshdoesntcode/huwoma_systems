@@ -16,9 +16,16 @@ import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import { useVehicleFilterFormConfig } from "./useVehicleFilterFormConfig";
 import FormItems from "./form_items";
 import { Filter } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const buildVehicleListingQuery = (payload) => {
-  const query = { status: "Available" };
+  const query = { status: payload.status || "Available" };
 
   const { budget, criteria } = payload;
 
@@ -119,6 +126,7 @@ function VehicleFilterForm({
 
   const onSubmit = async (data) => {
     const payload = cleanObject({
+      status: data.status || "Available",
       budget: {
         min: data.min,
         max: data.max,
@@ -191,6 +199,7 @@ function VehicleFilterForm({
     setSelectedInterestDriveTypes([]);
     setSelectedInterestModels([]);
     reset({
+      status: "Available",
       min: "",
       max: "",
       mileageMax: "",
@@ -212,6 +221,7 @@ function VehicleFilterForm({
     ]);
     setQuery({
       status: "Available",
+      isVerified: true,
     });
   };
 
@@ -222,6 +232,24 @@ function VehicleFilterForm({
         onSubmit={handleSubmit(onSubmit)}
         className="max-h-[55dvh] sm:max-h-[80dvh] overflow-y-scroll px-2"
       >
+        {/* Status Filter */}
+        <div className="mt-4 mb-2">
+          <Label htmlFor="status" className="mb-2 block">Status</Label>
+          <Select
+            value={form.watch("status") || "Available"}
+            onValueChange={(value) => form.setValue("status", value)}
+          >
+            <SelectTrigger id="status">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Available">Available</SelectItem>
+              <SelectItem value="Sold">Sold</SelectItem>
+              <SelectItem value="Cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <Accordion type="multiple">
           <AccordionItem value="budget">
             <AccordionTrigger>

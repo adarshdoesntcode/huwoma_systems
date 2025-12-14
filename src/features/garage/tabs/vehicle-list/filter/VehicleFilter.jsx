@@ -23,7 +23,7 @@ function VehicleFilter({ query, setQuery }) {
 
   const form = useForm();
 
-  const initialQuery = { status: "Available" };
+  const initialQuery = { status: "Available", isVerified: true };
 
   const areFiltersActive = !isEqual(query, initialQuery);
 

@@ -172,7 +172,7 @@ function BuyerInterestForm({
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5 ">
                 <h3 className="text-lg font-semibold">
-                  Exchange Interest Form
+                  Buyer Preference Form
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {hasBuyerInterest
@@ -183,6 +183,7 @@ function BuyerInterestForm({
 
               <Switch
                 disabled={true}
+                className="hidden"
                 checked={hasBuyerInterest}
                 onCheckedChange={(value) => {
                   setHasBuyerInterest(value);

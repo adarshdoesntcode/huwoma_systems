@@ -26,9 +26,9 @@ function BuyerInterests({ tab }) {
   const queryArgs =
     tab === "interest"
       ? {
-          pageModel: { currentPage, pageSize: Number(pageSize) },
-          reportModel: query,
-        }
+        pageModel: { currentPage, pageSize: Number(pageSize) },
+        reportModel: query,
+      }
       : skipToken;
 
   const { isLoading, isSuccess, isError, isFetching, error, refetch, data } =
@@ -70,10 +70,10 @@ function BuyerInterests({ tab }) {
           <div className="py-8 text-center">
             <MessageSquareHeart className="w-16 h-16 mx-auto mb-4 text-gray-400" />
             <h3 className="mb-2 text-sm font-medium text-gray-900">
-              No interests found
+              No preferences found
             </h3>
             <p className="text-xs text-gray-500">
-              There are no buyer interests available at the moment.
+              There are no preferences available at the moment.
             </p>
           </div>
         )}
@@ -93,10 +93,10 @@ function BuyerInterests({ tab }) {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-xl sm:text-2xl">
-              Buyer Interests
+              Buyer Preferences
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Vehicle interests of potential buyers
+              Vehicle preferences of potential buyers
             </CardDescription>
           </div>
           <div className="flex items-end gap-2">
@@ -110,7 +110,7 @@ function BuyerInterests({ tab }) {
                 className={`w-4 h-4 ${isFetching && "animate-spin"}`}
               />
             </Button>
-            <DynamicFilterWrapper
+            {/* <DynamicFilterWrapper
               trigger={
                 <Button variant="outline" aria-label="Toggle filters">
                   <span className="sr-only sm:not-sr-only">Filter</span>
@@ -118,7 +118,7 @@ function BuyerInterests({ tab }) {
                 </Button>
               }
               content={<></>}
-            />
+            /> */}
           </div>
         </div>
       </CardHeader>

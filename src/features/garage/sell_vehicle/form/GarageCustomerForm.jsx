@@ -185,9 +185,9 @@ function GarageCustomerForm({
         name,
         contactNumber,
       });
-      setFormStep(1);
+      setFormStep(2);
     } else if (selectedSeller) {
-      setFormStep(1);
+      setFormStep(2);
     }
   };
 

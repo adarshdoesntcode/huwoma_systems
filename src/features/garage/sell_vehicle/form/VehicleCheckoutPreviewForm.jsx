@@ -41,10 +41,7 @@ const VehicleCheckoutMinimalForm = ({
 }) => {
   const commissionAmount = watch("commissionAmount") || 0;
   const finalSellingPrice = watch("finalSellingPrice");
-  console.log(
-    "🚀 ~ VehicleCheckoutMinimalForm ~ finalSellingPrice:",
-    finalSellingPrice
-  );
+
 
   useEffect(() => {
     if (selectedVehicle.askingPrice) {

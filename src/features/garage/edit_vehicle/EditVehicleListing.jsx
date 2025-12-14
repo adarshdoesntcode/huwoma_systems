@@ -33,6 +33,7 @@ function EditVehicleListing() {
   const [selectedDriveType, setSelectedDriveType] = useState("");
   const [managedImages, setManagedImages] = useState([]);
   const [finalImageUrls, setFinalImageUrls] = useState([]);
+  const [selectedListingType, setSelectedListingType] = useState("");
 
   const [formStep, setFormStep] = useState(1);
 
@@ -63,6 +64,7 @@ function EditVehicleListing() {
       setSelectedTransmission(vehicle.transmission);
       setSelectedFuelType(vehicle.fuelType);
       setSelectedDriveType(vehicle.driveType);
+      setSelectedListingType(vehicle.listingType || "");
       setManagedImages(
         vehicle.photos.map((image) => ({
           urls: {
@@ -85,10 +87,11 @@ function EditVehicleListing() {
       transmission: selectedTransmission,
       fuelType: selectedFuelType,
       driveType: selectedDriveType,
+      listingType: selectedListingType,
       model: data.model,
       variant: data.variant,
       year: data.year,
-      numberPlate: data.numberPlate,
+      numberPlate: data?.numberPlate || "NO PLATE",
       mileage: data.mileage,
       askingPrice: data.askingPrice,
       engineCC: data.engineCC,
@@ -162,6 +165,8 @@ function EditVehicleListing() {
                 setSelectedFuelType={setSelectedFuelType}
                 selectedDriveType={selectedDriveType}
                 setSelectedDriveType={setSelectedDriveType}
+                selectedListingType={selectedListingType}
+                setSelectedListingType={setSelectedListingType}
                 setFormStep={setFormStep}
                 errors={errors}
                 reset={reset}
@@ -191,6 +196,7 @@ function EditVehicleListing() {
                 selectedTransmission={selectedTransmission}
                 selectedFuelType={selectedFuelType}
                 selectedDriveType={selectedDriveType}
+                selectedListingType={selectedListingType}
                 finalImageUrls={finalImageUrls}
               />
             )}

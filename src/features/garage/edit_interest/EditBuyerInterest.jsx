@@ -130,10 +130,10 @@ function EditBuyerInterest() {
           <div className="flex items-end justify-between px-1">
             <div>
               <CardTitle className="text-lg sm:text-xl">
-                Edit Buyer Interest Form
+                Edit Buyer Preference Form
               </CardTitle>
               <CardDescription className="text-xs sm:text-sm">
-                Edit the buyer interest in your garage
+                Edit the buyer preference in your garage
               </CardDescription>
             </div>
           </div>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
+import QRCode from "react-qr-code";
 
 function ShareVehicle({ shareId, setShowShare, setShareId, showShare }) {
   const [isCopied, setIsCopied] = useState(false);
@@ -24,7 +25,7 @@ function ShareVehicle({ shareId, setShowShare, setShareId, showShare }) {
     if (!shareId) return;
 
     await navigator.clipboard.writeText(
-      `${window.location.origin}/garage/vehicle-details/${shareId}`
+      `${window.location.origin}/garagebyhuwoma/${shareId}`
     );
 
     setIsCopied(true);
@@ -39,10 +40,13 @@ function ShareVehicle({ shareId, setShowShare, setShareId, showShare }) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Copy the shareable link</AlertDialogTitle>
-          <AlertDialogDescription className="p-3 text-sm text-center break-words border rounded-md bg-muted">
-            {`${window.location.origin}/garage/vehicle-details/${shareId}`}
+          <AlertDialogDescription className="p-3 text-sm text-center break-all border rounded-md bg-muted">
+            {`${window.location.origin}/garagebyhuwoma/${shareId}`}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <div className="flex justify-center">
+          <QRCode size={128} className="border rounded-md p-1 shadow-sm" value={`${window.location.origin}/garagebyhuwoma/${shareId}`} />
+        </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button onClick={handleCopy} disabled={isCopied}>

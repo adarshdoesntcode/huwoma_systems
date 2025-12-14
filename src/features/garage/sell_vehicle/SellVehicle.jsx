@@ -72,7 +72,7 @@ function SellVehicle() {
         contactNumber: selectedBuyer.contactNumber,
       },
       vehicleId: selectedVehicle._id,
-      interestId: selectedInterest._id || null,
+      interestId: selectedInterest?._id || null,
       sellingPrice: data.finalSellingPrice,
       commissionAmount: data.commissionAmount || 0,
     };
@@ -118,7 +118,7 @@ function SellVehicle() {
                 Fill the form to sell the vehicle
               </CardDescription>
             </div>
-            <Steps steps={3} current={formStep} />
+            <Steps steps={2} current={formStep} />
           </div>
         </CardHeader>
         <CardContent className="p-0 pt-4">

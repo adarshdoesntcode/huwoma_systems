@@ -16,6 +16,7 @@ function PreviewVehicleListingForm({
   selectedTransmission,
   selectedDriveType,
   selectedFuelType,
+  selectedListingType,
   selectedInterestMakes,
   selectedInterestCategories,
   selectedInterestTransmissions,
@@ -175,6 +176,14 @@ function PreviewVehicleListingForm({
                 {selectedFuelType || "-"}
               </div>
             </div>
+            <div className="flex items-center justify-between ">
+              <div className="text-xs font-medium text-muted-foreground">
+                Listing Type
+              </div>
+              <div className="text-xs font-medium">
+                {selectedListingType || "-"}
+              </div>
+            </div>
           </div>
           <div className="col-span-2 sm:col-span-1">
             {formData.description && (
@@ -197,8 +206,8 @@ function PreviewVehicleListingForm({
               <div className="text-sm font-semibold">
                 {formData.askingPrice
                   ? `Rs. ${Number(formData?.askingPrice)?.toLocaleString(
-                      "en-IN"
-                    )}`
+                    "en-IN"
+                  )}`
                   : "-"}
               </div>
             </div>
@@ -224,19 +233,19 @@ function PreviewVehicleListingForm({
                     <div className="text-xs font-medium">
                       {formData.min && formData.max
                         ? `Rs ${Number(formData.min).toLocaleString(
-                            "en-IN"
-                          )} - Rs ${Number(formData.max).toLocaleString(
-                            "en-IN"
-                          )}`
+                          "en-IN"
+                        )} - Rs ${Number(formData.max).toLocaleString(
+                          "en-IN"
+                        )}`
                         : formData.min
-                        ? `From Rs ${Number(formData.min).toLocaleString(
+                          ? `From Rs ${Number(formData.min).toLocaleString(
                             "en-IN"
                           )}`
-                        : formData.max
-                        ? `Up to Rs ${Number(formData.max).toLocaleString(
-                            "en-IN"
-                          )}`
-                        : "-"}
+                          : formData.max
+                            ? `Up to Rs ${Number(formData.max).toLocaleString(
+                              "en-IN"
+                            )}`
+                            : "-"}
                     </div>
                   </div>
                   {selectedInterestCategories.length > 0 && (
@@ -281,10 +290,10 @@ function PreviewVehicleListingForm({
                         {formData.from && formData.to
                           ? `${formData.from} - ${formData.to}`
                           : formData.from
-                          ? `${formData.from} - Present`
-                          : formData.to
-                          ? `Untill ${formData.to}`
-                          : "-"}
+                            ? `${formData.from} - Present`
+                            : formData.to
+                              ? `Untill ${formData.to}`
+                              : "-"}
                       </div>
                     </div>
                   )}
@@ -297,8 +306,8 @@ function PreviewVehicleListingForm({
                       <div className="text-xs font-medium">
                         {formData.mileageMax
                           ? `${Number(formData.mileageMax).toLocaleString(
-                              "en-IN"
-                            )} kms`
+                            "en-IN"
+                          )} kms`
                           : "-"}
                       </div>
                     </div>
@@ -348,7 +357,7 @@ function PreviewVehicleListingForm({
               variant="outline"
               type="button"
               onClick={() => {
-                setFormStep(3);
+                setFormStep(2);
               }}
             >
               <ChevronLeft className="w-4 h-4 mr-2" /> Back

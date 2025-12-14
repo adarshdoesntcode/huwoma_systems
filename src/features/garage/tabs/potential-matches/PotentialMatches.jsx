@@ -181,7 +181,7 @@ function PotentialMatches() {
                     </h4>
                     <div>
                       {Array.isArray(matchingVehicles) &&
-                      matchingVehicles.length > 0 ? (
+                        matchingVehicles.length > 0 ? (
                         <div
                           className="relative w-full overflow-x-auto scrollbar-thin scroll-smooth  min-h-[425px]"
                           style={{ maxWidth: "100%" }}
@@ -235,7 +235,7 @@ function PotentialMatches() {
               Potential Matches
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Best interest and vehicle matches in the system.
+              Best buyer preference and vehicle matches in the system.
             </CardDescription>
           </div>
 
@@ -271,9 +271,8 @@ function PotentialMatches() {
               aria-label="Refresh potential matches"
             >
               <RefreshCcw
-                className={`w-4 h-4 ${
-                  isLoading || isFetching ? "animate-spin" : ""
-                }`}
+                className={`w-4 h-4 ${isLoading || isFetching ? "animate-spin" : ""
+                  }`}
               />
             </Button>
           </div>

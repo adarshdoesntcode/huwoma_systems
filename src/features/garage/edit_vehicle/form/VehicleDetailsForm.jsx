@@ -3,10 +3,16 @@ import { Button } from "@/components/ui/button";
 import { useGetVehicleConfigQuery } from "../../garageApiSlice";
 import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import FormItems from "./form_items";
 import { useFormConfig } from "./useFormConfig";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function VehicleDetailsForm({
   register,
@@ -20,6 +26,8 @@ function VehicleDetailsForm({
   setSelectedFuelType,
   selectedDriveType,
   setSelectedDriveType,
+  selectedListingType,
+  setSelectedListingType,
   setFormStep,
   errors,
   setError,
@@ -36,6 +44,7 @@ function VehicleDetailsForm({
   const [transmissionData, setTransmissionData] = useState([]);
   const [fuelTypeData, setFuelTypeData] = useState([]);
   const [driveTypeData, setDriveTypeData] = useState([]);
+  const [listingTypeData, setListingTypeData] = useState(["REFERRAL", "DIRECT"]);
 
   useEffect(() => {
     if (data) {
@@ -65,7 +74,10 @@ function VehicleDetailsForm({
     fuelTypeData,
     selectedDriveType,
     setSelectedDriveType,
-    driveTypeData
+    driveTypeData,
+    selectedListingType,
+    setSelectedListingType,
+    listingTypeData
   );
 
   const handleReset = () => {
@@ -74,12 +86,14 @@ function VehicleDetailsForm({
     setSelectedTransmission("");
     setSelectedFuelType("");
     setSelectedDriveType("");
+    setSelectedListingType("");
     clearErrors([
       "make",
       "category",
       "transmission",
       "fuelType",
       "driveType",
+      "listingType",
       "model",
       "year",
       "numberPlate",
@@ -121,6 +135,11 @@ function VehicleDetailsForm({
         value: selectedDriveType,
         message: "Please select a drive type",
       },
+      {
+        name: "listingType",
+        value: selectedListingType,
+        message: "Please select a listing type",
+      },
     ];
 
     let hasError = false;
@@ -159,6 +178,10 @@ function VehicleDetailsForm({
     }
   };
 
+  const listingInfoConfig = formConfig.filter(
+    (config) => config.section === "listing-info"
+  );
+
   const vehicleInfoConfig = formConfig.filter(
     (config) => config.section === "vehicle-info"
   );
@@ -191,6 +214,27 @@ function VehicleDetailsForm({
             <p className="text-sm text-muted-foreground">
               Complete the form below about the vehicle you are selling
             </p>
+          </div>
+          <h3 className="flex items-center gap-2 pb-2 font-semibold border-b">
+            Listing Information
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs" delayDuration={0}>
+                  <div className="space-y-2 text-sm ">
+                    <p><strong>Direct:</strong> Vehicle owned by seller, sold directly through your garage.</p>
+                    <p><strong>Referral:</strong> Vehicle referred by someone else, you facilitate the sale.</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </h3>
+          <div className="grid grid-cols-3 gap-4">
+            {listingInfoConfig.map((config, index) => (
+              <FormItems key={index} type={config.type} props={config} />
+            ))}
           </div>
           <h3 className="pb-2 font-semibold border-b">Information</h3>
           <div className="grid grid-cols-3 gap-4">

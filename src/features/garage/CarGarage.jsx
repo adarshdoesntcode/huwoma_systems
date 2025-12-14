@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { KeySquare, PlusCircle, ReceiptText, Users } from "lucide-react";
+import { KeySquare, Link, PlusCircle, QrCode, ReceiptText, Users } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useIsSuper } from "@/hooks/useSuper";
 import { useMemo, useState } from "react";
@@ -8,6 +8,7 @@ import VehicleListing from "./tabs/vehicle-list/VehicleListing";
 import GarageStatsCards from "./components/GarageStatsCards";
 import BuyerInterests from "./tabs/buyer-interest/BuyerInterests";
 import PotentialMatches from "./tabs/potential-matches/PotentialMatches";
+import GaragePublicPortal from "./components/GaragePublicPortal";
 
 function CarGarage() {
   const isSuper = useIsSuper();
@@ -15,6 +16,7 @@ function CarGarage() {
   const location = useLocation();
   const navigateState = useMemo(() => location.state || {}, [location.state]);
   const [tab, setTab] = useState(navigateState?.tab || "listing");
+  const [showShare, setShowShare] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -25,6 +27,15 @@ function CarGarage() {
         </div>
 
         <div className="flex justify-end gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowShare(true)}
+          >
+            <span className="sr-only sm:not-sr-only">Public Portal</span>
+
+            <Link className="w-4 h-4 sm:ml-2" />
+          </Button>
           <Button
             size="sm"
             variant="outline"
@@ -70,7 +81,7 @@ function CarGarage() {
                   navigate("/garage", { state: { tab: "interest" } });
                 }}
               >
-                Interests
+                Preferences
               </TabsTrigger>
               <TabsTrigger
                 value="match"
@@ -88,7 +99,7 @@ function CarGarage() {
                 variant="outline"
                 onClick={() => navigate("/garage/new-interest")}
               >
-                <span>Interest</span>
+                <span>Preference</span>
                 <PlusCircle className="w-4 h-4 ml-2" />
               </Button>
               <Button
@@ -111,6 +122,7 @@ function CarGarage() {
             <PotentialMatches tab={tab} />
           </TabsContent>
         </Tabs>
+        <GaragePublicPortal showShare={showShare} setShowShare={setShowShare} />
       </div>
     </div>
   );

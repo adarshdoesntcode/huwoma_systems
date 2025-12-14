@@ -16,10 +16,11 @@ import { Button } from "@/components/ui/button";
 import DynamicMenu from "../../components/DynamicMenu";
 import { useState } from "react";
 import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
-import { formatDate, getDaysDifference } from "@/lib/utils";
+import { capitalizeFirstLetter, formatDate, getDaysDifference } from "@/lib/utils";
 import ShareVehicle from "./mutation/ShareVehicle";
+import StatusBadge from "@/components/ui/StatusBadge";
 
-export const VehicleCard = ({ vehicle }) => {
+export const VehicleCard = ({ vehicle, scope = null }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [showShare, setShowShare] = useState(false);
@@ -35,7 +36,11 @@ export const VehicleCard = ({ vehicle }) => {
   };
 
   const handleViewDetails = () => {
-    navigate(`/garage/vehicle/${vehicle._id}`);
+    if (scope === "public") {
+      navigate(`/garagebyhuwoma/${vehicle._id}`);
+    } else {
+      navigate(`/garage/vehicle/${vehicle._id}`);
+    }
   };
 
   const handleShare = () => {
@@ -81,8 +86,8 @@ export const VehicleCard = ({ vehicle }) => {
               vehicle.photos[0]?.fallbackUrl || "/api/placeholder/400/200";
           }}
         />
-        <div className="absolute px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full top-2 right-2">
-          {vehicle.status}
+        <div className="absolute top-2 right-2">
+          <StatusBadge status={vehicle.status} variant="solid" />
         </div>
         <div className="absolute px-2 py-1 text-xs text-white rounded bottom-2 left-2 bg-black/70">
           {vehicle.photos.length}{" "}
@@ -139,8 +144,8 @@ export const VehicleCard = ({ vehicle }) => {
             <span className="font-medium">{vehicle.category}</span>
           </div>
           <div className="flex justify-between text-xs">
-            <span className="text-gray-600">Engine:</span>
-            <span className="font-medium">{vehicle.engineCC}cc</span>
+            <span className="text-gray-600">Power:</span>
+            <span className="font-medium">{vehicle.engineCC} cc/kW</span>
           </div>
           <div className="flex justify-between text-xs">
             <span className="text-gray-600">Drive Type:</span>
@@ -158,11 +163,19 @@ export const VehicleCard = ({ vehicle }) => {
             <Eye className="w-3 h-3 mr-2" />
             <span className="text-xs">View Details</span>
           </Button>
-          <DynamicMenu configs={vehicleConfigs}>
-            <Button variant="outline" size="sm">
-              <Menu className="w-4 h-4" />
-            </Button>
-          </DynamicMenu>
+          {scope !== "public" && (
+            <>
+              {/* <Button className="flex-1" size="sm" onClick={handleShare}>
+                <Share2 className="w-3 h-3 mr-2" />
+                <span className="text-xs">Share</span>
+              </Button> */}
+              <DynamicMenu configs={vehicleConfigs}>
+                <Button variant="outline" size="sm">
+                  <Menu className="w-4 h-4" />
+                </Button>
+              </DynamicMenu>
+            </>
+          )}
         </div>
 
         <div className="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
@@ -171,7 +184,14 @@ export const VehicleCard = ({ vehicle }) => {
             Listed on {formatDate(vehicle.createdAt)}
           </div>
           <div className="text-[10px] text-gray-500">
-            {getDaysDifference(vehicle.createdAt, new Date())}d ago
+            {scope === "public" ? getDaysDifference(
+              vehicle.createdAt,
+              new Date()
+            ) > 0 ? getDaysDifference(
+              vehicle.createdAt,
+              new Date()
+            ) + "d ago" : "Today" : capitalizeFirstLetter(vehicle.listingType)}
+
           </div>
         </div>
         <DeleteVehicleListing

@@ -170,11 +170,11 @@ function BuyerInterestForm({
           <div className="p-4 border rounded-lg shadow-sm ">
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5 ">
-                <h3 className="text-lg font-semibold">Interest Form</h3>
+                <h3 className="text-lg font-semibold">Preference Form</h3>
                 <p className="text-sm text-muted-foreground">
                   {hasBuyerInterest
                     ? "Fill the details of the vehicles the buyer is interested in"
-                    : "Does the buyer have any interest?"}
+                    : "Does the buyer have any preferences?"}
                 </p>
               </div>
 

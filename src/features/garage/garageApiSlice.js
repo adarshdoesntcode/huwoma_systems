@@ -179,6 +179,30 @@ export const garageApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getPublicVehicleListings: builder.query({
+      query: (credentials) => ({
+        url: "/garage/public-vehicle-listings",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      providesTags: ["PublicVehicleListings"],
+    }),
+    // Public endpoints (no auth required)
+    getPublicVehicleConfig: builder.query({
+      query: () => ({
+        url: "/garage/public-vehicle-config",
+        method: "GET",
+      }),
+      providesTags: ["PublicVehicleConfigs"],
+    }),
+    publicNewVehicleListing: builder.mutation({
+      query: (credentials) => ({
+        url: "/garage/public-create-vehicle-listing",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["PublicVehicleListings"],
+    }),
   }),
 });
 
@@ -207,4 +231,8 @@ export const {
   useGetGarageFilteredTransactionsMutation,
   useFulfillInterestMutation,
   useGetPublicVehicleDetailsQuery,
+  useGetPublicVehicleListingsQuery,
+  useGetPublicVehicleConfigQuery,
+  usePublicNewVehicleListingMutation,
 } = garageApiSlice;
+

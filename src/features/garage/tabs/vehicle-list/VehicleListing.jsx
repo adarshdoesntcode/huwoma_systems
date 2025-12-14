@@ -6,6 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { RefreshCcw, Car, Settings2 } from "lucide-react";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
@@ -16,19 +23,22 @@ import GaragePagination from "../../components/GaragePagination";
 import VehicleFilter from "./filter/VehicleFilter";
 
 function VehicleListing({ tab }) {
-  const [pageSize, setPageSize] = useState("6");
+  const [pageSize, setPageSize] = useState("9");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
+  const [sortBy, setSortBy] = useState("newest");
   const [query, setQuery] = useState({
     status: "Available",
+    isVerified: true,
   });
 
   const queryArgs =
     tab === "listing"
       ? {
-          pageModel: { currentPage, pageSize: Number(pageSize) },
-          reportModel: query,
-        }
+        pageModel: { currentPage, pageSize: Number(pageSize) },
+        reportModel: query,
+        sortBy: sortBy === "newest" ? undefined : sortBy,
+      }
       : skipToken;
 
   const { data, isSuccess, isFetching, isLoading, isError, error, refetch } =
@@ -40,7 +50,11 @@ function VehicleListing({ tab }) {
 
   useEffect(() => {
     handleRefresh();
-  }, [currentPage, pageSize, query]);
+  }, [currentPage, pageSize, query, sortBy]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortBy, query]);
 
   useEffect(() => {
     if (isSuccess && data?.data) {
@@ -86,26 +100,36 @@ function VehicleListing({ tab }) {
   return (
     <Card>
       <CardHeader className="p-4 bg-white border-b rounded-t-lg top-[60px] sm:p-6 sm:py-4">
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-end sm:justify-between ">
+          <div className="hidden sm:block">
             <CardTitle className="text-xl sm:text-2xl">Vehicles</CardTitle>
             <CardDescription className="text-xs sm:text-sm">
               Vehicles available for sale
             </CardDescription>
           </div>
           <div className="flex items-end gap-2">
-            <Button
+            {/* Sort Dropdown */}
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="priceAsc">Low to High</SelectItem>
+                <SelectItem value="priceDesc">High to Low</SelectItem>
+              </SelectContent>
+            </Select>
+            {/* <Button
               variant="outline"
               onClick={handleRefresh}
               disabled={isLoading}
               aria-label="Refresh vehicle listings"
             >
               <RefreshCcw
-                className={`w-4 h-4 ${
-                  isLoading || isFetching ? "animate-spin" : ""
-                }`}
+                className={`w-4 h-4 ${isLoading || isFetching ? "animate-spin" : ""
+                  }`}
               />
-            </Button>
+            </Button> */}
             <VehicleFilter query={query} setQuery={setQuery} />
           </div>
         </div>

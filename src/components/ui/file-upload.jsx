@@ -2,8 +2,9 @@ import { cn } from "@/lib/utils";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "./badge";
-import { CheckCheck, Loader2, UploadCloud, X } from "lucide-react";
+import { Camera, CheckCheck, Loader2, UploadCloud, X } from "lucide-react";
 import heic2any from "heic2any";
+import { isMobile } from "react-device-detect";
 
 const MAX_FILES = 10;
 const MAX_FILE_SIZE_MB = 10;
@@ -70,6 +71,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
   const [previews, setPreviews] = useState({});
 
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   useEffect(() => {
     const currentImageIds = new Set(
@@ -123,6 +125,60 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
   }, [images]);
 
   const handleClick = () => fileInputRef.current?.click();
+  const handleCameraClick = (e) => {
+    e.stopPropagation();
+    cameraInputRef.current?.click();
+  };
+
+  const processFiles = async (acceptedFiles) => {
+    if (images.length + acceptedFiles.length > MAX_FILES) {
+      setUploadErrors([`Cannot upload. Max ${MAX_FILES} files.`]);
+      return;
+    }
+
+    setIsConverting(true);
+    try {
+      const processedFiles = await Promise.all(
+        acceptedFiles.map(async (file) => {
+          const isHeic =
+            file.type === "image/heic" ||
+            file.type === "image/heif" ||
+            file.name.toLowerCase().endsWith(".heic");
+          if (isHeic) {
+            const convertedBlob = await heic2any({
+              blob: file,
+              toType: "image/jpeg",
+              quality: 0.9,
+            });
+            const fileName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+            return new File([convertedBlob], fileName, {
+              type: "image/jpeg",
+              lastModified: new Date().getTime(),
+            });
+          }
+          return file;
+        })
+      );
+      onAddFiles(processedFiles);
+    } catch (error) {
+      console.error("File processing error:", error);
+      setUploadErrors([
+        "Failed to process some files, especially HEIC. Please try again.",
+      ]);
+    } finally {
+      setIsConverting(false);
+    }
+  };
+
+  const handleCameraCapture = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setUploadErrors([]);
+      await processFiles(files);
+    }
+    // Reset input to allow capturing the same file again
+    e.target.value = "";
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
@@ -142,43 +198,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
       }
 
       setUploadErrors([]);
-      if (images.length + acceptedFiles.length > MAX_FILES) {
-        setUploadErrors([`Cannot upload. Max ${MAX_FILES} files.`]);
-        return;
-      }
-
-      setIsConverting(true);
-      try {
-        const processedFiles = await Promise.all(
-          acceptedFiles.map(async (file) => {
-            const isHeic =
-              file.type === "image/heic" ||
-              file.type === "image/heif" ||
-              file.name.toLowerCase().endsWith(".heic");
-            if (isHeic) {
-              const convertedBlob = await heic2any({
-                blob: file,
-                toType: "image/jpeg",
-                quality: 0.9,
-              });
-              const fileName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
-              return new File([convertedBlob], fileName, {
-                type: "image/jpeg",
-                lastModified: new Date().getTime(),
-              });
-            }
-            return file;
-          })
-        );
-        onAddFiles(processedFiles);
-      } catch (error) {
-        console.error("File processing error:", error);
-        setUploadErrors([
-          "Failed to process some files, especially HEIC. Please try again.",
-        ]);
-      } finally {
-        setIsConverting(false);
-      }
+      await processFiles(acceptedFiles);
     },
     accept: {
       "image/jpeg": [".jpeg", ".jpg"],
@@ -197,6 +217,16 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
         className="relative w-full p-10 transition-transform duration-200 bg-white shadow-sm cursor-pointer rounded-xl group/file"
       >
         <input {...getInputProps()} ref={fileInputRef} className="hidden" />
+
+        {/* Hidden camera input for mobile */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleCameraCapture}
+          className="hidden"
+        />
 
         {isConverting && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm ">
@@ -240,14 +270,29 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
             </div>
           )}
 
-          <div
-            className={cn(
-              "relative border  hover:scale-[1.1] shadow-xl z-40 flex items-center justify-center h-32 mt-10 w-full max-w-[8rem] mx-auto rounded-xl transition-transform duration-200",
-              isDragActive && "scale-110 border-2 border-dashed border-primary"
+          {/* Upload and Camera buttons */}
+          <div className="flex items-center justify-center gap-4 mt-10">
+            <div
+              className={cn(
+                "relative border hover:scale-[1.1] shadow-xl z-40 flex items-center justify-center h-32 w-full max-w-[8rem] rounded-xl transition-transform duration-200",
+                isDragActive && "scale-110 border-2 border-dashed border-primary"
+              )}
+            >
+              <UploadCloud className="w-8 h-8 text-neutral-400" />
+            </div>
+
+            {/* Camera button - only visible on mobile */}
+            {isMobile && (
+              <div
+                onClick={handleCameraClick}
+                className="relative border hover:scale-[1.1] shadow-xl z-40 flex flex-col items-center justify-center h-32 w-full max-w-[8rem] rounded-xl transition-transform duration-200 bg-primary/5 border-primary/20"
+              >
+                <Camera className="w-8 h-8 text-primary" />
+                <p className="mt-2 text-xs font-medium text-primary">Camera</p>
+              </div>
             )}
-          >
-            <UploadCloud className="w-8 h-8 text-neutral-400" />
           </div>
+
           <div className="relative w-full max-w-xl mx-auto mt-6 space-y-4">
             {images.map((image) => {
               return (
@@ -269,3 +314,4 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
     </div>
   );
 };
+

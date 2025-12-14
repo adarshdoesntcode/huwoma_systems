@@ -65,10 +65,10 @@ function InterestDetails() {
           <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                Buyer Interest Details
+                Buyer Preferences Details
               </h1>
               <p className="mt-1 text-xs text-muted-foreground">
-                View comprehensive buyer requirements and preferences
+                View comprehensive buyer requirements
               </p>
             </div>
             {interest.status === "Active" && (
@@ -126,7 +126,7 @@ function InterestDetails() {
                       <span>{buyer.contactNumber}</span>
                     </p>
                     <p className="text-xs text-gray-400">
-                      Interest ID: {interest._id}
+                      Preference ID: {interest._id}
                     </p>
                   </div>
                 </div>
@@ -191,10 +191,10 @@ function InterestDetails() {
                     {criteria?.year?.from && criteria?.year?.to
                       ? `${criteria?.year?.from} - ${criteria?.year?.to}`
                       : criteria?.year?.from
-                      ? `${criteria?.year?.from} - Present`
-                      : criteria?.year?.to
-                      ? `Untill ${criteria?.year?.to}`
-                      : "-"}
+                        ? `${criteria?.year?.from} - Present`
+                        : criteria?.year?.to
+                          ? `Untill ${criteria?.year?.to}`
+                          : "-"}
                   </p>
                 </div>
 
@@ -205,13 +205,13 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.categories.length > 0
                       ? criteria.categories.map((item) => (
-                          <Badge
-                            key={item}
-                            className="pointer-events-none bg-green-50 text-green-700 border border-green-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                          >
-                            {item}
-                          </Badge>
-                        ))
+                        <Badge
+                          key={item}
+                          className="pointer-events-none bg-green-50 text-green-700 border border-green-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        >
+                          {item}
+                        </Badge>
+                      ))
                       : "-"}
                   </div>
                 </div>
@@ -222,13 +222,13 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.makes.length > 0
                       ? criteria.makes.map((item) => (
-                          <Badge
-                            key={item}
-                            className="pointer-events-none bg-teal-50 text-teal-700 border border-teal-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                          >
-                            {item}
-                          </Badge>
-                        ))
+                        <Badge
+                          key={item}
+                          className="pointer-events-none bg-teal-50 text-teal-700 border border-teal-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        >
+                          {item}
+                        </Badge>
+                      ))
                       : "-"}
                   </div>
                 </div>
@@ -239,8 +239,8 @@ function InterestDetails() {
                   <p className="p-2 mt-2 text-sm text-gray-800 border rounded-md bg-muted ">
                     {criteria?.mileageMax
                       ? `${new Intl.NumberFormat("en-IN").format(
-                          criteria.mileageMax
-                        )} km`
+                        criteria.mileageMax
+                      )} km`
                       : "-"}
                   </p>
                 </div>
@@ -249,13 +249,13 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.models.length > 0
                       ? criteria.models.map((item) => (
-                          <Badge
-                            key={item}
-                            className="pointer-events-none bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                          >
-                            {item}
-                          </Badge>
-                        ))
+                        <Badge
+                          key={item}
+                          className="pointer-events-none bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        >
+                          {item}
+                        </Badge>
+                      ))
                       : "-"}
                   </div>
                 </div>
@@ -267,13 +267,13 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.transmissions.length > 0
                       ? criteria.transmissions.map((item) => (
-                          <Badge
-                            key={item}
-                            className="pointer-events-none bg-sky-50 text-sky-700 border border-sky-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                          >
-                            {item}
-                          </Badge>
-                        ))
+                        <Badge
+                          key={item}
+                          className="pointer-events-none bg-sky-50 text-sky-700 border border-sky-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        >
+                          {item}
+                        </Badge>
+                      ))
                       : "-"}
                   </div>
                 </div>
@@ -284,13 +284,13 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.fuelTypes.length > 0
                       ? criteria.fuelTypes.map((item) => (
-                          <Badge
-                            key={item}
-                            className="pointer-events-none bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                          >
-                            {item}
-                          </Badge>
-                        ))
+                        <Badge
+                          key={item}
+                          className="pointer-events-none bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        >
+                          {item}
+                        </Badge>
+                      ))
                       : "-"}
                   </div>
                 </div>
@@ -301,13 +301,13 @@ function InterestDetails() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {criteria.driveTypes.length > 0
                       ? criteria.driveTypes.map((item) => (
-                          <Badge
-                            key={item}
-                            className="pointer-events-none bg-violet-50 text-violet-700 border border-violet-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
-                          >
-                            {item}
-                          </Badge>
-                        ))
+                        <Badge
+                          key={item}
+                          className="pointer-events-none bg-violet-50 text-violet-700 border border-violet-100 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                        >
+                          {item}
+                        </Badge>
+                      ))
                       : "-"}
                   </div>
                 </div>

@@ -42,6 +42,7 @@ function NewVehicleListing() {
   const [managedImages, setManagedImages] = useState([]);
   const [finalImageUrls, setFinalImageUrls] = useState([]);
   const [hasBuyerInterest, setHasBuyerInterest] = useState(false);
+  const [selectedListingType, setSelectedListingType] = useState("");
 
   const [formStep, setFormStep] = useState(0);
 
@@ -76,10 +77,11 @@ function NewVehicleListing() {
       transmission: selectedTransmission,
       fuelType: selectedFuelType,
       driveType: selectedDriveType,
+      listingType: selectedListingType,
       model: data.model,
       variant: data.variant,
       year: data.year,
-      numberPlate: data.numberPlate,
+      numberPlate: data?.numberPlate || "NO PLATE",
       mileage: data.mileage,
       askingPrice: data.askingPrice,
       engineCC: data.engineCC,
@@ -92,24 +94,24 @@ function NewVehicleListing() {
       hasInterest: hasBuyerInterest,
       info: hasBuyerInterest
         ? {
-            budget: {
-              min: data.min,
-              max: data.max,
+          budget: {
+            min: data.min,
+            max: data.max,
+          },
+          criteria: {
+            categories: selectedInterestCategories,
+            makes: selectedInterestMakes,
+            transmissions: selectedInterestTransmissions,
+            driveTypes: selectedInterestDriveTypes,
+            fuelTypes: selectedInterestFuelTypes,
+            models: selectedInterestModels,
+            mileageMax: data.mileageMax,
+            year: {
+              min: data.from,
+              max: data.to,
             },
-            criteria: {
-              categories: selectedInterestCategories,
-              makes: selectedInterestMakes,
-              transmissions: selectedInterestTransmissions,
-              driveTypes: selectedInterestDriveTypes,
-              fuelTypes: selectedInterestFuelTypes,
-              models: selectedInterestModels,
-              mileageMax: data.mileageMax,
-              year: {
-                min: data.from,
-                max: data.to,
-              },
-            },
-          }
+          },
+        }
         : {},
     });
 
@@ -162,7 +164,7 @@ function NewVehicleListing() {
                 Add a new vehicle to your garage
               </CardDescription>
             </div>
-            <Steps steps={5} current={formStep} />
+            <Steps steps={4} current={formStep} />
           </div>
         </CardHeader>
         <CardContent className="p-0 pt-4">
@@ -201,6 +203,8 @@ function NewVehicleListing() {
                 setSelectedFuelType={setSelectedFuelType}
                 selectedDriveType={selectedDriveType}
                 setSelectedDriveType={setSelectedDriveType}
+                selectedListingType={selectedListingType}
+                setSelectedListingType={setSelectedListingType}
                 setFormStep={setFormStep}
                 errors={errors}
                 reset={reset}
@@ -258,6 +262,7 @@ function NewVehicleListing() {
                 selectedTransmission={selectedTransmission}
                 selectedFuelType={selectedFuelType}
                 selectedDriveType={selectedDriveType}
+                selectedListingType={selectedListingType}
                 finalImageUrls={finalImageUrls}
                 hasBuyerInterest={hasBuyerInterest}
                 selectedInterestMakes={selectedInterestMakes}

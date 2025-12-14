@@ -64,7 +64,7 @@ function MarkAsFulfilled({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will set the interest as
+            This action cannot be undone. This will set the preference as
             fulfilled
           </AlertDialogDescription>
         </AlertDialogHeader>

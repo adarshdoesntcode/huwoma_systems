@@ -65,7 +65,7 @@ function DeleteBuyerInterest({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will delete this buyer interest
+            This action cannot be undone. This will delete this buyer preference
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

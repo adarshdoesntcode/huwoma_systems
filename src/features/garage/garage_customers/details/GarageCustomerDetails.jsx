@@ -240,7 +240,7 @@ function GarageCustomerDetails() {
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="interest">
-                  Interests
+                  Preferences
                   {buyerInterests.length > 0 && (
                     <Badge className="ml-2   py-0 text-[10px]">
                       {buyerInterests.length}
@@ -302,7 +302,7 @@ function GarageCustomerDetails() {
                   ) : (
                     <div className="flex min-h-[6rem] items-center justify-center">
                       <div className="text-xs text-muted-foreground">
-                        No interests listed
+                        No preferences listed
                       </div>
                     </div>
                   )}

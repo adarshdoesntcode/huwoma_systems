@@ -17,6 +17,8 @@ import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientM
 import { OfflineAlert } from "./components/OfflineAlert";
 import VehicleDetails from "./features/garage/tabs/vehicle-list/VehicleDetails";
 import PublicVehicleDetails from "./features/garage/tabs/vehicle-list/PublicVehicleDetails";
+import PublicVehicleListings from "./features/garage/public/PublicVehicleListings";
+import PublicNewVehicleListing from "./features/garage/public/PublicNewVehicleListing";
 import OAuthRedirect from "./features/auth/OAuthRedirect";
 
 const router = createBrowserRouter([
@@ -59,7 +61,17 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/garagebyhuwoma/vehicle/:id",
+    path: "/garagebyhuwoma",
+    element: <PublicVehicleListings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/garagebyhuwoma/new-vehicle",
+    element: <PublicNewVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/garagebyhuwoma/:id",
     element: <PublicVehicleDetails />,
     errorElement: <Error />,
   },
