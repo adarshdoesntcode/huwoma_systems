@@ -152,7 +152,6 @@ export const useFormConfig = (
       errors: errors?.numberPlate,
       formItemProps: {
         ...register("numberPlate", {
-          required: "Vehicle Number is required",
           pattern: {
             value: /^[A-Z0-9 ]+$/,
             message: "Only uppercase letters, digits, and spaces",

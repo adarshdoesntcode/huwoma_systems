@@ -36,7 +36,7 @@ function PublicPreviewForm({
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Images */}
-                    <div>
+                    <div className="mb-4">
                         {finalImageUrls.length > 0 && (
                             <Carousel className="w-full">
                                 <CarouselContent>
@@ -117,7 +117,7 @@ function PublicPreviewForm({
                                     <span className="font-medium">{selectedDriveType}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Mileage:</span>
+                                    <span className="text-muted-foreground">Driven:</span>
                                     <span className="font-medium">
                                         {Number(formData.mileage).toLocaleString("en-IN")} km
                                     </span>
@@ -125,6 +125,10 @@ function PublicPreviewForm({
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Power:</span>
                                     <span className="font-medium">{formData.engineCC} cc/kW</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Listing Type:</span>
+                                    <span className="font-medium">{capitalizeFirstLetter(selectedListingType)}</span>
                                 </div>
                             </div>
                         </div>

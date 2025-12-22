@@ -19,6 +19,7 @@ import VehicleDetails from "./features/garage/tabs/vehicle-list/VehicleDetails";
 import PublicVehicleDetails from "./features/garage/tabs/vehicle-list/PublicVehicleDetails";
 import PublicVehicleListings from "./features/garage/public/PublicVehicleListings";
 import PublicNewVehicleListing from "./features/garage/public/PublicNewVehicleListing";
+import PublicNewBuyerInterest from "./features/garage/public/PublicNewBuyerInterest";
 import OAuthRedirect from "./features/auth/OAuthRedirect";
 
 const router = createBrowserRouter([
@@ -68,6 +69,11 @@ const router = createBrowserRouter([
   {
     path: "/garagebyhuwoma/new-vehicle",
     element: <PublicNewVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/garagebyhuwoma/new-buyer-interest",
+    element: <PublicNewBuyerInterest />,
     errorElement: <Error />,
   },
   {

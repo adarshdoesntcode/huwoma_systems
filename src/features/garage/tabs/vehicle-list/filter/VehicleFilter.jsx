@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { isEqual } from "lodash";
 
 function VehicleFilter({ query, setQuery }) {
+  console.log("🚀 ~ VehicleFilter ~ query:", query)
   const [selectedInterestMakes, setSelectedInterestMakes] = useState([]);
   const [selectedInterestCategories, setSelectedInterestCategories] = useState(
     []

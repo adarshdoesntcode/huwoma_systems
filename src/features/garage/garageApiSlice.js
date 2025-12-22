@@ -203,6 +203,43 @@ export const garageApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["PublicVehicleListings"],
     }),
+    getUnverifiedVehicleCount: builder.query({
+      query: () => ({
+        url: "/garage/unverified-count",
+        method: "GET",
+      }),
+      providesTags: ["UnverifiedVehicleCount"],
+    }),
+    verifyVehicle: builder.mutation({
+      query: ({ id, action }) => ({
+        url: `/garage/verify-vehicle/${id}`,
+        method: "PUT",
+        body: { action },
+      }),
+      invalidatesTags: ["GarageVehicleListings", "UnverifiedVehicleCount"],
+    }),
+    publicNewBuyerInterest: builder.mutation({
+      query: (credentials) => ({
+        url: "/garage/public-create-buyer-interest",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
+    getUnverifiedInterestCount: builder.query({
+      query: () => ({
+        url: "/garage/unverified-interest-count",
+        method: "GET",
+      }),
+      providesTags: ["UnverifiedInterestCount"],
+    }),
+    verifyBuyerInterest: builder.mutation({
+      query: ({ id, action }) => ({
+        url: `/garage/verify-interest/${id}`,
+        method: "PUT",
+        body: { action },
+      }),
+      invalidatesTags: ["GarageBuyerInterests", "UnverifiedInterestCount"],
+    }),
   }),
 });
 
@@ -234,5 +271,14 @@ export const {
   useGetPublicVehicleListingsQuery,
   useGetPublicVehicleConfigQuery,
   usePublicNewVehicleListingMutation,
+  useGetUnverifiedVehicleCountQuery,
+  useVerifyVehicleMutation,
+  usePublicNewBuyerInterestMutation,
+  useGetUnverifiedInterestCountQuery,
+  useVerifyBuyerInterestMutation,
 } = garageApiSlice;
+
+
+
+
 

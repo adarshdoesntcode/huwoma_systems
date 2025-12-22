@@ -25,7 +25,7 @@ function PublicNewVehicleListing() {
     const [selectedTransmission, setSelectedTransmission] = useState("");
     const [selectedFuelType, setSelectedFuelType] = useState("");
     const [selectedDriveType, setSelectedDriveType] = useState("");
-    const [selectedListingType, setSelectedListingType] = useState("DIRECT");
+    const [selectedListingType, setSelectedListingType] = useState("");
     const [managedImages, setManagedImages] = useState([]);
     const [finalImageUrls, setFinalImageUrls] = useState([]);
 
@@ -110,7 +110,8 @@ function PublicNewVehicleListing() {
                         <img
                             loading="lazy"
                             src={IMAGE_DATA.huwoma_logo}
-                            className="h-6 aspect-auto"
+                            className="h-6 aspect-auto cursor-pointer"
+                            onClick={() => navigate("/garagebyhuwoma")}
                         />
 
                     </div>

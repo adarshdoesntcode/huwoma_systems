@@ -56,7 +56,8 @@ function PublicVehicleDetails() {
               <img
                 loading="lazy"
                 src={IMAGE_DATA.huwoma_logo}
-                className="h-6 aspect-auto"
+                className="h-6 aspect-auto cursor-pointer"
+                onClick={() => navigate("/garagebyhuwoma")}
               />
               <Button
                 size="sm"

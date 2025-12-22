@@ -35,6 +35,8 @@ import GarageCustomers from "@/features/garage/garage_customers/GarageCustomers"
 import GarageTransactions from "@/features/garage/garage_transactions/GarageTransactions";
 import GarageCustomerDetails from "@/features/garage/garage_customers/details/GarageCustomerDetails";
 import SellVehicle from "@/features/garage/sell_vehicle/SellVehicle";
+import VerifyVehicle from "@/features/garage/tabs/vehicle-list/VerifyVehicle";
+import VerifyInterest from "@/features/garage/tabs/buyer-interest/VerifyInterest";
 
 const PrivateRoutes = [
   {
@@ -155,6 +157,16 @@ const PrivateRoutes = [
   {
     path: "garage/vehicle/:id",
     element: <VehicleDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/verify/:id",
+    element: <VerifyVehicle />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/verify-interest/:id",
+    element: <VerifyInterest />,
     errorElement: <Error />,
   },
   {

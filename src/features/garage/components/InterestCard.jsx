@@ -14,9 +14,11 @@ import {
   Eye,
   Menu,
   Phone,
+  ShieldCheck,
   Trash,
   User,
   Wallet,
+
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -116,17 +118,31 @@ export const InterestCard = ({
         </div>
 
         <div className="flex gap-2">
-          <Button
-            className="flex-1"
-            size="sm"
-            onClick={() => {
-              navigate(`/garage/interest/${interest._id}`);
-            }}
-          >
-            <Eye className="w-3 h-3 mr-2" />
-            <span className="text-xs">View More</span>
-          </Button>
-          {showMutation && (
+          {interest.status === "Unverified" ? (
+            <Button
+              className="flex-1"
+              size="sm"
+              onClick={() => {
+                navigate(`/garage/verify-interest/${interest._id}`);
+              }}
+            >
+              <ShieldCheck className="w-3 h-3 mr-2" />
+              <span className="text-xs">Verify</span>
+            </Button>
+          ) : (
+            <Button
+              className="flex-1"
+              size="sm"
+              onClick={() => {
+                navigate(`/garage/interest/${interest._id}`);
+              }}
+            >
+              <Eye className="w-3 h-3 mr-2" />
+              <span className="text-xs">View More</span>
+            </Button>
+          )}
+
+          {showMutation && interest.status !== "Unverified" && (
             <DynamicMenu configs={interestConfigs}>
               <Button variant="outline" size="sm">
                 <Menu className="w-4 h-4" />
@@ -134,6 +150,7 @@ export const InterestCard = ({
             </DynamicMenu>
           )}
         </div>
+
 
         <div className="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
           <div className="flex items-center gap-1 text-[10px] text-gray-500">

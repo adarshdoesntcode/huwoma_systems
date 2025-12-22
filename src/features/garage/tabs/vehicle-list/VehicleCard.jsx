@@ -10,6 +10,7 @@ import {
   Gauge,
   Menu,
   Share2,
+  ShieldCheck,
   Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,10 @@ export const VehicleCard = ({ vehicle, scope = null }) => {
   const handleShare = () => {
     setShowShare(true);
     setShareId(vehicle._id);
+  };
+
+  const handleVerify = () => {
+    navigate(`/garage/verify/${vehicle._id}`);
   };
 
   const vehicleConfigs = [
@@ -159,22 +164,23 @@ export const VehicleCard = ({ vehicle, scope = null }) => {
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          <Button className="flex-1" size="sm" onClick={handleViewDetails}>
-            <Eye className="w-3 h-3 mr-2" />
-            <span className="text-xs">View Details</span>
-          </Button>
-          {scope !== "public" && (
-            <>
-              {/* <Button className="flex-1" size="sm" onClick={handleShare}>
-                <Share2 className="w-3 h-3 mr-2" />
-                <span className="text-xs">Share</span>
-              </Button> */}
-              <DynamicMenu configs={vehicleConfigs}>
-                <Button variant="outline" size="sm">
-                  <Menu className="w-4 h-4" />
-                </Button>
-              </DynamicMenu>
-            </>
+          {vehicle.status === "Unverified" ? (
+            <Button className="flex-1" size="sm" onClick={handleVerify}>
+              <ShieldCheck className="w-3 h-3 mr-2" />
+              <span className="text-xs">Verify</span>
+            </Button>
+          ) : (
+            <Button className="flex-1" size="sm" onClick={handleViewDetails}>
+              <Eye className="w-3 h-3 mr-2" />
+              <span className="text-xs">View Details</span>
+            </Button>
+          )}
+          {scope !== "public" && vehicle.status !== "Unverified" && (
+            <DynamicMenu configs={vehicleConfigs}>
+              <Button variant="outline" size="sm">
+                <Menu className="w-4 h-4" />
+              </Button>
+            </DynamicMenu>
           )}
         </div>
 

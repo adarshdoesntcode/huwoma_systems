@@ -46,7 +46,7 @@ function GaragePublicPortal({ setShowShare, showShare }) {
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <Button onClick={handleCopy} disabled={isCopied}>
+                    <Button onClick={handleCopy} variant="outline" disabled={isCopied}>
                         {isCopied ? (
                             <>
                                 Copied!

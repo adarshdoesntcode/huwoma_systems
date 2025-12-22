@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 
 const buildVehicleListingQuery = (payload) => {
-  const query = { status: payload.status || "Available" };
+  const query = { status: payload.status || "Available", isVerified: true };
 
   const { budget, criteria } = payload;
 
@@ -127,6 +127,7 @@ function VehicleFilterForm({
   const onSubmit = async (data) => {
     const payload = cleanObject({
       status: data.status || "Available",
+      isVerified: true,
       budget: {
         min: data.min,
         max: data.max,

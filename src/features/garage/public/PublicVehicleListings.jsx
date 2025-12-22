@@ -118,14 +118,26 @@ function PublicVehicleListings() {
                             loading="lazy"
                             src={IMAGE_DATA.huwoma_logo}
                             className="h-6 aspect-auto"
+                            alt="Huwoma Logo"
                         />
-                        <Button
-                            size="sm"
-                            onClick={() => navigate("/garagebyhuwoma/new-vehicle")}
-                        >
-                            <PlusCircle className="w-4 h-4 mr-2" />
-                            <span >Your Vehicle</span>
-                        </Button>
+                        <div className="flex items-center gap-2">
+
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => navigate("/garagebyhuwoma/new-buyer-interest")}
+                            >
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                <span className="sr-only sm:not-sr-only sm:mr-1">Your</span> <span>Preference</span>
+                            </Button>
+                            <Button
+                                size="sm"
+                                onClick={() => navigate("/garagebyhuwoma/new-vehicle")}
+                            >
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                <span className="sr-only sm:not-sr-only sm:mr-1">Your</span> <span>Vehicle</span>
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </header>

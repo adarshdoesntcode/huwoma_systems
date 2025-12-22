@@ -43,7 +43,7 @@ function PublicVehicleDetailsForm({
     const [transmissionData, setTransmissionData] = useState([]);
     const [fuelTypeData, setFuelTypeData] = useState([]);
     const [driveTypeData, setDriveTypeData] = useState([]);
-    const [listingTypeData] = useState(["DIRECT"]);
+    const [listingTypeData, setListingTypeData] = useState(["REFERRAL", "DIRECT"]);
 
     useEffect(() => {
         if (data) {
@@ -55,12 +55,6 @@ function PublicVehicleDetailsForm({
         }
     }, [data]);
 
-    // Set default listing type to DIRECT for public listings
-    useEffect(() => {
-        if (!selectedListingType) {
-            setSelectedListingType("DIRECT");
-        }
-    }, [selectedListingType, setSelectedListingType]);
 
     const formConfig = useFormConfig(
         register,
@@ -109,6 +103,11 @@ function PublicVehicleDetailsForm({
                 value: selectedDriveType,
                 message: "Please select a drive type",
             },
+            {
+                name: "listingType",
+                value: selectedListingType,
+                message: "Please select a listing type",
+            },
         ];
 
         let hasError = false;
@@ -123,9 +122,11 @@ function PublicVehicleDetailsForm({
         const isValid = await trigger([
             "model",
             "year",
+            "numberPlate",
             "mileage",
             "askingPrice",
             "engineCC",
+            "colour",
         ]);
 
         if (!isValid) {
@@ -145,7 +146,9 @@ function PublicVehicleDetailsForm({
         }
     };
 
-    // Filter out listing-info section for public (always DIRECT)
+    const listingInfoConfig = formConfig.filter(
+        (config) => config.section === "listing-info"
+    );
     const vehicleInfoConfig = formConfig.filter(
         (config) => config.section === "vehicle-info"
     );
@@ -178,6 +181,28 @@ function PublicVehicleDetailsForm({
                         <p className="text-sm text-muted-foreground">
                             Fill in the details about your vehicle
                         </p>
+                    </div>
+
+                    <h3 className="flex items-center gap-2 pb-2 font-semibold border-b">
+                        Listing Information
+                        <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Info className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs" >
+                                    <div className="space-y-2 text-sm">
+                                        <p><strong>Direct:</strong> Vehicle owned by seller, sold directly through this garage.</p>
+                                        <p><strong>Referral:</strong> Vehicle referred by someone else, this garage facilitates the sale.</p>
+                                    </div>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                        {listingInfoConfig.map((config, index) => (
+                            <FormItems key={index} type={config.type} props={config} />
+                        ))}
                     </div>
 
                     <h3 className="pb-2 font-semibold border-b">Vehicle Information</h3>

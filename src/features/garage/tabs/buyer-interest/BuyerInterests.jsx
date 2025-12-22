@@ -11,6 +11,7 @@ import { useGetBuyerInterestsQuery } from "../../garageApiSlice";
 import Loader from "@/components/Loader";
 import ApiError from "@/components/error/ApiError";
 import { skipToken } from "@reduxjs/toolkit/query";
+import UnverifiedInterests from "../../components/UnverifiedInterests";
 import { InterestCard } from "../../components/InterestCard";
 import GaragePagination from "../../components/GaragePagination";
 import DynamicFilterWrapper from "../../components/DynamicFilterWrapper";
@@ -40,6 +41,11 @@ function BuyerInterests({ tab }) {
   useEffect(() => {
     handleRefresh();
   }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    // Reset to page 1 when query filter changes
+    setCurrentPage(1);
+  }, [query]);
 
   useEffect(() => {
     if (isSuccess && data?.data) {
@@ -73,7 +79,9 @@ function BuyerInterests({ tab }) {
               No preferences found
             </h3>
             <p className="text-xs text-gray-500">
-              There are no preferences available at the moment.
+              {query.status === "Unverified"
+                ? "No unverified preferences pending review."
+                : "There are no preferences available at the moment."}
             </p>
           </div>
         )}
@@ -96,10 +104,13 @@ function BuyerInterests({ tab }) {
               Buyer Preferences
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Vehicle preferences of potential buyers
+              {query.status === "Unverified"
+                ? "Unverified preferences pending review"
+                : "Vehicle preferences of potential buyers"}
             </CardDescription>
           </div>
           <div className="flex items-end gap-2">
+            <UnverifiedInterests query={query} setQuery={setQuery} />
             <Button
               variant="outline"
               onClick={handleRefresh}

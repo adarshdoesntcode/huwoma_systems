@@ -45,6 +45,7 @@ function PublicSellerForm({
                         </Label>
                         <Input
                             id="sellerName"
+                            autoComplete="off"
                             placeholder="Enter your full name"
                             {...register("sellerName", {
                                 required: "Name is required",
@@ -68,6 +69,7 @@ function PublicSellerForm({
                         <Input
                             id="sellerContact"
                             type="tel"
+                            autoComplete="off"
                             inputMode="numeric"
                             placeholder="Enter your phone number"
                             {...register("sellerContact", {

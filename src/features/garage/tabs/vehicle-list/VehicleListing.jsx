@@ -21,6 +21,7 @@ import { useGetVehicleListingsQuery } from "../../garageApiSlice";
 import { VehicleCard } from "./VehicleCard";
 import GaragePagination from "../../components/GaragePagination";
 import VehicleFilter from "./filter/VehicleFilter";
+import UnverifiedVehicles from "../../components/UnverifiedVehicles";
 
 function VehicleListing({ tab }) {
   const [pageSize, setPageSize] = useState("9");
@@ -65,7 +66,7 @@ function VehicleListing({ tab }) {
   }, [data, isSuccess]);
 
   let content;
-  if (isLoading) {
+  if (isLoading || isFetching) {
     content = (
       <div className="flex items-center justify-center flex-1 h-full">
         <Loader />
@@ -104,11 +105,16 @@ function VehicleListing({ tab }) {
           <div className="hidden sm:block">
             <CardTitle className="text-xl sm:text-2xl">Vehicles</CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Vehicles available for sale
+              {
+                query.status === "Unverified"
+                  ? "Unverified vehicles"
+                  : "Vehicles available for sale"
+              }
             </CardDescription>
           </div>
           <div className="flex items-end gap-2">
             {/* Sort Dropdown */}
+            <UnverifiedVehicles query={query} setQuery={setQuery} />
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Sort by" />
