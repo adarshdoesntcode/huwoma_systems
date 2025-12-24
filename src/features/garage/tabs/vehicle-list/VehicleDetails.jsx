@@ -22,6 +22,7 @@ import {
   ArrowUpRight,
   Calendar,
   Edit,
+  Heart,
   MessageSquare,
   PhoneCall,
   Share,
@@ -312,8 +313,6 @@ function VehicleDetails() {
                   </div>}
 
 
-
-
                 {
                   vehicle.status === "Available" && (
                     <div className="flex items-center justify-between gap-2 pt-2">
@@ -359,6 +358,71 @@ function VehicleDetails() {
               </div>
             </div>
           </div>
+
+          {/* Interested Buyers Section */}
+          {vehicle.interestedBuyers?.filter(ib => !ib.fulfilled).length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-500" />
+                <Label className="text-base font-semibold">
+                  Interested Buyers ({vehicle.interestedBuyers.filter(ib => !ib.fulfilled).length})
+                </Label>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {vehicle.interestedBuyers
+                  .filter(ib => !ib.fulfilled)
+                  .map((interest, idx) => (
+                    <div
+                      key={idx}
+                      className="relative flex flex-col justify-between p-4 transition-all duration-300 border rounded-lg shadow-sm hover:shadow-md bg-card text-card-foreground animate-in fade-in-10 slide-in-from-bottom-1"
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary">
+                            <User className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p
+                              className="text-sm font-semibold leading-none cursor-pointer hover:underline"
+                              onClick={() =>
+                                navigate(`/garage/customers/${interest.customer._id}`)
+                              }
+                            >
+                              {interest.customer.name}
+                            </p>
+                            <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
+                              <PhoneCall className="w-3 h-3" />
+                              {interest.customer.contactNumber}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 mt-auto border-t">
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Calendar className="w-3 h-3" />
+                          {getDaysDifference(interest.createdAt, new Date())}d ago
+                        </div>
+                        <div className="flex gap-2">
+                          <a
+                            href={`sms:${interest.customer.contactNumber}`}
+                            className="inline-flex items-center justify-center w-8 h-8 transition-colors border rounded-md hover:bg-accent hover:text-accent-foreground"
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                          </a>
+                          <a
+                            href={`tel:${interest.customer.contactNumber}`}
+                            className="inline-flex items-center justify-center w-8 h-8 transition-colors border rounded-md hover:bg-accent hover:text-accent-foreground"
+                          >
+                            <PhoneCall className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
           {vehicle.status === "Available" && (
             <PotentialBuyers vehicle={vehicle} />
           )}

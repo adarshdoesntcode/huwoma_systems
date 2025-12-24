@@ -32,56 +32,75 @@ function GarageStatsCards() {
   } else if (isSuccess) {
     content = (
       <div className="grid gap-4 duration-300 animate-in fade-in-10 slide-in-from-bottom-1 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        {/* Card 1: Inventory */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">
-              Vehicles for Sale
+              Inventory Value
             </CardTitle>
             <BadgePercent className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              +{data?.data?.vehicleCount || 0}
+              {data?.data?.vehicleCount || 0} Vehicles
             </div>
+            <p className="text-xs text-muted-foreground">
+              Currently available for sale
+            </p>
           </CardContent>
         </Card>
+
+        {/* Card 2: Total Sales */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">
-              Active Buyer Interests
+              Total Revenue
+            </CardTitle>
+            <CodeSandboxLogoIcon className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {data?.data?.totalRevenue?.toLocaleString("en-IN") || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Across {data?.data?.soldCount || 0} sold vehicles
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Card 3: Commission */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">
+              Commission Earned
+            </CardTitle>
+            <CodeSandboxLogoIcon className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {data?.data?.totalCommission?.toLocaleString("en-IN") || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total realized profit
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Card 4: Active Leads */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">
+              Active Opportunities
             </CardTitle>
             <MessageSquareHeart className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              +{data?.data?.interestCount || 0}
+              +{data?.data?.activeLeads || 0}
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Listed Vehicle Worth
-            </CardTitle>
-            <CodeSandboxLogoIcon className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-semibold text-green-600">
-              {data?.data?.totalAskingPrice?.toLocaleString("en-IN") || 0}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Potential Commission
-            </CardTitle>
-            <span className="font-mono text-xs text-muted-foreground">5%</span>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-semibold text-blue-500">
-              ~ {data?.data?.potentialCommission?.toLocaleString("en-IN") || 0}
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Unfulfilled buyer interests
+            </p>
           </CardContent>
         </Card>
       </div>

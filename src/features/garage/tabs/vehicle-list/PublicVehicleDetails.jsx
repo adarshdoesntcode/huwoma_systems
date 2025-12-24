@@ -14,21 +14,18 @@ import {
 import { PhotoProvider } from "react-photo-view";
 import { FallbackImage } from "@/components/PhotoGallery";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 
 import {
-  ArrowUpRight,
   Calendar,
-  MessageSquare,
-  PhoneCall,
+  Heart,
   PlusCircle,
-  User,
 } from "lucide-react";
-import { formatCurrency, formatDate, getDaysDifference } from "@/lib/utils";
+import { formatDate, getDaysDifference } from "@/lib/utils";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { IMAGE_DATA } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import ShowInterestModal from "../../public/ShowInterestModal";
 
 function PublicVehicleDetails() {
   const { id } = useParams();
@@ -287,6 +284,16 @@ function PublicVehicleDetails() {
                         </div> */}
                       </div>
                     )
+                  )}
+                  {vehicle.status === "Available" && (
+                    <div className="flex sm:flex-row flex-col justify-end py-4 border-y">
+                      <div className="w-full sm:w-[180px]">
+                        <ShowInterestModal
+                          vehicleId={id}
+                          vehicleName={`${vehicle.make} ${vehicle.model}`}
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

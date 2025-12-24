@@ -240,6 +240,13 @@ export const garageApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["GarageBuyerInterests", "UnverifiedInterestCount"],
     }),
+    addPublicVehicleInterest: builder.mutation({
+      query: ({ vehicleId, name, contactNumber }) => ({
+        url: `/garage/public-add-interest/${vehicleId}`,
+        method: "POST",
+        body: { name, contactNumber },
+      }),
+    }),
   }),
 });
 
@@ -276,7 +283,9 @@ export const {
   usePublicNewBuyerInterestMutation,
   useGetUnverifiedInterestCountQuery,
   useVerifyBuyerInterestMutation,
+  useAddPublicVehicleInterestMutation,
 } = garageApiSlice;
+
 
 
 

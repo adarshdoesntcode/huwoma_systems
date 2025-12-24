@@ -8,6 +8,7 @@ import {
   Eye,
   Fuel,
   Gauge,
+  Heart,
   Menu,
   Share2,
   ShieldCheck,
@@ -20,6 +21,7 @@ import DeleteVehicleListing from "./mutation/DeleteVehicleListing";
 import { capitalizeFirstLetter, formatDate, getDaysDifference } from "@/lib/utils";
 import ShareVehicle from "./mutation/ShareVehicle";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { Badge } from "@/components/ui/badge";
 
 export const VehicleCard = ({ vehicle, scope = null }) => {
   const [showDelete, setShowDelete] = useState(false);
@@ -78,6 +80,8 @@ export const VehicleCard = ({ vehicle, scope = null }) => {
     },
   ];
 
+  const hasInterestedBuyers = vehicle.interestedBuyers.filter(ib => !ib.fulfilled).length > 0;
+
   return (
     <Card className="overflow-hidden transition-all duration-300 animate-in fade-in-10 slide-in-from-bottom-1 hover:shadow-md">
       {/* Vehicle Image */}
@@ -91,6 +95,11 @@ export const VehicleCard = ({ vehicle, scope = null }) => {
               vehicle.photos[0]?.fallbackUrl || "/api/placeholder/400/200";
           }}
         />
+        <div className="absolute top-2 left-2">
+          {hasInterestedBuyers && scope !== "public" && (
+            <div className="bg-white text-red-500  p-1.5 rounded-full"><Heart className="w-4 fill-red-500 h-4" /></div>
+          )}
+        </div>
         <div className="absolute top-2 right-2">
           <StatusBadge status={vehicle.status} variant="solid" />
         </div>
