@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeSandboxLogoIcon } from "@radix-ui/react-icons";
-import { BadgePercent, MessageSquareHeart } from "lucide-react";
+import { BadgePercent, Box, DollarSign, HandCoins, MessageSquareHeart } from "lucide-react";
 import { useGetVehicleGarageStatsQuery } from "../garageApiSlice";
 import ApiError from "@/components/error/ApiError";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,10 +38,10 @@ function GarageStatsCards() {
             <CardTitle className="text-sm font-medium">
               Inventory Value
             </CardTitle>
-            <BadgePercent className="w-4 h-4 text-muted-foreground" />
+            <Box className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl font-bold">
               {data?.data?.vehicleCount || 0} Vehicles
             </div>
             <p className="text-xs text-muted-foreground">
@@ -56,10 +56,10 @@ function GarageStatsCards() {
             <CardTitle className="text-sm font-medium">
               Total Revenue
             </CardTitle>
-            <CodeSandboxLogoIcon className="w-4 h-4 text-muted-foreground" />
+            <DollarSign className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-xl font-bold text-green-600">
               {data?.data?.totalRevenue?.toLocaleString("en-IN") || 0}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -74,10 +74,10 @@ function GarageStatsCards() {
             <CardTitle className="text-sm font-medium">
               Commission Earned
             </CardTitle>
-            <CodeSandboxLogoIcon className="w-4 h-4 text-muted-foreground" />
+            <HandCoins className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-xl font-bold text-blue-600">
               {data?.data?.totalCommission?.toLocaleString("en-IN") || 0}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -95,7 +95,7 @@ function GarageStatsCards() {
             <MessageSquareHeart className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl font-bold">
               +{data?.data?.activeLeads || 0}
             </div>
             <p className="text-xs text-muted-foreground">
