@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/card";
 import { format } from "date-fns";
 import { CarwashFilterTranasactionDataTable } from "../carwash_tranasactions/CarwashFilterTransactionDataTable";
-import { CarwashFilterTransactionColumn } from "../carwash_tranasactions/CarwashFilterTransactionColumn";
 import { Label } from "@/components/ui/label";
 import {
   Table,

@@ -8,7 +8,7 @@ export const SimRacingCustomersColumn = [
     header: () => <TableHead className="hidden md:table-cell">Sn</TableHead>,
     cell: ({ row }) => {
       return (
-        <TableCell className="text-muted-foreground hidden md:table-cell px-4 py-2">
+        <TableCell className="hidden px-4 py-2 text-muted-foreground md:table-cell">
           {row.index + 1}
         </TableCell>
       );
@@ -29,7 +29,7 @@ export const SimRacingCustomersColumn = [
 
       return (
         <TableCell className="px-4 py-2">
-          <div className="font-medium text-xs">{customer.customerName}</div>
+          <div className="text-xs font-medium">{customer.customerName}</div>
         </TableCell>
       );
     },
@@ -72,7 +72,7 @@ export const SimRacingCustomersColumn = [
       const total = row.original.totalNetAmount || 0;
 
       return (
-        <TableCell className="hidden lg:table-cell px-4 text-xs text-muted-foreground text-center py-2">
+        <TableCell className="hidden px-4 py-2 text-xs text-center lg:table-cell text-muted-foreground">
           +{total.toLocaleString()}
         </TableCell>
       );
@@ -95,7 +95,7 @@ export const SimRacingCustomersColumn = [
         <DataTableColumnHeader
           column={column}
           title={header}
-          className="hidden lg:table-cell px-1"
+          className="hidden px-1 lg:table-cell"
           buttonClass={"mx-auto"}
         />
       );
@@ -104,7 +104,7 @@ export const SimRacingCustomersColumn = [
       let date = format(new Date(row.original.createdAt), "MMMM d, yyyy");
 
       return (
-        <TableCell className="hidden  lg:table-cell px-4 py-2 text-center">
+        <TableCell className="hidden px-4 py-2 text-center lg:table-cell">
           <div className="text-xs text-muted-foreground">{date}</div>
         </TableCell>
       );

@@ -23,7 +23,6 @@ import SubmitButton from "@/components/SubmitButton";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SimRacingFinishedDataTable } from "../SimRacingFinishedDataTable";
-import { SimRacingFinishedColumn } from "../SimRacingFinishedColumn";
 import { Separator } from "@/components/ui/separator";
 import { SimRacingCustomerDetailsColumn } from "./SimRacingCustomerDetailsColumn";
 
@@ -36,7 +35,6 @@ function SimRacingCustomerDetails() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-    setValue,
   } = useForm();
 
   const [updateSimRacingCustomer] = useUpdateSimRacingCustomerMutation();
@@ -87,10 +85,10 @@ function SimRacingCustomerDetails() {
     );
   } else if (isSuccess) {
     content = (
-      <div className=" space-y-4 mb-64">
+      <div className="mb-64 space-y-4 ">
         <NavBackButton buttonText={"Back"} navigateTo={-1} />
         <Card>
-          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-2">
+          <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
             {!isEdit ? (
               <div className="flex items-start justify-between">
                 <div>
@@ -110,7 +108,7 @@ function SimRacingCustomerDetails() {
                     size="sm"
                     onClick={() => setIsEdit(true)}
                   >
-                    <Edit className="sm:mr-2 h-4 w-4" />
+                    <Edit className="w-4 h-4 sm:mr-2" />
                     <span className="ml-2 sr-only sm:not-sr-only">Edit</span>
                   </Button>
                 </div>
@@ -137,7 +135,7 @@ function SimRacingCustomerDetails() {
                     condition={isSubmitting}
                     buttonText={
                       <>
-                        <Save className="sm:mr-2  h-4 w-4" />
+                        <Save className="w-4 h-4 sm:mr-2" />
                         <span className="sr-only sm:not-sr-only">Save</span>
                       </>
                     }
@@ -145,8 +143,8 @@ function SimRacingCustomerDetails() {
                     size="sm"
                   />
                 </div>
-                <div className="grid grid-cols-2 sm:gap-6 gap-4">
-                  <div className="col-span-2 sm:col-span-1 space-y-2">
+                <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                  <div className="col-span-2 space-y-2 sm:col-span-1">
                     <Label>
                       {errors.customerName ? (
                         <span className="text-destructive">
@@ -174,7 +172,7 @@ function SimRacingCustomerDetails() {
                       }
                     />
                   </div>
-                  <div className="sm:col-span-1 col-span-2 space-y-2">
+                  <div className="col-span-2 space-y-2 sm:col-span-1">
                     <Label>
                       {errors.customerContact ? (
                         <span className="text-destructive">
@@ -204,7 +202,7 @@ function SimRacingCustomerDetails() {
               </form>
             )}
           </CardHeader>
-          <CardContent className="p-4  sm:p-6 pt-0 sm:pt-0">
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <Separator className="my-4" />
             <SimRacingFinishedDataTable
               data={customer.customerTransactions}

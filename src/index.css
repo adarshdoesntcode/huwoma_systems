@@ -15,6 +15,10 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+/* 
+* {
+  border: 1px solid green;
+} */
 
 @layer base {
   :root {
@@ -123,8 +127,8 @@ input[type="number"] {
 
 @theme inline {
   @keyframes gradient {
-  to {
-    background-position: var(--bg-size, 300%) 0;
+    to {
+      background-position: var(--bg-size, 300%) 0;
     }
   }
 }

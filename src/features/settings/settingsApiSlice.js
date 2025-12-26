@@ -159,6 +159,23 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["ParkingVehicles"],
     }),
 
+    getGarageVehicleConfig: builder.query({
+      query: () => ({
+        url: "/garage/vehicle-configs",
+        method: "GET",
+      }),
+      providesTags: ["GarageVehicleConfig"],
+    }),
+
+    updateGarageVehicleConfig: builder.mutation({
+      query: (credentials) => ({
+        url: "/garage/vehicle-configs",
+        method: "PUT",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["GarageVehicleConfig"],
+    }),
+
     updateAdminProfile: builder.mutation({
       query: (credentials) => ({
         url: `/settings/general/${credentials.id}`,
@@ -304,4 +321,6 @@ export const {
   useCreateParkingVehicleMutation,
   useDeleteParkingVehicleMutation,
   useUpdateParkingVehicleMutation,
+  useGetGarageVehicleConfigQuery,
+  useUpdateGarageVehicleConfigMutation,
 } = settingsApiSlice;

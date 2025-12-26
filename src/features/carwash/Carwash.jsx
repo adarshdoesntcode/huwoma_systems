@@ -90,11 +90,6 @@ function Carwash() {
   let hourlyCounts;
 
   if (data) {
-    // const filteredTransactions = data?.data?.transactions?.filter(
-    //   (transaction) =>
-    //     transaction.transactionStatus !== "Cancelled" &&
-    //     transaction.paymentStatus !== "Cancelled"
-    // );
     hourlyCounts = Object.entries(data?.data?.hours).map(
       ([hour, customers]) => ({
         hour: hour,

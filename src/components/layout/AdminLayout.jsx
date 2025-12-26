@@ -63,7 +63,7 @@ function AdminLayout() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location]);
+  }, [location.pathname]);
 
   const crumbs = location.pathname.split("/").filter((crumb) => {
     if (crumb !== "" && crumb != ROLES_LIST.ADMIN) {

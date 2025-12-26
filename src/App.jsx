@@ -14,6 +14,12 @@ import PrivateRoutes from "./routes/PrivateRoutes";
 import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClientStartRace";
 import Error from "./components/error/Error";
 import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
+import { OfflineAlert } from "./components/OfflineAlert";
+import VehicleDetails from "./features/garage/tabs/vehicle-list/VehicleDetails";
+import PublicVehicleDetails from "./features/garage/tabs/vehicle-list/PublicVehicleDetails";
+import PublicVehicleListings from "./features/garage/public/PublicVehicleListings";
+import PublicNewVehicleListing from "./features/garage/public/PublicNewVehicleListing";
+import PublicNewBuyerInterest from "./features/garage/public/PublicNewBuyerInterest";
 import OAuthRedirect from "./features/auth/OAuthRedirect";
 
 const router = createBrowserRouter([
@@ -55,7 +61,26 @@ const router = createBrowserRouter([
     element: <SimRacingClientMyRace />,
     errorElement: <Error />,
   },
-
+  {
+    path: "/garagebyhuwoma",
+    element: <PublicVehicleListings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/garagebyhuwoma/new-vehicle",
+    element: <PublicNewVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/garagebyhuwoma/new-buyer-interest",
+    element: <PublicNewBuyerInterest />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/garagebyhuwoma/:id",
+    element: <PublicVehicleDetails />,
+    errorElement: <Error />,
+  },
   {
     path: "/unauthorized",
     element: <Unauthorized />,
@@ -70,6 +95,7 @@ function App() {
   return (
     <Provider store={store}>
       <RouterProvider router={router} />
+      <OfflineAlert />
     </Provider>
   );
 }

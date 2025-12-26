@@ -242,3 +242,46 @@ export function getMostDetailedObject(arr) {
       : mostDetailed;
   }, {});
 }
+
+export const cleanObject = (obj) => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([_, v]) => {
+        if (Array.isArray(v)) return v.length > 0;
+        if (typeof v === "object" && v !== null)
+          return Object.keys(cleanObject(v)).length > 0;
+        return v !== undefined && v !== "";
+      })
+      .map(([k, v]) => [
+        k,
+        typeof v === "object" && !Array.isArray(v) ? cleanObject(v) : v,
+      ])
+  );
+};
+export const formatCurrency = (amount) => {
+  if (amount == null || isNaN(amount)) return "Rs 0";
+  return `Rs ${new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount)}`;
+};
+
+export const formatNumber = (num) => {
+  if (num == null || isNaN(num)) return "0";
+  return new Intl.NumberFormat("en-IN").format(num);
+};
+
+export const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+
+export const capitalizeFirstLetter = (string) => {
+  if (!string) return "";
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+

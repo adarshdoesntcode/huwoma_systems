@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/lib/config";
 const baseQuery = fetchBaseQuery({
   baseUrl: API_BASE_URL,
   credentials: "include",
+  timeout: 60000,
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.token;
     if (token) {

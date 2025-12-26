@@ -25,6 +25,18 @@ import SystemActivity from "@/features/system_activity/SystemActivity";
 import CarwashOldRecord from "@/features/carwash/CarwashOldRecord";
 import CarGarage from "@/features/garage/CarGarage";
 import ParkingTabSettlement from "@/features/parking/parking_tabs/settlement/ParkingTabSettlement";
+import NewVehicleListing from "@/features/garage/new_vehicle/NewVehicleListing";
+import VehicleDetails from "@/features/garage/tabs/vehicle-list/VehicleDetails";
+import InterestDetails from "@/features/garage/tabs/buyer-interest/InterestDetails";
+import EditVehicleListing from "@/features/garage/edit_vehicle/EditVehicleListing";
+import NewBuyerInterest from "@/features/garage/new_interest/NewBuyerInterest";
+import EditBuyerInterest from "@/features/garage/edit_interest/EditBuyerInterest";
+import GarageCustomers from "@/features/garage/garage_customers/GarageCustomers";
+import GarageTransactions from "@/features/garage/garage_transactions/GarageTransactions";
+import GarageCustomerDetails from "@/features/garage/garage_customers/details/GarageCustomerDetails";
+import SellVehicle from "@/features/garage/sell_vehicle/SellVehicle";
+import VerifyVehicle from "@/features/garage/tabs/vehicle-list/VerifyVehicle";
+import VerifyInterest from "@/features/garage/tabs/buyer-interest/VerifyInterest";
 
 const PrivateRoutes = [
   {
@@ -140,6 +152,66 @@ const PrivateRoutes = [
   {
     path: "garage",
     element: <CarGarage />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/vehicle/:id",
+    element: <VehicleDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/verify/:id",
+    element: <VerifyVehicle />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/verify-interest/:id",
+    element: <VerifyInterest />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/interest/:id",
+    element: <InterestDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/new-vehicle",
+    element: <NewVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/edit-vehicle/:id",
+    element: <EditVehicleListing />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/sell-vehicle",
+    element: <SellVehicle />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/new-interest/",
+    element: <NewBuyerInterest />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/edit-interest/:id",
+    element: <EditBuyerInterest />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/customers",
+    element: <GarageCustomers />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/customers/:id",
+    element: <GarageCustomerDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "garage/transactions",
+    element: <GarageTransactions />,
     errorElement: <Error />,
   },
   {

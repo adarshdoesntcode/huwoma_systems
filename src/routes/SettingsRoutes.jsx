@@ -12,6 +12,7 @@ import SimrRacingSettings from "@/features/settings/simracing/SimRacingSettings"
 import PosSettings from "@/features/settings/pos/PosSettings";
 import AdminsSettings from "@/features/settings/admins/AdminsSettings";
 import ParkingSettings from "@/features/settings/parking/ParkingSettings";
+import GarageSettings from "@/features/settings/garage/GarageSettings";
 
 const SettingsRoutes = [
   {
@@ -47,6 +48,11 @@ const SettingsRoutes = [
   {
     path: "park",
     element: <ParkingSettings />,
+    errorElement: <Error />,
+  },
+  {
+    path: "car-grag",
+    element: <GarageSettings />,
     errorElement: <Error />,
   },
   {
