@@ -303,7 +303,7 @@ function VerifyVehicle() {
     return (
         <div className="grid items-start w-full max-w-4xl gap-4 mx-auto mb-64">
             <div>
-                <NavBackButton buttonText={"Back"} navigateTo={-1} />
+                <NavBackButton buttonText={"Back"} navigateTo={"/garage"} />
             </div>
             <Card className="p-0 bg-transparent border-none shadow-none">
                 <CardHeader className="p-0">
