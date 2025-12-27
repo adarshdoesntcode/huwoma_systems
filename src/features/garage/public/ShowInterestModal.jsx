@@ -44,7 +44,7 @@ function ShowInterestModal({ vehicleId, vehicleName }) {
             toast({
                 title: "Interest Submitted!",
                 description: "We will contact you soon.",
-                duration: 3000,
+                duration: 5000,
             });
 
             // Close modal after 2 seconds

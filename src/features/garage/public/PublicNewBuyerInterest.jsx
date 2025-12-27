@@ -80,8 +80,8 @@ function PublicNewBuyerInterest() {
             }
             toast({
                 title: "Preference Submitted!",
-                description: "Your preference will be active after verification.",
-                duration: 3000,
+                description: "You will be contacted if your preference matches with our sellers.",
+                duration: 5000,
             });
             reset();
             navigate("/garagebyhuwoma");
@@ -123,7 +123,7 @@ function PublicNewBuyerInterest() {
                                     Your Buying Preference
                                 </CardTitle>
                                 <CardDescription className="text-xs sm:text-sm">
-                                    Tell us what you&apos;re looking for. It will be active after verification.
+                                    Tell us what you&apos;re looking for.
                                 </CardDescription>
                             </div>
                             <Steps steps={2} current={formStep} />

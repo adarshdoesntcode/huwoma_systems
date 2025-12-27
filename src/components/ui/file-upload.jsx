@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "./badge";
-import { Camera, CheckCheck, Loader2, UploadCloud, X } from "lucide-react";
+import { Camera, CheckCheck, Image, Loader2, UploadCloud, X } from "lucide-react";
 import heic2any from "heic2any";
 import { isMobile } from "react-device-detect";
 
@@ -127,6 +127,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
   const handleClick = () => fileInputRef.current?.click();
   const handleCameraClick = (e) => {
     e.stopPropagation();
+    e.preventDefault();
     cameraInputRef.current?.click();
   };
 
@@ -213,7 +214,13 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
   return (
     <div className="w-full" {...getRootProps()}>
       <div
-        onClick={handleClick}
+        onClick={(e) => {
+          // Prevent triggering file select if camera button was clicked
+          if (e.target.closest('[data-camera-button]')) {
+            return;
+          }
+          handleClick();
+        }}
         className="relative w-full p-10 transition-transform duration-200 bg-white shadow-sm cursor-pointer rounded-xl group/file"
       >
         <input {...getInputProps()} ref={fileInputRef} className="hidden" />
@@ -271,24 +278,24 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
           )}
 
           {/* Upload and Camera buttons */}
-          <div className="flex items-center justify-center gap-4 mt-10">
+          <div className="flex items-center justify-center gap-4 mt-10 w-full">
             <div
               className={cn(
                 "relative border hover:scale-[1.1] shadow-xl z-40 flex items-center justify-center h-32 w-full max-w-[8rem] rounded-xl transition-transform duration-200",
                 isDragActive && "scale-110 border-2 border-dashed border-primary"
               )}
             >
-              <UploadCloud className="w-8 h-8 text-neutral-400" />
+              <Image className="w-8 h-8 text-neutral-400" />
             </div>
 
             {/* Camera button - only visible on mobile */}
             {isMobile && (
               <div
+                data-camera-button
                 onClick={handleCameraClick}
-                className="relative border hover:scale-[1.1] shadow-xl z-40 flex flex-col items-center justify-center h-32 w-full max-w-[8rem] rounded-xl transition-transform duration-200 bg-primary/5 border-primary/20"
+                className="relative border hover:scale-[1.1] shadow-xl z-40 flex flex-col items-center justify-center h-32 w-full max-w-[8rem] rounded-xl transition-transform duration-200 "
               >
-                <Camera className="w-8 h-8 text-primary" />
-                <p className="mt-2 text-xs font-medium text-primary">Camera</p>
+                <Camera className="w-8 h-8 text-neutral-400" />
               </div>
             )}
           </div>

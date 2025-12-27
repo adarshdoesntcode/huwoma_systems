@@ -87,7 +87,7 @@ function PublicNewVehicleListing() {
                 toast({
                     title: "Vehicle Submitted!",
                     description: "Your vehicle will be visible after verification.",
-                    duration: 3000,
+                    duration: 5000,
                 });
                 reset();
                 navigate(`/garagebyhuwoma`);
@@ -131,7 +131,7 @@ function PublicNewVehicleListing() {
                                     List Your Vehicle
                                 </CardTitle>
                                 <CardDescription className="text-xs sm:text-sm">
-                                    Submit your vehicle for sale. It will be visible after verification.
+                                    Submit your vehicle for sale.
                                 </CardDescription>
                             </div>
                             <Steps steps={4} current={formStep} />
