@@ -37,8 +37,8 @@ function ScanReceiptQr() {
         transactionDetails.transactionStatus === "In Queue"
           ? "queue"
           : transactionDetails.transactionStatus === "Ready for Pickup"
-          ? "pickup"
-          : transactionDetails.transactionStatus === "Completed" && "pending";
+            ? "pickup"
+            : transactionDetails.transactionStatus === "Completed" && "pending";
 
       navigate("/carwash/checkout", {
         state: { transactionDetails, origin },
@@ -86,7 +86,7 @@ function ScanReceiptQr() {
       }}
     >
       <DrawerTrigger asChild>
-        <div className="fixed p-4 text-white transition-all bg-black rounded-full shadow-lg cursor-pointer hover:scale-110 bottom-6 right-6">
+        <div className="fixed p-4 text-white transition-all bg-black z-50 rounded-full shadow-lg cursor-pointer hover:scale-110 bottom-6 right-6">
           <ScanQrCode className="w-5 h-5" />
         </div>
       </DrawerTrigger>

@@ -59,7 +59,7 @@ function GaragePublicPortal({ setShowShare, showShare }) {
                             </>
                         )}
                     </Button>
-                    <Button onClick={() => window.open(`${window.location.origin}/garagebyhuwoma`, "_blank")}>
+                    <Button className="mb-2 sm:ml-2 " onClick={() => window.open(`${window.location.origin}/garagebyhuwoma`, "_blank")}>
                         Visit <ExternalLink className="w-4 h-4 ml-2" />
                     </Button>
                 </AlertDialogFooter>
