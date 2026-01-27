@@ -59,7 +59,7 @@ const MonthSelector = ({ filter, onSelect }) => {
     : null;
 
   return isMobile ? (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
       <DrawerTrigger asChild>
         <Button
           variant="outline"
@@ -97,7 +97,7 @@ const MonthSelector = ({ filter, onSelect }) => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2" data-vaul-no-drag>
           {MONTHS.map((month, index) => {
             const isDisabled = year === currentYear && index > currentMonth;
             return (
