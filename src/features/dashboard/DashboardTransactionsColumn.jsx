@@ -174,7 +174,7 @@ export const DashboardTransactionsColumn = [
               {amount.toFixed(2)}
             </div>
             <div className="text-[9px] leading-[10px] flex justify-end   text-muted-foreground">
-              <span className="text-[7px] leading-[10px] flex justify-end   text-muted-foreground pr-1">via</span>
+              <span className=" flex justify-end   text-muted-foreground pr-1">via</span>
               {row.original.paymentMode.paymentModeName}
             </div>
           </>
