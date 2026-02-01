@@ -10,7 +10,6 @@ import { startOfMonth, endOfMonth, isBefore, isAfter, format } from "date-fns";
 import { isMobile } from "react-device-detect";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
-import { useScrollLock } from "@/hooks/useScrollLock";
 
 const MONTHS = [
   "January",
@@ -39,9 +38,6 @@ const MonthSelector = ({ filter, onSelect }) => {
 
   const [year, setYear] = useState(currentYear);
   const [open, setOpen] = useState(false);
-
-  // Lock body scroll when drawer is open
-  useScrollLock(open && isMobile);
 
   const handleMonthSelect = (monthIndex) => {
     if (year === currentYear && monthIndex > currentMonth) return;

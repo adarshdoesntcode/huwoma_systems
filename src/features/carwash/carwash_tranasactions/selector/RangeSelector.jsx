@@ -11,15 +11,10 @@ import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { isMobile } from "react-device-detect";
-import { useScrollLock } from "@/hooks/useScrollLock";
 
 function RangeSelector({ filter, setFilter }) {
-  const [open, setOpen] = useState(false);
-
-  // Lock body scroll when drawer is open
-  useScrollLock(open && isMobile);
   return isMobile ? (
-    <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
+    <Drawer shouldScaleBackground={false}>
       <DrawerTrigger asChild>
         <Button
           type="button"
