@@ -11,9 +11,13 @@ import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { isMobile } from "react-device-detect";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 function DateSelector({ filter, setFilter }) {
   const [open, setOpen] = useState(false);
+
+  // Lock body scroll when drawer is open
+  // useScrollLock(open && isMobile); // TEMP: Disabled for testing
 
   return isMobile ? (
     <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
@@ -25,6 +29,10 @@ function DateSelector({ filter, setFilter }) {
             "w-full  justify-start text-left font-normal",
             !filter.customDate.date && "text-muted-foreground"
           )}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
         >
           <CalendarIcon className="w-4 h-4 mr-2" />
           {filter.customDate.date ? (
