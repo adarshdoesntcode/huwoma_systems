@@ -14,7 +14,7 @@ import { isMobile } from "react-device-detect";
 
 function RangeSelector({ filter, setFilter }) {
   return isMobile ? (
-    <Drawer>
+    <Drawer shouldScaleBackground={false}>
       <DrawerTrigger asChild>
         <Button
           type="button"
@@ -72,6 +72,7 @@ function RangeSelector({ filter, setFilter }) {
             }));
           }}
           numberOfMonths={2}
+          data-vaul-no-drag
         />
       </DrawerContent>
     </Drawer>

@@ -16,7 +16,7 @@ function DateSelector({ filter, setFilter }) {
   const [open, setOpen] = useState(false);
 
   return isMobile ? (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
       <DrawerTrigger asChild>
         <Button
           type="button"
@@ -59,6 +59,7 @@ function DateSelector({ filter, setFilter }) {
             }));
             setOpen(false);
           }}
+          data-vaul-no-drag
         />
       </DrawerContent>
     </Drawer>
