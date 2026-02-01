@@ -41,7 +41,7 @@ const MonthSelector = ({ filter, onSelect }) => {
   const [open, setOpen] = useState(false);
 
   // Lock body scroll when drawer is open
-  // useScrollLock(open && isMobile); // TEMP: Disabled for testing
+  useScrollLock(open && isMobile);
 
   const handleMonthSelect = (monthIndex) => {
     if (year === currentYear && monthIndex > currentMonth) return;
@@ -72,10 +72,6 @@ const MonthSelector = ({ filter, onSelect }) => {
             "justify-start w-full font-normal text-left ",
             !filter.customMonth?.from && "text-muted-foreground"
           )}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
         >
           <CalendarIcon className="w-4 h-4 mr-2" />
           {filter.customMonth?.from ? (
