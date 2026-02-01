@@ -62,6 +62,7 @@ const MonthSelector = ({ filter, onSelect }) => {
     <Drawer open={open} onOpenChange={setOpen} shouldScaleBackground={false}>
       <DrawerTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           className={cn(
             "justify-start w-full font-normal text-left ",
@@ -79,6 +80,7 @@ const MonthSelector = ({ filter, onSelect }) => {
       <DrawerContent className="flex items-center justify-center pb-10">
         <div className="flex items-center justify-between w-[240px] mb-2">
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => canGoPrev && setYear((y) => y - 1)}
@@ -88,6 +90,7 @@ const MonthSelector = ({ filter, onSelect }) => {
           </Button>
           <span className="font-medium">{year}</span>
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => canGoNext && setYear((y) => y + 1)}
@@ -102,6 +105,7 @@ const MonthSelector = ({ filter, onSelect }) => {
             const isDisabled = year === currentYear && index > currentMonth;
             return (
               <Button
+                type="button"
                 key={month}
                 variant={
                   selectedMonth === index && selectedYear === year
@@ -123,6 +127,7 @@ const MonthSelector = ({ filter, onSelect }) => {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           className={cn(
             "justify-start w-full font-normal text-left ",
@@ -140,6 +145,7 @@ const MonthSelector = ({ filter, onSelect }) => {
       <PopoverContent className="w-[280px]">
         <div className="flex items-center justify-between mb-2">
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => canGoPrev && setYear((y) => y - 1)}
@@ -149,6 +155,7 @@ const MonthSelector = ({ filter, onSelect }) => {
           </Button>
           <span className="font-medium">{year}</span>
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={() => canGoNext && setYear((y) => y + 1)}
@@ -163,6 +170,7 @@ const MonthSelector = ({ filter, onSelect }) => {
             const isDisabled = year === currentYear && index > currentMonth;
             return (
               <Button
+                type="button"
                 key={month}
                 variant={
                   selectedMonth === index && selectedYear === year

@@ -19,6 +19,7 @@ function DateSelector({ filter, setFilter }) {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button
+          type="button"
           variant={"outline"}
           className={cn(
             "w-full  justify-start text-left font-normal",
@@ -65,6 +66,7 @@ function DateSelector({ filter, setFilter }) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant={"outline"}
           className={cn(
             "w-full  justify-start text-left font-normal",

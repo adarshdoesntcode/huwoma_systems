@@ -17,13 +17,14 @@ function RangeSelector({ filter, setFilter }) {
     <Drawer>
       <DrawerTrigger asChild>
         <Button
+          type="button"
           id="date"
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
             !filter.customRange?.from &&
-              !filter.customRange?.to &&
-              "text-muted-foreground"
+            !filter.customRange?.to &&
+            "text-muted-foreground"
           )}
         >
           <CalendarIcon className="w-4 h-4 mr-2" />
@@ -78,13 +79,14 @@ function RangeSelector({ filter, setFilter }) {
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           id="date"
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
             !filter.customRange?.from &&
-              !filter.customRange?.to &&
-              "text-muted-foreground"
+            !filter.customRange?.to &&
+            "text-muted-foreground"
           )}
         >
           <CalendarIcon className="w-4 h-4 mr-2" />
