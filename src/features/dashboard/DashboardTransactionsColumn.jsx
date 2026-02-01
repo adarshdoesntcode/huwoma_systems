@@ -36,10 +36,10 @@ export const DashboardTransactionsColumn = [
       const type = billNo.endsWith("W")
         ? "Carwash"
         : billNo.endsWith("R")
-        ? "Simracing"
-        : billNo.endsWith("P")
-        ? "Parking"
-        : "Unknown";
+          ? "Simracing"
+          : billNo.endsWith("P")
+            ? "Parking"
+            : "Unknown";
 
       return (
         <TableCell className="px-2 py-1 sm:py-1 sm:px-4 ">
@@ -104,10 +104,10 @@ export const DashboardTransactionsColumn = [
       const type = billNo.endsWith("W")
         ? "Carwash"
         : billNo.endsWith("R")
-        ? "Simracing"
-        : billNo.endsWith("P")
-        ? "Parking"
-        : "Unknown";
+          ? "Simracing"
+          : billNo.endsWith("P")
+            ? "Parking"
+            : "Unknown";
       return (
         <TableCell className="px-2 py-1 sm:py-1 sm:px-4">
           <Badge variant={"outline"} className={badgeColours[type]}>
@@ -124,10 +124,10 @@ export const DashboardTransactionsColumn = [
       return billNo.endsWith("W")
         ? "Carwash"
         : billNo.endsWith("R")
-        ? "Simracing"
-        : billNo.endsWith("P")
-        ? "Parking"
-        : "Unknown";
+          ? "Simracing"
+          : billNo.endsWith("P")
+            ? "Parking"
+            : "Unknown";
     },
   },
 
@@ -166,9 +166,18 @@ export const DashboardTransactionsColumn = [
       const amount = row.original.netAmount;
 
       return (
-        <TableCell className=" py-1 text-end px-3 sm:pr-6 font-mono text-sm tracking-tight">
-          <span className="sr-only sm:not-sr-only">+</span>
-          {amount.toFixed(2)}
+        <TableCell className=" py-2 text-end px-3 sm:pr-6 font-mono text-sm tracking-tight">
+
+          <>
+            <div className="font-medium text-primary text-xs">
+              <span className="sr-only sm:not-sr-only">+</span>
+              {amount.toFixed(2)}
+            </div>
+            <div className="text-[9px] leading-[10px] flex justify-end   text-muted-foreground">
+              <span className="text-[7px] leading-[10px] flex justify-end   text-muted-foreground pr-1">via</span>
+              {row.original.paymentMode.paymentModeName}
+            </div>
+          </>
         </TableCell>
       );
     },
