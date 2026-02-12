@@ -87,7 +87,7 @@ const CarwashTransactionDetails = ({
     parkingEligible = timeDifference(serviceEnd, new Date(), parkingBuffer);
     parkingIncluded = transactionDetails?.service?.id?.includeParking.decision;
     parkingStart = new Date(
-      new Date(serviceEnd).getTime() + parkingBuffer * 60 * 1000
+      new Date(serviceEnd).getTime() + parkingBuffer * 60 * 1000,
     );
     parkingEnd = new Date();
     parkingTime = getTimeDifference(parkingStart, parkingEnd);
@@ -230,7 +230,7 @@ const Details = ({
                     {transactionDetails?.vehicleColor && (
                       <div
                         className={cn(
-                          `w-5 h-5 border  rounded-full shadow-lg  cursor-pointer`
+                          `w-5 h-5 border  rounded-full shadow-lg  cursor-pointer`,
                         )}
                         style={{
                           backgroundColor:
@@ -250,7 +250,7 @@ const Details = ({
                     <div className="text-xs ">
                       {format(
                         transactionDetails?.service?.start,
-                        "d MMM, yy - h:mm a"
+                        "d MMM, yy - h:mm a",
                       )}
                     </div>
                   </div>
@@ -263,7 +263,7 @@ const Details = ({
                     <div className="text-xs ">
                       {format(
                         transactionDetails?.service?.end,
-                        "d MMM, yy - h:mm a"
+                        "d MMM, yy - h:mm a",
                       )}
                     </div>
                   </div>
@@ -304,7 +304,7 @@ const Details = ({
                           <div className="text-xs ">
                             {format(
                               transactionDetails?.parking?.in,
-                              "d MMM, yy - h:mm a"
+                              "d MMM, yy - h:mm a",
                             )}
                           </div>
                         </div>
@@ -317,7 +317,7 @@ const Details = ({
                           <div className="text-xs ">
                             {format(
                               transactionDetails?.parking?.out,
-                              "d MMM, yy - h:mm a"
+                              "d MMM, yy - h:mm a",
                             )}
                           </div>
                         </div>
@@ -437,7 +437,7 @@ const Details = ({
                             </Table>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </AccordionContent>
@@ -466,7 +466,7 @@ const Details = ({
                   <div className="text-xs font-medium">
                     {format(
                       transactionDetails?.transactionTime,
-                      "d MMM, yy - h:mm a"
+                      "d MMM, yy - h:mm a",
                     )}
                   </div>
                 </>
@@ -586,7 +586,7 @@ const DetailsFooter = ({
         `\n${2}\n`,
         `\nParking (${format(
           transactionDetails?.parking?.in,
-          "d MMM, h:mm a"
+          "d MMM, h:mm a",
         )} - ${format(transactionDetails?.parking.out, "d MMM, h:mm a")})\n`,
         `\n${" "}\n`,
         `\n${transactionDetails?.parking?.cost.toFixed(2)}\n`,
@@ -623,7 +623,7 @@ const DetailsFooter = ({
         "flex justify-between gap-4 items-start sm:items-center w-full",
         role === ROLES_LIST.STAFF &&
           transactionDetails?.transactionStatus === "In Queue" &&
-          "gap-0"
+          "gap-0",
       )}
     >
       <div>
@@ -646,12 +646,12 @@ const DetailsFooter = ({
             //   3 &&
 
             <Button
-              variant="outline"
+              className="border border-destructive bg-bg text-destructive hover:bg-destructive hover:text-white"
               onClick={() => {
-                handleRollbackFromPickup();
+                handleTermination();
               }}
             >
-              <Undo2Icon className="w-4 h-4 mr-2" /> Rollback
+              <OctagonX className="w-4 h-4 mr-2" /> Cancel
             </Button>
           )}
         {transactionDetails?.transactionStatus === "Completed" &&
@@ -698,17 +698,27 @@ const DetailsFooter = ({
 
       {transactionDetails?.transactionStatus === "Ready for Pickup" &&
         origin !== "transactions" && (
-          <Button
-            className="w-full"
-            onClick={() => {
-              navigate("/carwash/checkout", {
-                state: { transactionDetails, origin: "pickup" },
-              });
-            }}
-          >
-            Checkout
-            <ChevronRight className="w-4 h-4 ml-2" />{" "}
-          </Button>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={() => {
+                handleRollbackFromPickup();
+              }}
+            >
+              <Undo2Icon className="w-4 h-4 mr-2" /> Rollback
+            </Button>
+            <Button
+              className="w-full"
+              onClick={() => {
+                navigate("/carwash/checkout", {
+                  state: { transactionDetails, origin: "pickup" },
+                });
+              }}
+            >
+              Checkout
+              <ChevronRight className="w-4 h-4 ml-2" />{" "}
+            </Button>
+          </div>
         )}
       {transactionDetails?.transactionStatus === "Completed" &&
         transactionDetails.paymentStatus === "Pending" && (
