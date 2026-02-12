@@ -87,6 +87,8 @@ input[type="number"] {
   } */
   html {
     font-family: Inter, system-ui, sans-serif;
+
+    min-height: calc(100% + env(safe-area-inset-top));
   }
   /* body {
     @apply bg-background text-foreground;
