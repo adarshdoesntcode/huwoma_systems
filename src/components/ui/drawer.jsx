@@ -3,12 +3,39 @@ import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/lib/utils"
 
+const isIosPwa = () => {
+  if (typeof window === "undefined") return false
+
+  const isiPadOS = window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1
+  const isIos = /iPad|iPhone|iPod/.test(window.navigator.userAgent) || isiPadOS
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true
+
+  return isIos && isStandalone
+}
+
 const Drawer = ({
-  shouldScaleBackground = true,
+  shouldScaleBackground,
+  fixed,
+  preventScrollRestoration,
+  repositionInputs,
   ...props
-}) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
-)
+}) => {
+  const iosPwa = isIosPwa()
+  const resolvedShouldScaleBackground = shouldScaleBackground ?? !iosPwa
+  const resolvedFixed = fixed ?? iosPwa
+  const resolvedPreventScrollRestoration = preventScrollRestoration ?? iosPwa
+  const resolvedRepositionInputs = repositionInputs ?? !iosPwa
+
+  return (
+    <DrawerPrimitive.Root
+      shouldScaleBackground={resolvedShouldScaleBackground}
+      fixed={resolvedFixed}
+      preventScrollRestoration={resolvedPreventScrollRestoration}
+      repositionInputs={resolvedRepositionInputs}
+      {...props}
+    />
+  )
+}
 Drawer.displayName = "Drawer"
 
 const DrawerTrigger = DrawerPrimitive.Trigger
@@ -31,7 +58,7 @@ const DrawerContent = React.forwardRef(({ className, children, ...props }, ref) 
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
+        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[calc(100dvh-1.5rem)] flex-col overflow-y-auto overscroll-contain rounded-t-[10px] border bg-background pb-[max(env(safe-area-inset-bottom),1rem)]",
         className
       )}
       {...props}>
