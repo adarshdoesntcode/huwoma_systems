@@ -5,8 +5,19 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import {
+  installBodyPointerEventsGuard,
+  scheduleBodyPointerEventsCleanup,
+} from "@/components/ui/radix-modal-fixes"
 
-const Dialog = DialogPrimitive.Root
+const Dialog = ({ onOpenChange, ...props }) => (
+  <DialogPrimitive.Root
+    onOpenChange={(open) => {
+      onOpenChange?.(open)
+      scheduleBodyPointerEventsCleanup()
+    }}
+    {...props} />
+)
 
 const DialogTrigger = DialogPrimitive.Trigger
 
@@ -94,6 +105,15 @@ const DialogContent = React.forwardRef(({ className, children, style, ...props }
       document.removeEventListener("focusin", updateOffset)
       document.removeEventListener("focusout", updateOffset)
       window.removeEventListener("orientationchange", updateOffset)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    const removeGuard = installBodyPointerEventsGuard()
+
+    return () => {
+      removeGuard()
+      scheduleBodyPointerEventsCleanup()
     }
   }, [])
 
