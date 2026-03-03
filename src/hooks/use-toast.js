@@ -1,4 +1,5 @@
 // Inspired by react-hot-toast library
+import { haptic } from "@/lib/haptic/haptic"
 import * as React from "react"
 
 const TOAST_LIMIT = 1
@@ -123,6 +124,10 @@ function toast({
       },
     },
   })
+
+  if (props.variant === "destructive") { 
+    haptic() // Trigger haptic feedback for destructive toasts
+  }
 
   return {
     id: id,
