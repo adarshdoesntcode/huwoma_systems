@@ -43,6 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import TextSeparator from "@/components/ui/TextSeparator";
 import {
   useGetPostFilterTransactionsMutation,
@@ -94,6 +95,7 @@ const configInitialState = {
   text: "All",
   value: "All",
 };
+const FILTER_BATCH_SIZE = 250;
 
 function CarwashTransactions() {
   const isSuper = useIsSuper();
@@ -103,6 +105,13 @@ function CarwashTransactions() {
   const [responseData, setResponseData] = useState("");
   const [range, setRange] = useState("");
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [isBatchFetching, setIsBatchFetching] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    loadedCount: 0,
+    totalCount: 0,
+  });
 
   const {
     handleSubmit,
@@ -252,6 +261,7 @@ function CarwashTransactions() {
 
   const onSubmit = async () => {
     setResponseData("");
+    setRange("");
 
     let dateRange;
 
@@ -273,8 +283,15 @@ function CarwashTransactions() {
         description: "Please select a time range",
       });
     }
+    setIsBatchFetching(true);
+    setBatchProgress({
+      currentPage: 0,
+      totalPages: 0,
+      loadedCount: 0,
+      totalCount: 0,
+    });
     try {
-      const res = await getPostFilterTransactions({
+      const requestPayload = {
         timeRange: { ...dateRange },
         transactionStatus:
           filter.transaction.status === "All"
@@ -284,20 +301,75 @@ function CarwashTransactions() {
           filter.payment.status === "All" ? null : filter.payment.status,
         vehicleId: selectedVehicle?.value?._id || null,
         serviceId: selectedService?.value?._id || null,
+      };
+
+      const firstPageRes = await getPostFilterTransactions({
+        ...requestPayload,
+        page: 1,
+        limit: FILTER_BATCH_SIZE,
+        includeTotal: true,
       });
-      if (res.error) {
-        throw new Error(res.error.data.message);
+
+      if (firstPageRes.error) {
+        throw new Error(firstPageRes.error.data.message);
       }
-      if (!res.error) {
-        setResponseData(res.data.data);
-        setRange(dateRange);
+
+      const firstPageData = firstPageRes.data?.data || {};
+      const firstPageTransactions = Array.isArray(firstPageData)
+        ? firstPageData
+        : firstPageData.transactions || [];
+      const reportedTotalPages =
+        firstPageData?.pagination?.totalPages && firstPageData.pagination.totalPages > 0
+          ? firstPageData.pagination.totalPages
+          : 1;
+      const reportedTotalCount =
+        firstPageData?.pagination?.total ?? firstPageTransactions.length;
+
+      const allTransactions = [...firstPageTransactions];
+
+      setBatchProgress({
+        currentPage: 1,
+        totalPages: reportedTotalPages,
+        loadedCount: allTransactions.length,
+        totalCount: reportedTotalCount,
+      });
+
+      for (let page = 2; page <= reportedTotalPages; page++) {
+        const pagedRes = await getPostFilterTransactions({
+          ...requestPayload,
+          page,
+          limit: FILTER_BATCH_SIZE,
+          includeTotal: false,
+        });
+
+        if (pagedRes.error) {
+          throw new Error(pagedRes.error.data.message);
+        }
+
+        const pagedData = pagedRes.data?.data || {};
+        const pagedTransactions = Array.isArray(pagedData)
+          ? pagedData
+          : pagedData.transactions || [];
+
+        allTransactions.push(...pagedTransactions);
+        setBatchProgress({
+          currentPage: page,
+          totalPages: reportedTotalPages,
+          loadedCount: allTransactions.length,
+          totalCount: reportedTotalCount,
+        });
       }
+
+      setResponseData(allTransactions);
+      setRange(dateRange);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Something went wrong!!",
         description: error.message,
       });
+    } finally {
+      setIsBatchFetching(false);
     }
   };
 
@@ -523,13 +595,51 @@ function CarwashTransactions() {
                     Filter <Filter className="w-4 h-4 ml-2" />
                   </>
                 }
-                condition={isSubmitting}
-                loadingText="Submitting"
+                condition={isSubmitting || isBatchFetching}
+                loadingText={
+                  isBatchFetching
+                    ? `Fetching ${Math.max(batchProgress.currentPage, 1)}/${Math.max(batchProgress.totalPages, 1)}`
+                    : "Submitting"
+                }
                 form="carwash-transaction-filter"
               />
             </div>
           </CardFooter>
         </Card>
+        {isBatchFetching && (
+          <Card>
+            <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-3">
+              <CardTitle className="text-base sm:text-lg">
+                Loading Transactions
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Fetching filtered data in backend batches to avoid timeout
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>
+                    Page {Math.max(batchProgress.currentPage, 1)} of{" "}
+                    {Math.max(batchProgress.totalPages, 1)}
+                  </span>
+                  <span>
+                    {batchProgress.loadedCount.toLocaleString()} /{" "}
+                    {batchProgress.totalCount.toLocaleString()} records
+                  </span>
+                </div>
+                <Progress
+                  value={
+                    batchProgress.totalCount > 0
+                      ? (batchProgress.loadedCount / batchProgress.totalCount) * 100
+                      : 0
+                  }
+                  className="h-2"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {responseData && (
           <FilteredAnalytics responseData={responseData} range={range} />
         )}
@@ -563,10 +673,13 @@ function calculateVehicleServiceIncome(transactions) {
     const serviceVehicle = transaction.service?.id?.serviceVehicle;
     const serviceType = transaction.service?.id;
     const serviceCost = transaction.service?.cost;
-    const addOns = transaction?.addOns?.reduce(
-      (sum, addOn) => sum + addOn.price,
-      0
-    );
+    const addOns = Array.isArray(transaction?.addOns)
+      ? transaction.addOns.reduce(
+          (sum, addOn) => sum + (Number(addOn?.price) || 0),
+          0
+        )
+      : 0;
+    const normalizedServiceCost = Number(serviceCost) || 0;
 
     if (serviceVehicle && serviceType && serviceCost !== undefined) {
       let vehicleTypeEntry = result.find(
@@ -595,7 +708,7 @@ function calculateVehicleServiceIncome(transactions) {
         vehicleTypeEntry.services.push(serviceEntry);
       }
 
-      serviceEntry.income += serviceCost + addOns;
+      serviceEntry.income += normalizedServiceCost + addOns;
     }
   });
 
@@ -628,8 +741,15 @@ const FilteredAnalytics = ({ responseData, range }) => {
   const parkingRevenue = sumByKey("parking.cost", completetedTransactions);
   const pendingRevenue = sumByKey("service.cost", pendingTransactions);
   const addOnsRevenue = completetedTransactions.reduce(
-    (total, transaction) =>
-      total + transaction.addOns.reduce((sum, addOn) => sum + addOn.price, 0),
+    (total, transaction) => {
+      const currentTransactionAddOnTotal = Array.isArray(transaction?.addOns)
+        ? transaction.addOns.reduce(
+            (sum, addOn) => sum + (Number(addOn?.price) || 0),
+            0
+          )
+        : 0;
+      return total + currentTransactionAddOnTotal;
+    },
     0
   );
 
