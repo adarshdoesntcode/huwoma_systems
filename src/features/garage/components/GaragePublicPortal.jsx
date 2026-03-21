@@ -15,6 +15,11 @@ import QRCode from "react-qr-code";
 function GaragePublicPortal({ setShowShare, showShare }) {
     const [isCopied, setIsCopied] = useState(false);
     const publicPortalUrl = `${window.location.origin}/garagebyhuwoma`;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
 
     const handleCloseShare = () => {
         setShowShare(false);
@@ -29,6 +34,26 @@ function GaragePublicPortal({ setShowShare, showShare }) {
         setTimeout(() => {
             setIsCopied(false);
         }, 2000);
+    };
+
+    const openInNewTab = (url) => {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer external";
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    };
+
+    const handleVisit = () => {
+        // iOS standalone PWAs often keep links inside the web app.
+        // x-safari-https:// hands off to Safari on iOS 17+.
+        if (isIOS && isStandalone && publicPortalUrl.startsWith("https://")) {
+            window.location.href = `x-safari-${publicPortalUrl}`;
+            return;
+        }
+        openInNewTab(publicPortalUrl);
     };
 
     return (
@@ -58,14 +83,8 @@ function GaragePublicPortal({ setShowShare, showShare }) {
                             </>
                         )}
                     </Button>
-                    <Button asChild className="mb-2 sm:ml-2">
-                        <a
-                            href={publicPortalUrl}
-                            target="_blank"
-                            rel="noopener noreferrer external"
-                        >
-                            Visit <ExternalLink className="w-4 h-4 ml-2" />
-                        </a>
+                    <Button className="mb-2 sm:ml-2" onClick={handleVisit}>
+                        Visit <ExternalLink className="w-4 h-4 ml-2" />
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>

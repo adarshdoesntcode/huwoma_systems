@@ -19,7 +19,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 function createChartConfig(incomeData) {
   const chartConfig = {
@@ -54,6 +54,20 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
 
   const [activeChart, setActiveChart] = useState(keys[0]);
 
+  useEffect(() => {
+    if (!keys.length) {
+      return;
+    }
+
+    if (!activeChart || !keys.includes(activeChart)) {
+      setActiveChart(keys[0]);
+    }
+  }, [keys, activeChart]);
+
+  const selectedChart = activeChart && keys.includes(activeChart)
+    ? activeChart
+    : keys[0];
+
   const total = vehicleIncomeData.reduce((acc, curr) => {
     const totalIncome = curr.services?.reduce(
       (sum, service) => sum + service.income,
@@ -65,32 +79,37 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
 
   const serviceData =
     vehicleIncomeData.filter(
-      (vehicle) => vehicle.vehicleTypeName === activeChart
+      (vehicle) => vehicle.vehicleTypeName === selectedChart
     )[0]?.services || [];
 
   return (
     <Card className="col-span-12 xl:col-span-6">
       <CardHeader className="flex flex-col  space-y-0 border-b p-0 sm:flex-row">
-        <div className="flex">
+        <div className="w-full overflow-x-auto">
+          <div className="flex min-w-max">
           {keys.map((key) => {
             const chart = key;
 
             return (
               <button
                 key={chart}
-                data-active={activeChart === chart}
-                className=" flex  flex-col justify-center gap-1 border-t px-6 py-4 text-left even-border-l data-[active=true]:bg-muted/50 sm:border-r sm:border-t-0 sm:px-8 sm:py-6"
+                data-active={selectedChart === chart}
+                className=" flex  shrink-0 flex-col justify-center gap-1 border-t px-6 py-4 text-left even-border-l data-[active=true]:bg-muted/50 sm:border-r sm:border-t-0 sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(chart)}
               >
-                <span className="text-xs text-muted-foreground ">
+                <span
+                  className="text-xs leading-5 text-muted-foreground whitespace-normal break-words"
+                  title={chartConfig[chart].label}
+                >
                   {chartConfig[chart].label}
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-2xl">
-                  {total[key].toLocaleString()}
+                  {(total[key] || 0).toLocaleString()}
                 </span>
               </button>
             );
           })}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
@@ -120,7 +139,7 @@ const VehicleIncomeGraph = ({ vehicleIncomeData }) => {
             <Bar
               dataKey="income"
               layout="vertical"
-              fill={`${chartConfig[activeChart]?.color}`}
+              fill={`${chartConfig[selectedChart]?.color}`}
               radius={10}
               barSize={50}
             >

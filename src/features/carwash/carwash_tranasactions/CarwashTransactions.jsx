@@ -211,7 +211,7 @@ function CarwashTransactions() {
   const handleVehicleSelect = (vehicles, value) => {
     if (value !== "All") {
       const vehicle = vehicles.find(
-        (vehicle) => vehicle.vehicleTypeName === value
+        (vehicle) => vehicle.vehicleTypeName === value,
       );
       setSelectedVehicle({
         text: value,
@@ -226,7 +226,7 @@ function CarwashTransactions() {
   const handleServiceSelect = (services, value) => {
     if (value !== "All") {
       const service = services.find(
-        (service) => service.serviceTypeName === value
+        (service) => service.serviceTypeName === value,
       );
       setSelectedService({
         text: value,
@@ -319,7 +319,8 @@ function CarwashTransactions() {
         ? firstPageData
         : firstPageData.transactions || [];
       const reportedTotalPages =
-        firstPageData?.pagination?.totalPages && firstPageData.pagination.totalPages > 0
+        firstPageData?.pagination?.totalPages &&
+        firstPageData.pagination.totalPages > 0
           ? firstPageData.pagination.totalPages
           : 1;
       const reportedTotalCount =
@@ -484,7 +485,7 @@ function CarwashTransactions() {
                       onValueChange={(value) => {
                         handleServiceSelect(
                           selectedVehicle.value.services,
-                          value
+                          value,
                         );
                       }}
                     >
@@ -609,12 +610,9 @@ function CarwashTransactions() {
         {isBatchFetching && (
           <Card>
             <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-3">
-              <CardTitle className="text-base sm:text-lg">
+              <CardTitle className="text-sm sm:text-base">
                 Loading Transactions
               </CardTitle>
-              <CardDescription className="text-xs">
-                Fetching filtered data in backend batches to avoid timeout
-              </CardDescription>
             </CardHeader>
             <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
               <div className="space-y-2">
@@ -631,7 +629,8 @@ function CarwashTransactions() {
                 <Progress
                   value={
                     batchProgress.totalCount > 0
-                      ? (batchProgress.loadedCount / batchProgress.totalCount) * 100
+                      ? (batchProgress.loadedCount / batchProgress.totalCount) *
+                        100
                       : 0
                   }
                   className="h-2"
@@ -676,14 +675,14 @@ function calculateVehicleServiceIncome(transactions) {
     const addOns = Array.isArray(transaction?.addOns)
       ? transaction.addOns.reduce(
           (sum, addOn) => sum + (Number(addOn?.price) || 0),
-          0
+          0,
         )
       : 0;
     const normalizedServiceCost = Number(serviceCost) || 0;
 
     if (serviceVehicle && serviceType && serviceCost !== undefined) {
       let vehicleTypeEntry = result.find(
-        (entry) => entry.vehicleTypeId === serviceVehicle._id
+        (entry) => entry.vehicleTypeId === serviceVehicle._id,
       );
 
       if (!vehicleTypeEntry) {
@@ -696,7 +695,7 @@ function calculateVehicleServiceIncome(transactions) {
       }
 
       let serviceEntry = vehicleTypeEntry.services.find(
-        (service) => service.serviceTypeId === serviceType._id
+        (service) => service.serviceTypeId === serviceType._id,
       );
 
       if (!serviceEntry) {
@@ -721,17 +720,17 @@ const FilteredAnalytics = ({ responseData, range }) => {
   const completetedTransactions = responseData.filter(
     (transaction) =>
       transaction.transactionStatus === "Completed" &&
-      transaction.paymentStatus === "Paid"
+      transaction.paymentStatus === "Paid",
   );
 
   const vehicleIncomeData = calculateVehicleServiceIncome(
-    completetedTransactions
+    completetedTransactions,
   );
 
   const pendingTransactions = responseData.filter(
     (transaction) =>
       transaction.paymentStatus === "Pending" &&
-      transaction.transactionStatus !== "Cancelled"
+      transaction.transactionStatus !== "Cancelled",
   );
 
   const totalNetRevenue = sumByKey("netAmount", completetedTransactions);
@@ -740,22 +739,19 @@ const FilteredAnalytics = ({ responseData, range }) => {
 
   const parkingRevenue = sumByKey("parking.cost", completetedTransactions);
   const pendingRevenue = sumByKey("service.cost", pendingTransactions);
-  const addOnsRevenue = completetedTransactions.reduce(
-    (total, transaction) => {
-      const currentTransactionAddOnTotal = Array.isArray(transaction?.addOns)
-        ? transaction.addOns.reduce(
-            (sum, addOn) => sum + (Number(addOn?.price) || 0),
-            0
-          )
-        : 0;
-      return total + currentTransactionAddOnTotal;
-    },
-    0
-  );
+  const addOnsRevenue = completetedTransactions.reduce((total, transaction) => {
+    const currentTransactionAddOnTotal = Array.isArray(transaction?.addOns)
+      ? transaction.addOns.reduce(
+          (sum, addOn) => sum + (Number(addOn?.price) || 0),
+          0,
+        )
+      : 0;
+    return total + currentTransactionAddOnTotal;
+  }, 0);
 
   const actualWashRevenue = sumByKey(
     "service.actualRate",
-    completetedTransactions
+    completetedTransactions,
   );
   const freeWash = actualWashRevenue - WashRevenue;
 
@@ -764,15 +760,15 @@ const FilteredAnalytics = ({ responseData, range }) => {
     dailyIncome = Array.from(
       new Set(
         completetedTransactions.map((transaction) =>
-          new Date(transaction.transactionTime).toDateString()
-        )
-      )
+          new Date(transaction.transactionTime).toDateString(),
+        ),
+      ),
     )
       .map((date) => {
         const income = completetedTransactions
           .filter(
             (transaction) =>
-              new Date(transaction.transactionTime).toDateString() === date
+              new Date(transaction.transactionTime).toDateString() === date,
           )
           .reduce((sum, transaction) => sum + transaction.netAmount, 0);
 

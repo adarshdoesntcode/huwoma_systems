@@ -230,7 +230,7 @@ function GarageCustomerDetails() {
             <Separator className="my-2" />
 
             <Tabs defaultValue="vehicles">
-              <TabsList>
+              <TabsList className="flex-wrap justify-start h-20 md:h-10">
                 <TabsTrigger value="vehicles">
                   Vehicles
                   {vehicleListings.length > 0 && (
