@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
+import { UploadProgressCard } from "@/components/ui/upload-progress-card";
 import { toast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/config";
-import axios from "axios";
+import {
+  getVehicleImageUploadErrorMessage,
+  uploadVehicleImages,
+} from "@/lib/vehicleImageUpload";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -14,6 +18,7 @@ function VehicleImagesForm({
   setFinalImageUrls,
 }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
   const token = useSelector((state) => state.auth.token);
 
   const handleAddFiles = (newFiles) => {
@@ -55,24 +60,27 @@ function VehicleImagesForm({
     }
 
     setIsUploading(true);
-    const formData = new FormData();
-    filesToUpload.forEach((file) => {
-      formData.append("files", file);
+    setUploadProgress({
+      phase: "starting",
+      percent: 0,
+      uploadedFiles: 0,
+      totalFiles: filesToUpload.length,
+      currentBatch: 0,
+      totalBatches: 0,
     });
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/garage/upload-image`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
-      const uploadedUrlData = response.data.data;
+      const uploadedUrlData = await uploadVehicleImages({
+        files: filesToUpload,
+        url: `${API_BASE_URL}/garage/upload-image`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+        onProgress: (progressData) => {
+          setUploadProgress(progressData);
+        },
+      });
 
       let uploadIndex = 0;
       const fullyUpdatedImages = managedImages.map((image) => {
@@ -97,16 +105,18 @@ function VehicleImagesForm({
     } catch (error) {
       toast({
         title: "Error",
-        message: "Failed to upload images",
-        type: "error",
+        description: getVehicleImageUploadErrorMessage(error),
+        variant: "destructive",
       });
     } finally {
       setIsUploading(false);
+      setUploadProgress(null);
     }
   };
 
   return (
     <div className="flex flex-col gap-4 duration-500 slide-in-from-right-5 animate-in">
+      {isUploading ? <UploadProgressCard progress={uploadProgress} /> : null}
       <div className="w-full max-w-4xl mx-auto border rounded-lg border-neutral-200 ">
         <FileUpload
           images={managedImages}

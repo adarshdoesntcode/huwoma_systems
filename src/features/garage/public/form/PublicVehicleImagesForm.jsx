@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
+import { UploadProgressCard } from "@/components/ui/upload-progress-card";
 import { toast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/config";
-import axios from "axios";
+import {
+    getVehicleImageUploadErrorMessage,
+    uploadVehicleImages,
+} from "@/lib/vehicleImageUpload";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -13,6 +17,7 @@ function PublicVehicleImagesForm({
     setFinalImageUrls,
 }) {
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(null);
 
     const handleAddFiles = (newFiles) => {
         const newImageItems = newFiles.map((file) => ({
@@ -53,23 +58,23 @@ function PublicVehicleImagesForm({
         }
 
         setIsUploading(true);
-        const formData = new FormData();
-        filesToUpload.forEach((file) => {
-            formData.append("files", file);
+        setUploadProgress({
+            phase: "starting",
+            percent: 0,
+            uploadedFiles: 0,
+            totalFiles: filesToUpload.length,
+            currentBatch: 0,
+            totalBatches: 0,
         });
 
         try {
-            // Use public image upload endpoint (no auth required)
-            const response = await axios.post(
-                `${API_BASE_URL}/garage/public-upload-image`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
-            const uploadedUrlData = response.data.data;
+            const uploadedUrlData = await uploadVehicleImages({
+                files: filesToUpload,
+                url: `${API_BASE_URL}/garage/public-upload-image`,
+                onProgress: (progressData) => {
+                    setUploadProgress(progressData);
+                },
+            });
 
             let uploadIndex = 0;
             const fullyUpdatedImages = managedImages.map((image) => {
@@ -93,16 +98,18 @@ function PublicVehicleImagesForm({
         } catch (error) {
             toast({
                 title: "Error",
-                description: "Failed to upload images. Please try again.",
+                description: getVehicleImageUploadErrorMessage(error),
                 variant: "destructive",
             });
         } finally {
             setIsUploading(false);
+            setUploadProgress(null);
         }
     };
 
     return (
         <div className="flex flex-col gap-4 duration-500 slide-in-from-right-5 animate-in">
+            {isUploading ? <UploadProgressCard progress={uploadProgress} /> : null}
             <div className="w-full max-w-4xl mx-auto border rounded-lg border-neutral-200">
                 <FileUpload
                     images={managedImages}

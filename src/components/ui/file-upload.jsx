@@ -1,14 +1,18 @@
 import { cn } from "@/lib/utils";
+import {
+  MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_BYTES,
+  MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_MB,
+  MAX_VEHICLE_IMAGE_FILE_SIZE_MB,
+  optimizeVehicleImageForUpload,
+} from "@/lib/vehicleImageUpload";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "./badge";
-import { Camera, CheckCheck, Image, Loader2, UploadCloud, X } from "lucide-react";
+import { Camera, CheckCheck, Image, Loader2, X } from "lucide-react";
 import heic2any from "heic2any";
 import { isMobile } from "react-device-detect";
 
 const MAX_FILES = 10;
-const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 const FilePreviewCard = memo(({ image, previewUrl, onRemove }) => {
   const isExisting = image.type === "existing";
@@ -141,23 +145,30 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
     try {
       const processedFiles = await Promise.all(
         acceptedFiles.map(async (file) => {
+          let normalizedFile = file;
           const isHeic =
             file.type === "image/heic" ||
             file.type === "image/heif" ||
-            file.name.toLowerCase().endsWith(".heic");
+            file.name.toLowerCase().endsWith(".heic") ||
+            file.name.toLowerCase().endsWith(".heif");
+
           if (isHeic) {
-            const convertedBlob = await heic2any({
-              blob: file,
+            const convertedResult = await heic2any({
+              blob: normalizedFile,
               toType: "image/jpeg",
               quality: 0.9,
             });
-            const fileName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
-            return new File([convertedBlob], fileName, {
+            const convertedBlob = Array.isArray(convertedResult)
+              ? convertedResult[0]
+              : convertedResult;
+            const fileName = normalizedFile.name.replace(/\.[^/.]+$/, "") + ".jpg";
+            normalizedFile = new File([convertedBlob], fileName, {
               type: "image/jpeg",
               lastModified: new Date().getTime(),
             });
           }
-          return file;
+
+          return optimizeVehicleImageForUpload(normalizedFile);
         })
       );
       onAddFiles(processedFiles);
@@ -189,7 +200,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
         const errors = fileRejections.map(({ file, errors }) => {
           const mainError = errors[0];
           if (mainError.code === "file-too-large")
-            return `Error: ${file.name} is too large. Max size is ${MAX_FILE_SIZE_MB}MB.`;
+            return `Error: ${file.name} is too large. Max size is ${MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_MB}MB.`;
           if (mainError.code === "file-invalid-type")
             return `Error: ${file.name} is not a valid image type.`;
           return `Error with ${file.name}: ${mainError.message}`;
@@ -208,7 +219,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
       "image/heic": [".heic"],
       "image/heif": [".heif"],
     },
-    maxSize: MAX_FILE_SIZE_BYTES,
+    maxSize: MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_BYTES,
   });
 
   return (
@@ -238,7 +249,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
         {isConverting && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm ">
             <Loader2 className="w-8 h-8 animate-spin" />
-            <p className="mt-2 text-sm font-medium">Converting images...</p>
+            <p className="mt-2 text-sm font-medium">Optimizing images...</p>
           </div>
         )}
 
@@ -250,7 +261,10 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
             Drag & drop images here, or click to select
           </p>
           <p className="relative z-20 mt-2 font-sans text-sm font-normal text-neutral-400 dark:text-neutral-400">
-            JPG, PNG, WEBP, HEIC / Max 10MB
+            JPG, PNG, WEBP, HEIC / Originals up to {MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_MB}MB
+          </p>
+          <p className="relative z-20 mt-1 font-sans text-xs font-normal text-center text-neutral-400 dark:text-neutral-400">
+            We auto-optimize each photo to fit {MAX_VEHICLE_IMAGE_FILE_SIZE_MB}MB upload limits
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
             {MAX_FILES - images.length} uploads remaining
@@ -321,4 +335,3 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
     </div>
   );
 };
-
