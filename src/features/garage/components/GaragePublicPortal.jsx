@@ -14,6 +14,7 @@ import QRCode from "react-qr-code";
 
 function GaragePublicPortal({ setShowShare, showShare }) {
     const [isCopied, setIsCopied] = useState(false);
+    const publicPortalUrl = `${window.location.origin}/garagebyhuwoma`;
 
     const handleCloseShare = () => {
         setShowShare(false);
@@ -21,9 +22,7 @@ function GaragePublicPortal({ setShowShare, showShare }) {
     };
 
     const handleCopy = async () => {
-        await navigator.clipboard.writeText(
-            `${window.location.origin}/garagebyhuwoma`
-        );
+        await navigator.clipboard.writeText(publicPortalUrl);
 
         setIsCopied(true);
 
@@ -38,11 +37,11 @@ function GaragePublicPortal({ setShowShare, showShare }) {
                 <AlertDialogHeader>
                     <AlertDialogTitle>Copy the public portal link</AlertDialogTitle>
                     <AlertDialogDescription className="p-3 text-sm text-center break-all border rounded-md bg-muted">
-                        {`${window.location.origin}/garagebyhuwoma`}
+                        {publicPortalUrl}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="flex justify-center">
-                    <QRCode size={128} className="border rounded-md p-1 shadow-sm" value={`${window.location.origin}/garagebyhuwoma`} />
+                    <QRCode size={128} className="border rounded-md p-1 shadow-sm" value={publicPortalUrl} />
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -59,8 +58,14 @@ function GaragePublicPortal({ setShowShare, showShare }) {
                             </>
                         )}
                     </Button>
-                    <Button className="mb-2 sm:ml-2 " onClick={() => window.open(`${window.location.origin}/garagebyhuwoma`, "_blank")}>
-                        Visit <ExternalLink className="w-4 h-4 ml-2" />
+                    <Button asChild className="mb-2 sm:ml-2">
+                        <a
+                            href={publicPortalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer external"
+                        >
+                            Visit <ExternalLink className="w-4 h-4 ml-2" />
+                        </a>
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>

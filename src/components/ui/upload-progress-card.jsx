@@ -39,7 +39,7 @@ export const UploadProgressCard = ({ progress }) => {
       </div>
       <Progress className="h-2 mt-3 bg-neutral-200" value={safePercent} />
       <p className="mt-2 text-xs text-neutral-500">
-        {Math.max(currentBatch, 1)} of {Math.max(totalBatches, 1)}
+        Batch {Math.max(currentBatch, 1)} of {Math.max(totalBatches, 1)}
       </p>
     </div>
   );

@@ -3,7 +3,16 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { TableCell, TableHead } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
+
+const openInNewBrowserTab = (path) => {
+  const anchor = document.createElement("a");
+  anchor.href = new URL(path, window.location.origin).toString();
+  anchor.target = "_blank";
+  anchor.rel = "noopener noreferrer external";
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+};
 
 export const GarageTransactionsColumn = [
   {
@@ -27,9 +36,7 @@ export const GarageTransactionsColumn = [
       return (
         <TableCell
           className="px-4 py-2 text-center cursor-pointer sm:py-2 sm:px-4 hover:bg-muted/50"
-          onClick={() =>
-            window.open(`/garage/vehicle/${vehicle._id}`, "_blank")
-          }
+          onClick={() => openInNewBrowserTab(`/garage/vehicle/${vehicle._id}`)}
         >
           <div className="flex items-center gap-2">
             <div className="flex flex-col items-start">
@@ -66,7 +73,7 @@ export const GarageTransactionsColumn = [
         <TableCell
           className="px-4 py-2 cursor-pointer hover:bg-muted/50"
           onClick={() => {
-            window.open(`/garage/customers/${customer._id}`, "_blank");
+            openInNewBrowserTab(`/garage/customers/${customer._id}`);
           }}
         >
           <div className="flex flex-col items-start">
@@ -94,9 +101,7 @@ export const GarageTransactionsColumn = [
       return (
         <TableCell
           className="px-4 py-2 cursor-pointer hover:bg-muted/50"
-          onClick={() =>
-            window.open(`/garage/customers/${customer._id}`, "_blank")
-          }
+          onClick={() => openInNewBrowserTab(`/garage/customers/${customer._id}`)}
         >
           <div className="flex flex-col items-start">
             <div className="text-xs font-medium underline">{customer.name}</div>

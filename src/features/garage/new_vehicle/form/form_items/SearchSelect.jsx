@@ -67,7 +67,7 @@ export function SearchSelect({
             variant="outline"
             className={cn(
               errors ? "border-destructive" : "",
-              formItemClassName
+              formItemClassName,
             )}
           >
             {selectedValue ? (
@@ -108,7 +108,7 @@ export function SearchSelect({
             variant="outline"
             className={cn(
               errors ? "border-destructive" : "",
-              formItemClassName
+              formItemClassName,
             )}
           >
             {selectedValue ? (
@@ -129,7 +129,7 @@ export function SearchSelect({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mt-4 border-t">
+          <div className="pb-10 mt-4 border-t">
             <SelectList
               data={data}
               placeholder={placeholder}
@@ -148,7 +148,7 @@ export function SearchSelect({
         "grid gap-3",
         `col-span-${smallSpan}`,
         `sm:col-span-${largeSpan}`,
-        containerClassName
+        containerClassName,
       )}
     >
       <Label className={labelClassName}>

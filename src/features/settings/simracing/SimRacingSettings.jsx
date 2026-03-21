@@ -567,6 +567,7 @@ function SimRacingLocation() {
                 <a
                   href={`https://www.google.com/maps?q=${coordinates[1]},${coordinates[0]}`}
                   target="_blank"
+                  rel="noopener noreferrer external"
                 >
                   {coordinates[1].toFixed(6)}, {coordinates[0].toFixed(6)}
                   <ArrowUpRight className="ml-1 h-4 w-4 group-hover:-translate-y-1 group-hover:translate-x-1 transition" />

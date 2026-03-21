@@ -116,7 +116,6 @@ function VehicleImagesForm({
 
   return (
     <div className="flex flex-col gap-4 duration-500 slide-in-from-right-5 animate-in">
-      {isUploading ? <UploadProgressCard progress={uploadProgress} /> : null}
       <div className="w-full max-w-4xl mx-auto border rounded-lg border-neutral-200 ">
         <FileUpload
           images={managedImages}
@@ -124,6 +123,7 @@ function VehicleImagesForm({
           onRemoveImage={handleRemoveImage}
         />
       </div>
+      {isUploading ? <UploadProgressCard progress={uploadProgress} /> : null}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Button

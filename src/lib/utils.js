@@ -215,8 +215,25 @@ export const handlePrint = (data) => {
   const pdfObject = jsPDFInvoiceTemplate(props);
   var blob = pdfObject.blob;
   const blobUrl = URL.createObjectURL(blob);
-  const printWindow = window.open(blobUrl, "_blank");
-  printWindow.onload = () => printWindow.print();
+  const printFrame = document.createElement("iframe");
+  printFrame.style.position = "fixed";
+  printFrame.style.width = "0";
+  printFrame.style.height = "0";
+  printFrame.style.border = "0";
+  printFrame.src = blobUrl;
+  document.body.appendChild(printFrame);
+
+  printFrame.onload = () => {
+    const frameWindow = printFrame.contentWindow;
+    if (frameWindow) {
+      frameWindow.focus();
+      frameWindow.print();
+    }
+    setTimeout(() => {
+      URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(printFrame);
+    }, 1500);
+  };
 };
 
 export function getMostDetailedObject(arr) {
@@ -284,4 +301,3 @@ export const capitalizeFirstLetter = (string) => {
   if (!string) return "";
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
-
