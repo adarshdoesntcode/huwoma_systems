@@ -179,9 +179,7 @@ export const uploadVehicleImages = async ({
   const uploadedImageUrls = [];
   const totalFiles = files.length;
   const totalBatches = batches.length;
-  const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
   let uploadedFiles = 0;
-  let uploadedBytes = 0;
 
   const emitProgress = (payload) => {
     if (!onProgress) {
@@ -213,7 +211,7 @@ export const uploadVehicleImages = async ({
 
     emitProgress({
       phase: "uploading",
-      percent: totalBytes ? (uploadedBytes / totalBytes) * 100 : 0,
+      percent: totalFiles ? (uploadedFiles / totalFiles) * 100 : 0,
       uploadedFiles,
       totalFiles,
       currentBatch: batchIndex + 1,
@@ -225,10 +223,13 @@ export const uploadVehicleImages = async ({
       withCredentials,
       onUploadProgress: (event) => {
         const loadedInBatch = Math.min(event.loaded || 0, batchBytes);
-        const sentBytes = uploadedBytes + loadedInBatch;
+        const batchProgress = batchBytes > 0 ? loadedInBatch / batchBytes : 0;
+        const completedEquivalentFiles = uploadedFiles + batchProgress * batch.length;
         emitProgress({
           phase: "uploading",
-          percent: totalBytes ? (sentBytes / totalBytes) * 100 : 0,
+          percent: totalFiles
+            ? (completedEquivalentFiles / totalFiles) * 100
+            : 0,
           uploadedFiles,
           totalFiles,
           currentBatch: batchIndex + 1,
@@ -239,11 +240,10 @@ export const uploadVehicleImages = async ({
 
     uploadedImageUrls.push(...(response.data?.data || []));
     uploadedFiles += batch.length;
-    uploadedBytes += batchBytes;
 
     emitProgress({
       phase: "uploading",
-      percent: totalBytes ? (uploadedBytes / totalBytes) * 100 : 100,
+      percent: totalFiles ? (uploadedFiles / totalFiles) * 100 : 100,
       uploadedFiles,
       totalFiles,
       currentBatch: batchIndex + 1,
