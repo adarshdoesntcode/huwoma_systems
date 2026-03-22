@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCheck, ChevronRight, Contact, Loader2, X } from "lucide-react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -660,7 +660,10 @@ function CarwashNewRecord() {
 }
 
 const ServiceSelect = ({ customer, locationState }) => {
-  const vehicleData = getMostDetailedObject(customer?.vehicleModels || []);
+  const vehicleData = useMemo(
+    () => getMostDetailedObject(customer?.vehicleModels || []),
+    [customer?.vehicleModels]
+  );
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedColor, setSelectedColor] = useState(
@@ -679,8 +682,9 @@ const ServiceSelect = ({ customer, locationState }) => {
   const [addOnsList, setAddOnsList] = useState([]);
 
   const serviceSelectRef = useRef(null);
-  const vehicleSelectRef = useRef(null);
   const submitButtonRef = useRef(null);
+  const lastScrolledVehicleIdRef = useRef("");
+  const previousCanSubmitRef = useRef(false);
 
   const { data, isLoading, isSuccess, isError, error, isFetching } =
     useVehicleTypeWithServicesQuery();
@@ -693,8 +697,17 @@ const ServiceSelect = ({ customer, locationState }) => {
     handleSubmit,
     register,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm();
+  const watchedVehicleModel = watch("vehicleModel");
+  const watchedVehicleNumber = watch("vehicleNumber");
+
+  const canSubmit =
+    !!selectedService &&
+    !!selectedColor &&
+    !!String(watchedVehicleModel || vehicleData?.model || "").trim() &&
+    !!String(watchedVehicleNumber || vehicleData?.vehicleNumber || "").trim();
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -718,30 +731,42 @@ const ServiceSelect = ({ customer, locationState }) => {
         setSelectedVehicle(vehicle);
       }
     }
-  }, [data, vehicleData, isSuccess, customer.customerTransactions]);
+  }, [
+    data,
+    isSuccess,
+    customer.customerTransactions,
+    vehicleData?.vehicleNumber,
+  ]);
 
   useEffect(() => {
-    if (selectedVehicle && serviceSelectRef.current) {
+    const selectedVehicleId = selectedVehicle?._id || "";
+    if (
+      selectedVehicleId &&
+      selectedVehicleId !== lastScrolledVehicleIdRef.current &&
+      serviceSelectRef.current
+    ) {
       serviceSelectRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
+      lastScrolledVehicleIdRef.current = selectedVehicleId;
+      return;
     }
-  }, [selectedVehicle, vehicleData]);
+
+    if (!selectedVehicleId) {
+      lastScrolledVehicleIdRef.current = "";
+    }
+  }, [selectedVehicle]);
 
   useEffect(() => {
-    if (
-      vehicleData.vehicleNumber &&
-      vehicleData.vehicleColor &&
-      vehicleData.model &&
-      submitButtonRef.current
-    ) {
+    if (canSubmit && !previousCanSubmitRef.current && submitButtonRef.current) {
       submitButtonRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
     }
-  }, [selectedService, vehicleData]);
+    previousCanSubmitRef.current = canSubmit;
+  }, [canSubmit]);
 
   const handleColourPicker = () => {
     if (showColourPicker === true) {
@@ -882,7 +907,6 @@ const ServiceSelect = ({ customer, locationState }) => {
               <div
                 // className="flex flex-wrap justify-between gap-2 my-6 sm:justify-evenly"
                 className="grid grid-cols-3 gap-2 my-6 sm:gap-4"
-                ref={vehicleSelectRef}
               >
                 {data.data.map((vehicle) => {
                   return (
