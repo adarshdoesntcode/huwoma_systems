@@ -34,6 +34,22 @@ function VehicleImagesForm({
     setManagedImages((prev) => prev.filter((image) => image.id !== idToRemove));
   };
 
+  const handleReorderImages = (fromId, toId) => {
+    setManagedImages((prev) => {
+      const fromIndex = prev.findIndex((image) => image.id === fromId);
+      const toIndex = prev.findIndex((image) => image.id === toId);
+
+      if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) {
+        return prev;
+      }
+
+      const reordered = [...prev];
+      const [moved] = reordered.splice(fromIndex, 1);
+      reordered.splice(toIndex, 0, moved);
+      return reordered;
+    });
+  };
+
   const handleNext = async () => {
     if (isUploading) {
       return;
@@ -121,6 +137,7 @@ function VehicleImagesForm({
           images={managedImages}
           onAddFiles={handleAddFiles}
           onRemoveImage={handleRemoveImage}
+          onReorderImages={handleReorderImages}
         />
       </div>
       {isUploading ? <UploadProgressCard progress={uploadProgress} /> : null}

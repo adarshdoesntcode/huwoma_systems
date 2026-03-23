@@ -9,6 +9,7 @@ import SettingsRoutes from "./SettingsRoutes";
 import CarwashNewRecord from "@/features/carwash/CarwashNewRecord";
 import CarwashInspection from "@/features/carwash/CarwashInspection";
 import CarwashCheckout from "@/features/carwash/CarwashCheckout";
+import CarwashPendingSettlement from "@/features/carwash/CarwashPendingSettlement";
 import CarwashNewBooking from "@/features/carwash/CarwashNewBooking";
 import CarwashCustomers from "@/features/carwash/carwash_customers/CarwashCustomers";
 import CarwashTransactions from "@/features/carwash/carwash_tranasactions/CarwashTransactions";
@@ -77,6 +78,11 @@ const PrivateRoutes = [
   {
     path: "carwash/checkout",
     element: <CarwashCheckout />,
+    errorElement: <Error />,
+  },
+  {
+    path: "carwash/pending-settlement/:customerId",
+    element: <CarwashPendingSettlement />,
     errorElement: <Error />,
   },
   {

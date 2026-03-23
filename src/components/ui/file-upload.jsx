@@ -8,78 +8,171 @@ import {
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Badge } from "./badge";
-import { Camera, CheckCheck, Image, Loader2, X } from "lucide-react";
+import {
+  Camera,
+  CheckCheck,
+  ChevronDown,
+  ChevronUp,
+  GripVertical,
+  Image,
+  Loader2,
+  X,
+} from "lucide-react";
 import heic2any from "heic2any";
 import { isMobile } from "react-device-detect";
 
 const MAX_FILES = 10;
 
-const FilePreviewCard = memo(({ image, previewUrl, onRemove }) => {
-  const isExisting = image.type === "existing";
-  const file = isExisting ? null : image.file;
+const FilePreviewCard = memo(
+  ({
+    image,
+    previewUrl,
+    onRemove,
+    isFrontCover,
+    draggableEnabled,
+    isDragOver,
+    isDragging,
+    canMoveUp,
+    canMoveDown,
+    onMoveUp,
+    onMoveDown,
+    onDragStart,
+    onDragEnter,
+    onDragEnd,
+    onDrop,
+  }) => {
+    const isExisting = image.type === "existing";
+    const file = isExisting ? null : image.file;
 
-  return (
-    <div className="flex flex-row items-center w-full gap-4 p-2 pr-4 border shadow-md rounded-xl ">
-      {previewUrl && (
-        <div className="relative w-20 h-20 overflow-hidden rounded-lg shrink-0">
-          <img
-            src={previewUrl}
-            loading="lazy"
-            alt={file ? file.name : "Uploaded image"}
-            className="object-cover w-full h-full"
-          />
-        </div>
-      )}
-      <div className="flex flex-col justify-between flex-1 h-20 overflow-hidden">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 w-0 overflow-hidden">
-            <p className="text-sm font-medium truncate text-neutral-700 ">
-              {isExisting ? image.id.split("-")[0] : file?.name}
-            </p>
+    return (
+      <div
+        draggable={draggableEnabled}
+        onDragStart={(e) => onDragStart(e, image.id)}
+        onDragOver={(e) => e.preventDefault()}
+        onDragEnter={() => onDragEnter(image.id)}
+        onDrop={(e) => onDrop(e, image.id)}
+        onDragEnd={onDragEnd}
+        className={cn(
+          "relative flex flex-row items-center w-full gap-4 p-2 pr-12 border shadow-md rounded-xl transition-colors",
+          draggableEnabled && "cursor-grab active:cursor-grabbing",
+          isDragOver && "border-primary ring-1 ring-primary/30",
+          isDragging && "opacity-60",
+        )}
+      >
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(image.id);
+          }}
+          className="absolute p-1 transition-colors rounded-full right-2 top-2 shrink-0 hover:bg-gray-200 "
+        >
+          <X className="w-4 h-4 text-neutral-500" />
+        </button>
+        {draggableEnabled ? (
+          <div className="items-center justify-center hidden sm:flex text-neutral-400">
+            <GripVertical className="w-4 h-4" />
           </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove(image.id);
-            }}
-            className="p-1 transition-colors rounded-full shrink-0 hover:bg-gray-200 "
-          >
-            <X className="w-4 h-4 text-neutral-500" />
-          </button>
-        </div>
-        <div className="flex items-center justify-between mt-2 text-sm text-neutral-600 ">
-          {isExisting ? (
-            <div className="p-1 bg-green-500 rounded-full">
-              <CheckCheck className="w-3 h-3 text-white" />
+        ) : null}
+        {previewUrl && (
+          <div className="relative w-20 h-20 overflow-hidden rounded-lg shrink-0">
+            <img
+              src={previewUrl}
+              loading="lazy"
+              alt={file ? file.name : "Uploaded image"}
+              className="object-cover w-full h-full"
+            />
+            {isFrontCover ? (
+              <span className="absolute left-1 top-1 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                Front
+              </span>
+            ) : null}
+          </div>
+        )}
+        <div className="flex flex-col justify-between flex-1 h-20 overflow-hidden">
+          <div className="flex items-start gap-2">
+            <div className="flex-1 w-0 overflow-hidden">
+              <Badge variant={isExisting ? "secondary" : "outline"}>
+                {isExisting ? "Uploaded" : "New"}
+              </Badge>
             </div>
-          ) : (
-            <p className="px-1.5 py-0.5 text-xs rounded-md bg-gray-100 ">
-              {file?.type}
-            </p>
-          )}
-          <Badge variant={isExisting ? "secondary" : "outline"}>
-            {isExisting ? "Uploaded" : "New"}
-          </Badge>
+          </div>
+          <div className="flex items-center justify-between mt-2 text-sm text-neutral-600 ">
+            {isExisting ? (
+              <p className="px-1.5 py-0.5 text-xs rounded-md bg-gray-100 ">
+                image/{image.urls.primaryUrl.split(".").pop()}
+              </p>
+            ) : (
+              <p className="px-1.5 py-0.5 text-xs rounded-md bg-gray-100 ">
+                {file?.type}
+              </p>
+            )}
+          </div>
         </div>
+        {draggableEnabled ? (
+          <div className="absolute flex items-center gap-1 right-2 bottom-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveUp(image.id);
+              }}
+              disabled={!canMoveUp}
+              aria-label="Move image up"
+              className={cn(
+                "rounded-md p-1 transition-colors",
+                canMoveUp
+                  ? "text-neutral-500 hover:bg-gray-200"
+                  : "cursor-not-allowed text-neutral-300",
+              )}
+            >
+              <ChevronUp className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveDown(image.id);
+              }}
+              disabled={!canMoveDown}
+              aria-label="Move image down"
+              className={cn(
+                "rounded-md p-1 transition-colors",
+                canMoveDown
+                  ? "text-neutral-500 hover:bg-gray-200"
+                  : "cursor-not-allowed text-neutral-300",
+              )}
+            >
+              <ChevronDown className="w-4 h-4" />
+            </button>
+          </div>
+        ) : null}
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 FilePreviewCard.displayName = "FilePreviewCard";
 
-export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
+export const FileUpload = ({
+  images,
+  onAddFiles,
+  onRemoveImage,
+  onReorderImages,
+}) => {
   const [uploadErrors, setUploadErrors] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
   const [previews, setPreviews] = useState({});
+  const [draggedImageId, setDraggedImageId] = useState(null);
+  const [dragOverImageId, setDragOverImageId] = useState(null);
 
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   useEffect(() => {
     const currentImageIds = new Set(
-      images.filter((img) => img.type === "new").map((img) => img.id)
+      images.filter((img) => img.type === "new").map((img) => img.id),
     );
 
     const urlsToRevoke = [];
@@ -101,7 +194,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
           console.error(
             "Failed to create object URL for:",
             image.file.name,
-            error
+            error,
           );
         }
       }
@@ -129,10 +222,74 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
   }, [images]);
 
   const handleClick = () => fileInputRef.current?.click();
+  const handleGalleryClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    galleryInputRef.current?.click();
+  };
   const handleCameraClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
     cameraInputRef.current?.click();
+  };
+
+  const handleDragStart = (event, imageId) => {
+    if (!onReorderImages) {
+      return;
+    }
+    event.stopPropagation();
+    setDraggedImageId(imageId);
+  };
+
+  const handleDragEnter = (imageId) => {
+    if (!onReorderImages || !draggedImageId || draggedImageId === imageId) {
+      return;
+    }
+    setDragOverImageId(imageId);
+  };
+
+  const handleDrop = (event, targetImageId) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (
+      onReorderImages &&
+      draggedImageId &&
+      targetImageId &&
+      draggedImageId !== targetImageId
+    ) {
+      onReorderImages(draggedImageId, targetImageId);
+    }
+    setDraggedImageId(null);
+    setDragOverImageId(null);
+  };
+
+  const handleDragEnd = (event) => {
+    event.stopPropagation();
+    setDraggedImageId(null);
+    setDragOverImageId(null);
+  };
+
+  const handleMoveImage = (imageId, direction) => {
+    if (!onReorderImages) {
+      return;
+    }
+    const currentIndex = images.findIndex((image) => image.id === imageId);
+    if (currentIndex < 0) {
+      return;
+    }
+
+    const targetIndex =
+      direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= images.length) {
+      return;
+    }
+
+    const targetImageId = images[targetIndex]?.id;
+    if (!targetImageId) {
+      return;
+    }
+
+    onReorderImages(imageId, targetImageId);
   };
 
   const processFiles = async (acceptedFiles) => {
@@ -161,7 +318,8 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
             const convertedBlob = Array.isArray(convertedResult)
               ? convertedResult[0]
               : convertedResult;
-            const fileName = normalizedFile.name.replace(/\.[^/.]+$/, "") + ".jpg";
+            const fileName =
+              normalizedFile.name.replace(/\.[^/.]+$/, "") + ".jpg";
             normalizedFile = new File([convertedBlob], fileName, {
               type: "image/jpeg",
               lastModified: new Date().getTime(),
@@ -169,7 +327,7 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
           }
 
           return optimizeVehicleImageForUpload(normalizedFile);
-        })
+        }),
       );
       onAddFiles(processedFiles);
     } catch (error) {
@@ -189,6 +347,15 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
       await processFiles(files);
     }
     // Reset input to allow capturing the same file again
+    e.target.value = "";
+  };
+
+  const handleGallerySelect = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setUploadErrors([]);
+      await processFiles(files);
+    }
     e.target.value = "";
   };
 
@@ -227,12 +394,19 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
       <div
         onClick={(e) => {
           // Prevent triggering file select if camera button was clicked
-          if (e.target.closest('[data-camera-button]')) {
+          if (
+            e.target.closest("[data-camera-button]") ||
+            e.target.closest("[data-gallery-button]") ||
+            e.target.closest("[data-upload-list]")
+          ) {
+            return;
+          }
+          if (isMobile) {
             return;
           }
           handleClick();
         }}
-        className="relative w-full p-10 transition-transform duration-200 bg-white shadow-sm cursor-pointer rounded-xl group/file"
+        className="relative w-full p-4 transition-transform duration-200 bg-white shadow-sm cursor-pointer sm:p-10 rounded-xl group/file"
       >
         <input {...getInputProps()} ref={fileInputRef} className="hidden" />
 
@@ -243,6 +417,14 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
           accept="image/*"
           capture="environment"
           onChange={handleCameraCapture}
+          className="hidden"
+        />
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleGallerySelect}
           className="hidden"
         />
 
@@ -261,10 +443,12 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
             Drag & drop images here, or click to select
           </p>
           <p className="relative z-20 mt-2 font-sans text-sm font-normal text-neutral-400 dark:text-neutral-400">
-            JPG, PNG, WEBP, HEIC / Originals up to {MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_MB}MB
+            JPG, PNG, WEBP, HEIC / Originals up to{" "}
+            {MAX_RAW_VEHICLE_IMAGE_FILE_SIZE_MB}MB
           </p>
           <p className="relative z-20 mt-1 font-sans text-xs font-normal text-center text-neutral-400 dark:text-neutral-400">
-            We auto-optimize each photo to fit {MAX_VEHICLE_IMAGE_FILE_SIZE_MB}MB upload limits
+            We auto-optimize each photo to fit {MAX_VEHICLE_IMAGE_FILE_SIZE_MB}
+            MB upload limits
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
             {MAX_FILES - images.length} uploads remaining
@@ -292,11 +476,14 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
           )}
 
           {/* Upload and Camera buttons */}
-          <div className="flex items-center justify-center gap-4 mt-10 w-full">
+          <div className="flex items-center justify-center w-full gap-4 mt-10">
             <div
+              data-gallery-button
+              onClick={isMobile ? handleGalleryClick : undefined}
               className={cn(
                 "relative border hover:scale-[1.1] shadow-xl z-40 flex items-center justify-center h-32 w-full max-w-[8rem] rounded-xl transition-transform duration-200",
-                isDragActive && "scale-110 border-2 border-dashed border-primary"
+                isDragActive &&
+                  "scale-110 border-2 border-dashed border-primary",
               )}
             >
               <Image className="w-8 h-8 text-neutral-400" />
@@ -314,21 +501,51 @@ export const FileUpload = ({ images, onAddFiles, onRemoveImage }) => {
             )}
           </div>
 
-          <div className="relative w-full max-w-xl mx-auto mt-6 space-y-4">
-            {images.map((image) => {
-              return (
-                <FilePreviewCard
-                  key={image.id}
-                  image={image}
-                  previewUrl={
-                    image.type === "existing"
-                      ? image.urls.primaryUrl
-                      : previews[image.id]
-                  }
-                  onRemove={onRemoveImage}
-                />
-              );
-            })}
+          <div
+            data-upload-list
+            className="relative w-full max-w-xl p-4 mx-auto mt-10 border rounded-xl border-neutral-200 bg-neutral-50/70 sm:p-5"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-neutral-700">
+                Image Order
+              </p>
+              <p className="text-xs text-muted-foreground">
+                First image becomes cover
+              </p>
+            </div>
+            <div className="mt-4 space-y-3">
+              {images.length === 0 ? (
+                <div className="px-4 py-6 text-sm text-center bg-white border border-dashed rounded-lg border-neutral-300 text-neutral-500">
+                  Uploaded images will appear here
+                </div>
+              ) : null}
+              {images.map((image, imageIndex) => {
+                return (
+                  <FilePreviewCard
+                    key={image.id}
+                    image={image}
+                    previewUrl={
+                      image.type === "existing"
+                        ? image.urls.primaryUrl
+                        : previews[image.id]
+                    }
+                    isFrontCover={images[0]?.id === image.id}
+                    draggableEnabled={Boolean(onReorderImages)}
+                    isDragOver={dragOverImageId === image.id}
+                    isDragging={draggedImageId === image.id}
+                    canMoveUp={imageIndex > 0}
+                    canMoveDown={imageIndex < images.length - 1}
+                    onMoveUp={(id) => handleMoveImage(id, "up")}
+                    onMoveDown={(id) => handleMoveImage(id, "down")}
+                    onDragStart={handleDragStart}
+                    onDragEnter={handleDragEnter}
+                    onDragEnd={handleDragEnd}
+                    onDrop={handleDrop}
+                    onRemove={onRemoveImage}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

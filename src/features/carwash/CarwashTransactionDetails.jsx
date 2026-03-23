@@ -69,6 +69,7 @@ const CarwashTransactionDetails = ({
   setShowRollbackFromPickup,
   setRollBackId,
   origin,
+  hideFooter = false,
 }) => {
   const location = useLocation();
 
@@ -141,15 +142,17 @@ const CarwashTransactionDetails = ({
                 parkingTime={parkingTime}
               />
             </div>
-            <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
-              <DetailsFooter
-                transactionDetails={transactionDetails}
-                handleTermination={handleTermination}
-                handleRollbackFromComplete={handleRollbackFromComplete}
-                handleRollbackFromPickup={handleRollbackFromPickup}
-                origin={origin}
-              />
-            </SheetFooter>
+            {!hideFooter && (
+              <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
+                <DetailsFooter
+                  transactionDetails={transactionDetails}
+                  handleTermination={handleTermination}
+                  handleRollbackFromComplete={handleRollbackFromComplete}
+                  handleRollbackFromPickup={handleRollbackFromPickup}
+                  origin={origin}
+                />
+              </SheetFooter>
+            )}
           </div>
         </SheetContent>
       </Sheet>
@@ -173,15 +176,17 @@ const CarwashTransactionDetails = ({
                 parkingTime={parkingTime}
               />
             </div>
-            <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
-              <DetailsFooter
-                transactionDetails={transactionDetails}
-                handleTermination={handleTermination}
-                handleRollbackFromComplete={handleRollbackFromComplete}
-                handleRollbackFromPickup={handleRollbackFromPickup}
-                origin={origin}
-              />
-            </SheetFooter>
+            {!hideFooter && (
+              <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
+                <DetailsFooter
+                  transactionDetails={transactionDetails}
+                  handleTermination={handleTermination}
+                  handleRollbackFromComplete={handleRollbackFromComplete}
+                  handleRollbackFromPickup={handleRollbackFromPickup}
+                  origin={origin}
+                />
+              </SheetFooter>
+            )}
           </div>
         </SheetContent>
       </Sheet>

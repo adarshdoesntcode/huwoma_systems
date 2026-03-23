@@ -84,6 +84,14 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
     }),
+    settlePendingTransactions: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/transaction/settle/pending",
+        method: "POST",
+        body: { ...credentials },
+      }),
+      invalidatesTags: ["CarwashTransactions", "CarwashCustomers"],
+    }),
     createOldRecord: builder.mutation({
       query: (credentials) => ({
         url: "/carwash/transaction/old-record",
@@ -232,6 +240,7 @@ export const {
   useTransactionOneMutation,
   useTransactionTwoMutation,
   useTransactionThreeMutation,
+  useSettlePendingTransactionsMutation,
   useGetCarwashTransactionsQuery,
   useGetTransactionForInspectionQuery,
   useDeleteCarwashTransactionMutation,

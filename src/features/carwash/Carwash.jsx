@@ -42,6 +42,7 @@ import { ReviewModal } from "@/components/ReviewModal";
 import { ROLES_LIST } from "@/lib/config";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
+import { PendingCarwashDataTable } from "./PendingCarwashDataTable";
 
 const chartConfig = {
   customers: {
@@ -94,7 +95,7 @@ function Carwash() {
       ([hour, customers]) => ({
         hour: hour,
         Customers: Number(customers),
-      })
+      }),
     );
   }
   if (data) {
@@ -106,27 +107,27 @@ function Carwash() {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     readyForPickupTransactions = data?.data?.transactions
       ?.filter(
-        (transaction) => transaction.transactionStatus === "Ready for Pickup"
+        (transaction) => transaction.transactionStatus === "Ready for Pickup",
       )
       .sort((a, b) => new Date(b.service.end) - new Date(a.service.end));
     pendingPaymentTransactions = data?.data?.transactions
       ?.filter(
         (transaction) =>
           transaction.transactionStatus === "Completed" &&
-          transaction.paymentStatus === "Pending"
+          transaction.paymentStatus === "Pending",
       )
       .sort(
-        (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
+        (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime),
       );
 
     completedTransactions = data?.data?.transactions
       ?.filter(
         (transaction) =>
           transaction.transactionStatus === "Completed" &&
-          transaction.paymentStatus === "Paid"
+          transaction.paymentStatus === "Paid",
       )
       .sort(
-        (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime)
+        (a, b) => new Date(b.transactionTime) - new Date(a.transactionTime),
       );
   }
 
@@ -318,7 +319,7 @@ function Carwash() {
                   onClick={() => navigate("/carwash/new")}
                   className={cn(
                     "w-full",
-                    role === ROLES_LIST.STAFF && " h-14 sm:h-10"
+                    role === ROLES_LIST.STAFF && " h-14 sm:h-10",
                   )}
                 >
                   <span>Record</span>
@@ -413,7 +414,7 @@ function Carwash() {
                         Pending
                       </CardTitle>
                       <CardDescription className="text-xs sm:text-sm">
-                        Vehicles with pending payment
+                        Customers with pending payment
                       </CardDescription>
                     </div>
                     <div className="flex flex-col items-end gap-2">
@@ -436,10 +437,7 @@ function Carwash() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
-                  <CarwashDataTable
-                    data={pendingPaymentTransactions}
-                    columns={CarwashColumn}
-                  />
+                  <PendingCarwashDataTable data={pendingPaymentTransactions} />
                 </CardContent>
               </Card>
             </TabsContent>
