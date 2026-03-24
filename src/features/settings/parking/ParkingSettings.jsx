@@ -66,12 +66,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsSuper } from "@/hooks/useSuper";
-import { VEHICLE_ICON_PATHS } from "@/lib/config";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  VEHICLE_ICON_OPTIONS,
+  getVehicleIconKey,
+  resolveVehicleIcon,
+} from "@/lib/vehicleIcon";
 
 const ParkingSettings = () => {
   const isSuper = useIsSuper();
@@ -141,7 +145,7 @@ const ParkingSettings = () => {
                     <TableCell className="sm:p-1 p-4 text-center hidden sm:table-cell">
                       <img
                         className="w-24 mx-auto animate-in  fade-in duration-500"
-                        src={vehicle.vehicleIcon}
+                        src={resolveVehicleIcon(vehicle.vehicleIcon)}
                         alt="Vehicle Icon"
                       />
                     </TableCell>
@@ -255,7 +259,7 @@ function CreateVehicle({ createOpen, setCreateOpen }) {
   } = useForm();
 
   const handleImageSelect = (image) => {
-    setSelectedVehicleIcon(image);
+    setSelectedVehicleIcon(image.key);
     clearErrors("vehicleIcon");
   };
 
@@ -419,20 +423,20 @@ function CreateVehicle({ createOpen, setCreateOpen }) {
                 )}
               </Label>
               <div className="flex flex-wrap gap-2 justify-evenly">
-                {VEHICLE_ICON_PATHS.map((image, index) => (
+                {VEHICLE_ICON_OPTIONS.map((image) => (
                   <div
-                    key={index}
+                    key={image.key}
                     onClick={() => handleImageSelect(image)}
                     className={`cursor-pointer border-2 hover:border-muted-foreground transition-transform animate-in  fade-in duration-500 rounded-md border-transparent ${
-                      selectedVehicleIcon === image
+                      selectedVehicleIcon === image.key
                         ? "!border-muted-foreground"
                         : ""
                     }`}
                   >
                     <img
                       loading="lazy"
-                      src={`${image}`}
-                      alt={image}
+                      src={image.src}
+                      alt={image.key}
                       className="h-16 object-cover  rounded-md  "
                     />
                   </div>
@@ -523,7 +527,9 @@ function ConfirmDelete({
 }
 
 function EditVehicle({ selectedVehicle, editOpen, setEditOpen }) {
-  const [vehicleIcon, setVehicleIcon] = useState(selectedVehicle.vehicleIcon);
+  const [vehicleIcon, setVehicleIcon] = useState(
+    getVehicleIconKey(selectedVehicle.vehicleIcon)
+  );
   const [updateParkingVehicle, { isLoading: isSubmitting }] =
     useUpdateParkingVehicleMutation();
   const {
@@ -536,7 +542,7 @@ function EditVehicle({ selectedVehicle, editOpen, setEditOpen }) {
   } = useForm();
 
   const handleImageSelect = (image) => {
-    setVehicleIcon(image);
+    setVehicleIcon(image.key);
     clearErrors("vehicleIcon");
   };
 
@@ -701,20 +707,20 @@ function EditVehicle({ selectedVehicle, editOpen, setEditOpen }) {
                 )}
               </Label>
               <div className="flex flex-wrap gap-2 justify-evenly">
-                {VEHICLE_ICON_PATHS.map((image, index) => (
+                {VEHICLE_ICON_OPTIONS.map((image) => (
                   <div
-                    key={index}
+                    key={image.key}
                     onClick={() => handleImageSelect(image)}
                     className={`cursor-pointer border-2 hover:border-muted-foreground animate-in  fade-in duration-500 transition-transform rounded-md border-transparent ${
-                      vehicleIcon && vehicleIcon === image
+                      vehicleIcon && vehicleIcon === image.key
                         ? "!border-muted-foreground"
                         : ""
                     }`}
                   >
                     <img
                       loading="lazy"
-                      src={`${image}`}
-                      alt={image}
+                      src={image.src}
+                      alt={image.key}
                       className="h-16 object-cover  rounded-md  "
                     />
                   </div>

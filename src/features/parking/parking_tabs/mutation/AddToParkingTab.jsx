@@ -18,6 +18,7 @@ import SubmitButton from "@/components/SubmitButton";
 import { useAddToParkingTabMutation } from "../../parkingApiSlice";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { resolveVehicleIcon } from "@/lib/vehicleIcon";
 
 function AddToParkingTab({ tab, vehicles, setTabState }) {
   const [selectedVehicle, setSelectedVehicle] = useState("");
@@ -113,7 +114,7 @@ function AddToParkingTab({ tab, vehicles, setTabState }) {
                       </Badge>
                     )}
                     <img
-                      src={vehicle.vehicleIcon}
+                      src={resolveVehicleIcon(vehicle.vehicleIcon)}
                       loading="lazy"
                       alt="Vehicle Image"
                     />

@@ -15,7 +15,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
-import { VEHICLE_ICON_PATHS } from "@/lib/config";
+import {
+  VEHICLE_ICON_OPTIONS,
+  resolveVehicleIcon,
+} from "@/lib/vehicleIcon";
 import {
   CheckCheck,
   ChevronLeft,
@@ -86,7 +89,7 @@ function VehicleType({ vehicle, setVehicle }) {
   } = useForm();
 
   const handleImageSelect = (image) => {
-    setSelectedVehicleIcon(image);
+    setSelectedVehicleIcon(image.key);
     clearErrors("vehicleIcon");
   };
   const onSubmit = async (data) => {
@@ -143,7 +146,7 @@ function VehicleType({ vehicle, setVehicle }) {
             <div className="animate-in  fade-in duration-500">
               <img
                 loading="lazy"
-                src={`${vehicle.vehicleIcon}`}
+                src={resolveVehicleIcon(vehicle.vehicleIcon)}
                 alt={vehicle.vehicleTypeName}
                 className="h-16 object-cover"
               />
@@ -169,7 +172,7 @@ function VehicleType({ vehicle, setVehicle }) {
               <div className="animate-in  fade-in duration-500">
                 <img
                   loading="lazy"
-                  src={`${selectedVehicleIcon}`}
+                  src={resolveVehicleIcon(selectedVehicleIcon)}
                   alt={selectedVehicleIcon}
                   className="h-16 object-cover"
                 />
@@ -247,16 +250,16 @@ function VehicleType({ vehicle, setVehicle }) {
                   </PopoverTrigger>
                   <PopoverContent className="w-96">
                     <div className="flex flex-wrap gap-2 justify-evenly">
-                      {VEHICLE_ICON_PATHS.map((image, index) => (
+                      {VEHICLE_ICON_OPTIONS.map((image) => (
                         <div
-                          key={index}
+                          key={image.key}
                           onClick={() => handleImageSelect(image)}
                           className="animate-in  fade-in duration-500"
                         >
                           <img
                             loading="lazy"
-                            src={`${image}`}
-                            alt={image}
+                            src={image.src}
+                            alt={image.key}
                             className="h-16 object-cover cursor-pointer hover:scale-110 transition-transform "
                           />
                         </div>

@@ -27,6 +27,7 @@ import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import SubmitButton from "@/components/SubmitButton";
 import { useStartParkingMutation } from "./parkingApiSlice";
+import { resolveVehicleIcon } from "@/lib/vehicleIcon";
 
 function VehicleCard({ vehicle, className }) {
   const [modelOpen, setModalOpen] = useState(false);
@@ -74,7 +75,7 @@ function VehicleCard({ vehicle, className }) {
       <div className="flex ">
         <div className="flex items-center justify-center w-3/12 duration-500 aspect-auto animate-in fade-in ">
           <img
-            src={vehicle.vehicleIcon}
+            src={resolveVehicleIcon(vehicle.vehicleIcon)}
             loading="defer"
             // className="w-full"
             width={200}
@@ -107,7 +108,7 @@ function VehicleCard({ vehicle, className }) {
                         <div className="flex items-center gap-4">
                           <div>
                             <img
-                              src={`${vehicle.vehicleIcon}`}
+                              src={resolveVehicleIcon(vehicle.vehicleIcon)}
                               className="h-16"
                             />
                           </div>

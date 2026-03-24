@@ -14,7 +14,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { VEHICLE_ICON_PATHS } from "@/lib/config";
 import { ChevronLeft, CloudFog, Loader2, PlusCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -45,6 +44,11 @@ import {
 import { isEqual } from "lodash";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsSuper } from "@/hooks/useSuper";
+import {
+  VEHICLE_ICON_OPTIONS,
+  getVehicleIconKey,
+  resolveVehicleIcon,
+} from "@/lib/vehicleIcon";
 
 function CarwashEditConfig() {
   const isSuper = useIsSuper();
@@ -105,12 +109,14 @@ function VehicleType() {
       setValue("billAbbreviation", data.data.billAbbreviation, {
         shouldDirty: false,
       });
-      setValue("vehicleIcon", data.data.vehicleIcon, { shouldDirty: false });
+      setValue("vehicleIcon", getVehicleIconKey(data.data.vehicleIcon), {
+        shouldDirty: false,
+      });
     }
   }, [isSuccess, data, setValue]);
 
   const handleImageSelect = (image) => {
-    setValue("vehicleIcon", image, {
+    setValue("vehicleIcon", image.key, {
       shouldDirty: true,
     });
     clearErrors("vehicleIcon");
@@ -192,7 +198,7 @@ function VehicleType() {
             {vehicleIcon && (
               <div className="animate-in  fade-in duration-500">
                 <img
-                  src={`${vehicleIcon}`}
+                  src={resolveVehicleIcon(vehicleIcon)}
                   alt={vehicleIcon}
                   loading="lazy"
                   className="h-16 object-cover"
@@ -268,15 +274,15 @@ function VehicleType() {
                   </PopoverTrigger>
                   <PopoverContent className="w-96">
                     <div className="flex flex-wrap gap-2 justify-evenly">
-                      {VEHICLE_ICON_PATHS.map((image, index) => (
+                      {VEHICLE_ICON_OPTIONS.map((image) => (
                         <div
                           className="animate-in  fade-in duration-500"
-                          key={index}
+                          key={image.key}
                           onClick={() => handleImageSelect(image)}
                         >
                           <img
-                            src={`${image}`}
-                            alt={image}
+                            src={image.src}
+                            alt={image.key}
                             loading="lazy"
                             className="h-16 object-cover cursor-pointer hover:scale-110 transition-transform "
                           />

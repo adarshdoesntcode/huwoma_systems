@@ -35,6 +35,7 @@ import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
 import { CAR_COLOR_OPTIONS } from "@/lib/config";
+import { resolveVehicleIcon } from "@/lib/vehicleIcon";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -930,7 +931,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                           </Badge>
                         )}
                         <img
-                          src={vehicle.vehicleIcon}
+                          src={resolveVehicleIcon(vehicle.vehicleIcon)}
                           loading="lazy"
                           alt="Vehicle Image"
                         />

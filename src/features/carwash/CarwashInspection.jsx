@@ -43,6 +43,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { resolveVehicleIcon } from "@/lib/vehicleIcon";
 
 function CarwashInspection() {
   const navigate = useNavigate();
@@ -157,7 +158,7 @@ function CarwashInspection() {
               <div className="flex gap-4">
                 <div className="w-20 sm:w-24 ">
                   <img
-                    src={`${service?.serviceVehicle?.vehicleIcon}`}
+                    src={resolveVehicleIcon(service?.serviceVehicle?.vehicleIcon)}
                     loading="lazy"
                     alt={service?.serviceTypeName}
                   />

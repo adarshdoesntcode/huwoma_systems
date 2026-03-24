@@ -53,6 +53,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useIsSuper } from "@/hooks/useSuper";
+import { resolveVehicleIcon } from "@/lib/vehicleIcon";
 
 function getTotalRate(services, key) {
   return services?.reduce((total, service) => total + service[key], 0);
@@ -136,7 +137,7 @@ const CarwashConfigSettings = () => {
                   <TableCell className="font-medium p-1 hidden sm:table-cell">
                     <div className="flex animate-in  fade-in duration-500 items-center gap-4 text-center">
                       <img
-                        src={vehicle.vehicleIcon}
+                        src={resolveVehicleIcon(vehicle.vehicleIcon)}
                         width={96}
                         height={64}
                         alt="Vehicle Image"
@@ -305,7 +306,10 @@ function ConfigDetails({ setModalOpen, modelOpen, selectedVehicle }) {
         <DialogHeader className="border-b pb-4">
           <div className="flex items-center gap-4">
             <div>
-              <img src={`${selectedVehicle.vehicleIcon}`} className="h-16" />
+              <img
+                src={resolveVehicleIcon(selectedVehicle.vehicleIcon)}
+                className="h-16"
+              />
             </div>
             <div>
               <DialogTitle>{selectedVehicle.vehicleTypeName}</DialogTitle>
