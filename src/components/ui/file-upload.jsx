@@ -169,6 +169,7 @@ export const FileUpload = ({
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+  const lastPickerOpenAtRef = useRef(0);
 
   useEffect(() => {
     const currentImageIds = new Set(
@@ -221,16 +222,25 @@ export const FileUpload = ({
     };
   }, [images]);
 
-  const handleClick = () => fileInputRef.current?.click();
+  const triggerPicker = (openFn) => {
+    const now = Date.now();
+    if (now - lastPickerOpenAtRef.current < 350) {
+      return;
+    }
+    lastPickerOpenAtRef.current = now;
+    openFn?.();
+  };
+
+  const handleClick = () => triggerPicker(() => fileInputRef.current?.click());
   const handleGalleryClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    galleryInputRef.current?.click();
+    triggerPicker(() => galleryInputRef.current?.click());
   };
   const handleCameraClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    cameraInputRef.current?.click();
+    triggerPicker(() => cameraInputRef.current?.click());
   };
 
   const handleDragStart = (event, imageId) => {
