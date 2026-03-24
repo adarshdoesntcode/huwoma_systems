@@ -137,7 +137,12 @@ function CarwashPendingSettlement() {
 
     if (fromLatestData) return fromLatestData;
 
+    // Use router-seeded data only before the live query resolves (or on fetch failure).
+    // Once live data is available, avoid falling back to stale seeded state.
+    const canUseSeededFallback = !data;
+
     if (
+      canUseSeededFallback &&
       seededCustomerGroup &&
       (seededCustomerGroup.customerId === customerId ||
         seededCustomerGroup.key === customerId)
@@ -146,7 +151,7 @@ function CarwashPendingSettlement() {
     }
 
     return null;
-  }, [customerGroups, customerId, seededCustomerGroup]);
+  }, [customerGroups, customerId, seededCustomerGroup, data]);
 
   const selectedTransactions = useMemo(() => {
     if (!selectedCustomerGroup) return [];
@@ -185,7 +190,9 @@ function CarwashPendingSettlement() {
           (transaction) => transaction._id,
         ),
       );
+      return;
     }
+    setSelectedTransactionIds([]);
   }, [selectedCustomerGroup]);
 
   useEffect(() => {
