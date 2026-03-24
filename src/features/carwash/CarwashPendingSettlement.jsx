@@ -314,10 +314,12 @@ function CarwashPendingSettlement() {
 
       <Card className="mb-20">
         <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
-          <CardTitle className="text-lg">Customer Settlement</CardTitle>
-          <CardDescription>
-            Settle all pending transactions for this customer.
-          </CardDescription>
+          <CardTitle className="text-lg">
+            Pending Carwash Transactions
+          </CardTitle>
+          {/* <CardDescription>
+            Settle pending transactions for this customer
+          </CardDescription> */}
         </CardHeader>
 
         <CardContent className="grid gap-4 p-4 pt-2 sm:p-6 sm:pt-2">
@@ -337,30 +339,16 @@ function CarwashPendingSettlement() {
                 </div>
               </div>
             </div>
-
-            <Separator className="my-3" />
-
-            <div className="grid gap-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">
-                  Pending Transactions (Selected)
-                </span>
-                <span className="font-medium">
-                  {selectedTransactions.length}/
-                  {selectedCustomerGroup.transactions.length}
-                </span>
-              </div>
-            </div>
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-2 mt-2">
             <Label>
-              Pending Transactions ({selectedTransactions.length}/
+              Transactions ({selectedTransactions.length}/
               {selectedCustomerGroup.transactions.length})
             </Label>
 
-            <div className="max-h-[300px] overflow-y-auto border rounded-md p-2">
-              <div className="grid gap-3 p-2">
+            <div className="max-h-[300px] overflow-y-auto border-y py-2">
+              <div className="grid gap-3 p-1.5">
                 {selectedCustomerGroup.transactions.map((transaction) => {
                   const isSelected = selectedTransactionIds.includes(
                     transaction._id,
@@ -472,15 +460,15 @@ function CarwashPendingSettlement() {
               <ListCollapse className="w-4 h-4" /> Details
             </Label>
             <Separator className="mb-1" />
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Gross Amt</span>
               <span className="font-medium">Rs. {selectedTotals.gross}</span>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Discount Amt</span>
               <span className="font-medium">Rs. {selectedTotals.discount}</span>
             </div>
-            <div className="flex items-center justify-between text-base">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Net Amt</span>
               <span className="font-semibold">Rs. {selectedTotals.net}</span>
             </div>
