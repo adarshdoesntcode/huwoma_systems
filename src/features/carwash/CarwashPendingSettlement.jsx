@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 import QRCode from "react-qr-code";
-import { Check, CheckCheck, Contact, Edit, Eye, Undo2 } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  Contact,
+  Edit,
+  Eye,
+  ListCollapse,
+  Undo2,
+} from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -342,20 +350,6 @@ function CarwashPendingSettlement() {
                   {selectedCustomerGroup.transactions.length}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Gross Amt</span>
-                <span className="font-medium">Rs. {selectedTotals.gross}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Discount Amt</span>
-                <span className="font-medium">
-                  Rs. {selectedTotals.discount}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Net Amt</span>
-                <span className="font-semibold">Rs. {selectedTotals.net}</span>
-              </div>
             </div>
           </div>
 
@@ -365,7 +359,7 @@ function CarwashPendingSettlement() {
               {selectedCustomerGroup.transactions.length})
             </Label>
 
-            <div className="max-h-[420px] overflow-y-auto border rounded-md p-2">
+            <div className="max-h-[300px] overflow-y-auto border rounded-md p-2">
               <div className="grid gap-3 p-2">
                 {selectedCustomerGroup.transactions.map((transaction) => {
                   const isSelected = selectedTransactionIds.includes(
@@ -470,6 +464,25 @@ function CarwashPendingSettlement() {
                   );
                 })}
               </div>
+            </div>
+          </div>
+
+          <div className="grid gap-2 px-2 mb-1">
+            <Label className="flex items-center gap-1">
+              <ListCollapse className="w-4 h-4" /> Details
+            </Label>
+            <Separator className="mb-1" />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Gross Amt</span>
+              <span className="font-medium">Rs. {selectedTotals.gross}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Discount Amt</span>
+              <span className="font-medium">Rs. {selectedTotals.discount}</span>
+            </div>
+            <div className="flex items-center justify-between text-base">
+              <span className="text-muted-foreground">Net Amt</span>
+              <span className="font-semibold">Rs. {selectedTotals.net}</span>
             </div>
           </div>
 
