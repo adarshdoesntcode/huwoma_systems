@@ -138,7 +138,7 @@ const CarwashTransactionDetails = ({
         open={showDetails}
         onOpenChange={handleCloseSheet}
       >
-        <DrawerContent className="h-[80dvh] flex flex-col sm:h-[75dvh] pb-0 overflow-y-auto [&>div:first-child]:bg-foreground/25">
+        <DrawerContent className="h-[80dvh] flex flex-col sm:h-[85dvh] pb-0 overflow-y-auto [&>div:first-child]:bg-foreground/25">
           <DrawerHeader className="mb-2">
             <DrawerTitle>Transaction Details</DrawerTitle>
             <DrawerDescription></DrawerDescription>
