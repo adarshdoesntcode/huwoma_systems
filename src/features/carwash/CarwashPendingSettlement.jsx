@@ -347,7 +347,7 @@ function CarwashPendingSettlement() {
               {selectedCustomerGroup.transactions.length})
             </Label>
 
-            <div className="max-h-[300px] overflow-y-auto border-y py-2">
+            <div className="max-h-[300px] overflow-y-auto overscroll-y-auto touch-pan-y border-y py-2">
               <div className="grid gap-3 p-1.5">
                 {selectedCustomerGroup.transactions.map((transaction) => {
                   const isSelected = selectedTransactionIds.includes(

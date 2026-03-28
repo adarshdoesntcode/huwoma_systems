@@ -140,9 +140,7 @@ const CarwashTransactionDetails = ({
       >
         <DrawerContent className="h-[80dvh] flex flex-col sm:h-[85dvh] pb-0 overflow-hidden [&>div:first-child]:bg-foreground/25">
           <DrawerHeader>
-            <DrawerTitle className="text-base font-medium">
-              Transaction Details
-            </DrawerTitle>
+            <DrawerTitle>Transaction Details</DrawerTitle>
             <DrawerDescription></DrawerDescription>
           </DrawerHeader>
 
