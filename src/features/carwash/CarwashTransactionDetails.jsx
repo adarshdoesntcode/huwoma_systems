@@ -21,6 +21,15 @@ import {
 } from "lucide-react";
 
 import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -123,18 +132,15 @@ const CarwashTransactionDetails = ({
 
   if (isMobile) {
     return (
-      <Sheet open={showDetails} onOpenChange={handleCloseSheet}>
-        <SheetContent
-          className="h-[80dvh] flex-1 overflow-y-auto  sm:h-[75dvh] pb-0"
-          side={"bottom"}
-        >
-          <SheetHeader className="mb-2">
-            <SheetTitle>Transaction Details</SheetTitle>
-            <SheetDescription></SheetDescription>
-          </SheetHeader>
+      <Drawer dismissible open={showDetails} onOpenChange={handleCloseSheet}>
+        <DrawerContent className="h-[80dvh] flex flex-col sm:h-[75dvh] pb-0 overflow-hidden [&>div:first-child]:bg-foreground/25">
+          <DrawerHeader className="mb-2">
+            <DrawerTitle>Transaction Details</DrawerTitle>
+            <DrawerDescription></DrawerDescription>
+          </DrawerHeader>
 
-          <div className="flex flex-col flex-1">
-            <div className="flex-1 pb-16 overflow-y-auto">
+          <div className="flex flex-col flex-1 min-h-0">
+            <div className="flex-1 px-4 pb-4 overflow-y-auto">
               <Details
                 transactionDetails={transactionDetails}
                 parkingEligible={parkingEligible}
@@ -144,7 +150,7 @@ const CarwashTransactionDetails = ({
               />
             </div>
             {!hideFooter && (
-              <SheetFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
+              <DrawerFooter className="py-4 pb-6 border-t bg-background">
                 <DetailsFooter
                   transactionDetails={transactionDetails}
                   handleTermination={handleTermination}
@@ -152,11 +158,11 @@ const CarwashTransactionDetails = ({
                   handleRollbackFromPickup={handleRollbackFromPickup}
                   origin={origin}
                 />
-              </SheetFooter>
+              </DrawerFooter>
             )}
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
     );
   } else {
     return (

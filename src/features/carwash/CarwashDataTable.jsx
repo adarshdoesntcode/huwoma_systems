@@ -135,7 +135,9 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                     </React.Fragment>
                   );
                 })}
-                <TableHead className="hidden sm:table-cell"></TableHead>
+                <TableHead className="w-10 px-0 pr-4 text-center">
+                  <span className="sr-only">Edit</span>
+                </TableHead>
               </TableRow>
             ))}
           </TableHeader>
