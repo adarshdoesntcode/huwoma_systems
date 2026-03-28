@@ -38,6 +38,7 @@ import { format } from "date-fns";
 
 import {
   cn,
+  AUTHOR_TYPE,
   getDaysDifference,
   getTimeDifference,
   handlePrint,
@@ -452,7 +453,19 @@ const Details = ({
         )}
         <div className="grid gap-2">
           <Label>Details</Label>
-          <div className="flex flex-col gap-1 mt-1">
+          <Separator />
+          {transactionDetails?.author && (
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-medium text-muted-foreground">
+                Created By
+              </div>
+              <div className="text-xs font-normal">
+                {transactionDetails?.author?.name || "-"} (
+                {AUTHOR_TYPE[transactionDetails?.author?.authorType] || "-"})
+              </div>
+            </div>
+          )}
+          <div className="flex flex-col gap-1 ">
             <div className="flex items-center justify-between">
               <div className="text-xs font-medium text-muted-foreground">
                 Bill No

@@ -272,7 +272,7 @@ export const cleanObject = (obj) => {
       .map(([k, v]) => [
         k,
         typeof v === "object" && !Array.isArray(v) ? cleanObject(v) : v,
-      ])
+      ]),
   );
 };
 export const formatCurrency = (amount) => {
@@ -296,8 +296,12 @@ export const formatDate = (dateString) => {
   });
 };
 
-
 export const capitalizeFirstLetter = (string) => {
   if (!string) return "";
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
+export const AUTHOR_TYPE = {
+  Admin: "Admin",
+  POSAccess: "POS",
 };
