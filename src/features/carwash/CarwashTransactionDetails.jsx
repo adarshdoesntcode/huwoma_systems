@@ -138,32 +138,34 @@ const CarwashTransactionDetails = ({
         open={showDetails}
         onOpenChange={handleCloseSheet}
       >
-        <DrawerContent className="h-[80dvh] flex flex-col sm:h-[85dvh] pb-0 overflow-y-auto [&>div:first-child]:bg-foreground/25">
+        <DrawerContent className="h-[85dvh] flex flex-col sm:h-[80dvh] pb-0 overflow-hidden [&>div:first-child]:bg-foreground/25">
           <DrawerHeader className="mb-2">
             <DrawerTitle>Transaction Details</DrawerTitle>
             <DrawerDescription></DrawerDescription>
           </DrawerHeader>
 
-          <div className="px-4 pb-4">
-            <Details
-              transactionDetails={transactionDetails}
-              parkingEligible={parkingEligible}
-              parkingIncluded={parkingIncluded}
-              parkingStart={parkingStart}
-              parkingTime={parkingTime}
-            />
-          </div>
-          {!hideFooter && (
-            <DrawerFooter className="sticky bottom-0 py-4 pb-6 border-t bg-background">
-              <DetailsFooter
+          <div className="flex flex-col flex-1 min-h-0">
+            <div className="flex-1 px-4 pb-4 overflow-y-auto">
+              <Details
                 transactionDetails={transactionDetails}
-                handleTermination={handleTermination}
-                handleRollbackFromComplete={handleRollbackFromComplete}
-                handleRollbackFromPickup={handleRollbackFromPickup}
-                origin={origin}
+                parkingEligible={parkingEligible}
+                parkingIncluded={parkingIncluded}
+                parkingStart={parkingStart}
+                parkingTime={parkingTime}
               />
-            </DrawerFooter>
-          )}
+            </div>
+            {!hideFooter && (
+              <DrawerFooter className="py-4 pb-6 border-t bg-background">
+                <DetailsFooter
+                  transactionDetails={transactionDetails}
+                  handleTermination={handleTermination}
+                  handleRollbackFromComplete={handleRollbackFromComplete}
+                  handleRollbackFromPickup={handleRollbackFromPickup}
+                  origin={origin}
+                />
+              </DrawerFooter>
+            )}
+          </div>
         </DrawerContent>
       </Drawer>
     );
@@ -213,7 +215,7 @@ const Details = ({
 }) => {
   if (transactionDetails) {
     return (
-      <div className="grid gap-5 overflow-y-auto">
+      <div className="grid gap-5">
         {transactionDetails?.service?.id && (
           <div className="grid gap-2">
             <Label>Service</Label>
