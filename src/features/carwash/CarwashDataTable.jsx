@@ -130,7 +130,7 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </React.Fragment>
                   );
@@ -157,19 +157,19 @@ export const CarwashDataTable = ({ columns, data, origin = "carwash" }) => {
                     <React.Fragment key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </React.Fragment>
                   ))}
 
-                  <TableCell className="  text-center max-w-10 px-0 pr-4 sm:max-w-12">
+                  <TableCell className="px-1 pr-2 text-center max-w-10 sm:max-w-10">
                     <Edit
                       onClick={(e) => {
                         e.stopPropagation();
                         setTransactionDetails(row.original);
                         setShowEdit(true);
                       }}
-                      className="h-4 w-4 cursor-pointer  text-muted-foreground hover:text-primary  hover:scale-110 transition-all"
+                      className="w-4 h-4 transition-all cursor-pointer text-muted-foreground hover:text-primary hover:scale-110"
                     />
                   </TableCell>
                 </TableRow>

@@ -132,8 +132,13 @@ const CarwashTransactionDetails = ({
 
   if (isMobile) {
     return (
-      <Drawer dismissible open={showDetails} onOpenChange={handleCloseSheet}>
-        <DrawerContent className="h-[80dvh] flex flex-col sm:h-[75dvh] pb-0 overflow-hidden [&>div:first-child]:bg-foreground/25">
+      <Drawer
+        dismissible
+        scrollLockTimeout={0}
+        open={showDetails}
+        onOpenChange={handleCloseSheet}
+      >
+        <DrawerContent className="h-[80dvh] flex flex-col sm:h-[75dvh] pb-0 overflow-hidden data-[state=open]:[animation-duration:.7s] data-[state=open]:[transition-duration:.7s] [&>div:first-child]:bg-foreground/25">
           <DrawerHeader className="mb-2">
             <DrawerTitle>Transaction Details</DrawerTitle>
             <DrawerDescription></DrawerDescription>
