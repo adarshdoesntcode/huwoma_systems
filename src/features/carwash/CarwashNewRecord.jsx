@@ -59,10 +59,38 @@ function CarwashNewRecord() {
 
   const locationState = useLocation().state || null;
   useEffect(() => {
-    if (locationState?.customer) {
-      setCustomer(locationState.customer);
-    }
-  }, [locationState]);
+    let isMounted = true;
+
+    const hydrateCustomerFromBooking = async () => {
+      if (!locationState?.customer) return;
+
+      const seededCustomer = locationState.customer;
+      if (isMounted) {
+        setCustomer(seededCustomer);
+      }
+
+      // Booking flow now passes a lightweight customer from transactions list.
+      // Re-fetch to get streak-eligible transactions for wash selection.
+      if (Array.isArray(seededCustomer.customerTransactions)) return;
+      if (!seededCustomer.customerContact) return;
+
+      const res = await findCustomer({
+        customerContact: seededCustomer.customerContact,
+      });
+
+      if (!isMounted || res?.error) return;
+
+      if (res?.data?.data?.customer) {
+        setCustomer(res.data.data.customer);
+      }
+    };
+
+    hydrateCustomerFromBooking();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [findCustomer, locationState]);
 
   const {
     handleSubmit,
@@ -665,6 +693,10 @@ const ServiceSelect = ({ customer, locationState }) => {
     () => getMostDetailedObject(customer?.vehicleModels || []),
     [customer?.vehicleModels]
   );
+  const customerTransactions = useMemo(
+    () => customer?.customerTransactions || [],
+    [customer?.customerTransactions]
+  );
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedColor, setSelectedColor] = useState(
@@ -712,7 +744,7 @@ const ServiceSelect = ({ customer, locationState }) => {
 
   useEffect(() => {
     if (isSuccess && data) {
-      const serviceIds = customer.customerTransactions
+      const serviceIds = customerTransactions
         .filter(
           (transaction) =>
             transaction.vehicleNumber === vehicleData?.vehicleNumber &&
@@ -735,7 +767,7 @@ const ServiceSelect = ({ customer, locationState }) => {
   }, [
     data,
     isSuccess,
-    customer.customerTransactions,
+    customerTransactions,
     vehicleData?.vehicleNumber,
   ]);
 
@@ -861,7 +893,7 @@ const ServiceSelect = ({ customer, locationState }) => {
   };
   let content;
 
-  const applicableTransactions = customer?.customerTransactions || [];
+  const applicableTransactions = customerTransactions;
 
   if (isLoading || isFetching) {
     content = (

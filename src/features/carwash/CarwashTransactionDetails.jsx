@@ -213,6 +213,7 @@ const Details = ({
   parkingStart,
   parkingTime,
 }) => {
+  console.log(transactionDetails);
   if (transactionDetails) {
     return (
       <div className="grid gap-5">
@@ -307,55 +308,56 @@ const Details = ({
                   </div>
                 )}
               </div>
-              {transactionDetails?.parking && (
-                <div className="grid gap-2 mt-2">
-                  <Label>Parking</Label>
-                  <Separator />
-                  <div>
-                    <div className="flex flex-col gap-1">
-                      {transactionDetails?.parking?.in && (
-                        <div className="flex items-center justify-between">
-                          <div className="text-xs font-medium text-muted-foreground">
-                            In
-                          </div>
-                          <div className="text-xs ">
-                            {format(
-                              transactionDetails?.parking?.in,
-                              "d MMM, yy - h:mm a",
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      {transactionDetails?.parking?.out && (
-                        <div className="flex items-center justify-between">
-                          <div className="text-xs font-medium text-muted-foreground">
-                            Out
-                          </div>
-                          <div className="text-xs ">
-                            {format(
-                              transactionDetails?.parking?.out,
-                              "d MMM, yy - h:mm a",
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      {transactionDetails?.parking?.cost && (
-                        <>
-                          <Separator className="my-1" />
-                          <div className="flex items-center justify-between ">
+              {transactionDetails?.parking &&
+                Object.keys(transactionDetails?.parking).length > 0 && (
+                  <div className="grid gap-2 mt-2">
+                    <Label>Parking</Label>
+                    <Separator />
+                    <div>
+                      <div className="flex flex-col gap-1">
+                        {transactionDetails?.parking?.in && (
+                          <div className="flex items-center justify-between">
                             <div className="text-xs font-medium text-muted-foreground">
-                              Cost
+                              In
                             </div>
-                            <div className="text-xs font-medium">
-                              Rs. {transactionDetails?.parking?.cost}
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.parking?.in,
+                                "d MMM, yy - h:mm a",
+                              )}
                             </div>
                           </div>
-                        </>
-                      )}
+                        )}
+                        {transactionDetails?.parking?.out && (
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs font-medium text-muted-foreground">
+                              Out
+                            </div>
+                            <div className="text-xs ">
+                              {format(
+                                transactionDetails?.parking?.out,
+                                "d MMM, yy - h:mm a",
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetails?.parking?.cost && (
+                          <>
+                            <Separator className="my-1" />
+                            <div className="flex items-center justify-between ">
+                              <div className="text-xs font-medium text-muted-foreground">
+                                Cost
+                              </div>
+                              <div className="text-xs font-medium">
+                                Rs. {transactionDetails?.parking?.cost}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         )}
