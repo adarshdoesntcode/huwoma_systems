@@ -309,7 +309,7 @@ function CarwashPendingSettlement() {
   }
 
   return (
-    <div className="grid items-start w-full max-w-4xl gap-4 mx-auto">
+    <div className="grid items-start w-full max-w-2xl gap-4 mx-auto">
       <NavBackButton buttonText="Back" navigateTo={-1} />
 
       <Card className="mb-20">
@@ -342,9 +342,12 @@ function CarwashPendingSettlement() {
           </div>
 
           <div className="grid gap-2 mt-2">
-            <Label>
-              Transactions ({selectedTransactions.length}/
-              {selectedCustomerGroup.transactions.length})
+            <Label className="flex items-center justify-between gap-2 mb-2">
+              <span>Transactions</span>
+              <span>
+                ({selectedTransactions.length}/
+                {selectedCustomerGroup.transactions.length})
+              </span>
             </Label>
 
             <div className="max-h-[300px] overflow-y-auto overscroll-y-auto touch-pan-y border-y py-2">
@@ -368,7 +371,7 @@ function CarwashPendingSettlement() {
                   return (
                     <div
                       key={transaction._id}
-                      className="relative p-3 transition-all border shadow-sm cursor-pointer rounded-xl hover:border-primary bg-background"
+                      className="relative p-3 transition-all border shadow-sm cursor-pointer rounded-xl hover:shadow-lg bg-background"
                       onClick={() => handleToggleTransaction(transaction._id)}
                     >
                       {isSelected && (

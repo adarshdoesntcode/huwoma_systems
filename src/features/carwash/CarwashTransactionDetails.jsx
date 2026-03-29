@@ -145,7 +145,7 @@ const CarwashTransactionDetails = ({
           </DrawerHeader>
 
           <div className="flex flex-col flex-1 min-h-0">
-            <div className="flex-1 px-4 pb-4 overflow-y-auto">
+            <div className="flex-1 px-4 pb-4 overflow-y-auto overscroll-y-contain">
               <Details
                 transactionDetails={transactionDetails}
                 parkingEligible={parkingEligible}
@@ -213,7 +213,6 @@ const Details = ({
   parkingStart,
   parkingTime,
 }) => {
-  console.log(transactionDetails);
   if (transactionDetails) {
     return (
       <div className="grid gap-5">
