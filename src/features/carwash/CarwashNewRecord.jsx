@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCheck, ChevronRight, Contact, Loader2, X } from "lucide-react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -26,11 +26,7 @@ import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  cn,
-  findWashCountForCustomer,
-  getMostDetailedObject,
-} from "@/lib/utils";
+import { cn, getMostDetailedObject } from "@/lib/utils";
 import { ResetIcon } from "@radix-ui/react-icons";
 import SubmitButton from "@/components/SubmitButton";
 import NavBackButton from "@/components/NavBackButton";
@@ -58,10 +54,46 @@ function CarwashNewRecord() {
 
   const locationState = useLocation().state || null;
   useEffect(() => {
-    if (locationState?.customer) {
-      setCustomer(locationState.customer);
-    }
-  }, [locationState]);
+    let isMounted = true;
+
+    const hydrateCustomerFromBooking = async () => {
+      if (!locationState?.customer) return;
+
+      const seededCustomer = locationState.customer;
+      if (isMounted) {
+        setCustomer(seededCustomer);
+      }
+
+      // Booking flow passes a lightweight customer from transactions list.
+      // Re-fetch only when wash-selection insights are not present.
+      const hasUsableLegacyTransactions =
+        Array.isArray(seededCustomer.customerTransactions) &&
+        seededCustomer.customerTransactions.some(
+          (transaction) => transaction?.service?.id,
+        );
+
+      if (seededCustomer.washSelection || hasUsableLegacyTransactions) {
+        return;
+      }
+      if (!seededCustomer.customerContact) return;
+
+      const res = await findCustomer({
+        customerContact: seededCustomer.customerContact,
+      });
+
+      if (!isMounted || res?.error) return;
+
+      if (res?.data?.data?.customer) {
+        setCustomer(res.data.data.customer);
+      }
+    };
+
+    hydrateCustomerFromBooking();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [findCustomer, locationState]);
 
   const {
     handleSubmit,
@@ -205,7 +237,7 @@ function CarwashNewRecord() {
                           <TooltipTrigger>
                             <div
                               className={cn(
-                                `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
+                                `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`,
                               )}
                               style={{
                                 backgroundColor:
@@ -309,7 +341,7 @@ function CarwashNewRecord() {
                               const words = e.target.value.split(" ");
                               const newWords = words.map(
                                 (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1)
+                                  word.charAt(0).toUpperCase() + word.slice(1),
                               );
                               const newValue = newWords.join(" ");
                               if (e.target.value !== newValue) {
@@ -395,7 +427,7 @@ function CarwashNewRecord() {
                                               <TooltipTrigger>
                                                 <div
                                                   className={cn(
-                                                    `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`
+                                                    `w-5 h-5 border-2  rounded-full shadow-lg  cursor-pointer`,
                                                   )}
                                                   style={{
                                                     backgroundColor:
@@ -424,7 +456,7 @@ function CarwashNewRecord() {
                                           </div>
                                         </div>
                                       </div>
-                                    )
+                                    ),
                                   )}
                                 </div>
                               </div>
@@ -463,7 +495,7 @@ function CarwashNewRecord() {
                               const words = e.target.value.split(" ");
                               const newWords = words.map(
                                 (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1)
+                                  word.charAt(0).toUpperCase() + word.slice(1),
                               );
                               const newValue = newWords.join(" ");
                               if (e.target.value !== newValue) {
@@ -660,11 +692,65 @@ function CarwashNewRecord() {
 }
 
 const ServiceSelect = ({ customer, locationState }) => {
-  const vehicleData = getMostDetailedObject(customer?.vehicleModels || []);
+  const vehicleData = useMemo(
+    () =>
+      customer?.washSelection?.selectedVehicle ||
+      getMostDetailedObject(customer?.vehicleModels || []),
+    [customer?.washSelection?.selectedVehicle, customer?.vehicleModels],
+  );
+  const customerTransactions = useMemo(
+    () => customer?.customerTransactions || [],
+    [customer?.customerTransactions],
+  );
+  const derivedServiceStreakCounts = useMemo(() => {
+    return customerTransactions.reduce((acc, transaction) => {
+      const serviceId = transaction?.service?.id;
+
+      if (!serviceId) return acc;
+
+      acc[String(serviceId)] = (acc[String(serviceId)] || 0) + 1;
+      return acc;
+    }, {});
+  }, [customerTransactions]);
+  const derivedAutoSelectServiceIds = useMemo(() => {
+    const serviceIds = customerTransactions
+      .filter(
+        (transaction) =>
+          transaction.vehicleNumber === vehicleData?.vehicleNumber &&
+          transaction.service?.id,
+      )
+      .map((transaction) => String(transaction.service.id));
+
+    return [...new Set(serviceIds)];
+  }, [customerTransactions, vehicleData?.vehicleNumber]);
+  const autoSelectServiceIds = useMemo(() => {
+    const backendServiceIds = customer?.washSelection?.autoSelectServiceIds;
+
+    if (Array.isArray(backendServiceIds)) {
+      return backendServiceIds.map((serviceId) => String(serviceId));
+    }
+
+    return derivedAutoSelectServiceIds;
+  }, [
+    customer?.washSelection?.autoSelectServiceIds,
+    derivedAutoSelectServiceIds,
+  ]);
+  const serviceStreakCounts = useMemo(() => {
+    const backendCounts = customer?.washSelection?.serviceStreakCounts;
+
+    if (backendCounts && typeof backendCounts === "object") {
+      return backendCounts;
+    }
+
+    return derivedServiceStreakCounts;
+  }, [
+    customer?.washSelection?.serviceStreakCounts,
+    derivedServiceStreakCounts,
+  ]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedColor, setSelectedColor] = useState(
-    vehicleData?.vehicleColor || ""
+    vehicleData?.vehicleColor || "",
   );
   const [carColors, setCarColors] = useState(CAR_COLOR_OPTIONS);
   const [customCarColors, setCustomCarColors] = useState([]);
@@ -697,20 +783,10 @@ const ServiceSelect = ({ customer, locationState }) => {
   } = useForm();
 
   useEffect(() => {
-    if (isSuccess && data) {
-      const serviceIds = customer.customerTransactions
-        .filter(
-          (transaction) =>
-            transaction.vehicleNumber === vehicleData?.vehicleNumber &&
-            transaction.service?.id
-        )
-        .map((transaction) => transaction.service.id);
-
-      const uniqueServiceIds = [...new Set(serviceIds)];
-
+    if (isSuccess && data && autoSelectServiceIds.length > 0) {
       const vehicle = data.data.find((vehicle) => {
         return vehicle.services.some((service) =>
-          uniqueServiceIds.includes(service._id)
+          autoSelectServiceIds.includes(String(service._id)),
         );
       });
 
@@ -718,7 +794,7 @@ const ServiceSelect = ({ customer, locationState }) => {
         setSelectedVehicle(vehicle);
       }
     }
-  }, [data, vehicleData, isSuccess, customer.customerTransactions]);
+  }, [data, isSuccess, autoSelectServiceIds]);
 
   useEffect(() => {
     if (selectedVehicle && serviceSelectRef.current) {
@@ -835,8 +911,6 @@ const ServiceSelect = ({ customer, locationState }) => {
   };
   let content;
 
-  const applicableTransactions = customer?.customerTransactions || [];
-
   if (isLoading || isFetching) {
     content = (
       <Card>
@@ -935,10 +1009,8 @@ const ServiceSelect = ({ customer, locationState }) => {
                 >
                   {selectedVehicle.services.map((service) => {
                     let washCount = service.streakApplicable.washCount;
-                    let washStreak = findWashCountForCustomer(
-                      applicableTransactions,
-                      service._id
-                    );
+                    let washStreak =
+                      Number(serviceStreakCounts[String(service._id)]) || 0;
 
                     let washStreakApplicable =
                       service.streakApplicable.decision;
@@ -1123,7 +1195,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                           const words = e.target.value.split(" ");
                           const newWords = words.map(
                             (word) =>
-                              word.charAt(0).toUpperCase() + word.slice(1)
+                              word.charAt(0).toUpperCase() + word.slice(1),
                           );
                           const newValue = newWords.join(" ");
                           if (e.target.value !== newValue) {
@@ -1164,8 +1236,8 @@ const ServiceSelect = ({ customer, locationState }) => {
                             !selectedColor
                               ? ""
                               : selectedColor.colorCode == color.colorCode
-                              ? "border-muted-foreground border-2 grayscale-0"
-                              : "grayscale text-slate-400"
+                                ? "border-muted-foreground border-2 grayscale-0"
+                                : "grayscale text-slate-400",
                           )}
                           onClick={() => {
                             selectedColor.colorCode == color.colorCode
@@ -1175,7 +1247,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                         >
                           <div
                             className={cn(
-                              `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
+                              `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`,
                             )}
                             style={{ backgroundColor: color.colorCode }}
                           />
@@ -1190,8 +1262,8 @@ const ServiceSelect = ({ customer, locationState }) => {
                             !selectedColor
                               ? ""
                               : selectedColor.colorCode == color.colorCode
-                              ? "border-muted-foreground border-2 grayscale-0"
-                              : "grayscale text-slate-400"
+                                ? "border-muted-foreground border-2 grayscale-0"
+                                : "grayscale text-slate-400",
                           )}
                           onClick={() => {
                             selectedColor.colorCode == color.colorCode
@@ -1201,7 +1273,7 @@ const ServiceSelect = ({ customer, locationState }) => {
                         >
                           <div
                             className={cn(
-                              `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
+                              `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`,
                             )}
                             style={{ backgroundColor: color.colorCode }}
                           />
