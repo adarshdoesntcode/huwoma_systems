@@ -22,7 +22,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://huwoma-backend.vercel.app/api/:path*"
+      "destination": "huwoma-preview.vercel.app/api/:path*"
     },
     {
       "source": "/(.*)",
