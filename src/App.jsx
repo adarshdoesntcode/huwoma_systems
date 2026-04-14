@@ -21,6 +21,7 @@ import PublicVehicleListings from "./features/garage/public/PublicVehicleListing
 import PublicNewVehicleListing from "./features/garage/public/PublicNewVehicleListing";
 import PublicNewBuyerInterest from "./features/garage/public/PublicNewBuyerInterest";
 import OAuthRedirect from "./features/auth/OAuthRedirect";
+import CarwashPublicCheckin from "./features/carwash/public/CarwashPublicCheckin";
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,11 @@ const router = createBrowserRouter([
   {
     path: "/garagebyhuwoma/:id",
     element: <PublicVehicleDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/carwashbyhuwoma",
+    element: <CarwashPublicCheckin />,
     errorElement: <Error />,
   },
   {

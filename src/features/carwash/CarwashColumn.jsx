@@ -20,7 +20,14 @@ export const CarwashColumn = [
     cell: ({ row }) => {
       return (
         <TableCell className="text-muted-foreground text-xs hidden md:table-cell">
-          {row.original.billNo}
+          <div className="flex items-center gap-2">
+            <span>{row.original.billNo}</span>
+            {row.original?.author?.authorType === "PublicCustomer" && (
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                Customer
+              </Badge>
+            )}
+          </div>
         </TableCell>
       );
     },

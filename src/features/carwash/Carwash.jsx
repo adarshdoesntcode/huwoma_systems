@@ -16,6 +16,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import {
   Droplets,
   PlusCircle,
+  QrCode,
   ReceiptText,
   RefreshCcw,
   Users,
@@ -43,6 +44,7 @@ import { ROLES_LIST } from "@/lib/config";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 import { PendingCarwashDataTable } from "./PendingCarwashDataTable";
+import CarwashPublicPortal from "./components/CarwashPublicPortal";
 
 const chartConfig = {
   customers: {
@@ -53,12 +55,13 @@ const chartConfig = {
 
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [showShare, setShowShare] = useState(false);
   const isSuper = useIsSuper();
   const role = useRole();
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
-      pollingInterval: 600000,
+      pollingInterval: 60000,
       refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
@@ -152,6 +155,18 @@ function Carwash() {
             Carwash
           </div>
           <div className="flex justify-end ">
+            {role !== ROLES_LIST.STAFF && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="mr-2"
+                onClick={() => setShowShare(true)}
+              >
+                <span className="sr-only sm:not-sr-only">Public QR</span>
+                <QrCode className="w-4 h-4 sm:ml-2" />
+              </Button>
+            )}
+
             {role !== ROLES_LIST.STAFF && (
               <Button
                 size="sm"
@@ -523,6 +538,7 @@ function Carwash() {
           </Tabs>
         </div>
         <ReviewModal />
+        <CarwashPublicPortal showShare={showShare} setShowShare={setShowShare} />
       </div>
     );
   } else if (isError) {
