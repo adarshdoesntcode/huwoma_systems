@@ -29,7 +29,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import ApiError from "@/components/error/ApiError";
-import Loader from "@/components/Loader";
 import { cn } from "@/lib/utils";
 import { CAR_COLOR_OPTIONS, IMAGE_DATA } from "@/lib/config";
 import { resolveVehicleIcon } from "@/lib/vehicleIcon";
@@ -44,13 +43,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Circle,
-  Dot,
   Edit,
   Loader2,
-  Pencil,
   Plus,
   Trash2,
 } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import QRCode from "react-qr-code";
 import Steps from "@/components/Steps";
 
@@ -102,6 +100,8 @@ const initialVehicleDraft = {
   vehicleTypeId: "",
 };
 
+const STEP_TRANSITION_EASE = [0.22, 1, 0.36, 1];
+
 function PublicCarwashEntry() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState(initialFormState);
@@ -119,6 +119,15 @@ function PublicCarwashEntry() {
   const [customVehicles, setCustomVehicles] = useState([]);
   const [vehicleOverrides, setVehicleOverrides] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
+  const shouldReduceMotion = useReducedMotion();
+
+  const stepMotionTransition = useMemo(
+    () =>
+      shouldReduceMotion
+        ? { duration: 0 }
+        : { duration: 0.2, ease: STEP_TRANSITION_EASE },
+    [shouldReduceMotion],
+  );
 
   const {
     data: configData,
@@ -774,11 +783,7 @@ function PublicCarwashEntry() {
   };
 
   if (isConfigLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-muted/40">
-        <Loader />
-      </div>
-    );
+    return <PublicEntryLoadingState />;
   }
 
   if (isConfigError) {
@@ -821,119 +826,168 @@ function PublicCarwashEntry() {
             />
           </div>
           <CardContent className="pb-8">
-            {submittedData ? (
-              <SuccessState
-                submittedData={submittedData}
-                onStartNew={handleStartNewEntry}
-              />
-            ) : (
-              <>
-                {step === 1 && (
-                  <StepCustomer
-                    form={form}
-                    errors={errors}
-                    recentCustomers={recentCustomers}
-                    hasSearchedContact={hasSearchedContact}
-                    selectedMatchedCustomerId={selectedMatchedCustomerId}
-                    useManualCustomerLookup={useManualCustomerLookup}
-                    customerContext={customerContext}
-                    onContactChange={handleContactChange}
-                    onSelectRecentCustomer={handleSelectRecentCustomer}
-                    onRemoveRecentCustomer={handleRemoveRecentCustomer}
-                    onSelectMatchedCustomer={handleSelectMatchedCustomer}
-                    onNewCustomerNameChange={handleNewCustomerNameChange}
-                    isContextLoading={isContextLoading}
+            <AnimatePresence mode="wait" initial={false}>
+              {submittedData ? (
+                <motion.div
+                  key="success-state"
+                  initial={shouldReduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={stepMotionTransition}
+                >
+                  <SuccessState
+                    submittedData={submittedData}
+                    onStartNew={handleStartNewEntry}
                   />
-                )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={`step-${step}`}
+                  initial={shouldReduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={stepMotionTransition}
+                >
+                  {step === 1 && (
+                    <StepCustomer
+                      form={form}
+                      errors={errors}
+                      recentCustomers={recentCustomers}
+                      hasSearchedContact={hasSearchedContact}
+                      selectedMatchedCustomerId={selectedMatchedCustomerId}
+                      useManualCustomerLookup={useManualCustomerLookup}
+                      customerContext={customerContext}
+                      onContactChange={handleContactChange}
+                      onSelectRecentCustomer={handleSelectRecentCustomer}
+                      onRemoveRecentCustomer={handleRemoveRecentCustomer}
+                      onSelectMatchedCustomer={handleSelectMatchedCustomer}
+                      onNewCustomerNameChange={handleNewCustomerNameChange}
+                      isContextLoading={isContextLoading}
+                    />
+                  )}
 
-                {step === 2 && (
-                  <StepVehicle
-                    form={form}
-                    errors={errors}
-                    vehicleTypes={vehicleTypes}
-                    vehicles={selectableVehicles}
-                    onSelectVehicle={applyExistingVehicle}
-                    onSaveVehicleDraft={handleSaveVehicleDraft}
-                  />
-                )}
+                  {step === 2 && (
+                    <StepVehicle
+                      form={form}
+                      errors={errors}
+                      vehicleTypes={vehicleTypes}
+                      vehicles={selectableVehicles}
+                      isVehiclesLoading={isContextLoading}
+                      onSelectVehicle={applyExistingVehicle}
+                      onSaveVehicleDraft={handleSaveVehicleDraft}
+                    />
+                  )}
 
-                {step === 3 && (
-                  <StepService
-                    form={form}
-                    setForm={setForm}
-                    errors={errors}
-                    selectedVehicleType={selectedVehicleType}
-                    availableServices={availableServices}
-                  />
-                )}
+                  {step === 3 && (
+                    <StepService
+                      form={form}
+                      setForm={setForm}
+                      errors={errors}
+                      selectedVehicleType={selectedVehicleType}
+                      availableServices={availableServices}
+                    />
+                  )}
 
-                {step === 4 && (
-                  <StepReview
-                    form={form}
-                    selectedVehicleType={selectedVehicleType}
-                    selectedService={selectedService}
-                  />
-                )}
+                  {step === 4 && (
+                    <StepReview
+                      form={form}
+                      selectedVehicleType={selectedVehicleType}
+                      selectedService={selectedService}
+                    />
+                  )}
 
-                <Separator className="my-6" />
+                  <Separator className="my-6" />
 
-                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex w-full gap-2 sm:w-auto">
-                    {step > 1 ? (
-                      <Button
-                        variant="outline"
-                        className="w-full min-h-12 sm:w-auto"
-                        onClick={handleBack}
-                      >
-                        <ChevronLeft className="w-4 h-4 mr-2" />
-                        Back
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        className="w-full min-h-12 sm:w-auto"
-                        disabled={
-                          recentCustomers.length === 0 ||
-                          useManualCustomerLookup
-                        }
-                        onClick={handleNotYou}
-                      >
-                        Not You?
-                      </Button>
-                    )}
+                  <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex w-full gap-2 sm:w-auto">
+                      {step > 1 ? (
+                        <Button
+                          variant="outline"
+                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          onClick={handleBack}
+                        >
+                          <ChevronLeft className="w-4 h-4 mr-2" />
+                          Back
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          disabled={
+                            recentCustomers.length === 0 ||
+                            useManualCustomerLookup
+                          }
+                          onClick={handleNotYou}
+                        >
+                          Not You?
+                        </Button>
+                      )}
 
-                    {step < 4 ? (
-                      <Button
-                        className="w-full min-h-12 sm:w-auto"
-                        onClick={handleNext}
-                      >
-                        Next
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    ) : (
-                      <Button
-                        className="w-full min-h-12 sm:w-auto"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Submitting
-                          </>
-                        ) : (
-                          "Submit To Queue"
-                        )}
-                      </Button>
-                    )}
+                      {step < 4 ? (
+                        <Button
+                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          onClick={handleNext}
+                        >
+                          Next
+                          <ChevronRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      ) : (
+                        <Button
+                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          onClick={handleSubmit}
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? (
+                            <ButtonBusyState label="Submitting" />
+                          ) : (
+                            "Submit To Queue"
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+}
+
+function PublicEntryLoadingState() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+      <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
+        <Card className="border-0 shadow-xl">
+          <CardHeader className="space-y-3">
+            <div className="w-40 rounded-md h-7 bg-slate-200 animate-pulse" />
+            <div className="w-56 h-3 rounded bg-slate-100 animate-pulse [animation-delay:120ms]" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="h-12 rounded-xl bg-slate-100 animate-pulse" />
+            <div className="h-12 rounded-xl bg-slate-100 animate-pulse [animation-delay:140ms]" />
+            <div className="h-24 rounded-xl bg-slate-100 animate-pulse [animation-delay:220ms]" />
+            <div className="h-24 rounded-xl bg-slate-100 animate-pulse [animation-delay:300ms]" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function ButtonBusyState({ label }) {
+  return (
+    <span className="inline-flex items-center">
+      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+      {label}
+      <span className="inline-flex gap-1 ml-1.5">
+        <span className="w-1 h-1 bg-current rounded-full animate-pulse" />
+        <span className="w-1 h-1 rounded-full bg-current animate-pulse [animation-delay:140ms]" />
+        <span className="w-1 h-1 rounded-full bg-current animate-pulse [animation-delay:280ms]" />
+      </span>
+    </span>
   );
 }
 
@@ -960,7 +1014,7 @@ function StepCustomer({
     !showSavedCustomerCards && hasSearchedContact && !hasMatchedCustomer;
 
   return (
-    <div className="space-y-5 duration-300 animate-in fade-in">
+    <div className="space-y-5">
       {showSavedCustomerCards && (
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground">
@@ -973,7 +1027,7 @@ function StepCustomer({
                 role="button"
                 tabIndex={0}
                 className={cn(
-                  "relative w-full rounded-xl border p-4 text-left transition-all",
+                  "relative w-full rounded-xl border p-4 text-left transition-colors transition-shadow duration-200",
                   normalizeContact(form.customerContact) ===
                     normalizeContact(recentCustomer.customerContact)
                     ? "border-[#058299] bg-[#058299]/5"
@@ -1092,9 +1146,18 @@ function StepCustomer({
       )}
 
       {isContextLoading && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Checking customer contact...
+        <div className="p-4 space-y-3 border rounded-xl bg-slate-50/80">
+          <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="relative flex w-2.5 h-2.5">
+              <span className="absolute inline-flex w-full h-full rounded-full opacity-75 bg-[#058299] animate-ping" />
+              <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-[#058299]" />
+            </div>
+            Checking customer contact...
+          </div>
+          <div className="space-y-2">
+            <div className="w-3/4 h-2 rounded bg-slate-200 animate-pulse" />
+            <div className="w-1/2 h-2 rounded bg-slate-200 animate-pulse [animation-delay:160ms]" />
+          </div>
         </div>
       )}
 
@@ -1172,6 +1235,7 @@ function StepVehicle({
   errors,
   vehicleTypes,
   vehicles,
+  isVehiclesLoading,
   onSelectVehicle,
   onSaveVehicleDraft,
 }) {
@@ -1269,7 +1333,7 @@ function StepVehicle({
 
   return (
     <>
-      <div className="space-y-6 duration-300 animate-in fade-in">
+      <div className="space-y-6">
         <div className="space-y-3">
           <Label>
             {hasVehicleValidationError ? (
@@ -1281,7 +1345,12 @@ function StepVehicle({
             )}
           </Label>
 
-          {vehicles.length > 0 ? (
+          {isVehiclesLoading && vehicles.length === 0 ? (
+            <div className="flex items-center gap-2 p-4 text-sm border rounded-xl bg-muted/40 text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading vehicles...
+            </div>
+          ) : vehicles.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {vehicles.map((vehicle) => {
                 const isSelected = form.selectedVehicleKey === vehicle.key;
@@ -1292,10 +1361,10 @@ function StepVehicle({
                     role="button"
                     tabIndex={0}
                     className={cn(
-                      "relative rounded-xl border p-4 text-left transition-all min-h-24 cursor-pointer",
+                      "relative rounded-xl border p-4 text-left transition-colors transition-shadow duration-200 min-h-24 cursor-pointer",
                       isSelected
-                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/5 to-[#fff]"
-                        : "border-muted hover:border-primary/40",
+                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                        : "border-muted hover:border-primary/40 hover:shadow-sm",
                     )}
                     onClick={() => onSelectVehicle(vehicle)}
                     onKeyDown={(event) => {
@@ -1357,7 +1426,7 @@ function StepVehicle({
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-8 px-3 text-xs"
+                          className="h-8 px-3 text-xs transition-transform active:scale-[0.98]"
                           onClick={(event) => {
                             event.stopPropagation();
                             openEditVehicleDrawer(vehicle);
@@ -1607,7 +1676,7 @@ function StepService({
   }
 
   return (
-    <div className="space-y-5 duration-300 animate-in fade-in">
+    <div className="space-y-5">
       <div className="space-y-1">
         <Label>
           {errors.serviceId ? (
@@ -1636,10 +1705,10 @@ function StepService({
                 }))
               }
               className={cn(
-                "rounded-xl border p-5 text-left transition-all min-h-20",
+                "rounded-xl border p-5 text-left transition-colors transition-shadow duration-200 min-h-20",
                 isSelected
                   ? "border-[#058299] bg-[#058299]/5"
-                  : "border-muted hover:border-primary/40",
+                  : "border-muted hover:border-primary/40 hover:shadow-sm",
               )}
             >
               <div className="flex items-start justify-between gap-4">
@@ -1667,7 +1736,7 @@ function StepReview({ form, selectedVehicleType, selectedService }) {
   const hasColor = form.vehicleColorCode && form.vehicleColorName;
 
   return (
-    <div className="space-y-5 duration-300 animate-in fade-in">
+    <div className="space-y-5">
       <div className="p-5 border border-[#058299] rounded-xl bg-[#058299]/5">
         <h3 className="mb-3 text-base font-semibold">Review Entry</h3>
 
@@ -1709,7 +1778,7 @@ function StepReview({ form, selectedVehicleType, selectedService }) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        On submit, this entry will be queued for admin processing.
+        On submit, this entry will be queued for wash.
       </p>
     </div>
   );
@@ -1728,7 +1797,7 @@ function SuccessState({ submittedData, onStartNew }) {
   const transaction = submittedData?.transaction;
 
   return (
-    <div className="py-4 space-y-6 text-center duration-300 animate-in fade-in">
+    <div className="py-4 space-y-6 text-center">
       <div className="space-y-2">
         <CheckCircle2 className="w-12 h-12 mx-auto text-emerald-600" />
         <h3 className="text-xl font-semibold">You Are In Queue</h3>
