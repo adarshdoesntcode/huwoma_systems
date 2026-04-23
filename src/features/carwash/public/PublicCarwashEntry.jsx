@@ -45,6 +45,7 @@ import {
   ChevronRight,
   Circle,
   Dot,
+  Edit,
   Loader2,
   Pencil,
   Plus,
@@ -1018,7 +1019,7 @@ function StepCustomer({
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            Selected customer will be verified when you tap Next.
+            Select a customer to proceed.
           </p>
           <AlertDialog
             open={Boolean(pendingDeleteCustomer)}
@@ -1293,7 +1294,7 @@ function StepVehicle({
                     className={cn(
                       "relative rounded-xl border p-4 text-left transition-all min-h-24 cursor-pointer",
                       isSelected
-                        ? "border-[#058299] bg-[#058299]/5"
+                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/5 to-[#fff]"
                         : "border-muted hover:border-primary/40",
                     )}
                     onClick={() => onSelectVehicle(vehicle)}
@@ -1304,28 +1305,18 @@ function StepVehicle({
                       }
                     }}
                   >
-                    <span className="absolute top-3 right-3">
+                    <span className="absolute -top-1.5 -right-1.5">
                       {isSelected ? (
-                        <div className="w-4 h-4 rounded-full flex items-center justify-center bg-[#058299]">
-                          <div className="w-1 h-1 bg-white rounded-full" />
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#058299]">
+                          <div className="w-1.5 h-1.5 bg-white rounded-full" />
                         </div>
                       ) : (
-                        <Circle className="w-4 h-4 text-muted" />
+                        <Circle className="w-5 h-5 text-muted" />
                       )}
                     </span>
 
-                    <div className="pr-7">
-                      <div className="flex items-start gap-3">
-                        {vehicle.vehicleIcon ? (
-                          <div className="rounded-md border bg-background/80 p-1.5">
-                            <img
-                              loading="lazy"
-                              src={resolveVehicleIcon(vehicle.vehicleIcon)}
-                              alt={vehicle.vehicleTypeName || "Vehicle type"}
-                              className="object-contain w-10 h-8"
-                            />
-                          </div>
-                        ) : null}
+                    <div>
+                      <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="font-semibold text-primary">
                             {vehicle.vehicleModel}
@@ -1339,12 +1330,22 @@ function StepVehicle({
                             </div>
                           )}
                         </div>
+                        {vehicle.vehicleIcon ? (
+                          <div className="rounded-md">
+                            <img
+                              loading="lazy"
+                              src={resolveVehicleIcon(vehicle.vehicleIcon)}
+                              alt={vehicle.vehicleTypeName || "Vehicle type"}
+                              className="object-contain w-12.5 h-10"
+                            />
+                          </div>
+                        ) : null}
                       </div>
 
-                      <div className="flex items-center justify-between gap-2 mt-3">
+                      <div className="flex items-center justify-between gap-2 mt-2">
                         {vehicle.vehicleTypeName ? (
                           <Badge
-                            variant="outline"
+                            // variant="outline"
                             className="max-w-[65%] text-[10px] text-center"
                           >
                             {vehicle.vehicleTypeName}
@@ -1362,7 +1363,7 @@ function StepVehicle({
                             openEditVehicleDrawer(vehicle);
                           }}
                         >
-                          <Pencil className="w-3 h-3 mr-1.5" />
+                          <Edit className="w-3 h-3 mr-1.5" />
                           Edit
                         </Button>
                       </div>
