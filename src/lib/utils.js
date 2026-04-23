@@ -304,4 +304,5 @@ export const capitalizeFirstLetter = (string) => {
 export const AUTHOR_TYPE = {
   Admin: "Admin",
   POSAccess: "POS",
+  CarWashCustomer: "Customer",
 };
