@@ -161,9 +161,10 @@ function Carwash() {
               className="w-full mr-2"
               onClick={() => setShowPublicEntry(true)}
             >
-              <span>Customer</span>
-              <span className="sr-only sm:ml-1 sm:not-sr-only">Portal</span>
-              <QrCode className="w-4 h-4 ml-2" />
+              <span className="sr-only sm:ml-1 sm:not-sr-only">
+                Customer Portal
+              </span>
+              <QrCode className="w-4 h-4 sm:ml-2" />
             </Button>
             {role !== ROLES_LIST.STAFF && (
               <Button

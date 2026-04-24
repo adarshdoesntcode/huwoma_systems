@@ -60,8 +60,10 @@ export const SystemActivityColumn = [
             {admin
               ? admin
               : module === "SimRacing Transaction"
-              ? "Unknown"
-              : "POS App"}
+                ? "Unknown"
+                : module === "Carwash Transaction"
+                  ? "Customer"
+                  : "POS App"}
           </div>
         </TableCell>
       );
@@ -94,7 +96,7 @@ export const SystemActivityColumn = [
         <TableCell
           className={cn(
             "text-xs hidden lg:table-cell p-0 px-4",
-            activityColors[status]
+            activityColors[status],
           )}
         >
           {status}
