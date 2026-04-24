@@ -32,6 +32,7 @@ import ApiError from "@/components/error/ApiError";
 import { cn } from "@/lib/utils";
 import { CAR_COLOR_OPTIONS, IMAGE_DATA } from "@/lib/config";
 import { resolveVehicleIcon } from "@/lib/vehicleIcon";
+import { haptic } from "@/lib/haptic/haptic";
 import { toast } from "@/hooks/use-toast";
 import {
   useCreatePublicCarwashTransactionMutation,
@@ -108,6 +109,12 @@ const initialVehicleDraft = {
 };
 
 const STEP_TRANSITION_EASE = [0.22, 1, 0.36, 1];
+const HAPTIC_PATTERNS = {
+  selection: 14,
+  step: 18,
+  error: [24, 40, 24],
+  success: [18, 48, 30],
+};
 
 function PublicCarwashEntry() {
   const [step, setStep] = useState(1);
@@ -135,6 +142,10 @@ function PublicCarwashEntry() {
         : { duration: 0.2, ease: STEP_TRANSITION_EASE },
     [shouldReduceMotion],
   );
+
+  const triggerHaptic = (type = "selection") => {
+    haptic(HAPTIC_PATTERNS[type] || HAPTIC_PATTERNS.selection);
+  };
 
   const {
     data: configData,
@@ -321,6 +332,7 @@ function PublicCarwashEntry() {
     }
 
     applyExistingVehicle(normalizedVehicle);
+    triggerHaptic("selection");
   };
 
   const fetchContextForContact = async () => {
@@ -331,6 +343,7 @@ function PublicCarwashEntry() {
         ...prev,
         customerContact: "Contact number must be 10 digits.",
       }));
+      triggerHaptic("error");
       return false;
     }
 
@@ -432,6 +445,9 @@ function PublicCarwashEntry() {
     }
 
     setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      triggerHaptic("error");
+    }
     return Object.keys(nextErrors).length === 0;
   };
 
@@ -518,6 +534,13 @@ function PublicCarwashEntry() {
   };
 
   const handleSelectRecentCustomer = (recentCustomer) => {
+    const isDifferentCustomer =
+      normalizeContact(form.customerContact) !==
+      normalizeContact(recentCustomer.customerContact);
+    if (isDifferentCustomer) {
+      triggerHaptic("selection");
+    }
+
     setUseManualCustomerLookup(false);
     setForm((prev) => ({
       ...prev,
@@ -620,6 +643,10 @@ function PublicCarwashEntry() {
   };
 
   const handleSelectMatchedCustomer = (customerId) => {
+    if (selectedMatchedCustomerId !== customerId) {
+      triggerHaptic("selection");
+    }
+
     setSelectedMatchedCustomerId(customerId);
     setErrors((prev) => ({
       ...prev,
@@ -634,6 +661,7 @@ function PublicCarwashEntry() {
         ...prev,
         customerContact: "Contact number must be 10 digits.",
       }));
+      triggerHaptic("error");
       return;
     }
 
@@ -647,6 +675,7 @@ function PublicCarwashEntry() {
           ...prev,
           customerName: "Please select a saved customer.",
         }));
+        triggerHaptic("error");
         return;
       }
 
@@ -655,6 +684,7 @@ function PublicCarwashEntry() {
         customerName,
       }));
       setErrors({});
+      triggerHaptic("step");
       setStep(2);
 
       if (!hasSearchedContact || customerContact !== contextContact) {
@@ -674,6 +704,7 @@ function PublicCarwashEntry() {
           ...prev,
           matchedCustomer: "Select the matched customer to continue.",
         }));
+        triggerHaptic("error");
         return;
       }
 
@@ -682,6 +713,7 @@ function PublicCarwashEntry() {
         customerName: customerContext.customer.customerName,
       }));
       setErrors({});
+      triggerHaptic("step");
       setStep(2);
       return;
     }
@@ -692,6 +724,7 @@ function PublicCarwashEntry() {
         ...prev,
         customerName: "Customer name is required for a new customer.",
       }));
+      triggerHaptic("error");
       return;
     }
 
@@ -700,6 +733,7 @@ function PublicCarwashEntry() {
       customerName,
     }));
     setErrors({});
+    triggerHaptic("step");
     setStep(2);
   };
 
@@ -711,11 +745,13 @@ function PublicCarwashEntry() {
 
     if (!validateStep(step)) return;
 
+    triggerHaptic("step");
     setStep((prev) => Math.min(prev + 1, 4));
   };
 
   const handleBack = () => {
     setErrors({});
+    triggerHaptic("step");
     setStep((prev) => Math.max(prev - 1, 1));
   };
 
@@ -750,6 +786,7 @@ function PublicCarwashEntry() {
         transaction: response?.data?.transaction,
         checkoutQrValue: response?.data?.checkoutQrValue,
       });
+      triggerHaptic("success");
 
       persistPrimaryCustomerCache(payload.customerName, payload.customerContact);
       saveRecentCustomer(payload.customerName, payload.customerContact);
@@ -796,6 +833,7 @@ function PublicCarwashEntry() {
 
   const handleNotYou = () => {
     setErrors({});
+    triggerHaptic("selection");
     setUseManualCustomerLookup(true);
     setHasSearchedContact(false);
     setSelectedMatchedCustomerId("");
@@ -897,7 +935,12 @@ function PublicCarwashEntry() {
                       vehicleTypes={vehicleTypes}
                       vehicles={selectableVehicles}
                       isVehiclesLoading={isContextLoading}
-                      onSelectVehicle={applyExistingVehicle}
+                      onSelectVehicle={(vehicle) => {
+                        if (form.selectedVehicleKey !== vehicle?.key) {
+                          triggerHaptic("selection");
+                        }
+                        applyExistingVehicle(vehicle);
+                      }}
                       onSaveVehicleDraft={handleSaveVehicleDraft}
                     />
                   )}
@@ -905,7 +948,19 @@ function PublicCarwashEntry() {
                   {step === 3 && (
                     <StepService
                       form={form}
-                      setForm={setForm}
+                      onSelectService={(serviceId) => {
+                        if (form.serviceId !== serviceId) {
+                          triggerHaptic("selection");
+                        }
+                        setForm((prev) => ({
+                          ...prev,
+                          serviceId,
+                        }));
+                        setErrors((prev) => ({
+                          ...prev,
+                          serviceId: "",
+                        }));
+                      }}
                       errors={errors}
                       selectedVehicleType={selectedVehicleType}
                       availableServices={availableServices}
@@ -1316,6 +1371,7 @@ function StepVehicle({
 
     if (Object.keys(nextErrors).length > 0) {
       setDrawerErrors(nextErrors);
+      haptic(HAPTIC_PATTERNS.error);
       return;
     }
 
@@ -1685,7 +1741,7 @@ function StepVehicle({
 
 function StepService({
   form,
-  setForm,
+  onSelectService,
   errors,
   selectedVehicleType,
   availableServices,
@@ -1727,12 +1783,7 @@ function StepService({
             <button
               key={service._id}
               type="button"
-              onClick={() =>
-                setForm((prev) => ({
-                  ...prev,
-                  serviceId: service._id,
-                }))
-              }
+              onClick={() => onSelectService(service._id)}
               className={cn(
                 "rounded-xl border p-5 text-left transition-colors transition-shadow duration-200 min-h-20",
                 isSelected
