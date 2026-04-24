@@ -279,7 +279,9 @@ function PublicCarwashEntry() {
   };
 
   const handleSaveVehicleDraft = ({ mode, vehicleKey, vehicleDraft }) => {
-    const normalizedModel = normalizeVehicleName(vehicleDraft?.vehicleModel || "");
+    const normalizedModel = normalizeVehicleName(
+      vehicleDraft?.vehicleModel || "",
+    );
     const normalizedNumber = normalizeVehicleNumber(
       vehicleDraft?.vehicleNumber || "",
     );
@@ -472,7 +474,9 @@ function PublicCarwashEntry() {
   ) => {
     setRecentCustomers((prev) => {
       const normalizedContact = normalizeContact(customerContact);
-      const normalizedPreviousContact = normalizeContact(previousCustomerContact);
+      const normalizedPreviousContact = normalizeContact(
+        previousCustomerContact,
+      );
       const nextRecentCustomers = [
         {
           customerName: capitalizeName(customerName),
@@ -788,7 +792,10 @@ function PublicCarwashEntry() {
       });
       triggerHaptic("success");
 
-      persistPrimaryCustomerCache(payload.customerName, payload.customerContact);
+      persistPrimaryCustomerCache(
+        payload.customerName,
+        payload.customerContact,
+      );
       saveRecentCustomer(payload.customerName, payload.customerContact);
 
       toast({
@@ -857,9 +864,20 @@ function PublicCarwashEntry() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+    <div className="min-h-screen relative bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+      <div className="fixed top-0 left-0 right-0 h-1.5 overflow-hidden">
+        <div
+          className="h-full transition-all duration-500 ease-in-out"
+          style={{
+            width: `${submittedData ? 100 : (step / 4) * 100}%`,
+            background: submittedData
+              ? "#058299"
+              : "linear-gradient(to right, #058299, white)",
+          }}
+        />
+      </div>
       <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
-        <Card className="relative border-0 mb-20 shadow-xl">
+        <Card className="my-4 border-0 shadow-xl ">
           <CardHeader className="pb-4 space-y-4 ">
             {/* <div className="flex items-center justify-between gap-3"> */}
             <div className="mb-1">
@@ -876,17 +894,7 @@ function PublicCarwashEntry() {
             </div>
             {/* </div> */}
           </CardHeader>
-          <div className="absolute top-0 left-0 right-0 h-1 overflow-hidden rounded-t-lg">
-            <div
-              className="h-full transition-all duration-500 ease-in-out"
-              style={{
-                width: `${submittedData ? 100 : (step / 4) * 100}%`,
-                background: submittedData
-                  ? "#058299"
-                  : "linear-gradient(to right, #058299, white)",
-              }}
-            />
-          </div>
+
           <CardContent className="pb-8">
             <AnimatePresence mode="wait" initial={false}>
               {submittedData ? (
@@ -1091,9 +1099,7 @@ function StepCustomer({
     <div className="space-y-5">
       {showSavedCustomerCards && (
         <div className="space-y-2">
-          <Label >
-            Saved Customer
-          </Label>
+          <Label>Saved Customer</Label>
           <div className="grid gap-2 sm:grid-cols-2">
             {recentCustomers.map((recentCustomer) => (
               <div
@@ -1104,9 +1110,8 @@ function StepCustomer({
                   "relative w-full rounded-xl border p-4 text-left transition-colors transition-shadow duration-200",
                   normalizeContact(form.customerContact) ===
                     normalizeContact(recentCustomer.customerContact)
-
-                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                        : "border-muted hover:border-primary/40 hover:shadow-sm",
+                    ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                    : "border-muted hover:border-primary/40 hover:shadow-sm",
                 )}
                 onClick={() => onSelectRecentCustomer(recentCustomer)}
                 onKeyDown={(event) => {
@@ -1128,7 +1133,7 @@ function StepCustomer({
                 >
                   <X className="w-4 h-4" />
                 </Button>
-                <div className="mb-1 font-semibold text-primary">
+                <div className="pr-4 mb-1 font-semibold text-primary text-wrap">
                   {recentCustomer.customerName}
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -1183,7 +1188,7 @@ function StepCustomer({
       {!showSavedCustomerCards && (
         <div className="space-y-2">
           <div className="grid gap-2">
-            <Label >
+            <Label>
               {errors.customerContact ? (
                 <span className="text-destructive">
                   {errors.customerContact}
@@ -1204,8 +1209,8 @@ function StepCustomer({
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Enter your contact number and tap <span className="font-medium">Next</span>
-          
+            Enter your contact number and tap{" "}
+            <span className="font-medium">Next</span>
           </p>
         </div>
       )}
@@ -1240,8 +1245,8 @@ function StepCustomer({
             className={cn(
               "relative w-full rounded-xl border p-4 text-left transition-all",
               selectedMatchedCustomerId === customerContext.customer._id
-                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                        : "border-muted hover:border-primary/40 hover:shadow-sm",
+                ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                : "border-muted hover:border-primary/40 hover:shadow-sm",
             )}
             onClick={() =>
               onSelectMatchedCustomer(customerContext.customer._id)
@@ -1256,7 +1261,7 @@ function StepCustomer({
                 <Circle className="w-4 h-4 text-muted" />
               )}
             </span>
-            <div className="font-semibold text-primary">
+            <div className="pr-4 font-semibold text-primary text-wrap">
               {customerContext.customer.customerName}
             </div>
             <div className="text-sm text-muted-foreground">
@@ -1350,7 +1355,9 @@ function StepVehicle({
   };
 
   const handleDrawerSave = () => {
-    const normalizedModel = normalizeVehicleName(vehicleDraft.vehicleModel || "");
+    const normalizedModel = normalizeVehicleName(
+      vehicleDraft.vehicleModel || "",
+    );
     const normalizedNumber = normalizeVehicleNumber(
       vehicleDraft.vehicleNumber || "",
     );
@@ -1397,7 +1404,6 @@ function StepVehicle({
     errors.vehicleTypeId ||
     errors.vehicleColor;
 
-
   return (
     <>
       <div className="space-y-6">
@@ -1413,7 +1419,7 @@ function StepVehicle({
           </Label>
 
           {isVehiclesLoading && vehicles.length === 0 ? (
-            <div className="flex items-center gap-2 p-4 py-14 text-sm border justify-center rounded-xl bg-muted/40 text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 p-4 text-sm border py-14 rounded-xl bg-muted/40 text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
               Loading vehicles...
             </div>
@@ -1446,15 +1452,13 @@ function StepVehicle({
                         <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#058299]">
                           <div className="w-1.5 h-1.5 bg-white rounded-full" />
                         </div>
-                      ) : (
-                        null
-                      )}
+                      ) : null}
                     </span>
 
                     <div>
-                      <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start justify-between gap-2">
                         <div>
-                          <div className="font-semibold text-primary">
+                          <div className="font-semibold text-primary text-wrap">
                             {vehicle.vehicleModel}
                           </div>
                           <div className="text-sm text-muted-foreground">
@@ -1479,27 +1483,28 @@ function StepVehicle({
                       </div>
 
                       <div className="flex items-center justify-between gap-2 mt-2">
-
                         <div className="flex items-center ">
-                          {
-                            vehicle?.vehicleColor?.colorCode ?
+                          {vehicle?.vehicleColor?.colorCode ? (
                             <span
-                          className="w-5 h-5 mr-3 border rounded-full"
-                          style={{ backgroundColor: vehicle.vehicleColor.colorCode }}
-                          />: <span/>
+                              className="w-5 h-5 mr-3 border rounded-full"
+                              style={{
+                                backgroundColor: vehicle.vehicleColor.colorCode,
+                              }}
+                            />
+                          ) : (
+                            <span />
+                          )}
 
-                          }
-                        
-                        {vehicle.vehicleTypeName ? (
-                          <Badge
-                          variant="outline"
-                          className="text-[10px] text-center"
-                          >
-                            {vehicle.vehicleTypeName}
-                          </Badge>
-                        ) : (
-                          <span />
-                        )}
+                          {vehicle.vehicleTypeName ? (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] text-center"
+                            >
+                              {vehicle.vehicleTypeName}
+                            </Badge>
+                          ) : (
+                            <span />
+                          )}
                         </div>
                         <Button
                           type="button"
@@ -1756,11 +1761,8 @@ function StepService({
 
   return (
     <div className="space-y-5">
-    
-        
-        <div className="flex justify-between">
-
-     <Label>
+      <div className="flex justify-between">
+        <Label>
           {errors.serviceId ? (
             <span className="text-destructive">{errors.serviceId}</span>
           ) : (
@@ -1768,12 +1770,8 @@ function StepService({
           )}
         </Label>
 
-<Badge>
-
-        {selectedVehicleType.vehicleTypeName}
-        </Badge>
-        </div>
-
+        <Badge>{selectedVehicleType.vehicleTypeName}</Badge>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {availableServices.map((service) => {
@@ -1785,22 +1783,22 @@ function StepService({
               type="button"
               onClick={() => onSelectService(service._id)}
               className={cn(
-                "rounded-xl border p-5 text-left transition-colors transition-shadow duration-200 min-h-20",
+                "rounded-xl border p-5 w-full text-left transition-colors duration-200 min-h-20",
                 isSelected
-                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                        : "border-muted hover:border-primary/40 hover:shadow-sm",
+                  ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                  : "border-muted hover:border-primary/40 hover:shadow-sm",
               )}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between gap-2">
                 <div>
-                  <div className="font-semibold text-primary">
+                  <div className="font-semibold text-primary text-wrap">
                     {service.serviceTypeName}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted-foreground text-wrap">
                     {service?.serviceDescription?.join(", ")}
                   </div>
                 </div>
-                <div className="text-sm font-bold">
+                <div className="text-sm font-bold text-nowrap">
                   Rs. {service.serviceRate}
                 </div>
               </div>
@@ -1899,7 +1897,7 @@ function SuccessState({ submittedData, onStartNew }) {
         />
         <ReviewItem
           label="Initiated On"
-          value={                          format(transaction.createdAt, "d MMM, yy - h:mm a") || ""}
+          value={format(transaction.createdAt, "d MMM, yy - h:mm a") || ""}
         />
       </div>
 
