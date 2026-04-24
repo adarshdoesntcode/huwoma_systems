@@ -155,6 +155,16 @@ function Carwash() {
             Carwash
           </div>
           <div className="flex justify-end ">
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full mr-2"
+              onClick={() => setShowPublicEntry(true)}
+            >
+              <span>Customer</span>
+              <span className="sr-only sm:ml-1 sm:not-sr-only">Portal</span>
+              <QrCode className="w-4 h-4 ml-2" />
+            </Button>
             {role !== ROLES_LIST.STAFF && (
               <Button
                 size="sm"
@@ -305,17 +315,6 @@ function Carwash() {
                 </TabsTrigger>
               </TabsList>
               <div className="flex justify-end order-1 w-full sm:w-fit sm:order-2 ">
-                {role !== ROLES_LIST.STAFF && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="w-full mr-2"
-                    onClick={() => setShowPublicEntry(true)}
-                  >
-                    <span>Public Entry</span>
-                    <QrCode className="w-4 h-4 ml-2" />
-                  </Button>
-                )}
                 {role !== ROLES_LIST.STAFF && (
                   <Button
                     size="sm"

@@ -91,7 +91,7 @@ function CarwashPublicEntryModal({ showPublicEntry, setShowPublicEntry }) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            Public Entry QR
+            Customer Portal QR
           </AlertDialogTitle>
           <AlertDialogDescription className="p-3 text-sm text-center break-all border rounded-md bg-muted">
             {publicEntryUrl}
@@ -104,13 +104,10 @@ function CarwashPublicEntryModal({ showPublicEntry, setShowPublicEntry }) {
             className="flex flex-col items-center gap-3 p-4 bg-white border rounded-lg"
           >
             <QRCode
-              size={140}
-              className="p-1 border rounded-md"
+              size={240}
+              className="p-1 rounded-md"
               value={publicEntryUrl}
             />
-            <div className="text-xs font-semibold tracking-wide text-center uppercase text-slate-700">
-              Park N Wash Public Entry
-            </div>
           </div>
         </div>
 
@@ -120,6 +117,7 @@ function CarwashPublicEntryModal({ showPublicEntry, setShowPublicEntry }) {
             onClick={handleCopyLink}
             variant="outline"
             disabled={isCopied}
+            className="w-full mt-2 sm:w-auto sm:mt-0"
           >
             {isCopied ? (
               <>
@@ -133,11 +131,18 @@ function CarwashPublicEntryModal({ showPublicEntry, setShowPublicEntry }) {
               </>
             )}
           </Button>
-          <Button onClick={handleOpenLink} variant="outline">
+          <Button
+            onClick={handleOpenLink}
+            variant="outline"
+            className="w-full mt-2 sm:w-auto sm:mt-0"
+          >
             Open
             <ExternalLink className="w-4 h-4 ml-2" />
           </Button>
-          <Button onClick={handleDownloadQr}>
+          <Button
+            onClick={handleDownloadQr}
+            className="w-full mt-2 sm:w-auto sm:mt-0"
+          >
             Download QR
             <Download className="w-4 h-4 ml-2" />
           </Button>
