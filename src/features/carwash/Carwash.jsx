@@ -16,6 +16,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import {
   Droplets,
   PlusCircle,
+  QrCode,
   ReceiptText,
   RefreshCcw,
   Users,
@@ -43,6 +44,7 @@ import { ROLES_LIST } from "@/lib/config";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 import { PendingCarwashDataTable } from "./PendingCarwashDataTable";
+import CarwashPublicEntryModal from "./public/CarwashPublicEntryModal";
 
 const chartConfig = {
   customers: {
@@ -53,6 +55,7 @@ const chartConfig = {
 
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [showPublicEntry, setShowPublicEntry] = useState(false);
   const isSuper = useIsSuper();
   const role = useRole();
 
@@ -152,6 +155,16 @@ function Carwash() {
             Carwash
           </div>
           <div className="flex justify-end ">
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full mr-2"
+              onClick={() => setShowPublicEntry(true)}
+            >
+              <span>Customer</span>
+              <span className="sr-only sm:ml-1 sm:not-sr-only">Portal</span>
+              <QrCode className="w-4 h-4 ml-2" />
+            </Button>
             {role !== ROLES_LIST.STAFF && (
               <Button
                 size="sm"
@@ -523,6 +536,10 @@ function Carwash() {
           </Tabs>
         </div>
         <ReviewModal />
+        <CarwashPublicEntryModal
+          showPublicEntry={showPublicEntry}
+          setShowPublicEntry={setShowPublicEntry}
+        />
       </div>
     );
   } else if (isError) {

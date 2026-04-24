@@ -230,6 +230,26 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         "CarwashCustomer",
       ],
     }),
+    getPublicCarwashConfig: builder.query({
+      query: () => ({
+        url: "/carwash/public/config",
+        method: "GET",
+      }),
+    }),
+    getPublicCarwashCustomerContext: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/public/customer-context",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
+    createPublicCarwashTransaction: builder.mutation({
+      query: (credentials) => ({
+        url: "/carwash/public/transaction",
+        method: "POST",
+        body: { ...credentials },
+      }),
+    }),
   }),
 });
 
@@ -262,4 +282,7 @@ export const {
   useFindCustomerByPhoneMutation,
   useMergeSourcerAndTargetCustomerMutation,
   useTransferCarwashTransactionMutation,
+  useGetPublicCarwashConfigQuery,
+  useGetPublicCarwashCustomerContextMutation,
+  useCreatePublicCarwashTransactionMutation,
 } = carwashApiSlice;
