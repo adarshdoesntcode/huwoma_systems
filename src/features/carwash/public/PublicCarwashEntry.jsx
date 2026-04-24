@@ -45,12 +45,13 @@ import {
   Circle,
   Edit,
   Loader2,
+  X,
   Plus,
-  Trash2,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import QRCode from "react-qr-code";
 import Steps from "@/components/Steps";
+import { format } from "date-fns";
 
 const CUSTOMER_CACHE_KEY = "huwoma_carwash_public_customer_v1";
 const CUSTOMER_RECENT_CACHE_KEY = "huwoma_carwash_public_recent_customers_v1";
@@ -88,6 +89,12 @@ const capitalizeName = (value) =>
       (part) => `${part.charAt(0).toUpperCase()}${part.slice(1).toLowerCase()}`,
     )
     .join(" ");
+
+const normalizeVehicleName = (value) => {
+  const trimmedValue = String(value || "").trim();
+  if (!trimmedValue) return "";
+  return `${trimmedValue.charAt(0).toUpperCase()}${trimmedValue.slice(1)}`;
+};
 
 const createLocalVehicleKey = () =>
   `local-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
@@ -239,7 +246,7 @@ function PublicCarwashEntry() {
 
   const applyExistingVehicle = (vehicle) => {
     const vehicleNumber = normalizeVehicleNumber(vehicle?.vehicleNumber);
-    const vehicleModel = capitalizeName(vehicle?.vehicleModel || "");
+    const vehicleModel = normalizeVehicleName(vehicle?.vehicleModel || "");
 
     setForm((prev) => ({
       ...prev,
@@ -261,7 +268,7 @@ function PublicCarwashEntry() {
   };
 
   const handleSaveVehicleDraft = ({ mode, vehicleKey, vehicleDraft }) => {
-    const normalizedModel = capitalizeName(vehicleDraft?.vehicleModel || "");
+    const normalizedModel = normalizeVehicleName(vehicleDraft?.vehicleModel || "");
     const normalizedNumber = normalizeVehicleNumber(
       vehicleDraft?.vehicleNumber || "",
     );
@@ -351,17 +358,10 @@ function PublicCarwashEntry() {
           customerName: customer.customerName,
           customerContact: resolvedCustomerContact,
         }));
-        try {
-          localStorage.setItem(
-            CUSTOMER_CACHE_KEY,
-            JSON.stringify({
-              customerName: customer.customerName,
-              customerContact: resolvedCustomerContact,
-            }),
-          );
-        } catch {
-          // Ignore localStorage failures silently.
-        }
+        persistPrimaryCustomerCache(
+          customer.customerName,
+          resolvedCustomerContact,
+        );
         saveRecentCustomer(customer.customerName, resolvedCustomerContact);
       } else {
         setForm((prev) => ({
@@ -435,18 +435,40 @@ function PublicCarwashEntry() {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const saveRecentCustomer = (customerName, customerContact) => {
+  const persistPrimaryCustomerCache = (customerName, customerContact) => {
+    try {
+      localStorage.setItem(
+        CUSTOMER_CACHE_KEY,
+        JSON.stringify({
+          customerName: capitalizeName(customerName),
+          customerContact: normalizeContact(customerContact),
+        }),
+      );
+    } catch {
+      // Ignore localStorage failures silently.
+    }
+  };
+
+  const upsertRecentCustomer = (
+    customerName,
+    customerContact,
+    previousCustomerContact = "",
+  ) => {
     setRecentCustomers((prev) => {
       const normalizedContact = normalizeContact(customerContact);
+      const normalizedPreviousContact = normalizeContact(previousCustomerContact);
       const nextRecentCustomers = [
         {
           customerName: capitalizeName(customerName),
           customerContact: normalizedContact,
         },
-        ...prev.filter(
-          (entry) =>
-            normalizeContact(entry.customerContact) !== normalizedContact,
-        ),
+        ...prev.filter((entry) => {
+          const entryContact = normalizeContact(entry.customerContact);
+          return (
+            entryContact !== normalizedContact &&
+            entryContact !== normalizedPreviousContact
+          );
+        }),
       ].slice(0, MAX_RECENT_CUSTOMERS);
 
       try {
@@ -460,6 +482,10 @@ function PublicCarwashEntry() {
 
       return nextRecentCustomers;
     });
+  };
+
+  const saveRecentCustomer = (customerName, customerContact) => {
+    upsertRecentCustomer(customerName, customerContact);
   };
 
   const handleContactChange = (value) => {
@@ -697,11 +723,15 @@ function PublicCarwashEntry() {
     if (!validateStep(4)) return;
 
     try {
+      const selectedVehicleOverride = form.selectedVehicleKey
+        ? vehicleOverrides[form.selectedVehicleKey]
+        : null;
+
       const payload = {
         customerName: capitalizeName(form.customerName),
         customerContact: normalizeContact(form.customerContact),
         vehicleNumber: normalizeVehicleNumber(form.vehicleNumber),
-        vehicleModel: String(form.vehicleModel || "").trim(),
+        vehicleModel: normalizeVehicleName(form.vehicleModel),
         vehicleTypeId: form.vehicleTypeId,
         serviceId: form.serviceId,
         vehicleColor: {
@@ -710,6 +740,10 @@ function PublicCarwashEntry() {
         },
       };
 
+      if (selectedVehicleOverride && form.selectedVehicleKey) {
+        payload.originalVehicleSignature = form.selectedVehicleKey;
+      }
+
       const response = await createPublicTransaction(payload).unwrap();
 
       setSubmittedData({
@@ -717,17 +751,7 @@ function PublicCarwashEntry() {
         checkoutQrValue: response?.data?.checkoutQrValue,
       });
 
-      try {
-        localStorage.setItem(
-          CUSTOMER_CACHE_KEY,
-          JSON.stringify({
-            customerName: payload.customerName,
-            customerContact: payload.customerContact,
-          }),
-        );
-      } catch {
-        // Ignore localStorage failures silently.
-      }
+      persistPrimaryCustomerCache(payload.customerName, payload.customerContact);
       saveRecentCustomer(payload.customerName, payload.customerContact);
 
       toast({
@@ -797,7 +821,7 @@ function PublicCarwashEntry() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
       <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
-        <Card className="relative border-0 shadow-xl">
+        <Card className="relative border-0 mb-20 shadow-xl">
           <CardHeader className="pb-4 space-y-4 ">
             {/* <div className="flex items-center justify-between gap-3"> */}
             <div className="mb-1">
@@ -982,11 +1006,6 @@ function ButtonBusyState({ label }) {
     <span className="inline-flex items-center">
       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
       {label}
-      <span className="inline-flex gap-1 ml-1.5">
-        <span className="w-1 h-1 bg-current rounded-full animate-pulse" />
-        <span className="w-1 h-1 rounded-full bg-current animate-pulse [animation-delay:140ms]" />
-        <span className="w-1 h-1 rounded-full bg-current animate-pulse [animation-delay:280ms]" />
-      </span>
     </span>
   );
 }
@@ -1017,7 +1036,7 @@ function StepCustomer({
     <div className="space-y-5">
       {showSavedCustomerCards && (
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">
+          <Label >
             Saved Customer
           </Label>
           <div className="grid gap-2 sm:grid-cols-2">
@@ -1030,8 +1049,9 @@ function StepCustomer({
                   "relative w-full rounded-xl border p-4 text-left transition-colors transition-shadow duration-200",
                   normalizeContact(form.customerContact) ===
                     normalizeContact(recentCustomer.customerContact)
-                    ? "border-[#058299] bg-[#058299]/5"
-                    : "border-muted hover:border-primary/40",
+
+                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                        : "border-muted hover:border-primary/40 hover:shadow-sm",
                 )}
                 onClick={() => onSelectRecentCustomer(recentCustomer)}
                 onKeyDown={(event) => {
@@ -1045,24 +1065,14 @@ function StepCustomer({
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="absolute w-7 h-7 right-1.5 bottom-1.5 text-muted-foreground/70 hover:text-destructive"
+                  className="absolute w-7 h-7 right-1.5 top-1.5 text-muted-foreground/70 hover:text-destructive"
                   onClick={(event) => {
                     event.stopPropagation();
                     setPendingDeleteCustomer(recentCustomer);
                   }}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <X className="w-4 h-4" />
                 </Button>
-                <span className="absolute top-3 right-3">
-                  {normalizeContact(form.customerContact) ===
-                  normalizeContact(recentCustomer.customerContact) ? (
-                    <div className="w-4 h-4 rounded-full flex items-center justify-center bg-[#058299]">
-                      <div className="w-1 h-1 bg-white rounded-full" />
-                    </div>
-                  ) : (
-                    <Circle className="w-4 h-4 text-muted-foreground/50" />
-                  )}
-                </span>
                 <div className="mb-1 font-semibold text-primary">
                   {recentCustomer.customerName}
                 </div>
@@ -1118,7 +1128,7 @@ function StepCustomer({
       {!showSavedCustomerCards && (
         <div className="space-y-2">
           <div className="grid gap-2">
-            <Label className="text-xs text-muted-foreground">
+            <Label >
               {errors.customerContact ? (
                 <span className="text-destructive">
                   {errors.customerContact}
@@ -1139,8 +1149,8 @@ function StepCustomer({
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Enter contact and tap <span className="font-medium">Next</span> to
-            check for a customer match.
+            Enter your contact number and tap <span className="font-medium">Next</span>
+          
           </p>
         </div>
       )}
@@ -1175,8 +1185,8 @@ function StepCustomer({
             className={cn(
               "relative w-full rounded-xl border p-4 text-left transition-all",
               selectedMatchedCustomerId === customerContext.customer._id
-                ? "border-[#058299] bg-[#058299]/5"
-                : "border-muted hover:border-primary/40",
+                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                        : "border-muted hover:border-primary/40 hover:shadow-sm",
             )}
             onClick={() =>
               onSelectMatchedCustomer(customerContext.customer._id)
@@ -1285,7 +1295,7 @@ function StepVehicle({
   };
 
   const handleDrawerSave = () => {
-    const normalizedModel = capitalizeName(vehicleDraft.vehicleModel || "");
+    const normalizedModel = normalizeVehicleName(vehicleDraft.vehicleModel || "");
     const normalizedNumber = normalizeVehicleNumber(
       vehicleDraft.vehicleNumber || "",
     );
@@ -1331,6 +1341,7 @@ function StepVehicle({
     errors.vehicleTypeId ||
     errors.vehicleColor;
 
+
   return (
     <>
       <div className="space-y-6">
@@ -1346,7 +1357,7 @@ function StepVehicle({
           </Label>
 
           {isVehiclesLoading && vehicles.length === 0 ? (
-            <div className="flex items-center gap-2 p-4 text-sm border rounded-xl bg-muted/40 text-muted-foreground">
+            <div className="flex items-center gap-2 p-4 py-14 text-sm border justify-center rounded-xl bg-muted/40 text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
               Loading vehicles...
             </div>
@@ -1363,7 +1374,7 @@ function StepVehicle({
                     className={cn(
                       "relative rounded-xl border p-4 text-left transition-colors transition-shadow duration-200 min-h-24 cursor-pointer",
                       isSelected
-                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/10 via-[#fff] to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
                         : "border-muted hover:border-primary/40 hover:shadow-sm",
                     )}
                     onClick={() => onSelectVehicle(vehicle)}
@@ -1380,7 +1391,7 @@ function StepVehicle({
                           <div className="w-1.5 h-1.5 bg-white rounded-full" />
                         </div>
                       ) : (
-                        <Circle className="w-5 h-5 text-muted" />
+                        null
                       )}
                     </span>
 
@@ -1412,16 +1423,28 @@ function StepVehicle({
                       </div>
 
                       <div className="flex items-center justify-between gap-2 mt-2">
+
+                        <div className="flex items-center ">
+                          {
+                            vehicle?.vehicleColor?.colorCode ?
+                            <span
+                          className="w-5 h-5 mr-3 border rounded-full"
+                          style={{ backgroundColor: vehicle.vehicleColor.colorCode }}
+                          />: <span/>
+
+                          }
+                        
                         {vehicle.vehicleTypeName ? (
                           <Badge
-                            // variant="outline"
-                            className="max-w-[65%] text-[10px] text-center"
+                          variant="outline"
+                          className="text-[10px] text-center"
                           >
                             {vehicle.vehicleTypeName}
                           </Badge>
                         ) : (
                           <span />
                         )}
+                        </div>
                         <Button
                           type="button"
                           variant="outline"
@@ -1492,7 +1515,7 @@ function StepVehicle({
                   onBlur={() =>
                     handleVehicleDraftChange(
                       "vehicleModel",
-                      capitalizeName(vehicleDraft.vehicleModel),
+                      normalizeVehicleName(vehicleDraft.vehicleModel),
                     )
                   }
                 />
@@ -1677,18 +1700,24 @@ function StepService({
 
   return (
     <div className="space-y-5">
-      <div className="space-y-1">
-        <Label>
+    
+        
+        <div className="flex justify-between">
+
+     <Label>
           {errors.serviceId ? (
             <span className="text-destructive">{errors.serviceId}</span>
           ) : (
             "Choose Service"
           )}
         </Label>
-        <p className="text-xs text-muted-foreground">
-          Services for {selectedVehicleType.vehicleTypeName}
-        </p>
-      </div>
+
+<Badge>
+
+        {selectedVehicleType.vehicleTypeName}
+        </Badge>
+        </div>
+
 
       <div className="grid gap-3 sm:grid-cols-2">
         {availableServices.map((service) => {
@@ -1707,8 +1736,8 @@ function StepService({
               className={cn(
                 "rounded-xl border p-5 text-left transition-colors transition-shadow duration-200 min-h-20",
                 isSelected
-                  ? "border-[#058299] bg-[#058299]/5"
-                  : "border-muted hover:border-primary/40 hover:shadow-sm",
+                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
+                        : "border-muted hover:border-primary/40 hover:shadow-sm",
               )}
             >
               <div className="flex items-start justify-between gap-4">
@@ -1737,7 +1766,7 @@ function StepReview({ form, selectedVehicleType, selectedService }) {
 
   return (
     <div className="space-y-5">
-      <div className="p-5 border border-[#058299] rounded-xl bg-[#058299]/5">
+      <div className="p-5 border border-[#058299] rounded-xl bg-gradient-to-r from-[#058299]/5  to-[#fff] ">
         <h3 className="mb-3 text-base font-semibold">Review Entry</h3>
 
         <div className="grid gap-3 text-sm sm:grid-cols-2">
@@ -1751,7 +1780,7 @@ function StepReview({ form, selectedVehicleType, selectedService }) {
           />
           <ReviewItem
             label="Vehicle Name"
-            value={capitalizeName(form.vehicleModel)}
+            value={normalizeVehicleName(form.vehicleModel)}
           />
           <ReviewItem
             label="Vehicle Number"
@@ -1810,18 +1839,18 @@ function SuccessState({ submittedData, onStartNew }) {
         <QRCode value={submittedData?.checkoutQrValue || ""} size={180} />
       </div>
 
-      {/* <div className="grid max-w-xl gap-3 mx-auto text-sm text-left sm:grid-cols-2">
-        <ReviewItem label="Bill No" value={transaction?.billNo || "-"} />
-        <ReviewItem label="Vehicle" value={transaction?.vehicleNumber || "-"} />
+      <div className="grid max-w-xl gap-3 mx-auto text-sm text-left sm:grid-cols-2">
+        {/* <ReviewItem label="Bill No" value={transaction?.billNo || "-"} /> */}
+        <ReviewItem label="Vehicle" value={transaction?.vehicleModel || "-"} />
         <ReviewItem
           label="Service"
           value={transaction?.service?.id?.serviceTypeName || "-"}
         />
         <ReviewItem
-          label="Status"
-          value={transaction?.transactionStatus || "In Queue"}
+          label="Initiated On"
+          value={                          format(transaction.createdAt, "d MMM, yy - h:mm a") || ""}
         />
-      </div> */}
+      </div>
 
       <Button className="w-full min-h-12" onClick={onStartNew}>
         Create Another Entry
