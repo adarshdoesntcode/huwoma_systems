@@ -115,7 +115,6 @@ const HAPTIC_PATTERNS = {
   error: [24, 40, 24],
   success: [18, 48, 30],
 };
-const PUBLIC_ENTRY_THEME_COLOR = "#cfe4ea";
 
 function PublicCarwashEntry() {
   const [step, setStep] = useState(1);
@@ -241,27 +240,6 @@ function PublicCarwashEntry() {
     } catch {
       // Ignore invalid cache payloads.
     }
-  }, []);
-
-  useEffect(() => {
-    const themeMeta = document.querySelector("meta[name='theme-color']");
-    const previousThemeColor = themeMeta?.getAttribute("content") || "";
-    const previousBodyBackground = document.body.style.backgroundColor;
-    const previousHtmlBackground = document.documentElement.style.backgroundColor;
-
-    if (themeMeta) {
-      themeMeta.setAttribute("content", PUBLIC_ENTRY_THEME_COLOR);
-    }
-    document.body.style.backgroundColor = PUBLIC_ENTRY_THEME_COLOR;
-    document.documentElement.style.backgroundColor = PUBLIC_ENTRY_THEME_COLOR;
-
-    return () => {
-      if (themeMeta) {
-        themeMeta.setAttribute("content", previousThemeColor || "#ffffff");
-      }
-      document.body.style.backgroundColor = previousBodyBackground;
-      document.documentElement.style.backgroundColor = previousHtmlBackground;
-    };
   }, []);
 
   useEffect(() => {
@@ -886,7 +864,7 @@ function PublicCarwashEntry() {
   }
 
   return (
-    <div className="min-h-[100dvh] relative bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+    <div className="min-h-screen relative bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
       <div className="fixed top-0 left-0 right-0 h-1.5 overflow-hidden">
         <div
           className="h-full transition-all duration-500 ease-in-out"
@@ -1067,7 +1045,7 @@ function PublicCarwashEntry() {
 
 function PublicEntryLoadingState() {
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
       <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
         <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-3">
@@ -1743,18 +1721,18 @@ function StepVehicle({
             </div>
           </div>
 
-          <DrawerFooter className="border-t bg-background">
+          <DrawerFooter className="flex-row gap-2 border-t bg-background">
             <Button
               type="button"
               variant="outline"
-              className="min-h-12"
+              className="h-10 flex-1"
               onClick={() => setIsVehicleDrawerOpen(false)}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              className="min-h-12"
+              className="h-10 flex-1"
               onClick={handleDrawerSave}
             >
               {editingVehicleKey ? "Save Vehicle" : "Add Vehicle"}
