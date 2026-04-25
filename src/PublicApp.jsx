@@ -1,5 +1,10 @@
-import { lazy, Suspense } from "react";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useLocation,
+} from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import Error from "./components/error/Error";
@@ -98,6 +103,10 @@ const publicRouter = createBrowserRouter([
 ]);
 
 function PublicApp() {
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   return (
     <Provider store={store}>
       <RouterProvider router={publicRouter} />
