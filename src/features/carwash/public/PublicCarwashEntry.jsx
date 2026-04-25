@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,842 +6,58 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import ApiError from "@/components/error/ApiError";
-import { cn } from "@/lib/utils";
-import { CAR_COLOR_OPTIONS, IMAGE_DATA } from "@/lib/config";
-import { resolveVehicleIcon } from "@/lib/vehicleIcon";
-import { haptic } from "@/lib/haptic/haptic";
-import { toast } from "@/hooks/use-toast";
-import {
-  useCreatePublicCarwashTransactionMutation,
-  useGetPublicCarwashConfigQuery,
-  useGetPublicCarwashCustomerContextMutation,
-} from "../carwashApiSlice";
-import {
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Circle,
-  Edit,
-  Loader2,
-  X,
-  Plus,
-} from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import QRCode from "react-qr-code";
 import Steps from "@/components/Steps";
-import { format } from "date-fns";
-
-const CUSTOMER_CACHE_KEY = "huwoma_carwash_public_customer_v1";
-const CUSTOMER_RECENT_CACHE_KEY = "huwoma_carwash_public_recent_customers_v1";
-const MAX_RECENT_CUSTOMERS = 6;
-
-const initialFormState = {
-  customerName: "",
-  customerContact: "",
-  selectedVehicleKey: "",
-  vehicleModel: "",
-  vehicleNumber: "",
-  vehicleColorName: "",
-  vehicleColorCode: "",
-  vehicleTypeId: "",
-  serviceId: "",
-};
-
-const normalizeContact = (value) =>
-  String(value || "")
-    .replace(/\D/g, "")
-    .slice(0, 10);
-
-const normalizeVehicleNumber = (value) =>
-  String(value || "")
-    .toUpperCase()
-    .replace(/\s+/g, " ")
-    .trim();
-
-const capitalizeName = (value) =>
-  String(value || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map(
-      (part) => `${part.charAt(0).toUpperCase()}${part.slice(1).toLowerCase()}`,
-    )
-    .join(" ");
-
-const normalizeVehicleName = (value) => {
-  const trimmedValue = String(value || "").trim();
-  if (!trimmedValue) return "";
-  return `${trimmedValue.charAt(0).toUpperCase()}${trimmedValue.slice(1)}`;
-};
-
-const createLocalVehicleKey = () =>
-  `local-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-
-const initialVehicleDraft = {
-  vehicleModel: "",
-  vehicleNumber: "",
-  vehicleColorName: "",
-  vehicleColorCode: "",
-  vehicleTypeId: "",
-};
-
-const STEP_TRANSITION_EASE = [0.22, 1, 0.36, 1];
-const TOUCH_CLEAN_INTERACTION_CLASS =
-  "focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [-webkit-tap-highlight-color:transparent]";
-const HAPTIC_PATTERNS = {
-  selection: 14,
-  step: 18,
-  error: [24, 40, 24],
-  success: [18, 48, 30],
-};
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { IMAGE_DATA } from "@/lib/config";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import PublicEntryButtonBusyState from "./entry/components/PublicEntryButtonBusyState";
+import PublicEntryLoadingState from "./entry/components/PublicEntryLoadingState";
+import PublicEntryStepCustomer from "./entry/components/PublicEntryStepCustomer";
+import PublicEntryStepVehicle from "./entry/components/PublicEntryStepVehicle";
+import PublicEntryStepService from "./entry/components/PublicEntryStepService";
+import PublicEntryStepReview from "./entry/components/PublicEntryStepReview";
+import usePublicCarwashEntryForm from "./entry/hooks/usePublicCarwashEntryForm";
+import { TOUCH_CLEAN_INTERACTION_CLASS } from "./entry/publicEntryShared";
 
 function PublicCarwashEntry() {
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState(initialFormState);
-  const [errors, setErrors] = useState({});
-  const [customerContext, setCustomerContext] = useState({
-    customer: null,
-    vehicles: [],
-  });
-  const [recentCustomers, setRecentCustomers] = useState([]);
-  const [useManualCustomerLookup, setUseManualCustomerLookup] = useState(true);
-  const [contextContact, setContextContact] = useState("");
-  const [hasSearchedContact, setHasSearchedContact] = useState(false);
-  const [selectedMatchedCustomerId, setSelectedMatchedCustomerId] =
-    useState("");
-  const [customVehicles, setCustomVehicles] = useState([]);
-  const [vehicleOverrides, setVehicleOverrides] = useState({});
-  const [submittedData, setSubmittedData] = useState(null);
-  const shouldReduceMotion = useReducedMotion();
-
-  const stepMotionTransition = useMemo(
-    () =>
-      shouldReduceMotion
-        ? { duration: 0 }
-        : { duration: 0.2, ease: STEP_TRANSITION_EASE },
-    [shouldReduceMotion],
-  );
-
-  const triggerHaptic = (type = "selection") => {
-    haptic(HAPTIC_PATTERNS[type] || HAPTIC_PATTERNS.selection);
-  };
-
   const {
-    data: configData,
-    isLoading: isConfigLoading,
-    isError: isConfigError,
-    error: configError,
-    refetch: refetchConfig,
-  } = useGetPublicCarwashConfigQuery();
-
-  const [getCustomerContext, { isLoading: isContextLoading }] =
-    useGetPublicCarwashCustomerContextMutation();
-  const [createPublicTransaction, { isLoading: isSubmitting }] =
-    useCreatePublicCarwashTransactionMutation();
-
-  const vehicleTypes = useMemo(
-    () => configData?.data?.vehicleTypes || [],
-    [configData],
-  );
-
-  const selectedVehicleType = useMemo(
-    () =>
-      vehicleTypes.find(
-        (vehicleType) => vehicleType._id === form.vehicleTypeId,
-      ),
-    [vehicleTypes, form.vehicleTypeId],
-  );
-
-  const availableServices = useMemo(
-    () => selectedVehicleType?.services || [],
-    [selectedVehicleType],
-  );
-
-  const selectedService = useMemo(
-    () => availableServices.find((service) => service._id === form.serviceId),
-    [availableServices, form.serviceId],
-  );
-
-  const selectableVehicles = useMemo(() => {
-    const existingVehicles = (customerContext?.vehicles || []).map(
-      (vehicle) => {
-        const override = vehicleOverrides[vehicle.key];
-        if (!override) return vehicle;
-
-        return {
-          ...vehicle,
-          ...override,
-          key: vehicle.key,
-        };
-      },
-    );
-
-    return [...existingVehicles, ...customVehicles];
-  }, [customerContext?.vehicles, customVehicles, vehicleOverrides]);
-
-  useEffect(() => {
-    try {
-      const cachedRecent = localStorage.getItem(CUSTOMER_RECENT_CACHE_KEY);
-      const parsedRecent = cachedRecent ? JSON.parse(cachedRecent) : [];
-
-      const sanitizedRecent = parsedRecent
-        .map((entry) => ({
-          customerName: capitalizeName(entry?.customerName || ""),
-          customerContact: normalizeContact(entry?.customerContact || ""),
-        }))
-        .filter((entry) => entry.customerName && entry.customerContact)
-        .slice(0, MAX_RECENT_CUSTOMERS);
-
-      setRecentCustomers(sanitizedRecent);
-      if (sanitizedRecent.length > 0) {
-        setUseManualCustomerLookup(false);
-        setForm((prev) => ({
-          ...prev,
-          customerName: sanitizedRecent[0].customerName,
-          customerContact: sanitizedRecent[0].customerContact,
-        }));
-        return;
-      }
-    } catch {
-      // Ignore invalid cache payloads.
-    }
-
-    try {
-      const cached = localStorage.getItem(CUSTOMER_CACHE_KEY);
-      if (!cached) return;
-      const parsed = JSON.parse(cached);
-      if (!parsed) return;
-
-      setForm((prev) => ({
-        ...prev,
-        customerContact: normalizeContact(parsed.customerContact || ""),
-      }));
-    } catch {
-      // Ignore invalid cache payloads.
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!selectedVehicleType) {
-      if (form.serviceId) {
-        setForm((prev) => ({ ...prev, serviceId: "" }));
-      }
-      return;
-    }
-
-    if (!availableServices.some((service) => service._id === form.serviceId)) {
-      setForm((prev) => ({ ...prev, serviceId: "" }));
-    }
-  }, [availableServices, form.serviceId, selectedVehicleType]);
-
-  const applyExistingVehicle = (vehicle) => {
-    const vehicleNumber = normalizeVehicleNumber(vehicle?.vehicleNumber);
-    const vehicleModel = normalizeVehicleName(vehicle?.vehicleModel || "");
-
-    setForm((prev) => ({
-      ...prev,
-      selectedVehicleKey: vehicle?.key || "",
-      vehicleModel,
-      vehicleNumber,
-      vehicleColorName: vehicle?.vehicleColor?.colorName || "",
-      vehicleColorCode: vehicle?.vehicleColor?.colorCode || "",
-      vehicleTypeId: vehicle?.vehicleTypeId || "",
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      vehicleModel: "",
-      vehicleNumber: "",
-      vehicleTypeId: "",
-      vehicleColor: "",
-    }));
-  };
-
-  const handleSaveVehicleDraft = ({ mode, vehicleKey, vehicleDraft }) => {
-    const normalizedModel = normalizeVehicleName(
-      vehicleDraft?.vehicleModel || "",
-    );
-    const normalizedNumber = normalizeVehicleNumber(
-      vehicleDraft?.vehicleNumber || "",
-    );
-    const normalizedTypeId = String(vehicleDraft?.vehicleTypeId || "");
-
-    const selectedType = vehicleTypes.find(
-      (vehicleType) => vehicleType._id === normalizedTypeId,
-    );
-
-    const sourceVehicle = selectableVehicles.find(
-      (vehicle) => vehicle.key === vehicleKey,
-    );
-
-    const normalizedVehicle = {
-      key: mode === "edit" && vehicleKey ? vehicleKey : createLocalVehicleKey(),
-      vehicleModel: normalizedModel,
-      vehicleNumber: normalizedNumber,
-      vehicleColor: {
-        colorCode: vehicleDraft.vehicleColorCode,
-        colorName: vehicleDraft.vehicleColorName,
-      },
-      vehicleTypeId: normalizedTypeId,
-      vehicleTypeName:
-        selectedType?.vehicleTypeName || sourceVehicle?.vehicleTypeName || "",
-      vehicleIcon:
-        selectedType?.vehicleIcon || sourceVehicle?.vehicleIcon || "",
-      lastServiceName: sourceVehicle?.lastServiceName || "",
-      lastVisitedAt: sourceVehicle?.lastVisitedAt || null,
-    };
-
-    if (mode === "edit" && vehicleKey) {
-      const isCustomVehicle = customVehicles.some(
-        (vehicle) => vehicle.key === vehicleKey,
-      );
-
-      if (isCustomVehicle) {
-        setCustomVehicles((prev) =>
-          prev.map((vehicle) =>
-            vehicle.key === vehicleKey ? normalizedVehicle : vehicle,
-          ),
-        );
-      } else {
-        setVehicleOverrides((prev) => ({
-          ...prev,
-          [vehicleKey]: normalizedVehicle,
-        }));
-      }
-    } else {
-      setCustomVehicles((prev) => [normalizedVehicle, ...prev]);
-    }
-
-    applyExistingVehicle(normalizedVehicle);
-    triggerHaptic("selection");
-  };
-
-  const fetchContextForContact = async () => {
-    const contact = normalizeContact(form.customerContact);
-
-    if (contact.length !== 10) {
-      setErrors((prev) => ({
-        ...prev,
-        customerContact: "Contact number must be 10 digits.",
-      }));
-      triggerHaptic("error");
-      return false;
-    }
-
-    try {
-      const response = await getCustomerContext({
-        customerContact: contact,
-      }).unwrap();
-
-      const customer = response?.data?.customer || null;
-      const vehicles = response?.data?.vehicles || [];
-      const resolvedCustomerContact = normalizeContact(
-        customer?.customerContact || contact,
-      );
-
-      setCustomVehicles([]);
-      setVehicleOverrides({});
-      setCustomerContext({ customer, vehicles });
-      setContextContact(resolvedCustomerContact);
-      setHasSearchedContact(true);
-      setSelectedMatchedCustomerId(customer?._id || "");
-
-      if (customer?.customerName) {
-        setForm((prev) => ({
-          ...prev,
-          customerName: customer.customerName,
-          customerContact: resolvedCustomerContact,
-        }));
-        persistPrimaryCustomerCache(
-          customer.customerName,
-          resolvedCustomerContact,
-        );
-        saveRecentCustomer(customer.customerName, resolvedCustomerContact);
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          customerName: "",
-        }));
-      }
-
-      if (vehicles.length > 0) {
-        const matchedVehicle =
-          vehicles.find((vehicle) => vehicle.key === form.selectedVehicleKey) ||
-          vehicles[0];
-        applyExistingVehicle(matchedVehicle);
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          selectedVehicleKey: "",
-          vehicleModel: "",
-          vehicleNumber: "",
-          vehicleColorName: "",
-          vehicleColorCode: "",
-          vehicleTypeId: "",
-          serviceId: "",
-        }));
-      }
-
-      return true;
-    } catch (error) {
-      setHasSearchedContact(false);
-      setSelectedMatchedCustomerId("");
-      toast({
-        variant: "destructive",
-        title: "Could not fetch customer context",
-        description:
-          error?.data?.message ||
-          error?.error ||
-          "Please continue with manual vehicle details.",
-      });
-      return false;
-    }
-  };
-
-  const validateStep = (currentStep) => {
-    const nextErrors = {};
-
-    if (currentStep === 2) {
-      if (!String(form.vehicleModel || "").trim()) {
-        nextErrors.vehicleModel = "Vehicle name is required.";
-      }
-
-      if (!normalizeVehicleNumber(form.vehicleNumber)) {
-        nextErrors.vehicleNumber = "Vehicle number is required.";
-      }
-
-      if (!form.vehicleTypeId) {
-        nextErrors.vehicleTypeId = "Please select a vehicle type.";
-      }
-
-      if (!form.vehicleColorCode || !form.vehicleColorName) {
-        nextErrors.vehicleColor = "Please select a vehicle color.";
-      }
-    }
-
-    if (currentStep === 3) {
-      if (!form.serviceId) {
-        nextErrors.serviceId = "Please select a service.";
-      }
-    }
-
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) {
-      triggerHaptic("error");
-    }
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const persistPrimaryCustomerCache = (customerName, customerContact) => {
-    try {
-      localStorage.setItem(
-        CUSTOMER_CACHE_KEY,
-        JSON.stringify({
-          customerName: capitalizeName(customerName),
-          customerContact: normalizeContact(customerContact),
-        }),
-      );
-    } catch {
-      // Ignore localStorage failures silently.
-    }
-  };
-
-  const upsertRecentCustomer = (
-    customerName,
-    customerContact,
-    previousCustomerContact = "",
-  ) => {
-    setRecentCustomers((prev) => {
-      const normalizedContact = normalizeContact(customerContact);
-      const normalizedPreviousContact = normalizeContact(
-        previousCustomerContact,
-      );
-      const nextRecentCustomers = [
-        {
-          customerName: capitalizeName(customerName),
-          customerContact: normalizedContact,
-        },
-        ...prev.filter((entry) => {
-          const entryContact = normalizeContact(entry.customerContact);
-          return (
-            entryContact !== normalizedContact &&
-            entryContact !== normalizedPreviousContact
-          );
-        }),
-      ].slice(0, MAX_RECENT_CUSTOMERS);
-
-      try {
-        localStorage.setItem(
-          CUSTOMER_RECENT_CACHE_KEY,
-          JSON.stringify(nextRecentCustomers),
-        );
-      } catch {
-        // Ignore localStorage failures silently.
-      }
-
-      return nextRecentCustomers;
-    });
-  };
-
-  const saveRecentCustomer = (customerName, customerContact) => {
-    upsertRecentCustomer(customerName, customerContact);
-  };
-
-  const handleContactChange = (value) => {
-    setForm((prev) => ({
-      ...prev,
-      customerContact: normalizeContact(value),
-      customerName: "",
-      selectedVehicleKey: "",
-      vehicleModel: "",
-      vehicleNumber: "",
-      vehicleColorName: "",
-      vehicleColorCode: "",
-      vehicleTypeId: "",
-      serviceId: "",
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      customerContact: "",
-      customerName: "",
-      matchedCustomer: "",
-    }));
-
-    setHasSearchedContact(false);
-    setSelectedMatchedCustomerId("");
-    setContextContact("");
-    setCustomVehicles([]);
-    setVehicleOverrides({});
-    setCustomerContext({ customer: null, vehicles: [] });
-  };
-
-  const handleSelectRecentCustomer = (recentCustomer) => {
-    const isDifferentCustomer =
-      normalizeContact(form.customerContact) !==
-      normalizeContact(recentCustomer.customerContact);
-    if (isDifferentCustomer) {
-      triggerHaptic("selection");
-    }
-
-    setUseManualCustomerLookup(false);
-    setForm((prev) => ({
-      ...prev,
-      customerContact: normalizeContact(recentCustomer.customerContact),
-      customerName: capitalizeName(recentCustomer.customerName),
-      selectedVehicleKey: "",
-      vehicleModel: "",
-      vehicleNumber: "",
-      vehicleColorName: "",
-      vehicleColorCode: "",
-      vehicleTypeId: "",
-      serviceId: "",
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      customerContact: "",
-      customerName: "",
-      matchedCustomer: "",
-    }));
-
-    setHasSearchedContact(false);
-    setSelectedMatchedCustomerId("");
-    setContextContact("");
-    setCustomVehicles([]);
-    setVehicleOverrides({});
-    setCustomerContext({ customer: null, vehicles: [] });
-  };
-
-  const handleRemoveRecentCustomer = (customerContact) => {
-    const normalizedContact = normalizeContact(customerContact);
-    const nextRecentCustomers = recentCustomers.filter(
-      (entry) => normalizeContact(entry.customerContact) !== normalizedContact,
-    );
-
-    setRecentCustomers(nextRecentCustomers);
-    try {
-      localStorage.setItem(
-        CUSTOMER_RECENT_CACHE_KEY,
-        JSON.stringify(nextRecentCustomers),
-      );
-    } catch {
-      // Ignore localStorage failures silently.
-    }
-
-    const isRemovingSelected =
-      normalizeContact(form.customerContact) === normalizedContact;
-    if (!isRemovingSelected) return;
-
-    setErrors({});
-    setHasSearchedContact(false);
-    setSelectedMatchedCustomerId("");
-    setContextContact("");
-    setCustomVehicles([]);
-    setVehicleOverrides({});
-    setCustomerContext({ customer: null, vehicles: [] });
-
-    if (nextRecentCustomers.length === 0) {
-      setUseManualCustomerLookup(true);
-      setForm((prev) => ({
-        ...prev,
-        customerName: "",
-        customerContact: "",
-        selectedVehicleKey: "",
-        vehicleModel: "",
-        vehicleNumber: "",
-        vehicleColorName: "",
-        vehicleColorCode: "",
-        vehicleTypeId: "",
-        serviceId: "",
-      }));
-      return;
-    }
-
-    const fallbackCustomer = nextRecentCustomers[0];
-    setUseManualCustomerLookup(false);
-    setForm((prev) => ({
-      ...prev,
-      customerName: capitalizeName(fallbackCustomer.customerName),
-      customerContact: normalizeContact(fallbackCustomer.customerContact),
-      selectedVehicleKey: "",
-      vehicleModel: "",
-      vehicleNumber: "",
-      vehicleColorName: "",
-      vehicleColorCode: "",
-      vehicleTypeId: "",
-      serviceId: "",
-    }));
-  };
-
-  const handleNewCustomerNameChange = (value) => {
-    setForm((prev) => ({
-      ...prev,
-      customerName: value,
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      customerName: "",
-    }));
-  };
-
-  const handleSelectMatchedCustomer = (customerId) => {
-    if (selectedMatchedCustomerId !== customerId) {
-      triggerHaptic("selection");
-    }
-
-    setSelectedMatchedCustomerId(customerId);
-    setErrors((prev) => ({
-      ...prev,
-      matchedCustomer: "",
-    }));
-  };
-
-  const handleCustomerStepNext = async () => {
-    const customerContact = normalizeContact(form.customerContact);
-    if (customerContact.length !== 10) {
-      setErrors((prev) => ({
-        ...prev,
-        customerContact: "Contact number must be 10 digits.",
-      }));
-      triggerHaptic("error");
-      return;
-    }
-
-    const isSavedCustomerMode =
-      !useManualCustomerLookup && recentCustomers.length > 0;
-
-    if (isSavedCustomerMode) {
-      const customerName = capitalizeName(form.customerName);
-      if (!customerName) {
-        setErrors((prev) => ({
-          ...prev,
-          customerName: "Please select a saved customer.",
-        }));
-        triggerHaptic("error");
-        return;
-      }
-
-      setForm((prev) => ({
-        ...prev,
-        customerName,
-      }));
-      setErrors({});
-      triggerHaptic("step");
-      setStep(2);
-
-      if (!hasSearchedContact || customerContact !== contextContact) {
-        fetchContextForContact();
-      }
-      return;
-    }
-
-    if (!hasSearchedContact || customerContact !== contextContact) {
-      await fetchContextForContact();
-      return;
-    }
-
-    if (customerContext?.customer) {
-      if (selectedMatchedCustomerId !== customerContext.customer._id) {
-        setErrors((prev) => ({
-          ...prev,
-          matchedCustomer: "Select the customer to continue.",
-        }));
-        triggerHaptic("error");
-        return;
-      }
-
-      setForm((prev) => ({
-        ...prev,
-        customerName: customerContext.customer.customerName,
-      }));
-      setErrors({});
-      triggerHaptic("step");
-      setStep(2);
-      return;
-    }
-
-    const customerName = capitalizeName(form.customerName);
-    if (!customerName) {
-      setErrors((prev) => ({
-        ...prev,
-        customerName: "Customer name is required.",
-      }));
-      triggerHaptic("error");
-      return;
-    }
-
-    setForm((prev) => ({
-      ...prev,
-      customerName,
-    }));
-    setErrors({});
-    triggerHaptic("step");
-    setStep(2);
-  };
-
-  const handleNext = async () => {
-    if (step === 1) {
-      await handleCustomerStepNext();
-      return;
-    }
-
-    if (!validateStep(step)) return;
-
-    triggerHaptic("step");
-    setStep((prev) => Math.min(prev + 1, 4));
-  };
-
-  const handleBack = () => {
-    setErrors({});
-    triggerHaptic("step");
-    setStep((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleSubmit = async () => {
-    if (!validateStep(4)) return;
-
-    try {
-      const selectedVehicleOverride = form.selectedVehicleKey
-        ? vehicleOverrides[form.selectedVehicleKey]
-        : null;
-
-      const payload = {
-        customerName: capitalizeName(form.customerName),
-        customerContact: normalizeContact(form.customerContact),
-        vehicleNumber: normalizeVehicleNumber(form.vehicleNumber),
-        vehicleModel: normalizeVehicleName(form.vehicleModel),
-        vehicleTypeId: form.vehicleTypeId,
-        serviceId: form.serviceId,
-        vehicleColor: {
-          colorCode: form.vehicleColorCode,
-          colorName: form.vehicleColorName,
-        },
-      };
-
-      if (selectedVehicleOverride && form.selectedVehicleKey) {
-        payload.originalVehicleSignature = form.selectedVehicleKey;
-      }
-
-      const response = await createPublicTransaction(payload).unwrap();
-
-      setSubmittedData({
-        transaction: response?.data?.transaction,
-        checkoutQrValue: response?.data?.checkoutQrValue,
-      });
-      triggerHaptic("success");
-
-      persistPrimaryCustomerCache(
-        payload.customerName,
-        payload.customerContact,
-      );
-      saveRecentCustomer(payload.customerName, payload.customerContact);
-
-      toast({
-        title: "Entry Submitted",
-        description: "You are now in queue.",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Could not submit entry",
-        description:
-          error?.data?.message || error?.error || "Please try again.",
-      });
-    }
-  };
-
-  const handleStartNewEntry = () => {
-    setStep(1);
-    setErrors({});
-    setHasSearchedContact(false);
-    setSelectedMatchedCustomerId("");
-    setCustomVehicles([]);
-    setVehicleOverrides({});
-    setCustomerContext({ customer: null, vehicles: [] });
-    setContextContact("");
-    setSubmittedData(null);
-    if (recentCustomers.length > 0) {
-      setUseManualCustomerLookup(false);
-      setForm((prev) => ({
-        ...prev,
-        ...initialFormState,
-        customerName: recentCustomers[0].customerName,
-        customerContact: recentCustomers[0].customerContact,
-      }));
-      return;
-    }
-
-    setUseManualCustomerLookup(true);
-    setForm(initialFormState);
-  };
-
-  const handleNotYou = () => {
-    setErrors({});
-    triggerHaptic("selection");
-    setUseManualCustomerLookup(true);
-    setHasSearchedContact(false);
-    setSelectedMatchedCustomerId("");
-    setCustomVehicles([]);
-    setVehicleOverrides({});
-    setCustomerContext({ customer: null, vehicles: [] });
-    setContextContact("");
-    setForm(initialFormState);
-  };
+    step,
+    form,
+    errors,
+    customerContext,
+    recentCustomers,
+    useManualCustomerLookup,
+    hasSearchedContact,
+    selectedMatchedCustomerId,
+    shouldReduceMotion,
+    stepMotionTransition,
+    vehicleTypes,
+    selectableVehicles,
+    selectedVehicleType,
+    availableServices,
+    selectedService,
+    isConfigLoading,
+    isConfigError,
+    configError,
+    refetchConfig,
+    isContextLoading,
+    isSubmitting,
+    handleContactChange,
+    handleSelectRecentCustomer,
+    handleRemoveRecentCustomer,
+    handleSelectMatchedCustomer,
+    handleNewCustomerNameChange,
+    handleSelectVehicle,
+    handleSaveVehicleDraft,
+    handleSelectService,
+    handleNext,
+    handleBack,
+    handleSubmit,
+    handleNotYou,
+  } = usePublicCarwashEntryForm();
 
   if (isConfigLoading) {
     return <PublicEntryLoadingState />;
@@ -855,24 +70,22 @@ function PublicCarwashEntry() {
       </div>
     );
   }
-  // bg-gradient-to-b from-slate-50 via-white to-[#058299]/20
+
   return (
     <div className="relative min-h-screen ">
       <div className="fixed top-0 left-0 right-0 h-1 overflow-hidden">
         <div
           className="h-full transition-all duration-500 ease-in-out"
           style={{
-            width: `${submittedData ? 100 : (step / 4) * 100}%`,
-            background: submittedData
-              ? "#058299"
-              : "linear-gradient(to right, #058299, #058299, white)",
+            width: `${(step / 4) * 100}%`,
+            background: "linear-gradient(to right, #058299, #058299, white)",
           }}
         />
       </div>
+
       <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
         <Card className="mt-2 mb-4 shadow-xl ">
           <CardHeader className="pb-4 ">
-            {/* <div className="flex items-center justify-between gap-3"> */}
             <div className="mb-1">
               <CardTitle className="flex items-center justify-between text-2xl">
                 <div className="w-32 h-20">
@@ -882,1125 +95,136 @@ function PublicCarwashEntry() {
                     alt="Receipt Logo"
                   />
                 </div>
-                <Steps steps={4} current={submittedData ? 4 : step} />
+                <Steps steps={4} current={step} />
               </CardTitle>
               <CardDescription> </CardDescription>
             </div>
-            {/* </div> */}
           </CardHeader>
 
           <CardContent className="pb-8">
             <AnimatePresence mode="wait" initial={false}>
-              {submittedData ? (
-                <motion.div
-                  key="success-state"
-                  initial={shouldReduceMotion ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={stepMotionTransition}
-                >
-                  <SuccessState
-                    submittedData={submittedData}
-                    onStartNew={handleStartNewEntry}
+              <motion.div
+                key={`step-${step}`}
+                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={stepMotionTransition}
+              >
+                {step === 1 ? (
+                  <PublicEntryStepCustomer
+                    form={form}
+                    errors={errors}
+                    recentCustomers={recentCustomers}
+                    hasSearchedContact={hasSearchedContact}
+                    selectedMatchedCustomerId={selectedMatchedCustomerId}
+                    useManualCustomerLookup={useManualCustomerLookup}
+                    customerContext={customerContext}
+                    onContactChange={handleContactChange}
+                    onSelectRecentCustomer={handleSelectRecentCustomer}
+                    onRemoveRecentCustomer={handleRemoveRecentCustomer}
+                    onSelectMatchedCustomer={handleSelectMatchedCustomer}
+                    onNewCustomerNameChange={handleNewCustomerNameChange}
+                    isContextLoading={isContextLoading}
                   />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={`step-${step}`}
-                  initial={shouldReduceMotion ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={stepMotionTransition}
-                >
-                  {step === 1 && (
-                    <StepCustomer
-                      form={form}
-                      errors={errors}
-                      recentCustomers={recentCustomers}
-                      hasSearchedContact={hasSearchedContact}
-                      selectedMatchedCustomerId={selectedMatchedCustomerId}
-                      useManualCustomerLookup={useManualCustomerLookup}
-                      customerContext={customerContext}
-                      onContactChange={handleContactChange}
-                      onSelectRecentCustomer={handleSelectRecentCustomer}
-                      onRemoveRecentCustomer={handleRemoveRecentCustomer}
-                      onSelectMatchedCustomer={handleSelectMatchedCustomer}
-                      onNewCustomerNameChange={handleNewCustomerNameChange}
-                      isContextLoading={isContextLoading}
-                    />
-                  )}
+                ) : null}
 
-                  {step === 2 && (
-                    <StepVehicle
-                      form={form}
-                      errors={errors}
-                      vehicleTypes={vehicleTypes}
-                      vehicles={selectableVehicles}
-                      shouldReduceMotion={shouldReduceMotion}
-                      isVehiclesLoading={isContextLoading}
-                      onSelectVehicle={(vehicle) => {
-                        if (form.selectedVehicleKey !== vehicle?.key) {
-                          triggerHaptic("selection");
+                {step === 2 ? (
+                  <PublicEntryStepVehicle
+                    form={form}
+                    errors={errors}
+                    vehicleTypes={vehicleTypes}
+                    vehicles={selectableVehicles}
+                    shouldReduceMotion={shouldReduceMotion}
+                    isVehiclesLoading={isContextLoading}
+                    onSelectVehicle={handleSelectVehicle}
+                    onSaveVehicleDraft={handleSaveVehicleDraft}
+                  />
+                ) : null}
+
+                {step === 3 ? (
+                  <PublicEntryStepService
+                    form={form}
+                    onSelectService={handleSelectService}
+                    errors={errors}
+                    selectedVehicleType={selectedVehicleType}
+                    availableServices={availableServices}
+                  />
+                ) : null}
+
+                {step === 4 ? (
+                  <PublicEntryStepReview
+                    form={form}
+                    selectedVehicleType={selectedVehicleType}
+                    selectedService={selectedService}
+                  />
+                ) : null}
+
+                <Separator className="my-6" />
+
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex w-full gap-2 sm:w-auto">
+                    {step > 1 ? (
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full min-h-12 transition-transform sm:w-auto",
+                          TOUCH_CLEAN_INTERACTION_CLASS,
+                        )}
+                        onClick={handleBack}
+                      >
+                        <ChevronLeft className="w-4 h-4 mr-2" />
+                        Back
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full min-h-12 transition-transform sm:w-auto",
+                          TOUCH_CLEAN_INTERACTION_CLASS,
+                        )}
+                        disabled={
+                          recentCustomers.length === 0 || useManualCustomerLookup
                         }
-                        applyExistingVehicle(vehicle);
-                      }}
-                      onSaveVehicleDraft={handleSaveVehicleDraft}
-                    />
-                  )}
+                        onClick={handleNotYou}
+                      >
+                        New Account?
+                      </Button>
+                    )}
 
-                  {step === 3 && (
-                    <StepService
-                      form={form}
-                      onSelectService={(serviceId) => {
-                        if (form.serviceId !== serviceId) {
-                          triggerHaptic("selection");
-                        }
-                        setForm((prev) => ({
-                          ...prev,
-                          serviceId,
-                        }));
-                        setErrors((prev) => ({
-                          ...prev,
-                          serviceId: "",
-                        }));
-                      }}
-                      errors={errors}
-                      selectedVehicleType={selectedVehicleType}
-                      availableServices={availableServices}
-                    />
-                  )}
-
-                  {step === 4 && (
-                    <StepReview
-                      form={form}
-                      selectedVehicleType={selectedVehicleType}
-                      selectedService={selectedService}
-                    />
-                  )}
-
-                  <Separator className="my-6" />
-
-                  <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex w-full gap-2 sm:w-auto">
-                      {step > 1 ? (
-                        <Button
-                          variant="outline"
-                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
-                          onClick={handleBack}
-                        >
-                          <ChevronLeft className="w-4 h-4 mr-2" />
-                          Back
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full min-h-12 transition-transform sm:w-auto",
-                            TOUCH_CLEAN_INTERACTION_CLASS,
-                          )}
-                          disabled={
-                            recentCustomers.length === 0 ||
-                            useManualCustomerLookup
-                          }
-                          onClick={handleNotYou}
-                        >
-                          New Account?
-                        </Button>
-                      )}
-
-                      {step < 4 ? (
-                        <Button
-                          className={cn(
-                            "w-full min-h-12 transition-transform sm:w-auto",
-                            TOUCH_CLEAN_INTERACTION_CLASS,
-                          )}
-                          onClick={handleNext}
-                        >
-                          Next
-                          <ChevronRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      ) : (
-                        <Button
-                          className={cn(
-                            "w-full min-h-12 transition-transform sm:w-auto",
-                            TOUCH_CLEAN_INTERACTION_CLASS,
-                          )}
-                          onClick={handleSubmit}
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? (
-                            <ButtonBusyState label="Submitting" />
-                          ) : (
-                            "Submit To Queue"
-                          )}
-                        </Button>
-                      )}
-                    </div>
+                    {step < 4 ? (
+                      <Button
+                        className={cn(
+                          "w-full min-h-12 transition-transform sm:w-auto",
+                          TOUCH_CLEAN_INTERACTION_CLASS,
+                        )}
+                        onClick={handleNext}
+                      >
+                        Next
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    ) : (
+                      <Button
+                        className={cn(
+                          "w-full min-h-12 transition-transform sm:w-auto",
+                          TOUCH_CLEAN_INTERACTION_CLASS,
+                        )}
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <PublicEntryButtonBusyState label="Submitting" />
+                        ) : (
+                          "Submit To Queue"
+                        )}
+                      </Button>
+                    )}
                   </div>
-                </motion.div>
-              )}
+                </div>
+              </motion.div>
             </AnimatePresence>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-}
-
-function PublicEntryLoadingState() {
-  return (
-    <div className="min-h-screen">
-      <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
-        <Card className="border-0 shadow-xl">
-          <CardHeader className="space-y-3">
-            <div className="w-40 rounded-md h-7 bg-slate-200 animate-pulse" />
-            <div className="w-56 h-3 rounded bg-slate-100 animate-pulse [animation-delay:120ms]" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="h-12 rounded-xl bg-slate-100 animate-pulse" />
-            <div className="h-12 rounded-xl bg-slate-100 animate-pulse [animation-delay:140ms]" />
-            <div className="h-24 rounded-xl bg-slate-100 animate-pulse [animation-delay:220ms]" />
-            <div className="h-24 rounded-xl bg-slate-100 animate-pulse [animation-delay:300ms]" />
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-function ButtonBusyState({ label }) {
-  return (
-    <span className="inline-flex items-center">
-      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-      {label}
-    </span>
-  );
-}
-
-function StepCustomer({
-  form,
-  errors,
-  recentCustomers,
-  hasSearchedContact,
-  selectedMatchedCustomerId,
-  useManualCustomerLookup,
-  customerContext,
-  onContactChange,
-  onSelectRecentCustomer,
-  onRemoveRecentCustomer,
-  onSelectMatchedCustomer,
-  onNewCustomerNameChange,
-  isContextLoading,
-}) {
-  const hasMatchedCustomer = Boolean(customerContext?.customer);
-  const [pendingDeleteCustomer, setPendingDeleteCustomer] = useState(null);
-  const contactInputRef = useRef(null);
-  const newCustomerNameInputRef = useRef(null);
-  const showSavedCustomerCards =
-    recentCustomers.length > 0 && !useManualCustomerLookup;
-  const isNewCustomer =
-    !showSavedCustomerCards && hasSearchedContact && !hasMatchedCustomer;
-
-  useEffect(() => {
-    if (showSavedCustomerCards) return;
-
-    const focusTimer = window.setTimeout(() => {
-      const inputNode = isNewCustomer
-        ? newCustomerNameInputRef.current
-        : contactInputRef.current;
-      inputNode?.focus({ preventScroll: true });
-    }, 80);
-
-    return () => window.clearTimeout(focusTimer);
-  }, [isNewCustomer, showSavedCustomerCards]);
-
-  return (
-    <div className="space-y-5">
-      {showSavedCustomerCards && (
-        <div className="space-y-2">
-          <Label>Saved Customer</Label>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {recentCustomers.map((recentCustomer) => (
-              <div
-                key={recentCustomer.customerContact}
-                role="button"
-                tabIndex={0}
-                className={cn(
-                  "relative w-full rounded-xl border p-4 text-left transition-colors transition-shadow duration-200",
-                  TOUCH_CLEAN_INTERACTION_CLASS,
-                  normalizeContact(form.customerContact) ===
-                    normalizeContact(recentCustomer.customerContact)
-                    ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                    : "",
-                )}
-                onClick={() => onSelectRecentCustomer(recentCustomer)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    onSelectRecentCustomer(recentCustomer);
-                  }
-                }}
-              >
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  className={cn(
-                    "absolute w-7 h-7 right-1.5 top-1.5 text-muted-foreground/70 hover:text-destructive",
-                    TOUCH_CLEAN_INTERACTION_CLASS,
-                  )}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setPendingDeleteCustomer(recentCustomer);
-                  }}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <div className="pr-4 mb-1 font-semibold text-primary text-wrap">
-                  {recentCustomer.customerName}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {recentCustomer.customerContact}
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-center text-muted-foreground">
-            Select a customer to proceed.
-          </p>
-          <AlertDialog
-            open={Boolean(pendingDeleteCustomer)}
-            onOpenChange={(open) => {
-              if (!open) {
-                setPendingDeleteCustomer(null);
-              }
-            }}
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Remove saved customer?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will remove{" "}
-                  <span className="font-medium text-foreground">
-                    {pendingDeleteCustomer?.customerName}
-                  </span>{" "}
-                  ({pendingDeleteCustomer?.customerContact}) from saved
-                  suggestions.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className={TOUCH_CLEAN_INTERACTION_CLASS}>
-                  Cancel
-                </AlertDialogCancel>
-                <Button
-                  variant="destructive"
-                  className={TOUCH_CLEAN_INTERACTION_CLASS}
-                  onClick={() => {
-                    if (!pendingDeleteCustomer) return;
-                    onRemoveRecentCustomer(
-                      pendingDeleteCustomer.customerContact,
-                    );
-                    setPendingDeleteCustomer(null);
-                  }}
-                >
-                  Delete
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )}
-
-      {!showSavedCustomerCards && (
-        <div className="space-y-2">
-          <div className="grid gap-2">
-            <Label>
-              {errors.customerContact ? (
-                <span className="text-destructive">
-                  {errors.customerContact}
-                </span>
-              ) : (
-                "Contact Number"
-              )}
-            </Label>
-            <Input
-              ref={contactInputRef}
-              value={form.customerContact}
-              className="min-h-12"
-              type="tel"
-              inputMode="numeric"
-              autoComplete="tel"
-              placeholder="10-digit number"
-              onChange={(event) => onContactChange(event.target.value)}
-            />
-          </div>
-
-          <p className="text-xs text-muted-foreground">
-            Enter your contact number and tap{" "}
-            <span className="font-medium">Next</span>
-          </p>
-        </div>
-      )}
-
-      {isContextLoading && (
-        <div className="p-4 space-y-3 border rounded-xl bg-slate-50/80">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <div className="relative flex w-2.5 h-2.5">
-              <span className="absolute inline-flex w-full h-full rounded-full opacity-75 bg-[#058299] animate-ping" />
-              <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-[#058299]" />
-            </div>
-            Checking customer contact...
-          </div>
-          <div className="space-y-2">
-            <div className="w-3/4 h-2 rounded bg-slate-200 animate-pulse" />
-            <div className="w-1/2 h-2 rounded bg-slate-200 animate-pulse [animation-delay:160ms]" />
-          </div>
-        </div>
-      )}
-
-      {!showSavedCustomerCards && hasMatchedCustomer && (
-        <div className="space-y-2">
-          <Label>
-            {errors.matchedCustomer ? (
-              <span className="text-destructive">{errors.matchedCustomer}</span>
-            ) : (
-              "Match Found"
-            )}
-          </Label>
-          <button
-            type="button"
-            className={cn(
-              "relative w-full rounded-xl border p-4 text-left transition-all",
-              TOUCH_CLEAN_INTERACTION_CLASS,
-              selectedMatchedCustomerId === customerContext.customer._id
-                ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                : "",
-            )}
-            onClick={() =>
-              onSelectMatchedCustomer(customerContext.customer._id)
-            }
-          >
-            <span className="absolute top-3 right-3">
-              {selectedMatchedCustomerId === customerContext.customer._id ? (
-                <div className="w-4 h-4 rounded-full flex items-center justify-center bg-[#058299]">
-                  <div className="w-1 h-1 bg-white rounded-full" />
-                </div>
-              ) : (
-                <Circle className="w-4 h-4 text-muted" />
-              )}
-            </span>
-            <div className="pr-4 font-semibold text-primary text-wrap">
-              {customerContext.customer.customerName}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {customerContext.customer.customerContact}
-            </div>
-            <div className="mt-2 text-xs text-muted-foreground">
-              {customerContext.vehicles.length} saved vehicle
-              {customerContext.vehicles.length > 1 ? "s" : ""} found
-            </div>
-          </button>
-        </div>
-      )}
-
-      {isNewCustomer && (
-        <div className="grid gap-2">
-          <Label>
-            {errors.customerName ? (
-              <span className="text-destructive">{errors.customerName}</span>
-            ) : (
-              "Customer Name"
-            )}
-          </Label>
-          <Input
-            ref={newCustomerNameInputRef}
-            value={form.customerName}
-            className="min-h-12"
-            placeholder="Full name"
-            autoComplete="name"
-            onChange={(event) => onNewCustomerNameChange(event.target.value)}
-            onBlur={(event) =>
-              onNewCustomerNameChange(capitalizeName(event.target.value))
-            }
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function StepVehicle({
-  form,
-  errors,
-  vehicleTypes,
-  vehicles,
-  shouldReduceMotion,
-  isVehiclesLoading,
-  onSelectVehicle,
-  onSaveVehicleDraft,
-}) {
-  const colorOptions = useMemo(() => CAR_COLOR_OPTIONS.slice(0, 20), []);
-  const [isVehicleDrawerOpen, setIsVehicleDrawerOpen] = useState(false);
-  const [editingVehicleKey, setEditingVehicleKey] = useState("");
-  const [vehicleDraft, setVehicleDraft] = useState(initialVehicleDraft);
-  const [drawerErrors, setDrawerErrors] = useState({});
-  const vehicleNameInputRef = useRef(null);
-
-  useEffect(() => {
-    if (!isVehicleDrawerOpen) return;
-
-    const focusTimer = window.setTimeout(() => {
-      vehicleNameInputRef.current?.focus({ preventScroll: true });
-    }, 120);
-
-    return () => window.clearTimeout(focusTimer);
-  }, [isVehicleDrawerOpen, editingVehicleKey]);
-
-  const openAddVehicleDrawer = () => {
-    setEditingVehicleKey("");
-    setVehicleDraft(initialVehicleDraft);
-    setDrawerErrors({});
-    setIsVehicleDrawerOpen(true);
-  };
-
-  const openEditVehicleDrawer = (vehicle) => {
-    setEditingVehicleKey(vehicle?.key || "");
-    setVehicleDraft({
-      vehicleModel: vehicle?.vehicleModel || "",
-      vehicleNumber: vehicle?.vehicleNumber || "",
-      vehicleColorName: vehicle?.vehicleColor?.colorName || "",
-      vehicleColorCode: vehicle?.vehicleColor?.colorCode || "",
-      vehicleTypeId: vehicle?.vehicleTypeId || "",
-    });
-    setDrawerErrors({});
-    setIsVehicleDrawerOpen(true);
-  };
-
-  const closeVehicleEditor = () => {
-    setIsVehicleDrawerOpen(false);
-    setEditingVehicleKey("");
-    setDrawerErrors({});
-  };
-
-  useEffect(() => {
-    if (!isVehicleDrawerOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isVehicleDrawerOpen]);
-
-  const handleVehicleDraftChange = (field, value) => {
-    setVehicleDraft((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    setDrawerErrors((prev) => ({
-      ...prev,
-      [field]: "",
-    }));
-  };
-
-  const handleDrawerSave = () => {
-    const normalizedModel = normalizeVehicleName(
-      vehicleDraft.vehicleModel || "",
-    );
-    const normalizedNumber = normalizeVehicleNumber(
-      vehicleDraft.vehicleNumber || "",
-    );
-
-    const nextErrors = {};
-    if (!normalizedModel) {
-      nextErrors.vehicleModel = "Vehicle name is required.";
-    }
-    if (!normalizedNumber) {
-      nextErrors.vehicleNumber = "Vehicle number (only number) is required.";
-    }
-    if (!vehicleDraft.vehicleTypeId) {
-      nextErrors.vehicleTypeId = "Please select a vehicle type.";
-    }
-    if (!vehicleDraft.vehicleColorCode || !vehicleDraft.vehicleColorName) {
-      nextErrors.vehicleColor = "Please select a vehicle color.";
-    }
-
-    if (Object.keys(nextErrors).length > 0) {
-      setDrawerErrors(nextErrors);
-      haptic(HAPTIC_PATTERNS.error);
-      return;
-    }
-
-    onSaveVehicleDraft({
-      mode: editingVehicleKey ? "edit" : "add",
-      vehicleKey: editingVehicleKey,
-      vehicleDraft: {
-        ...vehicleDraft,
-        vehicleModel: normalizedModel,
-        vehicleNumber: normalizedNumber,
-      },
-    });
-
-    setEditingVehicleKey("");
-    setDrawerErrors({});
-    setVehicleDraft(initialVehicleDraft);
-    closeVehicleEditor();
-  };
-
-  const hasVehicleValidationError =
-    errors.vehicleModel ||
-    errors.vehicleNumber ||
-    errors.vehicleTypeId ||
-    errors.vehicleColor;
-
-  return (
-    <>
-      <div className="space-y-6">
-        <div className="space-y-3">
-          <Label>
-            {hasVehicleValidationError ? (
-              <span className="text-destructive">
-                Select or add a valid vehicle to continue.
-              </span>
-            ) : (
-              "Choose Vehicle"
-            )}
-          </Label>
-
-          {isVehiclesLoading && vehicles.length === 0 ? (
-            <div className="flex items-center justify-center gap-2 p-4 text-sm border py-14 rounded-xl bg-muted/40 text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Loading vehicles...
-            </div>
-          ) : vehicles.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {vehicles.map((vehicle) => {
-                const isSelected = form.selectedVehicleKey === vehicle.key;
-
-                return (
-                  <div
-                    key={vehicle.key}
-                    role="button"
-                    tabIndex={0}
-                    className={cn(
-                      "relative rounded-xl border p-4 text-left transition-colors transition-shadow duration-200 min-h-24 cursor-pointer",
-                      TOUCH_CLEAN_INTERACTION_CLASS,
-                      isSelected
-                        ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/10 via-[#fff] to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                        : "",
-                    )}
-                    onClick={() => onSelectVehicle(vehicle)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        onSelectVehicle(vehicle);
-                      }
-                    }}
-                  >
-                    <span className="absolute -top-1.5 -right-1.5">
-                      {isSelected ? (
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#058299]">
-                          <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                        </div>
-                      ) : null}
-                    </span>
-
-                    <div>
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <div className="font-semibold text-primary text-wrap">
-                            {vehicle.vehicleModel}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Plate: {vehicle.vehicleNumber}
-                          </div>
-                          {/* {vehicle.lastServiceName && (
-                            <div className="mt-1 text-xs text-muted-foreground">
-                              Last: {vehicle.lastServiceName}
-                            </div>
-                          )} */}
-                        </div>
-                        {vehicle.vehicleIcon ? (
-                          <div className="rounded-md">
-                            <img
-                              loading="lazy"
-                              src={resolveVehicleIcon(vehicle.vehicleIcon)}
-                              alt={vehicle.vehicleTypeName || "Vehicle type"}
-                              className="object-contain w-12.5 h-10"
-                            />
-                          </div>
-                        ) : null}
-                      </div>
-
-                      <div className="flex items-end justify-between gap-2 mt-2">
-                        <div className="flex items-end">
-                          {vehicle?.vehicleColor?.colorCode ? (
-                            <span
-                              className="w-5 h-5 mr-3 border rounded-full"
-                              style={{
-                                backgroundColor: vehicle.vehicleColor.colorCode,
-                              }}
-                            />
-                          ) : (
-                            <span />
-                          )}
-
-                          {vehicle.vehicleTypeName ? (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] text-center"
-                            >
-                              {vehicle.vehicleTypeName}
-                            </Badge>
-                          ) : (
-                            <span />
-                          )}
-                        </div>
-                        <div
-                          className={cn(
-                            "text-muted-foreground/60 text-xs p-1 transition-transform",
-                            TOUCH_CLEAN_INTERACTION_CLASS,
-                          )}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            openEditVehicleDrawer(vehicle);
-                          }}
-                        >
-                          <Edit className="w-3.5 h-3.5" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="p-4 text-sm border rounded-xl bg-muted/40 text-muted-foreground">
-              No saved vehicles yet. Add your vehicle to continue.
-            </div>
-          )}
-
-          <Button
-            type="button"
-            variant="outline"
-            className={cn("w-full min-h-12", TOUCH_CLEAN_INTERACTION_CLASS)}
-            onClick={openAddVehicleDrawer}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Vehicle
-          </Button>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {isVehicleDrawerOpen ? (
-          <motion.div
-            key="vehicle-editor-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-50 bg-black/45"
-            onClick={closeVehicleEditor}
-          >
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-label={
-                editingVehicleKey ? "Edit Vehicle" : "Add New Vehicle"
-              }
-              initial={shouldReduceMotion ? false : { y: 36, opacity: 0.96 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={shouldReduceMotion ? { opacity: 0 } : { y: 24, opacity: 0 }}
-              transition={
-                shouldReduceMotion
-                  ? { duration: 0.12 }
-                  : { duration: 0.24, ease: STEP_TRANSITION_EASE }
-              }
-              className="absolute inset-x-0 bottom-0 flex flex-col h-[100dvh] overflow-hidden border-t shadow-2xl bg-background sm:inset-x-4 sm:bottom-4 sm:h-[min(900px,95dvh)] sm:rounded-2xl"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="flex items-start justify-between gap-3 px-4 pt-4 pb-3 border-b">
-                <div>
-                  <h3 className="text-lg font-semibold leading-tight">
-                    {editingVehicleKey ? "Edit Vehicle" : "Add New Vehicle"}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Fill in vehicle details and select its type.
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={cn("w-9 h-9 -mt-1", TOUCH_CLEAN_INTERACTION_CLASS)}
-                  onClick={closeVehicleEditor}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <div className="flex-1 min-h-0 px-4 py-4 space-y-5 overflow-y-auto">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label>
-                      {drawerErrors.vehicleModel ? (
-                        <span className="text-destructive">
-                          {drawerErrors.vehicleModel}
-                        </span>
-                      ) : (
-                        "Vehicle Name"
-                      )}
-                    </Label>
-                    <Input
-                      ref={vehicleNameInputRef}
-                      value={vehicleDraft.vehicleModel}
-                      className="min-h-12"
-                      placeholder="Vehicle name"
-                      onChange={(event) =>
-                        handleVehicleDraftChange(
-                          "vehicleModel",
-                          event.target.value,
-                        )
-                      }
-                      onBlur={() =>
-                        handleVehicleDraftChange(
-                          "vehicleModel",
-                          normalizeVehicleName(vehicleDraft.vehicleModel),
-                        )
-                      }
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label>
-                      {drawerErrors.vehicleNumber ? (
-                        <span className="text-destructive">
-                          {drawerErrors.vehicleNumber}
-                        </span>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <span>Vehicle Number</span>{" "}
-                          <span className="text-xs font-normal text-muted-foreground">
-                            Eg: 1234 (only number)
-                          </span>
-                        </div>
-                      )}
-                    </Label>
-                    <Input
-                      value={vehicleDraft.vehicleNumber}
-                      className="min-h-12"
-                      placeholder="Plate Number"
-                      onChange={(event) =>
-                        handleVehicleDraftChange(
-                          "vehicleNumber",
-                          event.target.value.toUpperCase(),
-                        )
-                      }
-                      onBlur={() =>
-                        handleVehicleDraftChange(
-                          "vehicleNumber",
-                          normalizeVehicleNumber(vehicleDraft.vehicleNumber),
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label>
-                    {drawerErrors.vehicleTypeId ? (
-                      <span className="text-destructive">
-                        {drawerErrors.vehicleTypeId}
-                      </span>
-                    ) : (
-                      "Vehicle Type"
-                    )}
-                  </Label>
-
-                  <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                    {vehicleTypes.map((vehicleType) => {
-                      const isSelected =
-                        vehicleDraft.vehicleTypeId === vehicleType._id;
-
-                      return (
-                        <button
-                          key={vehicleType._id}
-                          type="button"
-                          onClick={() =>
-                            handleVehicleDraftChange(
-                              "vehicleTypeId",
-                              vehicleType._id,
-                            )
-                          }
-                          className={cn(
-                            "relative flex flex-col items-center gap-3 px-3 py-2 transition-transform border rounded-lg shadow-sm text-muted-foreground hover:scale-105 hover:text-primary",
-                            TOUCH_CLEAN_INTERACTION_CLASS,
-                            isSelected ? "border-[#058299] bg-white" : "",
-                          )}
-                        >
-                          {isSelected ? (
-                            <Badge className="absolute bg-[#058299] top-0 right-0 p-2 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
-                              <div className="w-1 h-1 bg-white rounded-full" />
-                            </Badge>
-                          ) : null}
-                          <img
-                            loading="lazy"
-                            src={resolveVehicleIcon(vehicleType.vehicleIcon)}
-                            alt={vehicleType.vehicleTypeName}
-                            className="object-contain h-12"
-                          />
-                          <span className="text-xs font-medium text-center">
-                            {vehicleType.vehicleTypeName}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label>
-                    {drawerErrors.vehicleColor ? (
-                      <span className="text-destructive">
-                        {drawerErrors.vehicleColor}
-                      </span>
-                    ) : (
-                      "Vehicle Color"
-                    )}
-                  </Label>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {colorOptions.map((color) => {
-                      const isSelected =
-                        vehicleDraft.vehicleColorCode === color.colorCode;
-
-                      return (
-                        <button
-                          key={color.colorCode}
-                          type="button"
-                          onClick={() => {
-                            setVehicleDraft((prev) => ({
-                              ...prev,
-                              vehicleColorCode: color.colorCode,
-                              vehicleColorName: color.colorName,
-                            }));
-                            setDrawerErrors((prev) => ({
-                              ...prev,
-                              vehicleColor: "",
-                            }));
-                          }}
-                          className={cn(
-                            "min-h-12 rounded-lg border px-3 py-2 text-left text-xs sm:text-sm",
-                            TOUCH_CLEAN_INTERACTION_CLASS,
-                            isSelected ? "border-[#058299] bg-[#058299]/5" : "",
-                          )}
-                        >
-                          <span className="flex items-center justify-start gap-2">
-                            <span
-                              className="inline-block w-4 h-4 my-auto border rounded-full"
-                              style={{ backgroundColor: color.colorCode }}
-                            />
-                            {color.colorName}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-shrink-0 px-4 py-3 border-t bg-background/95 backdrop-blur pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
-                    onClick={closeVehicleEditor}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
-                    onClick={handleDrawerSave}
-                  >
-                    {editingVehicleKey ? "Save Vehicle" : "Add Vehicle"}
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </>
-  );
-}
-
-function StepService({
-  form,
-  onSelectService,
-  errors,
-  selectedVehicleType,
-  availableServices,
-}) {
-  if (!selectedVehicleType) {
-    return (
-      <div className="p-6 text-sm border rounded-xl bg-muted/50 text-muted-foreground">
-        Select a vehicle type first to see available services.
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <Label>
-          {errors.serviceId ? (
-            <span className="text-destructive">{errors.serviceId}</span>
-          ) : (
-            "Choose Service"
-          )}
-        </Label>
-
-        <Badge>{selectedVehicleType.vehicleTypeName}</Badge>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        {availableServices.map((service) => {
-          const isSelected = form.serviceId === service._id;
-
-          return (
-            <button
-              key={service._id}
-              type="button"
-              onClick={() => onSelectService(service._id)}
-              className={cn(
-                "rounded-xl border p-5 w-full text-left transition-colors duration-200 min-h-20",
-                TOUCH_CLEAN_INTERACTION_CLASS,
-                isSelected
-                  ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                  : "",
-              )}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="font-semibold text-primary text-wrap">
-                    {service.serviceTypeName}
-                  </div>
-                  <div className="text-xs text-muted-foreground text-wrap">
-                    {service?.serviceDescription?.join(", ")}
-                  </div>
-                </div>
-                <div className="text-sm font-bold text-nowrap">
-                  Rs. {service.serviceRate}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function StepReview({ form, selectedVehicleType, selectedService }) {
-  const hasColor = form.vehicleColorCode && form.vehicleColorName;
-
-  return (
-    <div className="space-y-5">
-      <div className="p-5 border rounded-lg bg-muted">
-        <h3 className="mb-3 text-base font-semibold">Review Entry</h3>
-
-        <div className="grid gap-3 text-sm sm:grid-cols-2">
-          <ReviewItem
-            label="Customer"
-            value={capitalizeName(form.customerName)}
-          />
-          <ReviewItem
-            label="Contact"
-            value={normalizeContact(form.customerContact)}
-          />
-          <ReviewItem
-            label="Vehicle Name"
-            value={normalizeVehicleName(form.vehicleModel)}
-          />
-          <ReviewItem
-            label="Vehicle Number"
-            value={normalizeVehicleNumber(form.vehicleNumber)}
-          />
-          <ReviewItem
-            label="Color"
-            value={hasColor ? form.vehicleColorName : "Not provided"}
-          />
-          <ReviewItem
-            label="Vehicle Type"
-            value={selectedVehicleType?.vehicleTypeName || "Not selected"}
-          />
-
-          <ReviewItem
-            label="Service"
-            value={selectedService?.serviceTypeName || "Not selected"}
-          />
-          {/* <ReviewItem
-            label="Rate"
-            value={selectedService ? `Rs. ${selectedService.serviceRate}` : "-"}
-          /> */}
-        </div>
-      </div>
-
-      <p className="text-xs text-center text-muted-foreground">
-        On submit, this entry will be queued for wash.
-      </p>
-    </div>
-  );
-}
-
-function ReviewItem({ label, value }) {
-  return (
-    <div className="space-y-1">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="font-medium">{value}</p>
-    </div>
-  );
-}
-
-function SuccessState({ submittedData, onStartNew }) {
-  const transaction = submittedData?.transaction;
-
-  return (
-    <div className="py-4 space-y-6 text-center">
-      <div className="space-y-2">
-        <CheckCircle2 className="w-12 h-12 mx-auto text-emerald-600" />
-        <h3 className="text-xl font-semibold">You Are In Queue</h3>
-        <p className="text-sm text-center text-muted-foreground">
-          Show this QR code during checkout.
-        </p>
-      </div>
-
-      <div className="inline-flex flex-col items-center gap-4 p-5 border rounded-xl">
-        <QRCode value={submittedData?.checkoutQrValue || ""} size={180} />
-      </div>
-
-      <div className="grid max-w-xl gap-3 mx-auto text-sm text-left sm:grid-cols-2">
-        {/* <ReviewItem label="Bill No" value={transaction?.billNo || "-"} /> */}
-        <ReviewItem label="Vehicle" value={transaction?.vehicleModel || "-"} />
-        <ReviewItem
-          label="Service"
-          value={transaction?.service?.id?.serviceTypeName || "-"}
-        />
-        <ReviewItem
-          label="Initiated On"
-          value={format(transaction.createdAt, "d MMM, yy - h:mm a") || ""}
-        />
-      </div>
-
-      <Button
-        className={cn("w-full min-h-12", TOUCH_CLEAN_INTERACTION_CLASS)}
-        onClick={onStartNew}
-      >
-        Create Another Entry
-      </Button>
     </div>
   );
 }

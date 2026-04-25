@@ -250,6 +250,12 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
         body: { ...credentials },
       }),
     }),
+    getPublicCarwashTransactionStatus: builder.query({
+      query: (transactionId) => ({
+        url: `/carwash/public/transaction/${transactionId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -285,4 +291,5 @@ export const {
   useGetPublicCarwashConfigQuery,
   useGetPublicCarwashCustomerContextMutation,
   useCreatePublicCarwashTransactionMutation,
+  useGetPublicCarwashTransactionStatusQuery,
 } = carwashApiSlice;

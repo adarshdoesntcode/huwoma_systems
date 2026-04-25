@@ -22,6 +22,7 @@ import PublicNewVehicleListing from "./features/garage/public/PublicNewVehicleLi
 import PublicNewBuyerInterest from "./features/garage/public/PublicNewBuyerInterest";
 import OAuthRedirect from "./features/auth/OAuthRedirect";
 import PublicCarwashEntry from "./features/carwash/public/PublicCarwashEntry";
+import PublicCarwashEntryStatus from "./features/carwash/public/PublicCarwashEntryStatus";
 
 const router = createBrowserRouter([
   {
@@ -85,6 +86,11 @@ const router = createBrowserRouter([
   {
     path: "/parknwashbyhuwoma",
     element: <PublicCarwashEntry />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/parknwashbyhuwoma/status/:transactionId",
+    element: <PublicCarwashEntryStatus />,
     errorElement: <Error />,
   },
   {
