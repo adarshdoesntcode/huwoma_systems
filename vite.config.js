@@ -136,6 +136,13 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
+        // Keep Workbox SPA fallback for systems routes, but let public routes
+        // hit network so Vercel rewrites can serve /public.html.
+        navigateFallbackDenylist: [
+          /^\/parknwashbyhuwoma(?:\/.*)?$/,
+          /^\/simracingbyhuwoma(?:\/.*)?$/,
+          /^\/garagebyhuwoma(?:\/.*)?$/,
+        ],
       },
     }),
   ],
