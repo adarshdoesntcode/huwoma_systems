@@ -1049,7 +1049,7 @@ function PublicCarwashEntry() {
 
 function PublicEntryLoadingState() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+    <div className="min-h-screen">
       <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
         <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-3">
