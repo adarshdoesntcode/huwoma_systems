@@ -1,4 +1,10 @@
-import { capitalizeName, normalizeContact, normalizeVehicleName, normalizeVehicleNumber } from "../publicEntryUtils";
+import { Separator } from "@radix-ui/react-dropdown-menu";
+import {
+  capitalizeName,
+  normalizeContact,
+  normalizeVehicleName,
+  normalizeVehicleNumber,
+} from "../publicEntryUtils";
 
 function PublicEntryStepReview({ form, selectedVehicleType, selectedService }) {
   const hasColor = form.vehicleColorCode && form.vehicleColorName;
@@ -17,6 +23,7 @@ function PublicEntryStepReview({ form, selectedVehicleType, selectedService }) {
             label="Contact"
             value={normalizeContact(form.customerContact)}
           />
+          <Separator className="border" />
           <ReviewItem
             label="Vehicle Name"
             value={normalizeVehicleName(form.vehicleModel)}
@@ -29,6 +36,7 @@ function PublicEntryStepReview({ form, selectedVehicleType, selectedService }) {
             label="Color"
             value={hasColor ? form.vehicleColorName : "Not provided"}
           />
+          <Separator className="border" />
           <ReviewItem
             label="Vehicle Type"
             value={selectedVehicleType?.vehicleTypeName || "Not selected"}
@@ -50,7 +58,7 @@ function PublicEntryStepReview({ form, selectedVehicleType, selectedService }) {
 
 function ReviewItem({ label, value }) {
   return (
-    <div className="space-y-1">
+    <div className="flex items-center justify-between gap-2">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="font-medium">{value}</p>
     </div>
