@@ -155,17 +155,6 @@ function Carwash() {
             Carwash
           </div>
           <div className="flex justify-end ">
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full mr-2"
-              onClick={() => setShowPublicEntry(true)}
-            >
-              <span className="sr-only sm:ml-1 sm:not-sr-only">
-                Customer Portal
-              </span>
-              <QrCode className="w-4 h-4 sm:ml-2" />
-            </Button>
             {role !== ROLES_LIST.STAFF && (
               <Button
                 size="sm"
@@ -178,7 +167,17 @@ function Carwash() {
                 <PlusCircle className="w-4 h-4 ml-2" />
               </Button>
             )}
-
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full mr-2"
+              onClick={() => setShowPublicEntry(true)}
+            >
+              <span className="sr-only sm:ml-1 sm:not-sr-only">
+                Customer Portal
+              </span>
+              <QrCode className="w-4 h-4 sm:ml-2" />
+            </Button>
             {role !== ROLES_LIST.STAFF && (
               <Button
                 size="sm"
