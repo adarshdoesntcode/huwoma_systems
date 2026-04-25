@@ -726,7 +726,7 @@ function PublicCarwashEntry() {
     if (!customerName) {
       setErrors((prev) => ({
         ...prev,
-        customerName: "Customer name is required for a new customer.",
+        customerName: "Customer name is required.",
       }));
       triggerHaptic("error");
       return;
@@ -862,9 +862,9 @@ function PublicCarwashEntry() {
       </div>
     );
   }
-
+  // bg-gradient-to-b from-slate-50 via-white to-[#058299]/20
   return (
-    <div className="min-h-screen relative bg-gradient-to-b from-slate-50 via-white to-[#058299]/20">
+    <div className="relative min-h-screen ">
       <div className="fixed top-0 left-0 right-0 h-1.5 overflow-hidden">
         <div
           className="h-full transition-all duration-500 ease-in-out"
@@ -877,20 +877,21 @@ function PublicCarwashEntry() {
         />
       </div>
       <div className="w-full max-w-4xl px-4 py-4 mx-auto sm:py-10">
-        <Card className="my-4 border-0 shadow-xl ">
-          <CardHeader className="pb-4 space-y-4 ">
+        <Card className="mt-2 mb-4 shadow-xl ">
+          <CardHeader className="pb-4 ">
             {/* <div className="flex items-center justify-between gap-3"> */}
             <div className="mb-1">
               <CardTitle className="flex items-center justify-between text-2xl">
-                <img
-                  src={IMAGE_DATA.receipt_logo}
-                  height={60}
-                  width={120}
-                  alt="Receipt Logo"
-                />
+                <div className="w-32 h-20">
+                  <img
+                    src={IMAGE_DATA.receipt_logo}
+                    className="object-cover w-full h-full"
+                    alt="Receipt Logo"
+                  />
+                </div>
                 <Steps steps={4} current={submittedData ? 4 : step} />
               </CardTitle>
-              <CardDescription>Customer Record Entry Portal </CardDescription>
+              <CardDescription> </CardDescription>
             </div>
             {/* </div> */}
           </CardHeader>
@@ -1006,7 +1007,7 @@ function PublicCarwashEntry() {
                           }
                           onClick={handleNotYou}
                         >
-                          Not You?
+                          New Account?
                         </Button>
                       )}
 
@@ -1142,7 +1143,7 @@ function StepCustomer({
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="mt-3 text-xs text-center text-muted-foreground">
             Select a customer to proceed.
           </p>
           <AlertDialog
@@ -1281,7 +1282,7 @@ function StepCustomer({
             {errors.customerName ? (
               <span className="text-destructive">{errors.customerName}</span>
             ) : (
-              "New Customer Name"
+              "Customer Name"
             )}
           </Label>
           <Input
@@ -1462,13 +1463,13 @@ function StepVehicle({
                             {vehicle.vehicleModel}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {vehicle.vehicleNumber}
+                            Plate: {vehicle.vehicleNumber}
                           </div>
-                          {vehicle.lastServiceName && (
+                          {/* {vehicle.lastServiceName && (
                             <div className="mt-1 text-xs text-muted-foreground">
                               Last: {vehicle.lastServiceName}
                             </div>
-                          )}
+                          )} */}
                         </div>
                         {vehicle.vehicleIcon ? (
                           <div className="rounded-md">
@@ -1483,7 +1484,7 @@ function StepVehicle({
                       </div>
 
                       <div className="flex items-center justify-between gap-2 mt-2">
-                        <div className="flex items-center ">
+                        <div className="flex items-end">
                           {vehicle?.vehicleColor?.colorCode ? (
                             <span
                               className="w-5 h-5 mr-3 border rounded-full"
@@ -1508,16 +1509,16 @@ function StepVehicle({
                         </div>
                         <Button
                           type="button"
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          className="h-8 px-3 text-xs transition-transform active:scale-[0.98]"
+                          className="h-8 text-muted-foreground text-xs transition-transform active:scale-[0.98]"
                           onClick={(event) => {
                             event.stopPropagation();
                             openEditVehicleDrawer(vehicle);
                           }}
                         >
-                          <Edit className="w-3 h-3 mr-1.5" />
-                          Edit
+                          <Edit className="w-4 h-4" />
+                          {/* Edit */}
                         </Button>
                       </div>
                     </div>
@@ -1725,14 +1726,14 @@ function StepVehicle({
             <Button
               type="button"
               variant="outline"
-              className="h-10 flex-1"
+              className="flex-1 h-10"
               onClick={() => setIsVehicleDrawerOpen(false)}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              className="h-10 flex-1"
+              className="flex-1 h-10"
               onClick={handleDrawerSave}
             >
               {editingVehicleKey ? "Save Vehicle" : "Add Vehicle"}
@@ -1761,7 +1762,7 @@ function StepService({
 
   return (
     <div className="space-y-5">
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between">
         <Label>
           {errors.serviceId ? (
             <span className="text-destructive">{errors.serviceId}</span>
@@ -1815,7 +1816,7 @@ function StepReview({ form, selectedVehicleType, selectedService }) {
 
   return (
     <div className="space-y-5">
-      <div className="p-5 border border-[#058299] rounded-xl bg-gradient-to-r from-[#058299]/5  to-[#fff] ">
+      <div className="p-5 border rounded-lg bg-muted">
         <h3 className="mb-3 text-base font-semibold">Review Entry</h3>
 
         <div className="grid gap-3 text-sm sm:grid-cols-2">
@@ -1855,7 +1856,7 @@ function StepReview({ form, selectedVehicleType, selectedService }) {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-center text-muted-foreground">
         On submit, this entry will be queued for wash.
       </p>
     </div>
@@ -1879,7 +1880,7 @@ function SuccessState({ submittedData, onStartNew }) {
       <div className="space-y-2">
         <CheckCircle2 className="w-12 h-12 mx-auto text-emerald-600" />
         <h3 className="text-xl font-semibold">You Are In Queue</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-center text-muted-foreground">
           Show this QR code during checkout.
         </p>
       </div>
