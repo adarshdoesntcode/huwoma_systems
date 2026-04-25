@@ -12,14 +12,6 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
-import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
@@ -944,6 +936,7 @@ function PublicCarwashEntry() {
                       errors={errors}
                       vehicleTypes={vehicleTypes}
                       vehicles={selectableVehicles}
+                      shouldReduceMotion={shouldReduceMotion}
                       isVehiclesLoading={isContextLoading}
                       onSelectVehicle={(vehicle) => {
                         if (form.selectedVehicleKey !== vehicle?.key) {
@@ -1341,6 +1334,7 @@ function StepVehicle({
   errors,
   vehicleTypes,
   vehicles,
+  shouldReduceMotion,
   isVehiclesLoading,
   onSelectVehicle,
   onSaveVehicleDraft,
@@ -1382,13 +1376,22 @@ function StepVehicle({
     setIsVehicleDrawerOpen(true);
   };
 
-  const handleDrawerOpenChange = (open) => {
-    setIsVehicleDrawerOpen(open);
-    if (!open) {
-      setEditingVehicleKey("");
-      setDrawerErrors({});
-    }
+  const closeVehicleEditor = () => {
+    setIsVehicleDrawerOpen(false);
+    setEditingVehicleKey("");
+    setDrawerErrors({});
   };
+
+  useEffect(() => {
+    if (!isVehicleDrawerOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isVehicleDrawerOpen]);
 
   const handleVehicleDraftChange = (field, value) => {
     setVehicleDraft((prev) => ({
@@ -1442,7 +1445,7 @@ function StepVehicle({
     setEditingVehicleKey("");
     setDrawerErrors({});
     setVehicleDraft(initialVehicleDraft);
-    setIsVehicleDrawerOpen(false);
+    closeVehicleEditor();
   };
 
   const hasVehicleValidationError =
@@ -1590,201 +1593,246 @@ function StepVehicle({
         </div>
       </div>
 
-      <Drawer open={isVehicleDrawerOpen} onOpenChange={handleDrawerOpenChange}>
-        <DrawerContent className="h-[88dvh] flex flex-col sm:h-[85dvh] pb-0 overflow-hidden [&>div:first-child]:bg-foreground/25">
-          <DrawerHeader>
-            <DrawerTitle>
-              {editingVehicleKey ? "Edit Vehicle" : "Add New Vehicle"}
-            </DrawerTitle>
-            <DrawerDescription>
-              Fill in vehicle details and select its type.
-            </DrawerDescription>
-          </DrawerHeader>
-
-          <div className="flex-1 px-4 pb-4 space-y-5 overflow-y-auto">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-2">
-                <Label>
-                  {drawerErrors.vehicleModel ? (
-                    <span className="text-destructive">
-                      {drawerErrors.vehicleModel}
-                    </span>
-                  ) : (
-                    "Vehicle Name"
-                  )}
-                </Label>
-                <Input
-                  ref={vehicleNameInputRef}
-                  value={vehicleDraft.vehicleModel}
-                  className="min-h-12"
-                  placeholder="Vehicle name"
-                  onChange={(event) =>
-                    handleVehicleDraftChange("vehicleModel", event.target.value)
-                  }
-                  onBlur={() =>
-                    handleVehicleDraftChange(
-                      "vehicleModel",
-                      normalizeVehicleName(vehicleDraft.vehicleModel),
-                    )
-                  }
-                />
+      <AnimatePresence>
+        {isVehicleDrawerOpen ? (
+          <motion.div
+            key="vehicle-editor-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-50 bg-black/45"
+            onClick={closeVehicleEditor}
+          >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={
+                editingVehicleKey ? "Edit Vehicle" : "Add New Vehicle"
+              }
+              initial={shouldReduceMotion ? false : { y: 36, opacity: 0.96 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { y: 24, opacity: 0 }}
+              transition={
+                shouldReduceMotion
+                  ? { duration: 0.12 }
+                  : { duration: 0.24, ease: STEP_TRANSITION_EASE }
+              }
+              className="absolute inset-x-0 bottom-0 flex flex-col h-[100dvh] overflow-hidden border-t shadow-2xl bg-background sm:inset-x-4 sm:bottom-4 sm:h-[min(900px,95dvh)] sm:rounded-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-3 px-4 pt-4 pb-3 border-b">
+                <div>
+                  <h3 className="text-lg font-semibold leading-tight">
+                    {editingVehicleKey ? "Edit Vehicle" : "Add New Vehicle"}
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Fill in vehicle details and select its type.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={cn("w-9 h-9 -mt-1", TOUCH_CLEAN_INTERACTION_CLASS)}
+                  onClick={closeVehicleEditor}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
 
-              <div className="grid gap-2">
-                <Label>
-                  {drawerErrors.vehicleNumber ? (
-                    <span className="text-destructive">
-                      {drawerErrors.vehicleNumber}
-                    </span>
-                  ) : (
-                    <div className="flex items-center justify-between">
-                      <span>Vehicle Number</span>{" "}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        Eg: 1234 (only number)
-                      </span>
-                    </div>
-                  )}
-                </Label>
-                <Input
-                  value={vehicleDraft.vehicleNumber}
-                  className="min-h-12"
-                  placeholder="Plate Number"
-                  onChange={(event) =>
-                    handleVehicleDraftChange(
-                      "vehicleNumber",
-                      event.target.value.toUpperCase(),
-                    )
-                  }
-                  onBlur={() =>
-                    handleVehicleDraftChange(
-                      "vehicleNumber",
-                      normalizeVehicleNumber(vehicleDraft.vehicleNumber),
-                    )
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label>
-                {drawerErrors.vehicleTypeId ? (
-                  <span className="text-destructive">
-                    {drawerErrors.vehicleTypeId}
-                  </span>
-                ) : (
-                  "Vehicle Type"
-                )}
-              </Label>
-
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                {vehicleTypes.map((vehicleType) => {
-                  const isSelected =
-                    vehicleDraft.vehicleTypeId === vehicleType._id;
-
-                  return (
-                    <button
-                      key={vehicleType._id}
-                      type="button"
-                      onClick={() =>
+              <div className="flex-1 min-h-0 px-4 py-4 space-y-5 overflow-y-auto">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label>
+                      {drawerErrors.vehicleModel ? (
+                        <span className="text-destructive">
+                          {drawerErrors.vehicleModel}
+                        </span>
+                      ) : (
+                        "Vehicle Name"
+                      )}
+                    </Label>
+                    <Input
+                      ref={vehicleNameInputRef}
+                      value={vehicleDraft.vehicleModel}
+                      className="min-h-12"
+                      placeholder="Vehicle name"
+                      onChange={(event) =>
                         handleVehicleDraftChange(
-                          "vehicleTypeId",
-                          vehicleType._id,
+                          "vehicleModel",
+                          event.target.value,
                         )
                       }
-                      className={cn(
-                        "relative flex flex-col items-center gap-3 px-3 py-2 transition-transform border rounded-lg shadow-sm text-muted-foreground hover:scale-105 hover:text-primary",
-                        TOUCH_CLEAN_INTERACTION_CLASS,
-                        isSelected ? "border-[#058299] bg-white" : "",
+                      onBlur={() =>
+                        handleVehicleDraftChange(
+                          "vehicleModel",
+                          normalizeVehicleName(vehicleDraft.vehicleModel),
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label>
+                      {drawerErrors.vehicleNumber ? (
+                        <span className="text-destructive">
+                          {drawerErrors.vehicleNumber}
+                        </span>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <span>Vehicle Number</span>{" "}
+                          <span className="text-xs font-normal text-muted-foreground">
+                            Eg: 1234 (only number)
+                          </span>
+                        </div>
                       )}
-                    >
-                      {isSelected && (
-                        <Badge className="absolute bg-[#058299] top-0 right-0 p-2 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
-                          <div className="w-1 h-1 bg-white rounded-full" />
-                        </Badge>
-                      )}
-                      <img
-                        loading="lazy"
-                        src={resolveVehicleIcon(vehicleType.vehicleIcon)}
-                        alt={vehicleType.vehicleTypeName}
-                        className="object-contain h-12"
-                      />
-                      <span className="text-xs font-medium text-center">
-                        {vehicleType.vehicleTypeName}
+                    </Label>
+                    <Input
+                      value={vehicleDraft.vehicleNumber}
+                      className="min-h-12"
+                      placeholder="Plate Number"
+                      onChange={(event) =>
+                        handleVehicleDraftChange(
+                          "vehicleNumber",
+                          event.target.value.toUpperCase(),
+                        )
+                      }
+                      onBlur={() =>
+                        handleVehicleDraftChange(
+                          "vehicleNumber",
+                          normalizeVehicleNumber(vehicleDraft.vehicleNumber),
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>
+                    {drawerErrors.vehicleTypeId ? (
+                      <span className="text-destructive">
+                        {drawerErrors.vehicleTypeId}
                       </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                    ) : (
+                      "Vehicle Type"
+                    )}
+                  </Label>
 
-            <div className="space-y-3">
-              <Label>
-                {drawerErrors.vehicleColor ? (
-                  <span className="text-destructive">
-                    {drawerErrors.vehicleColor}
-                  </span>
-                ) : (
-                  "Vehicle Color"
-                )}
-              </Label>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {colorOptions.map((color) => {
-                  const isSelected =
-                    vehicleDraft.vehicleColorCode === color.colorCode;
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                    {vehicleTypes.map((vehicleType) => {
+                      const isSelected =
+                        vehicleDraft.vehicleTypeId === vehicleType._id;
 
-                  return (
-                    <button
-                      key={color.colorCode}
-                      type="button"
-                      onClick={() => {
-                        setVehicleDraft((prev) => ({
-                          ...prev,
-                          vehicleColorCode: color.colorCode,
-                          vehicleColorName: color.colorName,
-                        }));
-                        setDrawerErrors((prev) => ({
-                          ...prev,
-                          vehicleColor: "",
-                        }));
-                      }}
-                      className={cn(
-                        "min-h-12 rounded-lg border px-3 py-2 text-left text-xs sm:text-sm",
-                        isSelected ? "border-[#058299] bg-[#058299]/5" : "",
-                      )}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <span
-                          className="inline-block w-4 h-4 my-auto border rounded-full"
-                          style={{ backgroundColor: color.colorCode }}
-                        />
-                        {color.colorName}
+                      return (
+                        <button
+                          key={vehicleType._id}
+                          type="button"
+                          onClick={() =>
+                            handleVehicleDraftChange(
+                              "vehicleTypeId",
+                              vehicleType._id,
+                            )
+                          }
+                          className={cn(
+                            "relative flex flex-col items-center gap-3 px-3 py-2 transition-transform border rounded-lg shadow-sm text-muted-foreground hover:scale-105 hover:text-primary",
+                            TOUCH_CLEAN_INTERACTION_CLASS,
+                            isSelected ? "border-[#058299] bg-white" : "",
+                          )}
+                        >
+                          {isSelected ? (
+                            <Badge className="absolute bg-[#058299] top-0 right-0 p-2 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
+                              <div className="w-1 h-1 bg-white rounded-full" />
+                            </Badge>
+                          ) : null}
+                          <img
+                            loading="lazy"
+                            src={resolveVehicleIcon(vehicleType.vehicleIcon)}
+                            alt={vehicleType.vehicleTypeName}
+                            className="object-contain h-12"
+                          />
+                          <span className="text-xs font-medium text-center">
+                            {vehicleType.vehicleTypeName}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>
+                    {drawerErrors.vehicleColor ? (
+                      <span className="text-destructive">
+                        {drawerErrors.vehicleColor}
                       </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+                    ) : (
+                      "Vehicle Color"
+                    )}
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {colorOptions.map((color) => {
+                      const isSelected =
+                        vehicleDraft.vehicleColorCode === color.colorCode;
 
-          <DrawerFooter className="flex-row gap-2 border-t bg-background">
-            <Button
-              type="button"
-              variant="outline"
-              className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
-              onClick={() => setIsVehicleDrawerOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
-              onClick={handleDrawerSave}
-            >
-              {editingVehicleKey ? "Save Vehicle" : "Add Vehicle"}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+                      return (
+                        <button
+                          key={color.colorCode}
+                          type="button"
+                          onClick={() => {
+                            setVehicleDraft((prev) => ({
+                              ...prev,
+                              vehicleColorCode: color.colorCode,
+                              vehicleColorName: color.colorName,
+                            }));
+                            setDrawerErrors((prev) => ({
+                              ...prev,
+                              vehicleColor: "",
+                            }));
+                          }}
+                          className={cn(
+                            "min-h-12 rounded-lg border px-3 py-2 text-left text-xs sm:text-sm",
+                            TOUCH_CLEAN_INTERACTION_CLASS,
+                            isSelected ? "border-[#058299] bg-[#058299]/5" : "",
+                          )}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <span
+                              className="inline-block w-4 h-4 my-auto border rounded-full"
+                              style={{ backgroundColor: color.colorCode }}
+                            />
+                            {color.colorName}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 px-4 py-3 border-t bg-background/95 backdrop-blur pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
+                    onClick={closeVehicleEditor}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
+                    onClick={handleDrawerSave}
+                  >
+                    {editingVehicleKey ? "Save Vehicle" : "Add Vehicle"}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }
