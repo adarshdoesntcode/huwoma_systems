@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -109,6 +109,8 @@ const initialVehicleDraft = {
 };
 
 const STEP_TRANSITION_EASE = [0.22, 1, 0.36, 1];
+const TOUCH_CLEAN_INTERACTION_CLASS =
+  "focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [-webkit-tap-highlight-color:transparent]";
 const HAPTIC_PATTERNS = {
   selection: 14,
   step: 18,
@@ -428,7 +430,7 @@ function PublicCarwashEntry() {
       }
 
       if (!normalizeVehicleNumber(form.vehicleNumber)) {
-        nextErrors.vehicleNumber = "Vehicle number (only number) is required.";
+        nextErrors.vehicleNumber = "Vehicle number is required.";
       }
 
       if (!form.vehicleTypeId) {
@@ -706,7 +708,7 @@ function PublicCarwashEntry() {
       if (selectedMatchedCustomerId !== customerContext.customer._id) {
         setErrors((prev) => ({
           ...prev,
-          matchedCustomer: "Select the matched customer to continue.",
+          matchedCustomer: "Select the customer to continue.",
         }));
         triggerHaptic("error");
         return;
@@ -800,8 +802,7 @@ function PublicCarwashEntry() {
 
       toast({
         title: "Entry Submitted",
-        description:
-          "You are now in queue. Please keep your checkout QR handy.",
+        description: "You are now in queue.",
       });
     } catch (error) {
       toast({
@@ -865,14 +866,14 @@ function PublicCarwashEntry() {
   // bg-gradient-to-b from-slate-50 via-white to-[#058299]/20
   return (
     <div className="relative min-h-screen ">
-      <div className="fixed top-0 left-0 right-0 h-1.5 overflow-hidden">
+      <div className="fixed top-0 left-0 right-0 h-1 overflow-hidden">
         <div
           className="h-full transition-all duration-500 ease-in-out"
           style={{
             width: `${submittedData ? 100 : (step / 4) * 100}%`,
             background: submittedData
               ? "#058299"
-              : "linear-gradient(to right, #058299, white)",
+              : "linear-gradient(to right, #058299, #058299, white)",
           }}
         />
       </div>
@@ -1000,7 +1001,10 @@ function PublicCarwashEntry() {
                       ) : (
                         <Button
                           variant="outline"
-                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          className={cn(
+                            "w-full min-h-12 transition-transform sm:w-auto",
+                            TOUCH_CLEAN_INTERACTION_CLASS,
+                          )}
                           disabled={
                             recentCustomers.length === 0 ||
                             useManualCustomerLookup
@@ -1013,7 +1017,10 @@ function PublicCarwashEntry() {
 
                       {step < 4 ? (
                         <Button
-                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          className={cn(
+                            "w-full min-h-12 transition-transform sm:w-auto",
+                            TOUCH_CLEAN_INTERACTION_CLASS,
+                          )}
                           onClick={handleNext}
                         >
                           Next
@@ -1021,7 +1028,10 @@ function PublicCarwashEntry() {
                         </Button>
                       ) : (
                         <Button
-                          className="w-full min-h-12 transition-transform sm:w-auto active:scale-[0.98]"
+                          className={cn(
+                            "w-full min-h-12 transition-transform sm:w-auto",
+                            TOUCH_CLEAN_INTERACTION_CLASS,
+                          )}
                           onClick={handleSubmit}
                           disabled={isSubmitting}
                         >
@@ -1091,10 +1101,25 @@ function StepCustomer({
 }) {
   const hasMatchedCustomer = Boolean(customerContext?.customer);
   const [pendingDeleteCustomer, setPendingDeleteCustomer] = useState(null);
+  const contactInputRef = useRef(null);
+  const newCustomerNameInputRef = useRef(null);
   const showSavedCustomerCards =
     recentCustomers.length > 0 && !useManualCustomerLookup;
   const isNewCustomer =
     !showSavedCustomerCards && hasSearchedContact && !hasMatchedCustomer;
+
+  useEffect(() => {
+    if (showSavedCustomerCards) return;
+
+    const focusTimer = window.setTimeout(() => {
+      const inputNode = isNewCustomer
+        ? newCustomerNameInputRef.current
+        : contactInputRef.current;
+      inputNode?.focus({ preventScroll: true });
+    }, 80);
+
+    return () => window.clearTimeout(focusTimer);
+  }, [isNewCustomer, showSavedCustomerCards]);
 
   return (
     <div className="space-y-5">
@@ -1109,10 +1134,11 @@ function StepCustomer({
                 tabIndex={0}
                 className={cn(
                   "relative w-full rounded-xl border p-4 text-left transition-colors transition-shadow duration-200",
+                  TOUCH_CLEAN_INTERACTION_CLASS,
                   normalizeContact(form.customerContact) ===
                     normalizeContact(recentCustomer.customerContact)
                     ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                    : "border-muted hover:border-primary/40 hover:shadow-sm",
+                    : "",
                 )}
                 onClick={() => onSelectRecentCustomer(recentCustomer)}
                 onKeyDown={(event) => {
@@ -1126,7 +1152,10 @@ function StepCustomer({
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="absolute w-7 h-7 right-1.5 top-1.5 text-muted-foreground/70 hover:text-destructive"
+                  className={cn(
+                    "absolute w-7 h-7 right-1.5 top-1.5 text-muted-foreground/70 hover:text-destructive",
+                    TOUCH_CLEAN_INTERACTION_CLASS,
+                  )}
                   onClick={(event) => {
                     event.stopPropagation();
                     setPendingDeleteCustomer(recentCustomer);
@@ -1167,9 +1196,12 @@ function StepCustomer({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel className={TOUCH_CLEAN_INTERACTION_CLASS}>
+                  Cancel
+                </AlertDialogCancel>
                 <Button
                   variant="destructive"
+                  className={TOUCH_CLEAN_INTERACTION_CLASS}
                   onClick={() => {
                     if (!pendingDeleteCustomer) return;
                     onRemoveRecentCustomer(
@@ -1199,6 +1231,7 @@ function StepCustomer({
               )}
             </Label>
             <Input
+              ref={contactInputRef}
               value={form.customerContact}
               className="min-h-12"
               type="tel"
@@ -1245,9 +1278,10 @@ function StepCustomer({
             type="button"
             className={cn(
               "relative w-full rounded-xl border p-4 text-left transition-all",
+              TOUCH_CLEAN_INTERACTION_CLASS,
               selectedMatchedCustomerId === customerContext.customer._id
                 ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                : "border-muted hover:border-primary/40 hover:shadow-sm",
+                : "",
             )}
             onClick={() =>
               onSelectMatchedCustomer(customerContext.customer._id)
@@ -1286,6 +1320,7 @@ function StepCustomer({
             )}
           </Label>
           <Input
+            ref={newCustomerNameInputRef}
             value={form.customerName}
             className="min-h-12"
             placeholder="Full name"
@@ -1315,6 +1350,17 @@ function StepVehicle({
   const [editingVehicleKey, setEditingVehicleKey] = useState("");
   const [vehicleDraft, setVehicleDraft] = useState(initialVehicleDraft);
   const [drawerErrors, setDrawerErrors] = useState({});
+  const vehicleNameInputRef = useRef(null);
+
+  useEffect(() => {
+    if (!isVehicleDrawerOpen) return;
+
+    const focusTimer = window.setTimeout(() => {
+      vehicleNameInputRef.current?.focus({ preventScroll: true });
+    }, 120);
+
+    return () => window.clearTimeout(focusTimer);
+  }, [isVehicleDrawerOpen, editingVehicleKey]);
 
   const openAddVehicleDrawer = () => {
     setEditingVehicleKey("");
@@ -1436,9 +1482,10 @@ function StepVehicle({
                     tabIndex={0}
                     className={cn(
                       "relative rounded-xl border p-4 text-left transition-colors transition-shadow duration-200 min-h-24 cursor-pointer",
+                      TOUCH_CLEAN_INTERACTION_CLASS,
                       isSelected
                         ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/10 via-[#fff] to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                        : "border-muted hover:border-primary/40 hover:shadow-sm",
+                        : "",
                     )}
                     onClick={() => onSelectVehicle(vehicle)}
                     onKeyDown={(event) => {
@@ -1483,7 +1530,7 @@ function StepVehicle({
                         ) : null}
                       </div>
 
-                      <div className="flex items-center justify-between gap-2 mt-2">
+                      <div className="flex items-end justify-between gap-2 mt-2">
                         <div className="flex items-end">
                           {vehicle?.vehicleColor?.colorCode ? (
                             <span
@@ -1507,19 +1554,18 @@ function StepVehicle({
                             <span />
                           )}
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-muted-foreground text-xs transition-transform active:scale-[0.98]"
+                        <div
+                          className={cn(
+                            "text-muted-foreground/60 text-xs p-1 transition-transform",
+                            TOUCH_CLEAN_INTERACTION_CLASS,
+                          )}
                           onClick={(event) => {
                             event.stopPropagation();
                             openEditVehicleDrawer(vehicle);
                           }}
                         >
-                          <Edit className="w-4 h-4" />
-                          {/* Edit */}
-                        </Button>
+                          <Edit className="w-3.5 h-3.5" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1535,7 +1581,7 @@ function StepVehicle({
           <Button
             type="button"
             variant="outline"
-            className="w-full min-h-12"
+            className={cn("w-full min-h-12", TOUCH_CLEAN_INTERACTION_CLASS)}
             onClick={openAddVehicleDrawer}
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -1568,6 +1614,7 @@ function StepVehicle({
                   )}
                 </Label>
                 <Input
+                  ref={vehicleNameInputRef}
                   value={vehicleDraft.vehicleModel}
                   className="min-h-12"
                   placeholder="Vehicle name"
@@ -1646,9 +1693,8 @@ function StepVehicle({
                       }
                       className={cn(
                         "relative flex flex-col items-center gap-3 px-3 py-2 transition-transform border rounded-lg shadow-sm text-muted-foreground hover:scale-105 hover:text-primary",
-                        isSelected
-                          ? "border-[#058299] bg-white"
-                          : "border-muted hover:border-primary/40",
+                        TOUCH_CLEAN_INTERACTION_CLASS,
+                        isSelected ? "border-[#058299] bg-white" : "",
                       )}
                     >
                       {isSelected && (
@@ -1703,9 +1749,7 @@ function StepVehicle({
                       }}
                       className={cn(
                         "min-h-12 rounded-lg border px-3 py-2 text-left text-xs sm:text-sm",
-                        isSelected
-                          ? "border-[#058299] bg-[#058299]/5"
-                          : "border-muted hover:border-primary/40",
+                        isSelected ? "border-[#058299] bg-[#058299]/5" : "",
                       )}
                     >
                       <span className="flex items-center justify-start gap-2">
@@ -1726,14 +1770,14 @@ function StepVehicle({
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-10"
+              className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
               onClick={() => setIsVehicleDrawerOpen(false)}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              className="flex-1 h-10"
+              className={cn("flex-1 h-10", TOUCH_CLEAN_INTERACTION_CLASS)}
               onClick={handleDrawerSave}
             >
               {editingVehicleKey ? "Save Vehicle" : "Add Vehicle"}
@@ -1785,9 +1829,10 @@ function StepService({
               onClick={() => onSelectService(service._id)}
               className={cn(
                 "rounded-xl border p-5 w-full text-left transition-colors duration-200 min-h-20",
+                TOUCH_CLEAN_INTERACTION_CLASS,
                 isSelected
                   ? "border-[#058299] bg-gradient-to-r from-[#058299]/10 via-[#058299]/5 to-[#fff] shadow-[0_10px_24px_-16px_rgba(5,130,153,0.55)]"
-                  : "border-muted hover:border-primary/40 hover:shadow-sm",
+                  : "",
               )}
             >
               <div className="flex items-start justify-between gap-2">
@@ -1902,7 +1947,10 @@ function SuccessState({ submittedData, onStartNew }) {
         />
       </div>
 
-      <Button className="w-full min-h-12" onClick={onStartNew}>
+      <Button
+        className={cn("w-full min-h-12", TOUCH_CLEAN_INTERACTION_CLASS)}
+        onClick={onStartNew}
+      >
         Create Another Entry
       </Button>
     </div>
