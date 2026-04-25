@@ -25,6 +25,30 @@
       "destination": "https://huwoma-backend.vercel.app/api/:path*"
     },
     {
+      "source": "/parknwashbyhuwoma",
+      "destination": "/public.html"
+    },
+    {
+      "source": "/parknwashbyhuwoma/:path*",
+      "destination": "/public.html"
+    },
+    {
+      "source": "/simracingbyhuwoma",
+      "destination": "/public.html"
+    },
+    {
+      "source": "/simracingbyhuwoma/:path*",
+      "destination": "/public.html"
+    },
+    {
+      "source": "/garagebyhuwoma",
+      "destination": "/public.html"
+    },
+    {
+      "source": "/garagebyhuwoma/:path*",
+      "destination": "/public.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

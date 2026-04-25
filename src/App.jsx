@@ -11,18 +11,8 @@ import Unauthorized from "./components/Unauthorized";
 import NotFound from "./components/NotFound";
 import PrivateRoutes from "./routes/PrivateRoutes";
 
-import SimRacingClientStartRace from "./features/simracing/racerui/SimRacingClientStartRace";
-import Error from "./components/error/Error";
-import SimRacingClientMyRace from "./features/simracing/racerui/SimRacingClientMyRace";
 import { OfflineAlert } from "./components/OfflineAlert";
-import VehicleDetails from "./features/garage/tabs/vehicle-list/VehicleDetails";
-import PublicVehicleDetails from "./features/garage/tabs/vehicle-list/PublicVehicleDetails";
-import PublicVehicleListings from "./features/garage/public/PublicVehicleListings";
-import PublicNewVehicleListing from "./features/garage/public/PublicNewVehicleListing";
-import PublicNewBuyerInterest from "./features/garage/public/PublicNewBuyerInterest";
 import OAuthRedirect from "./features/auth/OAuthRedirect";
-import PublicCarwashEntry from "./features/carwash/public/PublicCarwashEntry";
-import PublicCarwashEntryStatus from "./features/carwash/public/PublicCarwashEntryStatus";
 
 const router = createBrowserRouter([
   {
@@ -53,46 +43,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "/simracingbyhuwoma/startrace/:id",
-    element: <SimRacingClientStartRace />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/simracingbyhuwoma/myrace",
-    element: <SimRacingClientMyRace />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/garagebyhuwoma",
-    element: <PublicVehicleListings />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/garagebyhuwoma/new-vehicle",
-    element: <PublicNewVehicleListing />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/garagebyhuwoma/new-buyer-interest",
-    element: <PublicNewBuyerInterest />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/garagebyhuwoma/:id",
-    element: <PublicVehicleDetails />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/parknwashbyhuwoma",
-    element: <PublicCarwashEntry />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/parknwashbyhuwoma/status/:transactionId",
-    element: <PublicCarwashEntryStatus />,
-    errorElement: <Error />,
-  },
   {
     path: "/unauthorized",
     element: <Unauthorized />,

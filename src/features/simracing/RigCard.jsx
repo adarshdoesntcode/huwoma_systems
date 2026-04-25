@@ -43,10 +43,10 @@ function RigCard({ rig, className }) {
       className={cn("p-2 sm:p-4 bg-center sm:!bg-none  bg-cover ", className)}
     >
       <div className="flex ">
-        <div className="sm:w-8/12 w-full sm:border-r sm:pr-2 flex flex-col justify-between">
+        <div className="flex flex-col justify-between w-full sm:w-8/12 sm:border-r sm:pr-2">
           <div>
-            <CardHeader className=" p-2 pb-0 sm:pb-2 ">
-              <CardTitle className="flex text-lg sm:text-2xl  items-center justify-between gap-4 ">
+            <CardHeader className="p-2 pb-0  sm:pb-2">
+              <CardTitle className="flex items-center justify-between gap-4 text-lg sm:text-2xl ">
                 <div className="flex items-center gap-4 ">{rig?.rigName}</div>
                 <div>
                   <Badge
@@ -67,19 +67,19 @@ function RigCard({ rig, className }) {
               </CardDescription>
             </CardHeader>
           </div>
-          <div className="flex justify-between items-end p-2  pb-1">
+          <div className="flex items-end justify-between p-2 pb-1">
             <Dot
               strokeWidth={15}
               className={cn(
                 "w-5 h-5 text-muted-foreground transition-all",
                 rig?.rigStatus === "On Track"
                   ? "text-green-500  drop-shadow-md "
-                  : ""
+                  : "",
               )}
             />
             <Dialog>
               <DialogTrigger asChild>
-                <QrCode className="hover:scale-110 cursor-pointer transition-all" />
+                <QrCode className="transition-all cursor-pointer hover:scale-110" />
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -88,7 +88,7 @@ function RigCard({ rig, className }) {
 
                   <div
                     ref={canvasRef}
-                    className="flex flex-col  items-center justify-center gap-8 p-6"
+                    className="flex flex-col items-center justify-center gap-8 p-6"
                   >
                     <div>
                       <img
@@ -99,9 +99,9 @@ function RigCard({ rig, className }) {
                         loading="lazy"
                       />
                     </div>
-                    <div className="border p-4 rounded-lg shadow-lg ">
+                    <div className="p-4 border rounded-lg shadow-lg ">
                       <QRCode
-                        value={`https://huwoma.vercel.app/simracingbyhuwoma/startrace/${rig?._id}`}
+                        value={`${window.location.origin}/simracingbyhuwoma/startrace/${rig?._id}`}
                       />
                     </div>
                     <div className="font-medium uppercase">{rig?.rigName}</div>
@@ -112,7 +112,7 @@ function RigCard({ rig, className }) {
             </Dialog>
           </div>
         </div>
-        <div className="w-4/12 aspect-auto hidden sm:flex animate-in  fade-in duration-500 items-center  justify-center ">
+        <div className="items-center justify-center hidden w-4/12 duration-500 aspect-auto sm:flex animate-in fade-in ">
           <img
             src={IMAGE_DATA.rig}
             loading="lazy"

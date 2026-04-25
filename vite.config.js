@@ -1,10 +1,60 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PUBLIC_APP_ROUTE_PREFIXES = [
+  "/parknwashbyhuwoma",
+  "/simracingbyhuwoma",
+  "/garagebyhuwoma",
+];
+
+const shouldRewriteToPublicApp = (url = "") => {
+  const pathname = url.split("?")[0];
+
+  if (
+    !pathname ||
+    pathname.startsWith("/@") ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/assets/") ||
+    pathname.startsWith("/src/") ||
+    pathname.includes(".")
+  ) {
+    return false;
+  }
+
+  return PUBLIC_APP_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+};
+
+const publicAppRouteRewritePlugin = {
+  name: "public-app-route-rewrite",
+  configureServer(server) {
+    server.middlewares.use((req, _res, next) => {
+      if (shouldRewriteToPublicApp(req.url || "")) {
+        req.url = "/public.html";
+      }
+      next();
+    });
+  },
+  configurePreviewServer(server) {
+    server.middlewares.use((req, _res, next) => {
+      if (shouldRewriteToPublicApp(req.url || "")) {
+        req.url = "/public.html";
+      }
+      next();
+    });
+  },
+};
+
 export default defineConfig({
   plugins: [
+    publicAppRouteRewritePlugin,
     react(),
     VitePWA({
       registerType: "autoUpdate",
@@ -92,6 +142,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        public: path.resolve(__dirname, "public.html"),
+      },
     },
   },
 });
