@@ -13,9 +13,9 @@ import {
 import StatusBadge from "@/components/ui/StatusBadge";
 import ApiError from "@/components/error/ApiError";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, MapPinned } from "lucide-react";
 import { useGetPublicCarwashTransactionStatusQuery } from "../carwashApiSlice";
-import { IMAGE_DATA } from "@/lib/config";
+import { GOOGLE_REVIEW_URL, IMAGE_DATA } from "@/lib/config";
 import { Separator } from "@/components/ui/separator";
 
 const TOUCH_CLEAN_INTERACTION_CLASS =
@@ -61,7 +61,7 @@ function PublicCarwashEntryStatus() {
   const navigate = useNavigate();
   const { transactionId = "" } = useParams();
 
-  const { data, isLoading, isFetching, isError, error, refetch } =
+  const { data, isLoading, isError, error, refetch } =
     useGetPublicCarwashTransactionStatusQuery(transactionId, {
       skip: !transactionId,
       pollingInterval: 60000,
@@ -197,20 +197,21 @@ function PublicCarwashEntryStatus() {
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row">
+              <p className="p-0 text-xs text-center text-muted-foreground">
+                Please leave us a review on Google.
+              </p>
               <Button
                 variant="outline"
                 className={cn("w-full min-h-12", TOUCH_CLEAN_INTERACTION_CLASS)}
-                onClick={() => refetch()}
-                disabled={isFetching}
+                onClick={() =>
+                  window.open(
+                    GOOGLE_REVIEW_URL,
+                    "_blank",
+                    "noopener,noreferrer",
+                  )
+                }
               >
-                {isFetching ? (
-                  <span className="inline-flex items-center">
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Refreshing
-                  </span>
-                ) : (
-                  "Refresh Status"
-                )}
+                <MapPinned className="mr-2" /> Google Review
               </Button>
               <Button
                 className={cn("w-full min-h-12", TOUCH_CLEAN_INTERACTION_CLASS)}

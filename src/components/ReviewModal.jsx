@@ -9,17 +9,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { GOOGLE_REVIEW_URL } from "@/lib/config";
 import { MapPinPlus } from "lucide-react";
 import QRCode from "react-qr-code";
 
-export function ReviewModal() {
+export function ReviewModal({ open, onOpenChange, showTrigger = true }) {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="fixed shadow-lg bg-white hover:scale-110 transition-all cursor-pointer text-black bottom-6 left-6 md:left-[256px] lg:left-[312px] p-3.5 rounded-full">
-          <MapPinPlus className="w-5 h-5" />
-        </div>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {showTrigger && (
+        <DialogTrigger asChild>
+          <div className="fixed shadow-lg bg-white hover:scale-110 transition-all cursor-pointer text-black bottom-6 left-6 md:left-[256px] lg:left-[312px] p-3.5 rounded-full">
+            <MapPinPlus className="w-5 h-5" />
+          </div>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Google Review</DialogTitle>
@@ -29,11 +32,7 @@ export function ReviewModal() {
         </DialogHeader>
         <div className="flex items-center justify-center p-4">
           <div className="p-4 border rounded-md shadow-lg">
-            <QRCode
-              value={
-                "https://search.google.com/local/writereview?placeid=ChIJX7h_TQAb6zkRwutDM9cd9qo"
-              }
-            />
+            <QRCode value={GOOGLE_REVIEW_URL} />
           </div>
         </div>
         <DialogFooter>

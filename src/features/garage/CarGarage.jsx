@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { KeySquare, Link, PlusCircle, QrCode, ReceiptText, Users } from "lucide-react";
+import {
+  KeySquare,
+  Link,
+  PlusCircle,
+  QrCode,
+  ReceiptText,
+  Users,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useIsSuper } from "@/hooks/useSuper";
 import { useMemo, useState } from "react";
@@ -32,9 +39,9 @@ function CarGarage() {
             variant="outline"
             onClick={() => setShowShare(true)}
           >
-            <span className="sr-only sm:not-sr-only">Public Portal</span>
+            <span className="sr-only sm:not-sr-only">Garage Portal</span>
 
-            <Link className="w-4 h-4 sm:ml-2" />
+            <QrCode className="w-4 h-4 sm:ml-2" />
           </Button>
           <Button
             size="sm"

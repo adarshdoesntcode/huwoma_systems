@@ -11,14 +11,23 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { TabsContent } from "@/components/ui/tabs";
 
 import {
   Droplets,
+  MapPinHouseIcon,
   PlusCircle,
   QrCode,
   ReceiptText,
   RefreshCcw,
+  Smartphone,
   Users,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -55,7 +64,9 @@ const chartConfig = {
 
 function Carwash() {
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [showQrOptions, setShowQrOptions] = useState(false);
   const [showPublicEntry, setShowPublicEntry] = useState(false);
+  const [showGoogleReview, setShowGoogleReview] = useState(false);
   const isSuper = useIsSuper();
   const role = useRole();
 
@@ -138,6 +149,16 @@ function Carwash() {
     refetch();
   };
 
+  const handleOpenCustomerPortal = () => {
+    setShowQrOptions(false);
+    setShowPublicEntry(true);
+  };
+
+  const handleOpenGoogleReview = () => {
+    setShowQrOptions(false);
+    setShowGoogleReview(true);
+  };
+
   let content;
 
   if (isLoading) {
@@ -171,10 +192,10 @@ function Carwash() {
               size="sm"
               variant="outline"
               className="w-full mr-2"
-              onClick={() => setShowPublicEntry(true)}
+              onClick={() => setShowQrOptions(true)}
             >
               <span className="sr-only sm:ml-1 sm:not-sr-only sm:whitespace-nowrap">
-                Customer Portal
+                Qr Codes
               </span>
               <QrCode className="w-4 h-4 sm:ml-2" />
             </Button>
@@ -535,7 +556,33 @@ function Carwash() {
             </TabsContent>
           </Tabs>
         </div>
-        <ReviewModal />
+        <Dialog open={showQrOptions} onOpenChange={setShowQrOptions}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>QR Actions</DialogTitle>
+              <DialogDescription>
+                Choose what you want to open.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-2">
+              <Button className="h-14" onClick={handleOpenCustomerPortal}>
+                <Smartphone className="mr-2" /> Carwash Customer Portal
+              </Button>
+              <Button
+                variant="outline"
+                className="h-14"
+                onClick={handleOpenGoogleReview}
+              >
+                <MapPinHouseIcon className="mr-2" /> Google Review
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+        <ReviewModal
+          open={showGoogleReview}
+          onOpenChange={setShowGoogleReview}
+          showTrigger={false}
+        />
         <CarwashPublicEntryModal
           showPublicEntry={showPublicEntry}
           setShowPublicEntry={setShowPublicEntry}
