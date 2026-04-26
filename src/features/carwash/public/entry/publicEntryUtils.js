@@ -22,7 +22,10 @@ export const capitalizeName = (value) =>
 export const normalizeVehicleName = (value) => {
   const trimmedValue = String(value || "").trim();
   if (!trimmedValue) return "";
-  return `${trimmedValue.charAt(0).toUpperCase()}${trimmedValue.slice(1)}`;
+  return trimmedValue.replace(
+    /\S+/g,
+    (word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`,
+  );
 };
 
 export const createLocalVehicleKey = () =>
