@@ -16,10 +16,12 @@ export const CarwashCustomersColumn = [
   {
     accessorKey: "sn",
     header: () => <TableHead className="hidden md:table-cell">Sn</TableHead>,
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
+      const rowNumberOffset = table.options.meta?.rowNumberOffset || 0;
+
       return (
         <TableCell className="text-muted-foreground hidden md:table-cell px-4 py-2">
-          {row.index + 1}
+          {rowNumberOffset + row.index + 1}
         </TableCell>
       );
     },

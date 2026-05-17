@@ -10,18 +10,47 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getCarwashCustomers: builder.query({
-      query: () => ({
+      query: (params = {}) => ({
         url: "/carwash/customers",
         method: "GET",
+        params,
       }),
       providesTags: ["CarwashCustomers"],
     }),
-    getCarwashCustomerById: builder.query({
-      query: (id) => ({
-        url: `/carwash/customer/${id}`,
+    exportCarwashCustomers: builder.mutation({
+      query: (params = {}) => ({
+        url: "/carwash/customers/export",
         method: "GET",
+        params,
+        responseHandler: async (response) => ({
+          blob: await response.blob(),
+          contentDisposition: response.headers.get("content-disposition"),
+        }),
       }),
+    }),
+    getCarwashCustomerById: builder.query({
+      query: (args) => {
+        const id = typeof args === "object" ? args.id : args;
+        const params = typeof args === "object" ? args.params : {};
+
+        return {
+          url: `/carwash/customer/${id}`,
+          method: "GET",
+          params,
+        };
+      },
       providesTags: ["CarwashCustomer"],
+    }),
+    exportCarwashCustomerTransactions: builder.mutation({
+      query: ({ id, params = {} }) => ({
+        url: `/carwash/customer/${id}/export`,
+        method: "GET",
+        params,
+        responseHandler: async (response) => ({
+          blob: await response.blob(),
+          contentDisposition: response.headers.get("content-disposition"),
+        }),
+      }),
     }),
     updateCarwashCustomer: builder.mutation({
       query: (credentials) => ({
@@ -276,7 +305,9 @@ export const {
   useGetPreFilterTransactionsQuery,
   useGetPostFilterTransactionsMutation,
   useGetCarwashCustomersQuery,
+  useExportCarwashCustomersMutation,
   useGetCarwashCustomerByIdQuery,
+  useExportCarwashCustomerTransactionsMutation,
   useUpdateCarwashCustomerMutation,
   useRollBackFromPickupMutation,
   useRollBackFromCompletedMutation,

@@ -2,6 +2,7 @@ import { useGetCarwashCustomersQuery } from "../carwashApiSlice";
 import ApiError from "@/components/error/ApiError";
 import Loader from "@/components/Loader";
 import NavBackButton from "@/components/NavBackButton";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
   Card,
   CardContent,
@@ -12,19 +13,59 @@ import {
 
 import { CarwashCustomersColumn } from "./CarwashCustomersColumn";
 import { CarwashCustomersDataTable } from "./CarwashCustomersDataTable";
+import { useMemo, useState } from "react";
 
 function CarwashCustomers() {
+  const [filter, setFilter] = useState("customerContact");
+  const [search, setSearch] = useState("");
+  const [sorting, setSorting] = useState([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 50,
+  });
+  const debouncedSearch = useDebounce(search, 300);
+
+  const queryParams = useMemo(() => {
+    const sort = sorting[0];
+    const effectiveSearch = search ? debouncedSearch : "";
+    const params = {
+      page: pagination.pageIndex + 1,
+      limit: pagination.pageSize,
+      searchField: filter,
+    };
+
+    if (effectiveSearch) {
+      params.search = effectiveSearch;
+    }
+
+    if (sort) {
+      params.sortBy = sort.id;
+      params.sortOrder = sort.desc ? "desc" : "asc";
+    }
+
+    return params;
+  }, [debouncedSearch, filter, pagination, search, sorting]);
+
   const { data, isLoading, isSuccess, isFetching, isError, error } =
-    useGetCarwashCustomersQuery();
+    useGetCarwashCustomersQuery(queryParams);
   let content;
-  if (isLoading || isFetching) {
+  if (isLoading) {
     content = (
       <div className="flex items-center justify-center flex-1">
         <Loader />
       </div>
     );
   } else if (isSuccess) {
-    const customers = data?.data || [];
+    const responseData = data?.data || {};
+    const customers = Array.isArray(responseData)
+      ? responseData
+      : responseData.customers || [];
+    const paginationMetadata = responseData.pagination || {
+      page: pagination.pageIndex + 1,
+      limit: pagination.pageSize,
+      total: customers.length,
+      totalPages: 1,
+    };
 
     content = (
       <div className=" space-y-4 mb-64">
@@ -42,6 +83,28 @@ function CarwashCustomers() {
             <CarwashCustomersDataTable
               data={customers}
               columns={CarwashCustomersColumn}
+              filter={filter}
+              search={search}
+              sorting={sorting}
+              pagination={pagination}
+              paginationMetadata={paginationMetadata}
+              isFetching={isFetching}
+              queryParams={queryParams}
+              onFilterChange={(value) => {
+                setFilter(value);
+                setSearch("");
+                setSorting([]);
+                setPagination((current) => ({ ...current, pageIndex: 0 }));
+              }}
+              onSearchChange={(value) => {
+                setSearch(value);
+                setPagination((current) => ({ ...current, pageIndex: 0 }));
+              }}
+              onSortingChange={(updater) => {
+                setSorting(updater);
+                setPagination((current) => ({ ...current, pageIndex: 0 }));
+              }}
+              onPaginationChange={setPagination}
             />
           </CardContent>
         </Card>

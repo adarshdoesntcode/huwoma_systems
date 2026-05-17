@@ -16,13 +16,18 @@ import { Button } from "./ui/button";
 export function DataTablePagination({
   table,
   sizes = [10, 20, 30, 40, 50, 100],
+  totalRows,
+  isFetching = false,
 }) {
+  const visibleRows = table.getRowModel().rows.length;
+  const total = totalRows ?? table.getCoreRowModel().rows.length;
+
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
         <span className="hidden md:inline">
-          Showing {table.getPaginationRowModel().rows.length} of{" "}
-          {table.getCoreRowModel().rows.length}
+          Showing {visibleRows} of {total}
+          {isFetching ? " (refreshing...)" : ""}
         </span>
         <span className="md:hidden">
           Page {table.getState().pagination.pageIndex + 1} of{" "}

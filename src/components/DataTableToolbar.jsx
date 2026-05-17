@@ -107,12 +107,22 @@ export function DataTableToolbar({
   transactionOption,
   defaultSearchSelection,
   searchOptions,
+  serverControls,
 }) {
   const isFiltered =
-    table.getState().columnFilters.length > 0 ||
-    table.getState().sorting.length > 0 ||
-    Object.keys(table.getState().columnVisibility).length > 0;
-  const [filter, setFilter] = useState(defaultSearchSelection);
+    serverControls?.isFiltered ??
+    (table.getState().columnFilters.length > 0 ||
+      table.getState().sorting.length > 0 ||
+      Object.keys(table.getState().columnVisibility).length > 0);
+  const [localFilter, setLocalFilter] = useState(defaultSearchSelection);
+  const filter = serverControls?.filter || localFilter;
+
+  const handleReset = () => {
+    table.resetColumnFilters();
+    table.resetSorting();
+    table.resetColumnVisibility();
+    serverControls?.onReset?.();
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -121,10 +131,14 @@ export function DataTableToolbar({
           <Select
             value={filter}
             onValueChange={(value) => {
-              setFilter(value);
-              table.resetColumnFilters();
-              table.resetSorting();
-              table.resetColumnVisibility();
+              if (serverControls) {
+                serverControls.onFilterChange(value);
+              } else {
+                setLocalFilter(value);
+                table.resetColumnFilters();
+                table.resetSorting();
+                table.resetColumnVisibility();
+              }
             }}
           >
             <SelectTrigger className="w-[180px]">
@@ -147,10 +161,18 @@ export function DataTableToolbar({
             // type="tel"
             // inputMode="numeric"
             autoComplete="off"
-            value={table.getColumn(filter)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(filter)?.setFilterValue(event.target.value)
+            value={
+              serverControls
+                ? serverControls.search
+                : table.getColumn(filter)?.getFilterValue() ?? ""
             }
+            onChange={(event) => {
+              if (serverControls) {
+                serverControls.onSearchChange(event.target.value);
+              } else {
+                table.getColumn(filter)?.setFilterValue(event.target.value);
+              }
+            }}
             className="max-w-sm"
           />
         </div>
@@ -159,6 +181,10 @@ export function DataTableToolbar({
             <DataTableFacetedFilter
               column={table.getColumn("transactionStatus")}
               title="Status"
+              selectedValues={serverControls?.transactionStatuses}
+              onSelectedValuesChange={
+                serverControls?.onTransactionStatusesChange
+              }
               options={
                 transactionOption === "carwash"
                   ? carwashTransactionStatus
@@ -172,17 +198,15 @@ export function DataTableToolbar({
             <DataTableFacetedFilter
               column={table.getColumn("paymentStatus")}
               title="Payment"
+              selectedValues={serverControls?.paymentStatuses}
+              onSelectedValuesChange={serverControls?.onPaymentStatusesChange}
               options={paymentStatus}
             />
           )}
           {isFiltered && (
             <Button
               variant="ghost"
-              onClick={() => {
-                table.resetColumnFilters();
-                table.resetSorting();
-                table.resetColumnVisibility();
-              }}
+              onClick={handleReset}
             >
               Reset
               <X className="ml-2 h-3.5 w-5.5 text-muted-foreground" />

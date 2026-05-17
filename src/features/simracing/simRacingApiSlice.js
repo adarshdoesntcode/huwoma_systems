@@ -17,9 +17,21 @@ export const simRacingApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getSimRacingCustomers: builder.query({
-      query: () => ({
+      query: (params = {}) => ({
         url: "/simracing/customers",
         method: "GET",
+        params,
+      }),
+    }),
+    exportSimRacingCustomers: builder.mutation({
+      query: (params = {}) => ({
+        url: "/simracing/customers/export",
+        method: "GET",
+        params,
+        responseHandler: async (response) => ({
+          blob: await response.blob(),
+          contentDisposition: response.headers.get("content-disposition"),
+        }),
       }),
     }),
     getSimRacingCustomerById: builder.query({
@@ -175,6 +187,7 @@ export const {
   useGetSimracingCheckoutDetailsQuery,
   useSimracingCheckoutMutation,
   useGetSimRacingCustomersQuery,
+  useExportSimRacingCustomersMutation,
   useGetSimRacingCustomerByIdQuery,
   useUpdateSimRacingCustomerMutation,
   useGetSimRacingFilteredTransactionsMutation,

@@ -2,9 +2,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
 } from "@tanstack/react-table";
 import {
   Select,
@@ -21,96 +18,42 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
-import { File } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { Workbook } from "exceljs";
-import { format } from "date-fns";
+import { File, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DataTablePagination } from "@/components/DataTablePagination";
 
-const exportExcel = (rows) => {
-  try {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Customers");
-
-    const titleRow = worksheet.addRow(["Huwoma Car Garage"]);
-    titleRow.font = { bold: true, size: 14 };
-    titleRow.alignment = { horizontal: "center" };
-
-    worksheet.mergeCells(`A1:D1`);
-
-    worksheet.addRow([]);
-
-    worksheet.mergeCells(`A2:P2`);
-    worksheet.columns = [{ width: 25 }, { width: 15 }, { width: 25 }];
-
-    worksheet.getRow(3).values = ["Customer", "Contact", "Customer Since"];
-    worksheet.getRow(3).font = { bold: true, size: 12 };
-    worksheet.getRow(3).fill = {
-      type: "pattern",
-      pattern: "solid",
-      fgColor: { argb: "FFD3D3D3" },
-    };
-
-    const rowData = rows.map((row, index) => ({
-      Customer_Name: row.original?.name || "",
-      Customer_Contact: row.original?.contactNumber || "",
-      Customer_Since: row.original?.createdAt
-        ? format(row.original?.createdAt, "MMMM d, yyyy")
-        : "",
-    }));
-
-    rowData.forEach((row) => {
-      worksheet.addRow([
-        row.Customer_Name,
-        row.Customer_Contact,
-        row.Customer_Since,
-      ]);
-    });
-
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "GarageCustomers.xlsx";
-      a.click();
-    });
-    toast({
-      title: "Exported Successfully!!",
-      description: "Check your downloads folder",
-      duration: 2000,
-    });
-  } catch (e) {
-    console.error(e);
-    toast({
-      variant: "destructive",
-      title: "Something went wrong!!",
-      description: "Could not download",
-    });
-  }
-};
-
-export const GarageCustomersDataTable = ({ columns, data }) => {
-  const [filter, setFilter] = useState("contactNumber");
-  const [sorting, setSorting] = useState([]);
+export const GarageCustomersDataTable = ({
+  columns,
+  data,
+  filter,
+  search,
+  sorting,
+  pagination,
+  paginationMetadata,
+  isFetching = false,
+  isExporting = false,
+  onFilterChange,
+  onSearchChange,
+  onPaginationChange,
+  onSortingChange,
+  onExport,
+}) => {
   const navigate = useNavigate();
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true,
+    manualSorting: true,
+    pageCount: Math.max(paginationMetadata?.totalPages || 1, 1),
+    onPaginationChange,
+    onSortingChange,
     state: {
       sorting,
+      pagination,
     },
   });
 
@@ -118,15 +61,7 @@ export const GarageCustomersDataTable = ({ columns, data }) => {
     <>
       <div className="flex items-center justify-between mb-4 space-x-2">
         <div className="flex items-center gap-2 space-x-2">
-          <Select
-            value={filter}
-            onValueChange={(value) => {
-              setFilter(value);
-              table.resetColumnFilters();
-              table.resetSorting();
-              table.resetColumnVisibility();
-            }}
-          >
+          <Select value={filter} onValueChange={onFilterChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
@@ -140,10 +75,8 @@ export const GarageCustomersDataTable = ({ columns, data }) => {
             placeholder="Search.."
             type={filter === "contactNumber" ? "tel" : "text"}
             autoComplete="off"
-            value={table.getColumn(filter)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(filter)?.setFilterValue(event.target.value)
-            }
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
             className="max-w-sm"
           />
         </div>
@@ -152,10 +85,17 @@ export const GarageCustomersDataTable = ({ columns, data }) => {
             size="sm"
             variant="outline"
             className="h-10 gap-1 text-sm"
-            onClick={() => exportExcel(table.getFilteredRowModel().rows)}
+            disabled={isExporting}
+            onClick={onExport}
           >
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only">Export</span>
+            {isExporting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <File className="h-3.5 w-3.5" />
+            )}
+            <span className="sr-only sm:not-sr-only">
+              {isExporting ? "Exporting" : "Export"}
+            </span>
           </Button>
         </div>
       </div>
@@ -214,7 +154,11 @@ export const GarageCustomersDataTable = ({ columns, data }) => {
         </Table>
       </div>
       <div className="py-4 text-muted-foreground">
-        <DataTablePagination table={table} />
+        <DataTablePagination
+          table={table}
+          totalRows={paginationMetadata?.total || 0}
+          isFetching={isFetching}
+        />
       </div>
     </>
   );

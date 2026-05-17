@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import {
   useEditCarwashTransactionMutation,
   useEditCustomerVehicleMutation,
+  useExportCarwashCustomerTransactionsMutation,
   useGetCarwashCustomerByIdQuery,
   useResetStreakMutation,
   useUpdateCarwashCustomerMutation,
@@ -40,7 +41,7 @@ import {
   Save,
   Undo2,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -77,6 +78,11 @@ import { Badge } from "@/components/ui/badge";
 import { useRole } from "@/hooks/useRole";
 import { ROLES_LIST } from "@/lib/config";
 import MergeCarwashCustomer from "./merge/MergeCarwashCustomer";
+import { useDebounce } from "@/hooks/useDebounce";
+import {
+  downloadBlob,
+  getFilenameFromDisposition,
+} from "@/lib/download/downloadBlob";
 
 function CarwashCustomerDetails() {
   const { id } = useParams();
@@ -87,6 +93,16 @@ function CarwashCustomerDetails() {
 
   const [showVehicleEdit, setShowVehicleEdit] = useState(false);
   const [mergeItems, setMergeItems] = useState([]);
+  const [transactionFilter, setTransactionFilter] = useState("billNo");
+  const [transactionSearch, setTransactionSearch] = useState("");
+  const [transactionSorting, setTransactionSorting] = useState([]);
+  const [transactionPagination, setTransactionPagination] = useState({
+    pageIndex: 0,
+    pageSize: 50,
+  });
+  const [transactionStatuses, setTransactionStatuses] = useState([]);
+  const [paymentStatuses, setPaymentStatuses] = useState([]);
+  const debouncedTransactionSearch = useDebounce(transactionSearch, 300);
 
   const role = useRole();
 
@@ -99,9 +115,55 @@ function CarwashCustomerDetails() {
   } = useForm();
 
   const [updateCarwashCustomer] = useUpdateCarwashCustomerMutation();
+  const [
+    exportCarwashCustomerTransactions,
+    { isLoading: isExportingTransactions },
+  ] = useExportCarwashCustomerTransactionsMutation();
+
+  const transactionQueryParams = useMemo(() => {
+    const sort = transactionSorting[0];
+    const effectiveSearch = transactionSearch
+      ? debouncedTransactionSearch
+      : "";
+    const params = {
+      page: transactionPagination.pageIndex + 1,
+      limit: transactionPagination.pageSize,
+      searchField: transactionFilter,
+    };
+
+    if (effectiveSearch) {
+      params.search = effectiveSearch;
+    }
+
+    if (sort) {
+      params.sortBy = sort.id;
+      params.sortOrder = sort.desc ? "desc" : "asc";
+    }
+
+    if (transactionStatuses.length > 0) {
+      params.transactionStatus = transactionStatuses.join(",");
+    }
+
+    if (paymentStatuses.length > 0) {
+      params.paymentStatus = paymentStatuses.join(",");
+    }
+
+    return params;
+  }, [
+    debouncedTransactionSearch,
+    paymentStatuses,
+    transactionFilter,
+    transactionPagination,
+    transactionSearch,
+    transactionSorting,
+    transactionStatuses,
+  ]);
 
   const { data, isLoading, isFetching, isSuccess, isError, error } =
-    useGetCarwashCustomerByIdQuery(id);
+    useGetCarwashCustomerByIdQuery({
+      id,
+      params: transactionQueryParams,
+    });
 
   const handleReset = (serviceId) => {
     setIsReset(true);
@@ -110,63 +172,19 @@ function CarwashCustomerDetails() {
 
   let customer = {};
   let customerTransactions = [];
-  let vehicleWithServices = [];
-  let vehicleWithServicesAndStats;
+  let transactionPaginationMetadata = {};
+  let vehicleWithServicesAndStats = [];
   let customerVehicles = [];
 
   if (data) {
-    customer = data?.data.customer || {};
+    const responseData = data?.data || {};
+    customer = responseData.customer || {};
     customerTransactions =
-      data?.data?.customer?.customerTransactions.filter(
-        (transaction) =>
-          transaction.transactionStatus === "Completed" &&
-          transaction.paymentStatus === "Paid"
-      ) || [];
-
-    vehicleWithServices = data?.data?.activeVehicleTypes || [];
-
-    vehicleWithServicesAndStats = vehicleWithServices
-      .filter((vehicleWithService) => vehicleWithService.services.length > 0)
-      .map((vehicleWithService) => {
-        const services = vehicleWithService.services.map((service) => {
-          const transactionsForService = customerTransactions.filter(
-            (transaction) => transaction.service.id._id === service._id
-          );
-          const totalTransactions = transactionsForService.length;
-          const streak = transactionsForService.filter(
-            (transaction) => transaction.redeemed === false
-          ).length;
-          return {
-            serviceTypeName: service.serviceTypeName,
-            serviceId: service._id,
-            washCount: service.streakApplicable.washCount,
-            totalTransactions,
-            streak,
-          };
-        });
-        return {
-          vehicleTypeName: vehicleWithService.vehicleTypeName,
-          services,
-        };
-      });
-
-    customerVehicles = customerTransactions.reduce((acc, transaction) => {
-      const { vehicleModel, vehicleNumber, vehicleColor } = transaction;
-      const key = `${vehicleModel}-${vehicleNumber}-${vehicleColor?.colorCode}-${vehicleColor?.colorName}`;
-      const existing = acc.find((item) => item.key === key);
-      if (existing) {
-        existing.transactions.push(transaction);
-      } else {
-        acc.push({
-          key,
-          vehicleModel,
-          vehicleNumber,
-          vehicleColor,
-          transactions: [transaction],
-        });
-      }
-      return acc;
-    }, []);
+      responseData.transactions || customer.customerTransactions || [];
+    transactionPaginationMetadata = responseData.pagination || {};
+    vehicleWithServicesAndStats =
+      responseData.vehicleWithServicesAndStats || [];
+    customerVehicles = responseData.customerVehicles || [];
   }
 
   const handleEditVehicle = (vehicle) => {
@@ -202,8 +220,44 @@ function CarwashCustomerDetails() {
     }
   };
 
+  const handleExportTransactions = async () => {
+    try {
+      const { page, limit, ...exportParams } = transactionQueryParams;
+      const exportResult = await exportCarwashCustomerTransactions({
+        id,
+        params: exportParams,
+      }).unwrap();
+      const filename = getFilenameFromDisposition(
+        exportResult.contentDisposition,
+        "ParkNWashTransactions.xlsx"
+      );
+
+      downloadBlob(exportResult.blob, filename);
+      toast({
+        title: "Exported Successfully!!",
+        description: "Check your downloads folder",
+        duration: 2000,
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: "Could not download",
+      });
+    }
+  };
+
+  const resetTransactionFilters = () => {
+    setTransactionSearch("");
+    setTransactionSorting([]);
+    setTransactionStatuses([]);
+    setPaymentStatuses([]);
+    setTransactionPagination((current) => ({ ...current, pageIndex: 0 }));
+  };
+
   let content;
-  if (isLoading || isFetching) {
+  if (isLoading) {
     content = (
       <div className="flex items-center justify-center flex-1">
         <Loader />
@@ -497,7 +551,7 @@ function CarwashCustomerDetails() {
             <Separator className="my-6" />
 
             <CarwashFilterTranasactionDataTable
-              data={customer.customerTransactions}
+              data={customerTransactions}
               columns={CarwashCustomerDetailsColumn}
               searchOptions={[
                 {
@@ -508,6 +562,56 @@ function CarwashCustomerDetails() {
                 { value: "serviceTypeName", label: "Vehicle No" },
               ]}
               origin={"customer"}
+              serverMode
+              filter={transactionFilter}
+              search={transactionSearch}
+              pagination={transactionPagination}
+              paginationMetadata={transactionPaginationMetadata}
+              isFetching={isFetching}
+              serverSorting={transactionSorting}
+              transactionStatuses={transactionStatuses}
+              paymentStatuses={paymentStatuses}
+              isExporting={isExportingTransactions}
+              onFilterChange={(value) => {
+                setTransactionFilter(value);
+                setTransactionSearch("");
+                setTransactionSorting([]);
+                setTransactionPagination((current) => ({
+                  ...current,
+                  pageIndex: 0,
+                }));
+              }}
+              onSearchChange={(value) => {
+                setTransactionSearch(value);
+                setTransactionPagination((current) => ({
+                  ...current,
+                  pageIndex: 0,
+                }));
+              }}
+              onPaginationChange={setTransactionPagination}
+              onSortingChange={(updater) => {
+                setTransactionSorting(updater);
+                setTransactionPagination((current) => ({
+                  ...current,
+                  pageIndex: 0,
+                }));
+              }}
+              onTransactionStatusesChange={(values) => {
+                setTransactionStatuses(values);
+                setTransactionPagination((current) => ({
+                  ...current,
+                  pageIndex: 0,
+                }));
+              }}
+              onPaymentStatusesChange={(values) => {
+                setPaymentStatuses(values);
+                setTransactionPagination((current) => ({
+                  ...current,
+                  pageIndex: 0,
+                }));
+              }}
+              onResetFilters={resetTransactionFilters}
+              onExport={handleExportTransactions}
             />
           </CardContent>
         </Card>

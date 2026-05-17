@@ -418,7 +418,7 @@ const Details = ({
             </div>
           )}
 
-        {transactionDetails?.inspections.length > 0 && (
+        {transactionDetails?.inspections?.length > 0 && (
           <div>
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">

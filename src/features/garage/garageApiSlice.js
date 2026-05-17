@@ -119,9 +119,21 @@ export const garageApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     getGarageCustomers: builder.query({
-      query: () => ({
+      query: (params = {}) => ({
         url: "/garage/customers",
         method: "GET",
+        params,
+      }),
+    }),
+    exportGarageCustomers: builder.mutation({
+      query: (params = {}) => ({
+        url: "/garage/customers/export",
+        method: "GET",
+        params,
+        responseHandler: async (response) => ({
+          blob: await response.blob(),
+          contentDisposition: response.headers.get("content-disposition"),
+        }),
       }),
     }),
     getGarageCustomerDetails: builder.query({
@@ -268,6 +280,7 @@ export const {
   useGetPotentialBuyersQuery,
   useGetPotentialVehiclesQuery,
   useGetGarageCustomersQuery,
+  useExportGarageCustomersMutation,
   useGetGarageCustomerDetailsQuery,
   useEditGarageCustomerMutation,
   useGetBuyersIntrestsQuery,
@@ -285,7 +298,6 @@ export const {
   useVerifyBuyerInterestMutation,
   useAddPublicVehicleInterestMutation,
 } = garageApiSlice;
-
 
 
 

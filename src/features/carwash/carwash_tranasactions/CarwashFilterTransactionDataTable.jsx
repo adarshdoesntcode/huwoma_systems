@@ -202,6 +202,24 @@ export const CarwashFilterTranasactionDataTable = ({
     { value: "serviceTypeName", label: "Vehicle No" },
   ],
   origin,
+  serverMode = false,
+  filter,
+  search,
+  pagination,
+  paginationMetadata,
+  isFetching = false,
+  serverSorting = [],
+  transactionStatuses = [],
+  paymentStatuses = [],
+  isExporting = false,
+  onFilterChange,
+  onSearchChange,
+  onPaginationChange,
+  onSortingChange,
+  onTransactionStatusesChange,
+  onPaymentStatusesChange,
+  onResetFilters,
+  onExport,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -220,17 +238,22 @@ export const CarwashFilterTranasactionDataTable = ({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
+    getPaginationRowModel: serverMode ? undefined : getPaginationRowModel(),
+    manualPagination: serverMode,
+    manualSorting: serverMode,
+    pageCount: serverMode ? Math.max(paginationMetadata?.totalPages || 1, 1) : undefined,
+    onPaginationChange: serverMode ? onPaginationChange : undefined,
+    onSortingChange: serverMode ? onSortingChange : setSorting,
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getSortedRowModel: serverMode ? undefined : getSortedRowModel(),
+    getFilteredRowModel: serverMode ? undefined : getFilteredRowModel(),
+    getFacetedRowModel: serverMode ? undefined : getFacetedRowModel(),
+    getFacetedUniqueValues: serverMode ? undefined : getFacetedUniqueValues(),
     state: {
-      sorting,
+      sorting: serverMode ? serverSorting : sorting,
+      ...(serverMode && pagination ? { pagination } : {}),
       columnVisibility,
       rowSelection,
       columnFilters,
@@ -245,16 +268,46 @@ export const CarwashFilterTranasactionDataTable = ({
           transactionOption={transactionOption}
           defaultSearchSelection={defaultSearchSelection}
           searchOptions={searchOptions}
+          serverControls={
+            serverMode
+              ? {
+                  filter,
+                  search,
+                  transactionStatuses,
+                  paymentStatuses,
+                  onFilterChange,
+                  onSearchChange,
+                  onTransactionStatusesChange,
+                  onPaymentStatusesChange,
+                  onReset: onResetFilters,
+                  isFiltered:
+                    Boolean(search) ||
+                    serverSorting.length > 0 ||
+                    transactionStatuses.length > 0 ||
+                    paymentStatuses.length > 0 ||
+                    Object.keys(columnVisibility).length > 0,
+                }
+              : undefined
+          }
         />
         <div>
           <Button
             size="sm"
             variant="outline"
             className="h-10 gap-1 text-sm"
-            onClick={() => exportExcel(table.getFilteredRowModel().rows)}
+            disabled={isExporting}
+            onClick={() =>
+              serverMode ? onExport?.() : exportExcel(table.getFilteredRowModel().rows)
+            }
           >
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only">Export</span>
+            {isExporting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <File className="h-3.5 w-3.5" />
+            )}
+            <span className="sr-only sm:not-sr-only">
+              {isExporting ? "Exporting" : "Export"}
+            </span>
           </Button>
         </div>
       </div>
@@ -314,7 +367,11 @@ export const CarwashFilterTranasactionDataTable = ({
         </Table>
       </div>
       <div className="py-4 text-muted-foreground">
-        <DataTablePagination table={table} />
+        <DataTablePagination
+          table={table}
+          totalRows={serverMode ? paginationMetadata?.total || 0 : undefined}
+          isFetching={serverMode ? isFetching : false}
+        />
       </div>
       <CarwashTransactionDetails
         showDetails={showDetails}

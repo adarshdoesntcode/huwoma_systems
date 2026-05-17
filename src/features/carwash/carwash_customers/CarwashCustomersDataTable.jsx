@@ -2,9 +2,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
 } from "@tanstack/react-table";
 import {
   Select,
@@ -22,130 +19,85 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React from "react";
 
 import { Input } from "@/components/ui/input";
 
-import { File } from "lucide-react";
+import { File, Loader2 } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 
-import { Workbook } from "exceljs";
-import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { DataTablePagination } from "@/components/DataTablePagination";
+import { useExportCarwashCustomersMutation } from "../carwashApiSlice";
+import {
+  downloadBlob,
+  getFilenameFromDisposition,
+} from "@/lib/download/downloadBlob";
 
-const exportExcel = (rows) => {
-  try {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Customers");
-
-    const titleRow = worksheet.addRow(["Huwoma Park N Wash"]);
-    titleRow.font = { bold: true, size: 14 };
-    titleRow.alignment = { horizontal: "center" };
-
-    worksheet.mergeCells(`A1:D1`);
-
-    worksheet.addRow([]);
-
-    worksheet.mergeCells(`A2:P2`);
-    worksheet.columns = [
-      { width: 25 },
-      { width: 15 },
-      { width: 20 },
-      { width: 25 },
-      { width: 200 },
-    ];
-
-    worksheet.getRow(3).values = [
-      "Customer",
-      "Contact",
-      "Total Spent",
-      "Customer Since",
-      "Customer Vehicles",
-    ];
-    worksheet.getRow(3).font = { bold: true, size: 12 };
-    worksheet.getRow(3).fill = {
-      type: "pattern",
-      pattern: "solid",
-      fgColor: { argb: "FFD3D3D3" },
-    };
-
-    const rowData = rows.map((row, index) => ({
-      Customer_Name: row.original?.customerName || "",
-      Customer_Contact: row.original?.customerContact || "",
-      Customer_Transactions: row.original?.totalNetAmount || 0,
-      Customer_Since: row.original?.createdAt
-        ? format(row.original?.createdAt, "MMMM d, yyyy")
-        : "",
-      Customer_Vehicles: row.original.customerVehicles
-        .map(
-          (vehicle) =>
-            `${vehicle.vehicleModel}  ${
-              vehicle.vehicleNumber && `(${vehicle.vehicleNumber})`
-            }`
-        )
-        .join(", "),
-    }));
-
-    rowData.forEach((row) => {
-      worksheet.addRow([
-        row.Customer_Name,
-        row.Customer_Contact,
-        row.Customer_Transactions,
-        row.Customer_Since,
-        row.Customer_Vehicles,
-      ]);
-    });
-
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "ParkNWashCustomers.xlsx";
-      a.click();
-    });
-    toast({
-      title: "Exported Successfully!!",
-      description: "Check your downloads folder",
-      duration: 2000,
-    });
-  } catch (e) {
-    console.error(e);
-    toast({
-      variant: "destructive",
-      title: "Something went wrong!!",
-      description: "Could not download",
-    });
-  }
-};
-
-export const CarwashCustomersDataTable = ({ columns, data }) => {
-  const [filter, setFilter] = useState("customerContact");
-  const [sorting, setSorting] = useState([]);
+export const CarwashCustomersDataTable = ({
+  columns,
+  data,
+  filter,
+  search,
+  sorting,
+  pagination,
+  paginationMetadata,
+  isFetching,
+  queryParams,
+  onFilterChange,
+  onSearchChange,
+  onSortingChange,
+  onPaginationChange,
+}) => {
   const navigate = useNavigate();
+  const [exportCarwashCustomers, { isLoading: isExporting }] =
+    useExportCarwashCustomersMutation();
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true,
+    manualSorting: true,
+    pageCount: Math.max(paginationMetadata?.totalPages || 1, 1),
+    onPaginationChange,
+    onSortingChange,
     state: {
       sorting,
+      pagination,
     },
-    initialState: {
-      pagination: {
-        pageSize: 50, // Set your initial page size here
-      },
+    meta: {
+      rowNumberOffset:
+        ((paginationMetadata?.page || 1) - 1) *
+        (paginationMetadata?.limit || pagination.pageSize),
     },
   });
+
+  const handleExport = async () => {
+    try {
+      const { page, limit, ...exportParams } = queryParams;
+      const exportResult = await exportCarwashCustomers(exportParams).unwrap();
+      const filename = getFilenameFromDisposition(
+        exportResult.contentDisposition,
+        "ParkNWashCustomers.xlsx"
+      );
+
+      downloadBlob(exportResult.blob, filename);
+      toast({
+        title: "Exported Successfully!!",
+        description: "Check your downloads folder",
+        duration: 2000,
+      });
+    } catch (e) {
+      console.error(e);
+      toast({
+        variant: "destructive",
+        title: "Something went wrong!!",
+        description: "Could not download",
+      });
+    }
+  };
 
   return (
     <>
@@ -154,10 +106,7 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
           <Select
             value={filter}
             onValueChange={(value) => {
-              setFilter(value);
-              table.resetColumnFilters();
-              table.resetSorting();
-              table.resetColumnVisibility();
+              onFilterChange(value);
             }}
           >
             <SelectTrigger className="w-[180px]">
@@ -174,10 +123,8 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
             placeholder="Search.."
             type={filter === "customerContact" ? "tel" : "text"}
             autoComplete="off"
-            value={table.getColumn(filter)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(filter)?.setFilterValue(event.target.value)
-            }
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
             className="max-w-sm"
           />
         </div>
@@ -186,10 +133,17 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
             size="sm"
             variant="outline"
             className="h-10 gap-1 text-sm"
-            onClick={() => exportExcel(table.getFilteredRowModel().rows)}
+            disabled={isExporting}
+            onClick={handleExport}
           >
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only">Export</span>
+            {isExporting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <File className="h-3.5 w-3.5" />
+            )}
+            <span className="sr-only sm:not-sr-only">
+              {isExporting ? "Exporting" : "Export"}
+            </span>
           </Button>
         </div>
       </div>
@@ -248,7 +202,11 @@ export const CarwashCustomersDataTable = ({ columns, data }) => {
         </Table>
       </div>
       <div className="py-4 text-muted-foreground">
-        <DataTablePagination table={table} />
+        <DataTablePagination
+          table={table}
+          totalRows={paginationMetadata?.total || 0}
+          isFetching={isFetching}
+        />
       </div>
     </>
   );

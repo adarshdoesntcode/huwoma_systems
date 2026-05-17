@@ -39,10 +39,19 @@ const colour = {
   Parking: "purple-600 ",
 };
 
-export function DataTableFacetedFilter({ column, title, options }) {
-  const facets = column?.getFacetedUniqueValues();
+export function DataTableFacetedFilter({
+  column,
+  title,
+  options,
+  selectedValues: controlledSelectedValues,
+  onSelectedValuesChange,
+  facets: controlledFacets,
+}) {
+  const facets = controlledFacets || column?.getFacetedUniqueValues();
 
-  const selectedValues = new Set(column?.getFilterValue());
+  const selectedValues = new Set(
+    controlledSelectedValues || column?.getFilterValue()
+  );
 
   return (
     <Popover>
@@ -103,9 +112,13 @@ export function DataTableFacetedFilter({ column, title, options }) {
                         selectedValues.add(option.value);
                       }
                       const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
-                      );
+                      if (onSelectedValuesChange) {
+                        onSelectedValuesChange(filterValues);
+                      } else {
+                        column?.setFilterValue(
+                          filterValues.length ? filterValues : undefined
+                        );
+                      }
                     }}
                   >
                     <div
@@ -127,7 +140,7 @@ export function DataTableFacetedFilter({ column, title, options }) {
                     <span>{option.label}</span>
 
                     <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                      {facets.get(option.value) || 0}
+                      {facets?.get(option.value) || 0}
                     </span>
                   </CommandItem>
                 );
@@ -138,7 +151,13 @@ export function DataTableFacetedFilter({ column, title, options }) {
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={() => {
+                      if (onSelectedValuesChange) {
+                        onSelectedValuesChange([]);
+                      } else {
+                        column?.setFilterValue(undefined);
+                      }
+                    }}
                     className="justify-center text-center"
                   >
                     Clear filters
