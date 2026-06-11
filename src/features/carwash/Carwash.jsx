@@ -69,6 +69,7 @@ function Carwash() {
   const [showGoogleReview, setShowGoogleReview] = useState(false);
   const isSuper = useIsSuper();
   const role = useRole();
+  const isStaff = role === ROLES_LIST.STAFF;
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } =
     useGetCarwashTransactionsQuery(undefined, {
@@ -89,12 +90,21 @@ function Carwash() {
   const location = useLocation();
 
   const navigateState = useMemo(() => location.state || {}, [location.state]);
+  const allowedTabs = useMemo(
+    () =>
+      isStaff
+        ? ["queue", "pickup", "pending", "booking"]
+        : ["queue", "pickup", "pending", "complete", "booking"],
+    [isStaff],
+  );
 
-  const [tab, setTab] = useState(navigateState?.tab || "queue");
+  const [tab, setTab] = useState(() =>
+    allowedTabs.includes(navigateState?.tab) ? navigateState.tab : "queue",
+  );
 
   useEffect(() => {
-    setTab(navigateState?.tab || "queue");
-  }, [navigateState]);
+    setTab(allowedTabs.includes(navigateState?.tab) ? navigateState.tab : "queue");
+  }, [allowedTabs, navigateState]);
 
   let inQueueTransactions = [];
   let readyForPickupTransactions = [];
@@ -318,14 +328,16 @@ function Carwash() {
                     </Badge>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="complete">
-                  Complete
-                  {completedTransactions.length > 0 && (
-                    <Badge className="ml-2   py-0 text-[10px]">
-                      {completedTransactions.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
+                {!isStaff && (
+                  <TabsTrigger value="complete">
+                    Complete
+                    {completedTransactions.length > 0 && (
+                      <Badge className="ml-2   py-0 text-[10px]">
+                        {completedTransactions.length}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                )}
                 <TabsTrigger value="booking">
                   Booking
                   {bookedTransactions.length > 0 && (
@@ -475,45 +487,50 @@ function Carwash() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="complete">
-              <Card>
-                <CardHeader className="p-4 sm:p-6 sm:pb-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-xl sm:text-2xl">
-                        Complete
-                      </CardTitle>
-                      <CardDescription className="text-xs sm:text-sm">
-                        Vehicles that have been paid off
-                      </CardDescription>
+            {!isStaff && (
+              <TabsContent value="complete">
+                <Card>
+                  <CardHeader className="p-4 sm:p-6 sm:pb-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-xl sm:text-2xl">
+                          Complete
+                        </CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">
+                          Vehicles that have been paid off
+                        </CardDescription>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={handleRefresh}
+                          disabled={isFetching}
+                        >
+                          <span className="sr-only sm:not-sr-only">
+                            Refresh
+                          </span>
+                          <RefreshCcw
+                            className={`w-4 h-4 sm:ml-2 ${
+                              isFetching && "animate-spin"
+                            }`}
+                          />
+                        </Button>
+                        <span className="text-[10px] text-muted-foreground hidden sm:block">
+                          Last Updated:{" "}
+                          {lastUpdated ? lastUpdated : "loading..."}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={handleRefresh}
-                        disabled={isFetching}
-                      >
-                        <span className="sr-only sm:not-sr-only">Refresh</span>
-                        <RefreshCcw
-                          className={`w-4 h-4 sm:ml-2 ${
-                            isFetching && "animate-spin"
-                          }`}
-                        />
-                      </Button>
-                      <span className="text-[10px] text-muted-foreground hidden sm:block">
-                        Last Updated: {lastUpdated ? lastUpdated : "loading..."}
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
-                  <CarwashDataTable
-                    data={completedTransactions}
-                    columns={CarwashColumn}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0">
+                    <CarwashDataTable
+                      data={completedTransactions}
+                      columns={CarwashColumn}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
             <TabsContent value="booking">
               <Card>
                 <CardHeader className="p-4 sm:p-6 sm:pb-2">
