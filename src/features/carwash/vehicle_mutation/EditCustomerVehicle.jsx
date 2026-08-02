@@ -72,10 +72,7 @@ function EditCustomerVehicle({
       let payload;
 
       payload = {
-        transactions: vehicleDetails.transactions.map(
-          (transaction) => transaction._id
-        ),
-        customerId: customerId,
+        vehicleId: vehicleDetails._id,
         vehicleModel: data.vehicleModel,
         vehicleNumber: data.vehicleNumber,
         vehicleColor: selectedColor,

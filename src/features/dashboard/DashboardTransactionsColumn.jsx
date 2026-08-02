@@ -47,10 +47,10 @@ export const DashboardTransactionsColumn = [
             {type === "Carwash" && (
               <>
                 <div className="font-medium text-primary text-xs">
-                  {row.original?.vehicleModel}
-                  {row.original?.vehicleModel ? " - " : ""}
+                  {row.original?.vehicle?.vehicleModel}
+                  {row.original?.vehicle?.vehicleModel ? " - " : ""}
 
-                  {row.original?.vehicleNumber}
+                  {row.original?.vehicle?.vehicleNumber}
                 </div>
 
                 <div className="text-[10px] flex justify-between gap-2 text-muted-foreground">
@@ -84,8 +84,10 @@ export const DashboardTransactionsColumn = [
       );
     },
     filterFn: (row, _, filterValue) => {
-      if (row.original?.vehicleNumber) {
-        return row.original?.vehicleNumber
+      const vehicleNumber =
+        row.original?.vehicle?.vehicleNumber || row.original?.vehicleNumber;
+      if (vehicleNumber) {
+        return vehicleNumber
           ?.toString()
           .toLowerCase()
           .includes(filterValue.toLowerCase());

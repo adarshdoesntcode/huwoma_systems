@@ -115,11 +115,11 @@ const exportExcel = (rows) => {
       Bill_No: row.original?.billNo || "",
       Customer_Name: row.original?.customer?.customerName || "",
       Customer_Contact: row.original?.customer?.customerContact || "",
-      Vehicle_Model: row.original?.vehicleModel
-        ? row.original?.vehicleModel
+      Vehicle_Model: row.original?.vehicle?.vehicleModel
+        ? row.original?.vehicle?.vehicleModel
         : "",
-      Vehicle_Number: row.original?.vehicleNumber
-        ? row.original?.vehicleNumber
+      Vehicle_Number: row.original?.vehicle?.vehicleNumber
+        ? row.original?.vehicle?.vehicleNumber
         : "",
       Vehicle: row.original?.service?.id?.serviceVehicle?.vehicleTypeName || "",
       Service: row.original?.service?.id?.serviceTypeName || "",

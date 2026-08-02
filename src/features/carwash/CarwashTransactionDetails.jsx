@@ -233,25 +233,25 @@ const Details = ({
                       ?.vehicleTypeName
                   }
                   {/* <div className="font-medium text-primary">
-                    Vehicle No: {transactionDetails?.vehicleNumber}
+                    Vehicle No: {transactionDetails?.vehicle?.vehicleNumber}
                   </div> */}
                   <div className="flex items-center gap-2">
                     <div className="text-xs font-medium text-primary">
-                      {transactionDetails?.vehicleModel}
-                      {transactionDetails?.vehicleModel
+                      {transactionDetails?.vehicle?.vehicleModel}
+                      {transactionDetails?.vehicle?.vehicleModel
                         ? " - "
                         : "Vehicle No - "}
 
-                      {transactionDetails?.vehicleNumber}
+                      {transactionDetails?.vehicle?.vehicleNumber}
                     </div>
-                    {transactionDetails?.vehicleColor && (
+                    {transactionDetails?.vehicle?.vehicleColor && (
                       <div
                         className={cn(
                           `w-5 h-5 border  rounded-full shadow-lg  cursor-pointer`,
                         )}
                         style={{
                           backgroundColor:
-                            transactionDetails?.vehicleColor?.colorCode,
+                            transactionDetails?.vehicle?.vehicleColor?.colorCode,
                         }}
                       />
                     )}

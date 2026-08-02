@@ -33,7 +33,7 @@ export const CarwashFilterTransactionColumn = [
       return (
         <TableCell className="px-4 py-2 sm:py-1 sm:px-4 text-center">
           <div className="flex items-center gap-2">
-            {row?.original?.vehicleColor && (
+            {row?.original?.vehicle?.vehicleColor && (
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger>
@@ -42,13 +42,13 @@ export const CarwashFilterTransactionColumn = [
                         `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
                       )}
                       style={{
-                        backgroundColor: row?.original?.vehicleColor?.colorCode,
+                        backgroundColor: row?.original?.vehicle?.vehicleColor?.colorCode,
                       }}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs">
-                      {row?.original?.vehicleColor?.colorName}
+                      {row?.original?.vehicle?.vehicleColor?.colorName}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -56,10 +56,10 @@ export const CarwashFilterTransactionColumn = [
             )}
             <div className="flex flex-col items-start">
               <div className="font-semibold text-primary text-start text-xs">
-                {row.original?.vehicleModel}
+                {row.original?.vehicle?.vehicleModel}
               </div>
               <div className="text-xs flex justify-between gap-2 text-muted-foreground">
-                {row.original.vehicleNumber}
+                {row.original.vehicle?.vehicleNumber}
               </div>
             </div>
           </div>
@@ -67,7 +67,7 @@ export const CarwashFilterTransactionColumn = [
       );
     },
     filterFn: (row, _, filterValue) => {
-      return row?.original?.vehicleModel
+      return (row?.original?.vehicle?.vehicleModel || "")
         .toString()
         .toLowerCase()
         .includes(filterValue.toLowerCase());
@@ -131,7 +131,7 @@ export const CarwashFilterTransactionColumn = [
       );
     },
     filterFn: (row, _, filterValue) => {
-      return row.original.vehicleNumber
+      return (row.original.vehicle?.vehicleNumber || "")
         .toString()
         .toLowerCase()
         .includes(filterValue.toLowerCase());

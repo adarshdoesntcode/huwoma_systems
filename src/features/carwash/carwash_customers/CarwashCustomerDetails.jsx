@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import {
   useEditCarwashTransactionMutation,
-  useEditCustomerVehicleMutation,
+  useMergeVehiclesMutation,
   useExportCarwashCustomerTransactionsMutation,
   useGetCarwashCustomerByIdQuery,
   useResetStreakMutation,
@@ -498,7 +498,7 @@ function CarwashCustomerDetails() {
                         const droppedVehicle = JSON.parse(
                           e.dataTransfer.getData("vehicle")
                         );
-                        if (droppedVehicle.key !== vehicle.key) {
+                        if (droppedVehicle._id !== vehicle._id) {
                           setMergeItems([vehicle, droppedVehicle]);
                         }
                       }}
@@ -716,11 +716,11 @@ const ResetStreak = ({
   );
 };
 
-const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
+const MergeVehicles = ({ mergeItems, setMergeItems }) => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
 
-  const [editCustomerVehicle, { isLoading: isSubmitting }] =
-    useEditCustomerVehicleMutation();
+  const [mergeVehicles, { isLoading: isSubmitting }] =
+    useMergeVehiclesMutation();
   const handleCloseMerge = () => {
     setMergeItems([]);
     setSelectedVehicle("");
@@ -732,16 +732,13 @@ const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
       let payload;
 
       payload = {
-        transactions: mergeItems.flatMap((item) =>
-          item.transactions.map((i) => i._id)
-        ),
-        customerId: customerId,
-        vehicleModel: selectedVehicle?.vehicleModel,
-        vehicleNumber: selectedVehicle?.vehicleNumber,
-        vehicleColor: selectedVehicle?.vehicleColor,
+        targetVehicleId: selectedVehicle?._id,
+        sourceVehicleIds: mergeItems
+          .filter((item) => item._id !== selectedVehicle?._id)
+          .map((item) => item._id),
       };
 
-      const res = await editCustomerVehicle(payload);
+      const res = await mergeVehicles(payload);
       if (res.error) {
         handleCloseMerge();
         throw new Error(res.error.data.message);
@@ -780,11 +777,11 @@ const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
                   key={index}
                   className={cn(
                     "border-2 cursor-pointer relative hover:border-muted-foreground p-4 pb-2  transition-all  rounded-xl shadow-md",
-                    selectedVehicle.key === vehicle.key ? "border-primary" : ""
+                    selectedVehicle._id === vehicle._id ? "border-primary" : ""
                   )}
                   onClick={() => setSelectedVehicle(vehicle)}
                 >
-                  {selectedVehicle.key === vehicle.key && (
+                  {selectedVehicle._id === vehicle._id && (
                     <Badge className="absolute top-0 right-0 p-1 rounded-full shadow-lg translate-x-1/4 -translate-y-1/4">
                       <CheckCheck className="w-4 h-4 " />
                     </Badge>
@@ -822,7 +819,7 @@ const MergeVehicles = ({ mergeItems, setMergeItems, customerId }) => {
                     Records:{" "}
                     <span className="font-semibold ">
                       {" "}
-                      {vehicle.transactions.length}{" "}
+                      {vehicle.transactions?.length ?? 0}{" "}
                     </span>
                   </p>
                 </div>

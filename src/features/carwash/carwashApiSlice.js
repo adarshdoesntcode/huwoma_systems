@@ -69,12 +69,24 @@ export const carwashApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["CarwashCustomer"],
     }),
     editCustomerVehicle: builder.mutation({
-      query: (credentials) => ({
+      query: ({ vehicleId, vehicleModel, vehicleNumber, vehicleColor }) => ({
         url: "/carwash/customer/editvehicle",
         method: "PUT",
-        body: { ...credentials },
+        body: { vehicleId, vehicleModel, vehicleNumber, vehicleColor },
       }),
       invalidatesTags: ["CarwashCustomer", "CarwashCustomers"],
+    }),
+    mergeVehicles: builder.mutation({
+      query: ({ sourceVehicleIds, targetVehicleId }) => ({
+        url: "/carwash/vehicle/merge",
+        method: "PUT",
+        body: { sourceVehicleIds, targetVehicleId },
+      }),
+      invalidatesTags: [
+        "CarwashTransactions",
+        "CarwashCustomers",
+        "CarwashCustomer",
+      ],
     }),
     createCutomer: builder.mutation({
       query: (credentials) => ({
@@ -315,6 +327,7 @@ export const {
   useGetPreEditDataQuery,
   useResetStreakMutation,
   useEditCustomerVehicleMutation,
+  useMergeVehiclesMutation,
   useCreateOldRecordMutation,
   useFindCustomerByPhoneMutation,
   useMergeSourcerAndTargetCustomerMutation,

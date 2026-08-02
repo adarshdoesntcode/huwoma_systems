@@ -177,12 +177,12 @@ function CarwashInspection() {
 
                     <div className="flex items-center gap-2">
                       <div className="font-medium text-primary text-xs">
-                        {data?.data?.transaction?.vehicleModel}
-                        {data?.data?.transaction?.vehicleModel
+                        {data?.data?.transaction?.vehicle?.vehicleModel}
+                        {data?.data?.transaction?.vehicle?.vehicleModel
                           ? " - "
                           : "Vehicle No - "}
 
-                        {data?.data?.transaction?.vehicleNumber}
+                        {data?.data?.transaction?.vehicle?.vehicleNumber}
                       </div>
                     </div>
                   </div>

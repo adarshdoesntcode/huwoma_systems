@@ -747,7 +747,7 @@ const ServiceSelect = ({ customer, locationState }) => {
       const serviceIds = customerTransactions
         .filter(
           (transaction) =>
-            transaction.vehicleNumber === vehicleData?.vehicleNumber &&
+            transaction.vehicle?.vehicleNumber === vehicleData?.vehicleNumber &&
             transaction.service?.id
         )
         .map((transaction) => transaction.service.id);

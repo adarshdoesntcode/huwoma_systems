@@ -183,7 +183,7 @@ function EditCarwashTransaction({
               autoComplete="off"
               placeholder="Company/Model"
               autoFocus
-              defaultValue={transactionDetails?.vehicleModel}
+              defaultValue={transactionDetails?.vehicle?.vehicleModel}
               {...register("vehicleModel", {
                 required: "Vehicle name is required",
               })}
@@ -202,7 +202,7 @@ function EditCarwashTransaction({
               inputMode="numeric"
               autoComplete="off"
               placeholder="Vehicle Identification Number"
-              defaultValue={transactionDetails?.vehicleNumber}
+              defaultValue={transactionDetails?.vehicle?.vehicleNumber}
               {...register("vehicleNumber", {
                 required: "Identification is required",
               })}

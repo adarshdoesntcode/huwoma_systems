@@ -176,7 +176,7 @@ function PublicCarwashEntryStatus() {
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <StatusItem
                 label="Vehicle"
-                value={transaction.vehicleModel || "-"}
+                value={transaction.vehicle?.vehicleModel || "-"}
               />
               <StatusItem
                 label="Service"

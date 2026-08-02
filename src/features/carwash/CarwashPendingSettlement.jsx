@@ -401,9 +401,9 @@ function CarwashPendingSettlement() {
                           <div className="flex items-center justify-between gap-2">
                             <span>
                               {" "}
-                              {transaction?.vehicleModel}
-                              {transaction?.vehicleModel ? " - " : ""}
-                              {transaction?.vehicleNumber}
+                              {transaction?.vehicle?.vehicleModel}
+                              {transaction?.vehicle?.vehicleModel ? " - " : ""}
+                              {transaction?.vehicle?.vehicleNumber}
                             </span>
                             <span>{transactionTime}</span>
                           </div>

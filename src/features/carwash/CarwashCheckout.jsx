@@ -301,7 +301,7 @@ function CarwashCheckout() {
       transactionDetails?.service?.id?.streakApplicable.decision;
     vehicleName =
       transactionDetails?.service?.id?.serviceVehicle?.vehicleTypeName;
-    vehicleNumber = transactionDetails?.vehicleNumber;
+    vehicleNumber = transactionDetails?.vehicle?.vehicleNumber;
     serviceStart = transactionDetails?.service?.start;
     serviceEnd = transactionDetails?.service?.end || new Date();
     isFreeTransaction =
@@ -474,12 +474,12 @@ function CarwashCheckout() {
                       {vehicleName}
 
                       <div className="text-xs font-medium text-primary">
-                        {transactionDetails?.vehicleModel}
-                        {transactionDetails?.vehicleModel
+                        {transactionDetails?.vehicle?.vehicleModel}
+                        {transactionDetails?.vehicle?.vehicleModel
                           ? " - "
                           : "Vehicle No - "}
 
-                        {transactionDetails?.vehicleNumber}
+                        {transactionDetails?.vehicle?.vehicleNumber}
                       </div>
                     </div>
                   </div>

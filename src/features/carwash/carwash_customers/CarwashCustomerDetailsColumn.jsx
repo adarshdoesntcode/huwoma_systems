@@ -71,7 +71,7 @@ export const CarwashCustomerDetailsColumn = [
       return (
         <TableCell className="px-4 py-2 text-center sm:py-2 sm:px-4">
           <div className="flex items-center gap-2">
-            {row?.original?.vehicleColor && (
+            {row?.original?.vehicle?.vehicleColor && (
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger>
@@ -80,13 +80,13 @@ export const CarwashCustomerDetailsColumn = [
                         `w-6 h-6 border-2  rounded-full shadow-lg  cursor-pointer`
                       )}
                       style={{
-                        backgroundColor: row?.original?.vehicleColor?.colorCode,
+                        backgroundColor: row?.original?.vehicle?.vehicleColor?.colorCode,
                       }}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-xs">
-                      {row?.original?.vehicleColor?.colorName}
+                      {row?.original?.vehicle?.vehicleColor?.colorName}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -94,10 +94,10 @@ export const CarwashCustomerDetailsColumn = [
             )}
             <div className="flex flex-col items-start">
               <div className="text-xs font-semibold text-primary text-start">
-                {row.original?.vehicleModel}
+                {row.original?.vehicle?.vehicleModel}
               </div>
               <div className="flex justify-between gap-2 text-xs text-muted-foreground">
-                {row.original.vehicleNumber}
+                {row.original.vehicle?.vehicleNumber}
               </div>
             </div>
           </div>
@@ -132,7 +132,7 @@ export const CarwashCustomerDetailsColumn = [
       );
     },
     filterFn: (row, _, filterValue) => {
-      return row.original.vehicleNumber
+      return (row.original.vehicle?.vehicleNumber || "")
         .toString()
         .toLowerCase()
         .includes(filterValue.toLowerCase());
