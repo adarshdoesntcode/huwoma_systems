@@ -21,14 +21,6 @@
   ],
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://huwoma-backend.vercel.app/api/:path*"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "https://huwoma-backend-uat.vercel.app/api/:path*"
-    },
-    {
       "source": "/parknwashbyhuwoma",
       "destination": "/public.html"
     },
